@@ -4,6 +4,7 @@
 use super::style::{self, icon, Palette};
 use super::traced::TracedAction;
 use super::{take, Cx, Pending};
+use crate::gui::style::ColumnsInOrder;
 use crate::i18n::tr;
 use crate::tracer::{self, DbLog};
 use eframe::egui::{self, Ui};
@@ -56,12 +57,12 @@ impl LogsDbTab {
         let folder = tracer::db_folder(cx.settings);
         let mut action = None;
 
-        ui.horizontal(|ui| {
+        crate::gui::style::row(ui, |ui| {
             style::search_field(ui, &mut self.search, "Search logs", 220.0);
             ui.add_space(6.0);
             style::toggle(ui, &mut self.compatible_only, "Only logs for this system");
             ui.label(style::muted(ui, crate::tf!("Only {} {}", std::env::consts::OS, std::env::consts::ARCH)));
-            ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
+            ui.with_layout(crate::gui::style::far_layout(egui::Align::Center), |ui| {
                 let has_url = cx.settings.logs_db_url.as_deref().is_some_and(|u| !u.trim().is_empty());
                 ui.add_enabled_ui(self.updating.is_none(), |ui| {
                     let r = style::secondary(ui, icon::DOWNLOAD, "Update").on_hover_text(if has_url {
@@ -109,10 +110,10 @@ impl LogsDbTab {
 
         // Action bar for the selected log
         style::card(ui, |ui| {
-            ui.horizontal(|ui| match self.focus.and_then(|i| self.list.get(i)) {
+            crate::gui::style::row(ui, |ui| match self.focus.and_then(|i| self.list.get(i)) {
                 Some(d) => {
                     style::icon_tile(ui, icon::DATABASE, p.accent, 34.0);
-                    ui.vertical(|ui| {
+                    crate::gui::style::column(ui, |ui| {
                         ui.label(style::strong(&d.log.name));
                         ui.label(
                             style::muted(
@@ -122,7 +123,7 @@ impl LogsDbTab {
                             .size(12.5),
                         );
                     });
-                    ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
+                    ui.with_layout(crate::gui::style::far_layout(egui::Align::Center), |ui| {
                         ui.add_enabled_ui(d.compatible(), |ui| {
                             let import = |cx: &mut Cx| match tracer::db_import(d) {
                                 Ok(l) => Some(l),
@@ -154,15 +155,11 @@ impl LogsDbTab {
         TableBuilder::new(ui)
             .striped(true)
             .sense(egui::Sense::click())
-            .cell_layout(egui::Layout::left_to_right(egui::Align::Center))
+            .cell_layout(crate::gui::style::near_layout(egui::Align::Center))
             .auto_shrink([false, false])
-            .column(Column::remainder().at_least(220.0))
-            .column(Column::exact(120.0))
-            .column(Column::exact(90.0))
-            .column(Column::exact(90.0))
-            .column(Column::exact(110.0))
+            .columns_in_order(vec![Column::remainder().at_least(220.0), Column::exact(120.0), Column::exact(90.0), Column::exact(90.0), Column::exact(110.0)])
             .header(26.0, |mut h| {
-                for t in ["Name", "System", "Settings", "Files", "Recorded"] {
+                for t in crate::gui::style::ordered(vec!["Name", "System", "Settings", "Files", "Recorded"]) {
                     h.col(|ui| {
                         ui.label(style::muted(ui, tr(t)).size(12.5));
                     });
@@ -175,22 +172,27 @@ impl LogsDbTab {
                     let sel = self.focus == Some(i);
                     row.set_selected(sel);
                     let soft = |ui: &Ui, t: String| style::muted(ui, t);
-                    row.col(|ui| {
-                        ui.label(egui::RichText::new(icon::DATABASE).color(if d.compatible() { p.accent } else { p.faint }));
-                        ui.add(egui::Label::new(style::strong(&d.log.name)).truncate());
-                    });
-                    row.col(|ui| {
-                        ui.label(soft(ui, crate::tf!("{} {}", d.log.os, d.log.arch)));
-                    });
-                    row.col(|ui| {
-                        ui.label(d.log.count(true).to_string());
-                    });
-                    row.col(|ui| {
-                        ui.label(d.log.count(false).to_string());
-                    });
-                    row.col(|ui| {
-                        ui.label(soft(ui, d.log.created.format("%d %b %Y").to_string()));
-                    });
+                    crate::gui::style::cells_in_order(
+                        &mut row,
+                        vec![
+                            Box::new(|ui: &mut Ui| {
+                                ui.label(egui::RichText::new(icon::DATABASE).color(if d.compatible() { p.accent } else { p.faint }));
+                                ui.add(egui::Label::new(style::strong(&d.log.name)).truncate());
+                            }),
+                            Box::new(|ui: &mut Ui| {
+                                ui.label(soft(ui, crate::tf!("{} {}", d.log.os, d.log.arch)));
+                            }),
+                            Box::new(|ui: &mut Ui| {
+                                ui.label(d.log.count(true).to_string());
+                            }),
+                            Box::new(|ui: &mut Ui| {
+                                ui.label(d.log.count(false).to_string());
+                            }),
+                            Box::new(|ui: &mut Ui| {
+                                ui.label(soft(ui, d.log.created.format("%d %b %Y").to_string()));
+                            }),
+                        ],
+                    );
                     if row.response().clicked() {
                         clicked = Some(i);
                     }

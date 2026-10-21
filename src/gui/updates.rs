@@ -74,8 +74,8 @@ impl Updates {
         let p = Palette::get(ui.ctx());
         style::card(ui, |ui| {
             style::section_title(ui, "Updates");
-            ui.horizontal(|ui| {
-                ui.vertical(|ui| {
+            crate::gui::style::row(ui, |ui| {
+                crate::gui::style::column(ui, |ui| {
                     ui.label(crate::tf!("CleanCore {}", update::CURRENT));
                     let (text, col) = if self.installed {
                         ("Update installed. Restart CleanCore to use it.".to_string(), p.success)
@@ -88,7 +88,7 @@ impl Updates {
                     };
                     ui.label(RichText::new(text).size(12.5).color(col));
                 });
-                ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
+                ui.with_layout(crate::gui::style::far_layout(egui::Align::Center), |ui| {
                     let busy = self.check.is_some() || self.install.is_some();
                     if let (Some(r), false) = (&self.available, self.installed) {
                         if ui.add_enabled_ui(!busy, |ui| style::primary(ui, icon::DOWNLOAD, &crate::tf!("Install {}", r.version))).inner.clicked() {

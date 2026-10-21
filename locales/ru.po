@@ -2748,8 +2748,14 @@ msgstr "Запись в фоне отключена"
 msgid "Choose what to watch"
 msgstr "Выберите, за чем следить"
 
+msgid "Use a quick pick on the right"
+msgstr "Используйте быстрый выбор справа"
+
 msgid "Use a quick pick on the left"
 msgstr "Используйте быстрый выбор слева"
+
+msgid "The button at the top left"
+msgstr "Кнопка слева вверху"
 
 msgid "The button at the top right"
 msgstr "Кнопка справа вверху"
@@ -2856,11 +2862,17 @@ msgstr "Фильтр изменений"
 msgid "Nothing to show yet"
 msgstr "Пока нечего показать"
 
+msgid "Choose what to watch on the right, then start recording."
+msgstr "Выберите справа, за чем следить, и начните запись."
+
 msgid "Choose what to watch on the left, then start recording."
 msgstr "Выберите слева, за чем следить, и начните запись."
 
 msgid "Not recording"
 msgstr "Запись не идёт"
+
+msgid "Press Start recording at the top left, then use your program."
+msgstr "Нажмите «Начать запись» слева вверху и работайте с программой."
 
 msgid "Press Start recording at the top right, then use your program."
 msgstr "Нажмите «Начать запись» справа вверху и работайте с программой."

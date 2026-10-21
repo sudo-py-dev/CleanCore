@@ -78,9 +78,9 @@ impl<T: Send + 'static> Pending<T> {
     pub fn show_progress(&self, ui: &mut Ui) {
         let label = crate::i18n::tr(&self.label);
         let p = Palette::get(ui.ctx());
-        ui.vertical(|ui| {
+        crate::gui::style::column(ui, |ui| {
             ui.spacing_mut().item_spacing.y = 6.0;
-            ui.horizontal(|ui| {
+            crate::gui::style::row(ui, |ui| {
                 ui.add(egui::Spinner::new().size(16.0).color(p.accent));
                 ui.label(label);
                 ui.label(RichText::new(crate::tf!("{:.0}s", self.started.elapsed().as_secs_f32())).color(p.faint));
@@ -310,11 +310,11 @@ impl App {
         let indicator = ui.painter().add(egui::Shape::Noop);
         let mut selected_rect = None;
         ui.add_space(18.0);
-        ui.horizontal(|ui| {
+        crate::gui::style::row(ui, |ui| {
             ui.add_space(6.0);
             style::logo(ui, icon::SPARKLE, 36.0);
             ui.add_space(2.0);
-            ui.vertical(|ui| {
+            crate::gui::style::column(ui, |ui| {
                 ui.spacing_mut().item_spacing.y = 1.0;
                 ui.add_space(1.0);
                 ui.label(style::strong(tr("CleanCore")).size(17.0));
@@ -331,7 +331,7 @@ impl App {
             let rec = crate::watcher::recorder_running();
             egui::Frame::new().fill(p.surface_alt).corner_radius(8).inner_margin(egui::Margin::symmetric(10, 6)).show(ui, |ui| {
                 ui.set_width(ui.available_width());
-                ui.horizontal(|ui| {
+                crate::gui::style::row(ui, |ui| {
                     let (r, _) = ui.allocate_exact_size(Vec2::splat(8.0), egui::Sense::hover());
                     if rec {
                         // A slow pulse while recording.
@@ -346,9 +346,9 @@ impl App {
             });
             ui.add_space(4.0);
             // Settings, with the theme switch and notifications on the same row.
-            ui.horizontal(|ui| {
+            crate::gui::style::row(ui, |ui| {
                 ui.spacing_mut().item_spacing.x = 2.0;
-                let w = ui.available_width() - 2.0 * 34.0;
+                let w = ui.available_width() - 2.0 * 34.0 - 6.0;
                 let r = ui.allocate_ui(Vec2::new(w, 38.0), |ui| style::nav_item(ui, Tool::Settings.icon(), Tool::Settings.label(), self.tool == Tool::Settings)).inner;
                 if self.tool == Tool::Settings {
                     selected_rect = Some(r.rect);
@@ -373,7 +373,7 @@ impl App {
             for (section, tools) in Tool::SECTIONS {
                 let tools = tools.iter().copied().filter(|t| t.supported());
                 ui.add_space(10.0);
-                ui.horizontal(|ui| {
+                crate::gui::style::row(ui, |ui| {
                     ui.add_space(14.0);
                     ui.label(RichText::new(crate::i18n::tr(section).to_uppercase()).size(11.0).family(style::semibold()).color(p.faint));
                 });
@@ -464,10 +464,10 @@ impl App {
 
 fn notice_row(ui: &mut Ui, n: &Notice) {
     let p = Palette::get(ui.ctx());
-    ui.horizontal_top(|ui| {
+    crate::gui::style::row_top(ui, |ui| {
         let (ic, col) = if n.error { (icon::WARNING, p.danger) } else { (icon::CHECK_CIRCLE, p.success) };
         ui.label(RichText::new(ic).size(17.0).color(col));
-        ui.vertical(|ui| {
+        crate::gui::style::column(ui, |ui| {
             ui.add(egui::Label::new(&n.text).wrap());
             ui.label(RichText::new(n.at.format("%H:%M:%S").to_string()).size(11.5).color(p.faint));
         });
@@ -478,13 +478,18 @@ impl eframe::App for App {
     fn ui(&mut self, ui: &mut Ui, _frame: &mut eframe::Frame) {
         let ctx = ui.ctx().clone();
         let p = Palette::get(&ctx);
-        egui::Panel::left("sidebar")
-            .resizable(false)
+        // The sidebar sits at the start of the reading direction: right for right-to-left.
+        let side = if style::rtl() { egui::Panel::right("sidebar") } else { egui::Panel::left("sidebar") };
+        side.resizable(false)
             .exact_size(236.0)
             .frame(egui::Frame::new().fill(p.surface).stroke(egui::Stroke::new(1.0, p.border)).inner_margin(egui::Margin::symmetric(12, 0)))
             .show(ui, |ui| self.sidebar(ui));
 
         egui::CentralPanel::default().frame(egui::Frame::new().fill(p.bg).inner_margin(egui::Margin { left: 28, right: 28, top: 22, bottom: 18 })).show(ui, |ui| {
+            // Pages are laid out from the start edge of the reading direction.
+            let mut page =
+                ui.new_child(egui::UiBuilder::new().max_rect(ui.max_rect()).layout(egui::Layout::top_down(if style::rtl() { egui::Align::Max } else { egui::Align::Min })));
+            let ui = &mut page;
             // A new page fades in and settles from slightly below.
             let now = ui.input(|i| i.time);
             if self.shown != Some(self.tool) {
@@ -556,7 +561,7 @@ fn first_run(ctx: &egui::Context, settings: &mut Settings) {
         ui.label(style::strong(tr("Welcome to CleanCore")).size(20.0));
         ui.label(style::muted(ui, tr("Pick a look. You can change it any time in Settings.")));
         ui.add_space(14.0);
-        ui.horizontal(|ui| {
+        crate::gui::style::row(ui, |ui| {
             if style::secondary(ui, icon::SUN, "Light").clicked() {
                 chosen = Some("light");
             }

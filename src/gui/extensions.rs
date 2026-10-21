@@ -95,7 +95,7 @@ impl ExtensionsTab {
             b
         };
         let selected: Vec<Extension> = self.list.iter().filter(|e| self.checked.contains(&key(e))).cloned().collect();
-        ui.horizontal(|ui| {
+        crate::gui::style::row(ui, |ui| {
             style::search_field(ui, &mut self.search, "Search extensions", 200.0);
             ui.add_space(6.0);
             if style::segment(ui, self.browser.is_none(), "All browsers").clicked() {
@@ -107,7 +107,7 @@ impl ExtensionsTab {
                     self.browser = Some(*b);
                 }
             }
-            ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
+            ui.with_layout(crate::gui::style::far_layout(egui::Align::Center), |ui| {
                 ui.add_enabled_ui(!selected.is_empty() && self.removing.is_none(), |ui| {
                     if style::primary(ui, icon::TRASH, &crate::tf!("Remove ({})", selected.len())).clicked() {
                         self.confirm = true;
@@ -156,7 +156,7 @@ impl ExtensionsTab {
                     if last.is_some() {
                         ui.add_space(10.0);
                     }
-                    ui.horizontal(|ui| {
+                    crate::gui::style::row(ui, |ui| {
                         ui.label(RichText::new(icon::GLOBE).size(16.0).color(p.accent));
                         ui.label(style::strong(crate::tf!("{}  ›  {}", e.browser.label(), e.profile)));
                         if self.running.contains(&e.browser) {
@@ -167,7 +167,7 @@ impl ExtensionsTab {
                     last = Some(group);
                 }
                 style::card(ui, |ui| {
-                    ui.horizontal(|ui| {
+                    crate::gui::style::row(ui, |ui| {
                         let k = key(e);
                         let mut on = self.checked.contains(&k);
                         ui.add_enabled_ui(!e.builtin, |ui| {
@@ -180,8 +180,8 @@ impl ExtensionsTab {
                             }
                         });
                         style::icon_tile(ui, if e.kind == "Theme" { icon::PALETTE } else { icon::CUBE }, if e.enabled { p.accent } else { p.faint }, 32.0);
-                        ui.vertical(|ui| {
-                            ui.horizontal(|ui| {
+                        crate::gui::style::column(ui, |ui| {
+                            crate::gui::style::row(ui, |ui| {
                                 ui.label(style::strong(&e.name));
                                 ui.label(style::muted(ui, &e.version).size(12.5));
                                 if e.kind != "Extension" {
@@ -197,7 +197,7 @@ impl ExtensionsTab {
                             let sub = if e.description.is_empty() { e.id.clone() } else { e.description.clone() };
                             ui.add(egui::Label::new(style::muted(ui, sub).size(12.5)).truncate());
                         });
-                        ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
+                        ui.with_layout(crate::gui::style::far_layout(egui::Align::Center), |ui| {
                             if let Some(path) = &e.path {
                                 if style::icon_button(ui, icon::FOLDER_OPEN, "Open folder").clicked() {
                                     let dir = if path.is_dir() { path.clone() } else { path.parent().map(|p| p.to_path_buf()).unwrap_or(path.clone()) };
@@ -233,7 +233,7 @@ impl ExtensionsTab {
                     ui.label(RichText::new(crate::tf!("{}  Close {} first.", icon::WARNING, running.join(", "))).color(p.warning));
                 }
                 ui.add_space(12.0);
-                ui.horizontal(|ui| {
+                crate::gui::style::row(ui, |ui| {
                     if !running.is_empty() && style::secondary(ui, icon::REFRESH, "Check again").clicked() {
                         recheck = true;
                     }

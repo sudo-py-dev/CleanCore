@@ -126,12 +126,12 @@ impl TunerView {
                 .inner_margin(egui::Margin::symmetric(14, 10))
                 .show(ui, |ui| {
                     ui.set_width(ui.available_width());
-                    ui.horizontal(|ui| {
+                    crate::gui::style::row(ui, |ui| {
                         ui.label(RichText::new(icon::WARNING).size(18.0).color(p.warning));
                         let msgs: Vec<&str> = self.pending.iter().filter_map(|r| r.message()).map(|m| m.split(" (").next().unwrap_or(m)).collect();
                         ui.label(RichText::new(crate::tf!("Some changes need one more step: {}.", msgs.join(", "))).color(p.text));
                         if cfg!(windows) && self.pending.contains(&Requires::Explorer) {
-                            ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| restart = style::secondary(ui, icon::REFRESH, "Restart Explorer").clicked());
+                            ui.with_layout(crate::gui::style::far_layout(egui::Align::Center), |ui| restart = style::secondary(ui, icon::REFRESH, "Restart Explorer").clicked());
                         }
                     });
                 });
@@ -187,14 +187,14 @@ impl TunerView {
         let current = st.and_then(|s| s.current.clone());
         let ours = st.and_then(|s| s.ours.clone());
         let mut out = None;
-        ui.horizontal(|ui| {
-            ui.vertical(|ui| {
+        crate::gui::style::row(ui, |ui| {
+            crate::gui::style::column(ui, |ui| {
                 ui.set_width((ui.available_width() - 240.0).max(240.0));
                 ui.label(RichText::new(tr(&t.name)).color(if available { p.text } else { p.faint }));
                 if !t.description.is_empty() {
                     ui.label(RichText::new(tr(&t.description)).size(12.5).color(p.muted));
                 }
-                ui.horizontal_wrapped(|ui| {
+                crate::gui::style::row_wrapped(ui, |ui| {
                     if ours.is_some() {
                         style::badge(ui, "by CleanCore", p.accent);
                     }
@@ -215,7 +215,7 @@ impl TunerView {
                     }
                 });
             });
-            ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
+            ui.with_layout(crate::gui::style::far_layout(egui::Align::Center), |ui| {
                 ui.add_enabled_ui(available, |ui| {
                     if t.is_toggle() {
                         let mut on = current.is_some();
@@ -262,7 +262,7 @@ impl TunerView {
             ui.label(style::strong(tr("Are you sure?")).size(19.0));
             ui.label(style::muted(ui, warning));
             ui.add_space(14.0);
-            ui.horizontal(|ui| {
+            crate::gui::style::row(ui, |ui| {
                 if style::primary(ui, "", "Apply anyway").clicked() {
                     answer = Some(true);
                 }

@@ -394,6 +394,183 @@ fn with_icon(icon: &str, text: &str) -> String {
     }
 }
 
+// ---------------------------------------------------------------- reading direction
+//
+// Right-to-left languages (Hebrew) mirror the whole interface: rows run from the right, the
+// "far" side of a row is the left, columns hug the right edge, the sidebar sits on the right
+// and arrows point the other way. Pages use these instead of egui's left-to-right ones.
+
+/// The interface reads right to left.
+pub fn rtl() -> bool {
+    crate::i18n::is_rtl()
+}
+
+/// A row in reading order (egui's `horizontal`, mirrored for right-to-left).
+pub fn row<R>(ui: &mut Ui, add: impl FnOnce(&mut Ui) -> R) -> egui::InnerResponse<R> {
+    row_with(ui, egui::Align::Center, false, add)
+}
+
+/// A row whose items line up at the top.
+pub fn row_top<R>(ui: &mut Ui, add: impl FnOnce(&mut Ui) -> R) -> egui::InnerResponse<R> {
+    row_with(ui, egui::Align::Min, false, add)
+}
+
+/// A row that wraps onto more lines when it runs out of room.
+pub fn row_wrapped<R>(ui: &mut Ui, add: impl FnOnce(&mut Ui) -> R) -> egui::InnerResponse<R> {
+    row_with(ui, egui::Align::Center, true, add)
+}
+
+fn row_with<R>(ui: &mut Ui, align: egui::Align, wrap: bool, add: impl FnOnce(&mut Ui) -> R) -> egui::InnerResponse<R> {
+    if !rtl() {
+        return if wrap {
+            ui.horizontal_wrapped(add)
+        } else if align == egui::Align::Min {
+            ui.horizontal_top(add)
+        } else {
+            ui.horizontal(add)
+        };
+    }
+    let size = Vec2::new(ui.available_size_before_wrap().x, ui.spacing().interact_size.y);
+    ui.allocate_ui_with_layout(size, egui::Layout::right_to_left(align).with_main_wrap(wrap), add)
+}
+
+/// A column whose items line up at the start of the reading direction.
+pub fn column<R>(ui: &mut Ui, add: impl FnOnce(&mut Ui) -> R) -> egui::InnerResponse<R> {
+    if rtl() {
+        ui.with_layout(egui::Layout::top_down(egui::Align::Max), add)
+    } else {
+        ui.vertical(add)
+    }
+}
+
+/// Layout for the far end of a row (the right for left-to-right, the left for right-to-left).
+pub fn far_layout(align: egui::Align) -> egui::Layout {
+    if rtl() {
+        egui::Layout::left_to_right(align)
+    } else {
+        egui::Layout::right_to_left(align)
+    }
+}
+
+/// Layout that starts at the near end of a row (where reading starts).
+pub fn near_layout(align: egui::Align) -> egui::Layout {
+    if rtl() {
+        egui::Layout::right_to_left(align)
+    } else {
+        egui::Layout::left_to_right(align)
+    }
+}
+
+/// Arrow pointing back (left for left-to-right, right for right-to-left).
+pub fn icon_back() -> &'static str {
+    if rtl() {
+        icon::ARROW_RIGHT
+    } else {
+        icon::ARROW_LEFT
+    }
+}
+
+/// Arrow pointing forward.
+pub fn icon_forward() -> &'static str {
+    if rtl() {
+        icon::ARROW_LEFT
+    } else {
+        icon::ARROW_RIGHT
+    }
+}
+
+/// Mirrors x positions inside `rect` for right-to-left painting: `x(d)` is `d` from the start
+/// edge, `align` flips left/right anchors.
+#[derive(Clone, Copy)]
+pub struct Mirror {
+    rect: egui::Rect,
+    on: bool,
+}
+
+impl Mirror {
+    pub fn new(rect: egui::Rect) -> Self {
+        Self { rect, on: rtl() }
+    }
+
+    /// The x coordinate `d` from the start edge.
+    pub fn x(&self, d: f32) -> f32 {
+        if self.on {
+            self.rect.right() - d
+        } else {
+            self.rect.left() + d
+        }
+    }
+
+    /// A point `d` from the start edge at height `y`.
+    pub fn pos(&self, d: f32, y: f32) -> egui::Pos2 {
+        egui::pos2(self.x(d), y)
+    }
+
+    /// A rect of `size` whose start edge is `d` from the start edge, top at `y`.
+    pub fn rect(&self, d: f32, y: f32, size: Vec2) -> egui::Rect {
+        let x = if self.on { self.rect.right() - d - size.x } else { self.rect.left() + d };
+        egui::Rect::from_min_size(egui::pos2(x, y), size)
+    }
+
+    /// Text anchor at the start side (LEFT_* for left-to-right).
+    pub fn start(&self, v: egui::Align) -> egui::Align2 {
+        egui::Align2([if self.on { egui::Align::Max } else { egui::Align::Min }, v])
+    }
+
+    /// Text anchor at the end side.
+    pub fn end(&self, v: egui::Align) -> egui::Align2 {
+        egui::Align2([if self.on { egui::Align::Min } else { egui::Align::Max }, v])
+    }
+
+    /// Where a galley of width `w` starts so that it begins `d` from the start edge.
+    pub fn galley_x(&self, d: f32, w: f32) -> f32 {
+        if self.on {
+            self.rect.right() - d - w
+        } else {
+            self.rect.left() + d
+        }
+    }
+}
+
+/// Items in reading order: as given, or reversed for right-to-left (table columns and cells).
+pub fn ordered<T>(mut items: Vec<T>) -> Vec<T> {
+    if rtl() {
+        items.reverse();
+    }
+    items
+}
+
+/// Table columns given in left-to-right order, added in reading order.
+pub trait ColumnsInOrder {
+    fn columns_in_order(self, columns: Vec<egui_extras::Column>) -> Self;
+}
+
+impl ColumnsInOrder for egui_extras::TableBuilder<'_> {
+    fn columns_in_order(mut self, columns: Vec<egui_extras::Column>) -> Self {
+        for c in ordered(columns) {
+            self = self.column(c);
+        }
+        self
+    }
+}
+
+/// A table row's cells, given in left-to-right order, added in reading order.
+pub fn cells_in_order<'a>(row: &mut egui_extras::TableRow<'_, '_>, cells: Vec<Box<dyn FnOnce(&mut Ui) + 'a>>) {
+    for c in ordered(cells) {
+        row.col(c);
+    }
+}
+
+/// Text laid out from the reading-direction edge: paint it at `Mirror::x(d)` (right-aligned
+/// for right-to-left). `wrap` is the wrap width (`f32::INFINITY` for one line).
+pub fn text_galley(ui: &Ui, text: impl Into<String>, font: FontId, color: Color32, wrap: f32) -> Arc<egui::Galley> {
+    let mut job = egui::text::LayoutJob::simple(text.into(), font, color, wrap);
+    if rtl() {
+        job.halign = egui::Align::RIGHT;
+    }
+    ui.painter().layout_job(job)
+}
+
 /// Height of buttons, inputs, dropdowns and search fields, so toolbars line up.
 pub const CONTROL_H: f32 = 36.0;
 
@@ -571,15 +748,16 @@ pub fn stat_tile(ui: &mut Ui, width: f32, glyph: &str, value: &str, label: &str,
     let (rect, resp) = ui.allocate_exact_size(Vec2::new(width, 74.0), egui::Sense::hover());
     resp.widget_info(|| egui::WidgetInfo::labeled(egui::Role::Label, true, format!("{label}: {value}")));
     ui.painter().rect(rect, 12.0, p.surface, Stroke::new(1.0, p.border), egui::StrokeKind::Inside);
-    let tile = egui::Rect::from_min_size(rect.min + Vec2::new(14.0, 17.0), Vec2::splat(40.0));
+    let m = Mirror::new(rect);
+    let tile = m.rect(14.0, rect.top() + 17.0, Vec2::splat(40.0));
     ui.painter().rect_filled(tile, 11.0, soft(color, if p.dark { 44 } else { 26 }));
     ui.painter().text(tile.center(), egui::Align2::CENTER_CENTER, glyph, FontId::new(19.0, icon_fill()), color);
-    let x = tile.right() + 12.0;
-    let max_w = rect.right() - x - 10.0;
+    let d = 14.0 + 40.0 + 12.0;
+    let max_w = rect.width() - d - 10.0;
     let vg = ui.painter().layout(value.to_string(), FontId::new(20.0, semibold()), p.text, max_w);
-    let vg_h = vg.size().y.min(26.0);
-    ui.painter().with_clip_rect(rect).galley(egui::pos2(x, rect.top() + 14.0), vg, p.text);
-    ui.painter().with_clip_rect(rect).text(egui::pos2(x, rect.top() + 18.0 + vg_h), egui::Align2::LEFT_TOP, label, FontId::proportional(12.0), p.muted);
+    let (vg_h, vg_w) = (vg.size().y.min(26.0), vg.size().x);
+    ui.painter().with_clip_rect(rect).galley(egui::pos2(m.galley_x(d, vg_w), rect.top() + 14.0), vg, p.text);
+    ui.painter().with_clip_rect(rect).text(m.pos(d, rect.top() + 18.0 + vg_h), m.start(egui::Align::Min), label, FontId::proportional(12.0), p.muted);
 }
 
 /// Small uppercase label above a group of cards.
@@ -720,11 +898,11 @@ fn header_row(ui: &mut Ui, title: &str, subtitle: &str, lead: impl FnOnce(&mut U
     let subtitle = tr(subtitle);
     let key = egui::Id::unique(("header-actions", title));
     let actions_w = ui.ctx().data(|d| d.get_temp::<f32>(key)).unwrap_or(0.0);
-    ui.horizontal(|ui| {
+    row(ui, |ui| {
         ui.set_min_height(52.0);
         lead(ui);
         let title_w = (ui.available_width() - actions_w - 16.0).max(120.0);
-        ui.vertical(|ui| {
+        column(ui, |ui| {
             ui.set_max_width(title_w);
             ui.spacing_mut().item_spacing.y = 2.0;
             ui.add(egui::Label::new(RichText::new(title).size(24.0).family(semibold())).truncate());
@@ -732,11 +910,10 @@ fn header_row(ui: &mut Ui, title: &str, subtitle: &str, lead: impl FnOnce(&mut U
                 ui.add(egui::Label::new(muted(ui, subtitle)).truncate());
             }
         });
-        let r = ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
+        let r = ui.with_layout(far_layout(egui::Align::Center), |ui| {
             ui.spacing_mut().item_spacing.x = 8.0;
-            let start = ui.cursor().right();
             actions(ui);
-            start - ui.min_rect().left()
+            ui.min_rect().width()
         });
         let w = r.inner.max(0.0);
         if (w - actions_w).abs() > 0.5 {
@@ -755,7 +932,7 @@ pub fn page_header_back(ui: &mut Ui, title: &str, subtitle: &str, actions: impl 
         title,
         subtitle,
         |ui| {
-            let r = ui.add(egui::Button::new(RichText::new(icon::ARROW_LEFT).size(17.0)).frame_when_inactive(false).corner_radius(8).min_size(Vec2::splat(CONTROL_H)));
+            let r = ui.add(egui::Button::new(RichText::new(icon_back()).size(17.0)).frame_when_inactive(false).corner_radius(8).min_size(Vec2::splat(CONTROL_H)));
             r.widget_info(|| egui::WidgetInfo::labeled(egui::Role::Button, true, "Back"));
             back = r.on_hover_text("Back").clicked();
             ui.add_space(2.0);
@@ -800,7 +977,7 @@ pub fn tabs<T: PartialEq + Copy>(ui: &mut Ui, current: &mut T, items: &[(T, &str
     };
     let scroll = measure(false, false, 12.0) > avail;
     let mut row_ui = |ui: &mut Ui| {
-        ui.horizontal(|ui| {
+        row(ui, |ui| {
             ui.spacing_mut().item_spacing.x = 2.0;
             for (value, ic, label, count) in items {
                 let sel = *current == *value;
@@ -913,10 +1090,11 @@ pub fn nav_item(ui: &mut Ui, icon: &str, label: &str, selected: bool) -> egui::R
     let fg = p.text.lerp_to_gamma(p.accent, s);
     let icon_color = p.muted.lerp_to_gamma(p.text, t).lerp_to_gamma(p.accent, s);
     // Icons nudge right a touch on hover, like a cursor following them.
-    let left = rect.left_center() + Vec2::new(14.0 + 2.0 * t, 0.0);
+    let m = Mirror::new(rect);
+    let cy = rect.center().y;
     let family = if selected { icon_fill() } else { FontFamily::Proportional };
-    ui.painter().text(left, egui::Align2::LEFT_CENTER, icon, FontId::new(18.0, family), icon_color);
-    ui.painter().text(left + Vec2::new(30.0, 0.0), egui::Align2::LEFT_CENTER, label, FontId::new(14.5, if selected { semibold() } else { FontFamily::Proportional }), fg);
+    ui.painter().text(m.pos(14.0 + 2.0 * t, cy), m.start(egui::Align::Center), icon, FontId::new(18.0, family), icon_color);
+    ui.painter().text(m.pos(44.0 + 2.0 * t, cy), m.start(egui::Align::Center), label, FontId::new(14.5, if selected { semibold() } else { FontFamily::Proportional }), fg);
     if resp.hovered() {
         ui.ctx().set_cursor_icon(egui::CursorIcon::PointingHand);
     }
@@ -936,7 +1114,8 @@ pub fn nav_indicator(ui: &Ui, slot: egui::layers::ShapeIdx, target: egui::Rect, 
         ui.painter().set(slot, egui::Shape::Noop);
         return;
     }
-    let bar = egui::Rect::from_center_size(egui::pos2(rect.left() + 1.5, rect.center().y), Vec2::new(3.0, 18.0));
+    let edge = if rtl() { rect.right() - 1.5 } else { rect.left() + 1.5 };
+    let bar = egui::Rect::from_center_size(egui::pos2(edge, rect.center().y), Vec2::new(3.0, 18.0));
     ui.painter().set(slot, egui::Shape::Vec(vec![egui::Shape::rect_filled(rect, 9.0, p.accent_soft), egui::Shape::rect_filled(bar, 1.5, p.accent)]));
 }
 
@@ -975,7 +1154,9 @@ pub fn toggle(ui: &mut Ui, on: &mut bool, label: &str) -> egui::Response {
             ui.painter().rect_filled(rect.expand(3.0), 14.0, soft(p.accent, (30.0 * h) as u8));
         }
         ui.painter().rect_filled(rect, 11.0, bg);
-        let x = egui::lerp((rect.left() + 11.0)..=(rect.right() - 11.0), t);
+        // Off sits at the start of the reading direction, on at the far end.
+        let (off, on_x) = if rtl() { (rect.right() - 11.0, rect.left() + 11.0) } else { (rect.left() + 11.0, rect.right() - 11.0) };
+        let x = egui::lerp(off..=on_x, t);
         let knob = egui::pos2(x, rect.center().y);
         ui.painter().circle_filled(knob + Vec2::new(0.0, 1.0), 8.5, Color32::from_black_alpha(40));
         ui.painter().circle_filled(knob, 8.0 + h * 0.5, Color32::WHITE);
@@ -994,7 +1175,7 @@ fn field(ui: &mut Ui, text: &mut String, hint: &str, width: f32, lead: Option<&s
     let clearable = lead.is_some();
     let (rect, _) = ui.allocate_exact_size(Vec2::new(width.max(80.0), CONTROL_H), egui::Sense::hover());
     let bg = ui.painter().add(egui::Shape::Noop);
-    let mut child = ui.new_child(egui::UiBuilder::new().max_rect(rect.shrink2(Vec2::new(10.0, 0.0))).layout(egui::Layout::left_to_right(egui::Align::Center)));
+    let mut child = ui.new_child(egui::UiBuilder::new().max_rect(rect.shrink2(Vec2::new(10.0, 0.0))).layout(near_layout(egui::Align::Center)));
     child.spacing_mut().item_spacing.x = 6.0;
     if let Some(ic) = lead {
         child.label(RichText::new(ic).color(p.faint));
@@ -1002,12 +1183,11 @@ fn field(ui: &mut Ui, text: &mut String, hint: &str, width: f32, lead: Option<&s
     let clear_w = if clearable && !text.is_empty() { 26.0 } else { 0.0 };
     let edit_w = (child.available_width() - clear_w).max(20.0);
     let r = child.add(
-        egui::TextEdit::singleline(text)
-            .hint_text(RichText::new(hint).color(p.faint))
-            .frame(egui::Frame::NONE)
-            .margin(Margin::ZERO)
-            .desired_width(edit_w)
-            .align(egui::Align2::LEFT_CENTER),
+        egui::TextEdit::singleline(text).hint_text(RichText::new(hint).color(p.faint)).frame(egui::Frame::NONE).margin(Margin::ZERO).desired_width(edit_w).align(if rtl() {
+            egui::Align2::RIGHT_CENTER
+        } else {
+            egui::Align2::LEFT_CENTER
+        }),
     );
     if clear_w > 0.0 {
         let c = child.add(egui::Button::new(RichText::new(icon::X).size(12.0).color(p.muted)).frame_when_inactive(false).min_size(Vec2::splat(20.0)));
@@ -1169,9 +1349,9 @@ pub fn setting_row(ui: &mut Ui, title: &str, help: &str, control: impl FnOnce(&m
     let title = tr(title);
     let help = tr(help);
     ui.add_space(2.0);
-    ui.horizontal(|ui| {
+    row(ui, |ui| {
         ui.set_min_height(42.0);
-        ui.vertical(|ui| {
+        column(ui, |ui| {
             ui.spacing_mut().item_spacing.y = 2.0;
             ui.set_width((ui.available_width() - 260.0).max(200.0));
             if help.is_empty() {
@@ -1182,7 +1362,7 @@ pub fn setting_row(ui: &mut Ui, title: &str, help: &str, control: impl FnOnce(&m
                 ui.add(egui::Label::new(muted(ui, help).size(12.5)).wrap());
             }
         });
-        ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), control);
+        ui.with_layout(far_layout(egui::Align::Center), control);
     });
     ui.add_space(2.0);
 }

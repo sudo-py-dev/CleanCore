@@ -114,7 +114,7 @@ impl HunterView {
                 close = true;
             }
             egui::CentralPanel::default().frame(egui::Frame::new().fill(p.surface).stroke(egui::Stroke::new(1.0, p.border)).inner_margin(6)).show(ui, |ui| {
-                ui.horizontal(|ui| {
+                crate::gui::style::row(ui, |ui| {
                     // Grip: drag the window around.
                     ui.spacing_mut().item_spacing.x = 0.0;
                     let (grip, r) = ui.allocate_exact_size(egui::vec2(20.0, 30.0), egui::Sense::drag());
@@ -204,7 +204,7 @@ impl HunterView {
             // Left: the target and the running programs.
             let ui = &mut cols[0];
             style::card(ui, |ui| {
-                ui.horizontal(|ui| {
+                crate::gui::style::row(ui, |ui| {
                     let size = 72.0;
                     let (rect, resp) = ui.allocate_exact_size(Vec2::splat(size), egui::Sense::drag());
                     let dragging = resp.dragged();
@@ -218,11 +218,11 @@ impl HunterView {
                     if resp.drag_stopped() {
                         self.identify_pointer(ui.ctx(), cx);
                     }
-                    ui.vertical(|ui| {
+                    crate::gui::style::column(ui, |ui| {
                         ui.label(style::strong(tr("Drag the target onto a window")).size(15.0));
                         ui.label(style::muted(ui, tr("Hold the mouse button on the crosshair, move it over another program's window and let go.")).size(12.5));
                         ui.add_space(4.0);
-                        ui.horizontal(|ui| {
+                        crate::gui::style::row(ui, |ui| {
                             match self.countdown {
                                 Some(end) => {
                                     let left = end.saturating_duration_since(Instant::now()).as_secs_f32().ceil();
@@ -247,9 +247,9 @@ impl HunterView {
                 });
             });
             ui.add_space(10.0);
-            ui.horizontal(|ui| {
+            crate::gui::style::row(ui, |ui| {
                 ui.label(style::strong(tr("Running programs")));
-                ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
+                ui.with_layout(crate::gui::style::far_layout(egui::Align::Center), |ui| {
                     style::search_field(ui, &mut self.search, "Filter", 140.0);
                     if style::toggle(ui, &mut self.all, "Show all processes").changed() {
                         self.loaded = false;
@@ -266,11 +266,13 @@ impl HunterView {
                     let r = ui.add(egui::Button::selectable(selected, "").min_size(Vec2::new(ui.available_width(), 40.0)));
                     let rect = r.rect;
                     let (fg, sub_fg) = (p.text, p.muted);
-                    ui.painter().text(rect.left_center() + Vec2::new(12.0, 0.0), egui::Align2::LEFT_CENTER, icon::APP_WINDOW, egui::FontId::proportional(16.0), sub_fg);
-                    ui.painter().text(rect.left_center() + Vec2::new(38.0, -8.0), egui::Align2::LEFT_CENTER, &pr.name, egui::FontId::new(13.5, style::semibold()), fg);
+                    let mr = crate::gui::style::Mirror::new(rect);
+                    let cy = rect.center().y;
+                    ui.painter().text(mr.pos(12.0, cy), mr.start(egui::Align::Center), icon::APP_WINDOW, egui::FontId::proportional(16.0), sub_fg);
+                    ui.painter().text(mr.pos(38.0, cy - 8.0), mr.start(egui::Align::Center), &pr.name, egui::FontId::new(13.5, style::semibold()), fg);
                     let sub = pr.title.clone().or(pr.exe.clone()).unwrap_or_default();
                     let sub: String = if sub.chars().count() > 70 { sub.chars().take(70).collect::<String>() + "…" } else { sub };
-                    ui.painter().text(rect.left_center() + Vec2::new(38.0, 9.0), egui::Align2::LEFT_CENTER, sub, egui::FontId::proportional(11.5), sub_fg);
+                    ui.painter().text(mr.pos(38.0, cy + 9.0), mr.start(egui::Align::Center), sub, egui::FontId::proportional(11.5), sub_fg);
                     r.widget_info(|| egui::WidgetInfo::selected(egui::Role::Button, true, selected, &pr.name));
                     if r.clicked() {
                         pick = Some(pr.pid);
@@ -300,7 +302,7 @@ impl HunterView {
                     ui.add_space(6.0);
                     ui.label(style::muted(ui, tr("Unsaved work in it is lost. The file is backed up and can be restored from Backups.")));
                     ui.add_space(12.0);
-                    ui.horizontal(|ui| {
+                    crate::gui::style::row(ui, |ui| {
                         if style::danger(ui, icon::TRASH, "Close and delete").clicked() {
                             match hunter::kill_and_delete(&t, cx.settings) {
                                 Ok(id) => cx.info(crate::tf!("Deleted {}. Backup: {id}", t.name)),
@@ -328,9 +330,9 @@ impl HunterView {
     fn target_panel(&mut self, ui: &mut Ui, cx: &mut Cx, t: &Target, p: Palette) -> Option<HunterAction> {
         let mut action = None;
         style::card(ui, |ui| {
-            ui.horizontal(|ui| {
+            crate::gui::style::row(ui, |ui| {
                 style::icon_tile(ui, icon::APP_WINDOW, p.accent, 44.0);
-                ui.vertical(|ui| {
+                crate::gui::style::column(ui, |ui| {
                     ui.label(style::strong(t.program.as_ref().map(|x| x.name.clone()).unwrap_or(t.name.clone())).size(18.0));
                     let n = t.pids.len();
                     ui.label(style::muted(ui, crate::tf!("{} · {n} process(es)", t.name)).size(12.5));
@@ -338,7 +340,7 @@ impl HunterView {
             });
             ui.add_space(10.0);
             let row = |ui: &mut Ui, k: &str, v: &str| {
-                ui.horizontal(|ui| {
+                crate::gui::style::row(ui, |ui| {
                     ui.add_sized([90.0, 18.0], egui::Label::new(style::muted(ui, k).size(12.5)));
                     ui.add(egui::Label::new(RichText::new(v).size(12.5)).wrap());
                 });
@@ -367,7 +369,7 @@ impl HunterView {
         style::card(ui, |ui| {
             style::section_title(ui, "Actions");
             ui.add_space(4.0);
-            ui.horizontal(|ui| {
+            crate::gui::style::row(ui, |ui| {
                 if style::primary(ui, icon::TRASH, "Uninstall").on_hover_text(tr("Uninstall the program and scan for leftovers")).clicked() {
                     action = Some(match &t.program {
                         Some(pr) => HunterAction::Uninstall(Box::new(pr.clone())),
@@ -397,7 +399,7 @@ impl HunterView {
                 }
             });
             ui.add_space(4.0);
-            ui.horizontal(|ui| {
+            crate::gui::style::row(ui, |ui| {
                 ui.add_enabled_ui(t.exe.is_some(), |ui| {
                     if style::danger(ui, icon::TRASH, "Kill and delete").clicked() {
                         self.confirm_delete = true;

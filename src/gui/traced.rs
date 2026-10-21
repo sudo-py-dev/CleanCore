@@ -2,6 +2,7 @@
 
 use super::style::{self, icon, Palette};
 use super::{Cx, Pending};
+use crate::gui::style::ColumnsInOrder;
 use crate::i18n::tr;
 use crate::tracer::{self, ItemKind, ItemStatus, Session, TraceItem, TraceLog};
 use eframe::egui::{self, RichText, Ui};
@@ -106,7 +107,7 @@ impl TraceScreen {
                 }
                 let mut stop = false;
                 style::card(ui, |ui| {
-                    ui.horizontal(|ui| {
+                    crate::gui::style::row(ui, |ui| {
                         let (r, _) = ui.allocate_exact_size(egui::vec2(12.0, 12.0), egui::Sense::hover());
                         ui.painter().circle_filled(r.center(), 6.0, p.danger);
                         let since = session.as_ref().map(|s| (chrono::Local::now() - s.started).num_seconds()).unwrap_or(0);
@@ -118,7 +119,7 @@ impl TraceScreen {
                         tr("Install the program now: run its installer below, or start it any way you like. Install one program at a time and close other programs."),
                     ));
                     ui.add_space(10.0);
-                    ui.horizontal(|ui| {
+                    crate::gui::style::row(ui, |ui| {
                         style::text_input(
                             ui,
                             &mut self.installer,
@@ -224,7 +225,7 @@ fn busy(ui: &mut Ui, p: Palette, title: &str, sub: &str) {
 }
 
 fn steps(ui: &mut Ui, idx: usize, labels: &[&str], p: Palette) {
-    ui.horizontal(|ui| {
+    crate::gui::style::row(ui, |ui| {
         for (i, label) in labels.iter().enumerate() {
             let (bg, fg) = if i < idx {
                 (p.success, egui::Color32::WHITE)
@@ -260,7 +261,7 @@ fn item_list(ui: &mut Ui, items: &[TraceItem], p: Palette, mut remove: Option<&m
                 continue;
             }
             style::card(ui, |ui| {
-                ui.horizontal(|ui| {
+                crate::gui::style::row(ui, |ui| {
                     style::icon_tile(ui, ic, p.accent, 28.0);
                     ui.label(style::strong(title));
                     style::badge(ui, &idx.len().to_string(), p.accent);
@@ -268,7 +269,7 @@ fn item_list(ui: &mut Ui, items: &[TraceItem], p: Palette, mut remove: Option<&m
                 ui.add_space(4.0);
                 for i in idx.iter().take(500) {
                     let it = &items[*i];
-                    ui.horizontal(|ui| {
+                    crate::gui::style::row(ui, |ui| {
                         let (mark, col) = if it.status == ItemStatus::Created { (icon::PLUS, p.success) } else { (icon::DOTS, p.muted) };
                         ui.label(RichText::new(mark).color(col)).on_hover_text(if it.status == ItemStatus::Created {
                             tr("Created: removed on uninstall")
@@ -279,7 +280,7 @@ fn item_list(ui: &mut Ui, items: &[TraceItem], p: Palette, mut remove: Option<&m
                             egui::Label::new(RichText::new(it.label()).monospace().size(12.5).color(if it.status == ItemStatus::Created { p.text } else { p.muted })).truncate(),
                         );
                         if let Some(r) = remove.as_deref_mut() {
-                            ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
+                            ui.with_layout(crate::gui::style::far_layout(egui::Align::Center), |ui| {
                                 if style::icon_button(ui, icon::TRASH, "Remove from log").clicked() {
                                     *r = Some(*i);
                                 }
@@ -358,7 +359,7 @@ impl TracedTab {
         self.count();
         let p = Palette::get(ui.ctx());
         let mut action = None;
-        ui.horizontal(|ui| {
+        crate::gui::style::row(ui, |ui| {
             style::search_field(ui, &mut self.search, "Search logs", 240.0);
             let mut groups: Vec<String> = self.logs.iter().filter_map(|l| l.group.clone()).collect();
             groups.sort_by_key(|g| g.to_lowercase());
@@ -375,11 +376,11 @@ impl TracedTab {
                     }
                 }
             }
-            ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
+            ui.with_layout(crate::gui::style::far_layout(egui::Align::Center), |ui| {
                 let r = style::secondary(ui, icon::DOTS, "More");
                 egui::Popup::menu(&r).width(380.0).show(|ui| {
                     ui.label(style::muted(ui, tr("Import a .cptrace log")));
-                    ui.horizontal(|ui| {
+                    crate::gui::style::row(ui, |ui| {
                         style::text_input(ui, &mut self.import_path, "path/to/log.cptrace", 260.0 - style::CONTROL_H - 8.0);
                         if let Some(p) = style::browse_button(ui, "trace-import", style::Pick::File, &self.import_path) {
                             self.import_path = p;
@@ -396,7 +397,7 @@ impl TracedTab {
                     ui.separator();
                     ui.label(style::muted(ui, tr("Back up or restore every log (one file)")));
                     style::path_input(ui, "trace-backup", &mut self.export_path, "", 360.0, style::Pick::Save);
-                    ui.horizontal(|ui| {
+                    crate::gui::style::row(ui, |ui| {
                         if style::secondary(ui, icon::FLOPPY, "Back up all").clicked() {
                             let path = std::path::Path::new(&self.export_path).with_extension("cptraces");
                             match tracer::backup_all(&path) {
@@ -432,11 +433,11 @@ impl TracedTab {
         // Action bar, only while a log is selected or several are ticked.
         if focus.is_some() || self.checked.len() > 1 {
             style::card(ui, |ui| {
-                ui.horizontal(|ui| {
+                crate::gui::style::row(ui, |ui| {
                     let n = self.checked.len();
                     if n > 1 {
                         ui.label(style::strong(crate::tf!("{n} logs selected")));
-                        ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
+                        ui.with_layout(crate::gui::style::far_layout(egui::Align::Center), |ui| {
                             let ready = !self.merge_name.trim().is_empty();
                             if ui.add_enabled_ui(ready, |ui| style::primary(ui, icon::LIST_CHECKS, "Merge")).inner.clicked() {
                                 let ids: Vec<String> = self.checked.iter().cloned().collect();
@@ -452,7 +453,7 @@ impl TracedTab {
                         });
                     } else if let Some(l) = &focus {
                         style::icon_tile(ui, l.icon.as_deref().and_then(style::icon_for_key).unwrap_or(icon::RECORD), p.accent, 34.0);
-                        ui.vertical(|ui| {
+                        crate::gui::style::column(ui, |ui| {
                             ui.label(style::strong(&l.name));
                             ui.label(
                                 style::muted(
@@ -468,7 +469,7 @@ impl TracedTab {
                                 .size(12.5),
                             );
                         });
-                        ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
+                        ui.with_layout(crate::gui::style::far_layout(egui::Align::Center), |ui| {
                             let r = style::icon_button(ui, icon::DOTS, "More");
                             egui::Popup::menu(&r).width(360.0).show(|ui| {
                                 if style::ghost(ui, icon::CHAT, "Rename").clicked() {
@@ -485,7 +486,7 @@ impl TracedTab {
                                             pick = Some(Some(g));
                                         }
                                     }
-                                    ui.horizontal(|ui| {
+                                    crate::gui::style::row(ui, |ui| {
                                         style::text_input(ui, &mut self.new_group, "New group", 140.0);
                                         if ui.button(tr("Add")).clicked() && !self.new_group.trim().is_empty() {
                                             pick = Some(Some(self.new_group.trim().to_string()));
@@ -554,16 +555,18 @@ impl TracedTab {
             TableBuilder::new(ui)
                 .striped(true)
                 .sense(egui::Sense::click())
-                .cell_layout(egui::Layout::left_to_right(egui::Align::Center))
+                .cell_layout(crate::gui::style::near_layout(egui::Align::Center))
                 .auto_shrink([false, false])
-                .column(Column::exact(28.0))
-                .column(Column::remainder().at_least(200.0).clip(true))
-                .column(Column::exact(130.0))
-                .column(Column::exact(90.0))
-                .column(Column::exact(90.0))
-                .column(Column::exact(90.0))
+                .columns_in_order(vec![
+                    Column::exact(28.0),
+                    Column::remainder().at_least(200.0).clip(true),
+                    Column::exact(130.0),
+                    Column::exact(90.0),
+                    Column::exact(90.0),
+                    Column::exact(90.0),
+                ])
                 .header(26.0, |mut h| {
-                    for t in ["", "Name", "Created", if cfg!(windows) { tr("Registry") } else { tr("Settings") }, "Files", "Size"] {
+                    for t in crate::gui::style::ordered(vec!["", "Name", "Created", if cfg!(windows) { tr("Registry") } else { tr("Settings") }, "Files", "Size"]) {
                         h.col(|ui| {
                             ui.label(RichText::new(tr(t)).size(12.5).color(p.muted));
                         });
@@ -573,46 +576,51 @@ impl TracedTab {
                     body.rows(44.0, shown.len(), |mut row| {
                         let l = &shown[row.index()];
                         row.set_selected(self.focus.as_deref() == Some(l.id.as_str()));
-                        row.col(|ui| {
-                            let mut c = self.checked.contains(&l.id);
-                            if ui.checkbox(&mut c, "").changed() {
-                                if c {
-                                    self.checked.insert(l.id.clone());
-                                } else {
-                                    self.checked.remove(&l.id);
-                                }
-                            }
-                        });
-                        row.col(|ui| {
-                            ui.vertical(|ui| {
-                                ui.spacing_mut().item_spacing.y = 1.0;
-                                ui.spacing_mut().interact_size.y = 18.0;
-                                ui.horizontal(|ui| {
-                                    ui.label(RichText::new(l.icon.as_deref().and_then(style::icon_for_key).unwrap_or(icon::RECORD)).color(p.accent));
-                                    ui.add(egui::Label::new(style::strong(&l.name)).truncate());
-                                    if let Some(g) = &l.group {
-                                        style::badge(ui, g, p.accent);
+                        crate::gui::style::cells_in_order(
+                            &mut row,
+                            vec![
+                                Box::new(|ui: &mut Ui| {
+                                    let mut c = self.checked.contains(&l.id);
+                                    if ui.checkbox(&mut c, "").changed() {
+                                        if c {
+                                            self.checked.insert(l.id.clone());
+                                        } else {
+                                            self.checked.remove(&l.id);
+                                        }
                                     }
-                                    if l.imported {
-                                        style::badge(ui, "Imported", p.muted);
-                                    }
-                                });
-                                let sub = if l.comment.is_empty() { l.installer.clone().unwrap_or_default() } else { l.comment.clone() };
-                                ui.add(egui::Label::new(RichText::new(sub).size(12.0).color(p.muted)).truncate());
-                            });
-                        });
-                        row.col(|ui| {
-                            ui.label(RichText::new(l.created.format("%d %b %Y %H:%M").to_string()).color(p.muted));
-                        });
-                        row.col(|ui| {
-                            ui.label(l.count(true).to_string());
-                        });
-                        row.col(|ui| {
-                            ui.label(l.count(false).to_string());
-                        });
-                        row.col(|ui| {
-                            ui.label(RichText::new(crate::backup::human_size(l.size())).color(p.muted));
-                        });
+                                }),
+                                Box::new(|ui: &mut Ui| {
+                                    crate::gui::style::column(ui, |ui| {
+                                        ui.spacing_mut().item_spacing.y = 1.0;
+                                        ui.spacing_mut().interact_size.y = 18.0;
+                                        crate::gui::style::row(ui, |ui| {
+                                            ui.label(RichText::new(l.icon.as_deref().and_then(style::icon_for_key).unwrap_or(icon::RECORD)).color(p.accent));
+                                            ui.add(egui::Label::new(style::strong(&l.name)).truncate());
+                                            if let Some(g) = &l.group {
+                                                style::badge(ui, g, p.accent);
+                                            }
+                                            if l.imported {
+                                                style::badge(ui, "Imported", p.muted);
+                                            }
+                                        });
+                                        let sub = if l.comment.is_empty() { l.installer.clone().unwrap_or_default() } else { l.comment.clone() };
+                                        ui.add(egui::Label::new(RichText::new(sub).size(12.0).color(p.muted)).truncate());
+                                    });
+                                }),
+                                Box::new(|ui: &mut Ui| {
+                                    ui.label(RichText::new(l.created.format("%d %b %Y %H:%M").to_string()).color(p.muted));
+                                }),
+                                Box::new(|ui: &mut Ui| {
+                                    ui.label(l.count(true).to_string());
+                                }),
+                                Box::new(|ui: &mut Ui| {
+                                    ui.label(l.count(false).to_string());
+                                }),
+                                Box::new(|ui: &mut Ui| {
+                                    ui.label(RichText::new(crate::backup::human_size(l.size())).color(p.muted));
+                                }),
+                            ],
+                        );
                         let r = row.response();
                         if r.clicked() {
                             clicked = Some(l.id.clone());
@@ -639,7 +647,7 @@ impl TracedTab {
                 ui.label(style::strong(tr("Rename log")).size(18.0));
                 style::text_input(ui, name, "", 380.0);
                 ui.add_space(10.0);
-                ui.horizontal(|ui| {
+                crate::gui::style::row(ui, |ui| {
                     if style::primary(ui, "", "Rename").clicked() {
                         done = Some(true);
                     }
@@ -668,7 +676,7 @@ impl TracedTab {
                 ui.label(style::strong(tr("Delete this log?")).size(18.0));
                 ui.label(style::muted(ui, tr("The program stays installed; only the record of its installation is deleted.")));
                 ui.add_space(12.0);
-                ui.horizontal(|ui| {
+                crate::gui::style::row(ui, |ui| {
                     if style::primary(ui, "", "Delete").clicked() {
                         done = Some(true);
                     }
@@ -707,7 +715,7 @@ impl TracedTab {
                     style::text_input(ui, &mut ed.log.comment, "", 420.0);
                     ui.end_row();
                     ui.label(style::muted(ui, tr("Add item")));
-                    ui.horizontal(|ui| {
+                    crate::gui::style::row(ui, |ui| {
                         let kinds = [
                             (ItemKind::File, "File"),
                             (ItemKind::Folder, "Folder"),
@@ -750,7 +758,7 @@ impl TracedTab {
                 ui.add_space(8.0);
                 ui.allocate_ui(egui::vec2(ui.available_width(), 360.0), |ui| item_list(ui, &ed.log.items, p, Some(&mut remove)));
                 ui.add_space(8.0);
-                ui.horizontal(|ui| {
+                crate::gui::style::row(ui, |ui| {
                     if style::primary(ui, icon::FLOPPY, "Save").clicked() {
                         done = Some(true);
                     }

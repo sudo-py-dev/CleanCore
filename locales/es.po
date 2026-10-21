@@ -2748,8 +2748,14 @@ msgstr "El grabador ya no se ejecuta en segundo plano"
 msgid "Choose what to watch"
 msgstr "Elige qué vigilar"
 
+msgid "Use a quick pick on the right"
+msgstr "Usa una opción rápida de la derecha"
+
 msgid "Use a quick pick on the left"
 msgstr "Usa una opción rápida de la izquierda"
+
+msgid "The button at the top left"
+msgstr "El botón de arriba a la izquierda"
 
 msgid "The button at the top right"
 msgstr "El botón de arriba a la derecha"
@@ -2856,11 +2862,17 @@ msgstr "Filtrar cambios"
 msgid "Nothing to show yet"
 msgstr "Aún no hay nada que mostrar"
 
+msgid "Choose what to watch on the right, then start recording."
+msgstr "Elige a la derecha qué vigilar y empieza a grabar."
+
 msgid "Choose what to watch on the left, then start recording."
 msgstr "Elige a la izquierda qué vigilar y empieza a grabar."
 
 msgid "Not recording"
 msgstr "Sin grabar"
+
+msgid "Press Start recording at the top left, then use your program."
+msgstr "Pulsa Empezar a grabar arriba a la izquierda y usa tu programa."
 
 msgid "Press Start recording at the top right, then use your program."
 msgstr "Pulsa Empezar a grabar arriba a la derecha y usa tu programa."

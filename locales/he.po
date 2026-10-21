@@ -2748,8 +2748,14 @@ msgstr "המקליט כבר לא רץ ברקע"
 msgid "Choose what to watch"
 msgstr "בחר במה לעקוב"
 
+msgid "Use a quick pick on the right"
+msgstr "השתמש בבחירה מהירה מימין"
+
 msgid "Use a quick pick on the left"
 msgstr "השתמש בבחירה מהירה משמאל"
+
+msgid "The button at the top left"
+msgstr "הכפתור בפינה השמאלית העליונה"
 
 msgid "The button at the top right"
 msgstr "הכפתור בפינה הימנית העליונה"
@@ -2785,7 +2791,7 @@ msgid "A registry key"
 msgstr "מפתח רישום"
 
 msgid "A folder, file or dconf: path"
-msgstr "תיקייה, קובץ או נתיב dconf:"
+msgstr "תיקייה, קובץ או נתיב dconf"
 
 msgid "Watch"
 msgstr "עקוב"
@@ -2856,11 +2862,17 @@ msgstr "סינון שינויים"
 msgid "Nothing to show yet"
 msgstr "עדיין אין מה להציג"
 
+msgid "Choose what to watch on the right, then start recording."
+msgstr "בחר מימין במה לעקוב, ואז התחל להקליט."
+
 msgid "Choose what to watch on the left, then start recording."
 msgstr "בחר משמאל במה לעקוב, ואז התחל להקליט."
 
 msgid "Not recording"
 msgstr "לא מקליט"
+
+msgid "Press Start recording at the top left, then use your program."
+msgstr "לחץ על \"התחל להקליט\" בפינה השמאלית העליונה, ואז השתמש בתוכנה שלך."
 
 msgid "Press Start recording at the top right, then use your program."
 msgstr "לחץ על \"התחל להקליט\" בפינה הימנית העליונה, ואז השתמש בתוכנה שלך."

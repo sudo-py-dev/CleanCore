@@ -250,16 +250,16 @@ impl CleanerView {
         // Hero: what will be scanned, where, and the button that starts it.
         let mut start = false;
         style::hero(ui, |ui| {
-            ui.horizontal(|ui| {
+            crate::gui::style::row(ui, |ui| {
                 style::logo(ui, glyph, 60.0);
                 ui.add_space(8.0);
-                ui.vertical(|ui| {
+                crate::gui::style::column(ui, |ui| {
                     ui.spacing_mut().item_spacing.y = 4.0;
                     ui.add_space(2.0);
                     ui.label(style::strong(tr("Ready to scan")).size(21.0));
                     ui.label(style::muted(ui, crate::tf!("{title} · {} categories · {scope}", count(self.mode))));
                     ui.add_space(2.0);
-                    ui.horizontal(|ui| {
+                    crate::gui::style::row(ui, |ui| {
                         ui.spacing_mut().item_spacing.x = 4.0;
                         if style::segment(ui, !self.all_users, &crate::tf!("{}  Current account", icon::USER)).clicked() {
                             self.all_users = false;
@@ -269,7 +269,7 @@ impl CleanerView {
                         }
                     });
                 });
-                ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
+                ui.with_layout(crate::gui::style::far_layout(egui::Align::Center), |ui| {
                     ui.add_enabled_ui(!busy, |ui| {
                         ui.spacing_mut().button_padding = Vec2::new(24.0, 12.0);
                         start = style::primary(ui, icon::PLAY, "Start scan").clicked();
@@ -289,7 +289,7 @@ impl CleanerView {
         let gap = 14.0;
         let w = ((ui.available_width() - gap * 2.0) / 3.0).max(200.0);
         let mut go = None;
-        ui.horizontal(|ui| {
+        crate::gui::style::row(ui, |ui| {
             ui.spacing_mut().item_spacing.x = gap;
             for m in [ScanMode::Safe, ScanMode::Moderate, ScanMode::Advanced] {
                 let r = depth_card(ui, Vec2::new(w, if w < 260.0 { 190.0 } else { 168.0 }), m, self.mode == m, count(m), p);
@@ -310,7 +310,7 @@ impl CleanerView {
 
         style::eyebrow(ui, "Other ways to scan");
         let w2 = ((ui.available_width() - gap) / 2.0).max(260.0);
-        ui.horizontal(|ui| {
+        crate::gui::style::row(ui, |ui| {
             ui.spacing_mut().item_spacing.x = gap;
             if mode_card(ui, Vec2::new(w2, 84.0), icon::SLIDERS, "Custom Scan", "Choose exactly which categories to scan.", None, p).clicked() && !busy {
                 self.screen = Screen::Managed;
@@ -332,14 +332,14 @@ impl CleanerView {
         let n = done.len().min(total);
         let secs = self.scan.as_ref().map_or(0.0, |s| s.elapsed());
         style::hero(ui, |ui| {
-            ui.horizontal(|ui| {
+            crate::gui::style::row(ui, |ui| {
                 style::progress_ring(ui, id, 104.0, (total > 0).then(|| n as f32 / total as f32), glyph);
                 ui.add_space(14.0);
-                ui.vertical(|ui| {
+                crate::gui::style::column(ui, |ui| {
                     ui.spacing_mut().item_spacing.y = 6.0;
                     ui.add_space(14.0);
                     let pct = (n * 100).checked_div(total).map(|x| crate::tf!("{x}%")).unwrap_or_default();
-                    ui.horizontal(|ui| {
+                    crate::gui::style::row(ui, |ui| {
                         ui.label(style::strong(tr("Looking for leftovers…")).size(20.0));
                         ui.label(RichText::new(pct).size(20.0).family(style::semibold()).color(p.accent));
                     });
@@ -364,7 +364,7 @@ impl CleanerView {
         let w = (ui.available_width() - 10.0 * (cols - 1) as f32) / cols as f32;
         egui::ScrollArea::vertical().auto_shrink([false, false]).show(ui, |ui| {
             for row in planned.chunks(cols) {
-                ui.horizontal(|ui| {
+                crate::gui::style::row(ui, |ui| {
                     ui.spacing_mut().item_spacing.x = 10.0;
                     for (i, id) in row.iter().enumerate() {
                         let finished = done.contains(id);
@@ -405,7 +405,7 @@ impl CleanerView {
             self.start_scan(ui.ctx(), cx, Selection::Ids(ids), "Custom Scan".into());
             return;
         }
-        ui.horizontal(|ui| {
+        crate::gui::style::row(ui, |ui| {
             if style::ghost(ui, icon::CHECK, "Select all").clicked() {
                 self.managed = engine::all_checks().iter().map(|c| c.id.to_string()).collect();
             }
@@ -420,13 +420,13 @@ impl CleanerView {
                     if i > 0 {
                         style::divider(ui);
                     }
-                    ui.horizontal(|ui| {
+                    crate::gui::style::row(ui, |ui| {
                         style::icon_tile(ui, style::category_icon(c.id), p.accent, 32.0);
-                        ui.vertical(|ui| {
+                        crate::gui::style::column(ui, |ui| {
                             ui.label(style::strong(tr(c.name)));
                             ui.label(style::muted(ui, tr(c.description)).size(12.5));
                         });
-                        ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
+                        ui.with_layout(crate::gui::style::far_layout(egui::Align::Center), |ui| {
                             let mut on = self.managed.contains(c.id);
                             if style::toggle(ui, &mut on, c.name).changed() {
                                 if on {
@@ -516,7 +516,7 @@ impl CleanerView {
             return;
         }
 
-        ui.horizontal(|ui| {
+        crate::gui::style::row(ui, |ui| {
             let mut all = sel == total;
             if ui.checkbox(&mut all, tr("Select all")).changed() {
                 self.checked.iter_mut().for_each(|c| *c = all);
@@ -568,9 +568,9 @@ impl CleanerView {
                             ui.add_space(4.0);
                             for &i in idx {
                                 let issue = &self.results[i];
-                                ui.horizontal(|ui| {
+                                crate::gui::style::row(ui, |ui| {
                                     ui.checkbox(&mut self.checked[i], "");
-                                    ui.vertical(|ui| {
+                                    crate::gui::style::column(ui, |ui| {
                                         let r = ui.add(egui::Label::new(RichText::new(&issue.location).monospace().size(12.5)).sense(egui::Sense::click()).truncate());
                                         let r = r.on_hover_text(crate::tf!("{}\n{}", issue.location, issue.detail));
                                         r.context_menu(|ui| item_menu(ui, i, self.checked[i], &issue.location, &mut action));
@@ -630,7 +630,7 @@ impl CleanerView {
             ui.checkbox(&mut c.restore_point, if cfg!(windows) { tr("Create a System Restore Point") } else { tr("Create a system snapshot (snapper / timeshift)") });
             ui.checkbox(&mut c.full_backup, if cfg!(windows) { tr("Create a full registry backup") } else { tr("Create a full config backup") });
             ui.add_space(14.0);
-            ui.horizontal(|ui| {
+            crate::gui::style::row(ui, |ui| {
                 if style::primary(ui, icon::TRASH, "Delete").clicked() {
                     go = Some(true);
                 }
@@ -665,38 +665,39 @@ fn depth_card(ui: &mut Ui, size: Vec2, m: ScanMode, selected: bool, categories: 
     let s = ui.ctx().animate_bool_with_time(resp.id.with("sel"), selected, style::FADE * 1.5);
     let painter = ui.painter();
     let pad = 18.0;
-    let tile = egui::Rect::from_min_size(rect.min + Vec2::splat(pad), Vec2::splat(40.0));
+    let mr = style::Mirror::new(rect);
+    let tile = mr.rect(pad, rect.top() + pad, Vec2::splat(40.0));
     painter.rect_filled(tile, 11.0, p.accent_soft.lerp_to_gamma(p.accent, s));
     painter.text(tile.center(), egui::Align2::CENTER_CENTER, ic, egui::FontId::new(20.0, style::icon_fill()), p.accent.lerp_to_gamma(p.on_accent, s));
-    // Radio mark.
-    let rc = egui::pos2(rect.right() - pad - 10.0, tile.center().y);
+    // Radio mark, at the far end.
+    let rc = mr.pos(rect.width() - pad - 10.0, tile.center().y);
     painter.circle_stroke(rc, 10.0, egui::Stroke::new(1.5, p.border.lerp_to_gamma(p.accent, s)));
     if s > 0.0 {
         painter.circle_filled(rc, 10.0 * s, p.accent);
         painter.text(rc, egui::Align2::CENTER_CENTER, icon::CHECK, egui::FontId::proportional(12.0 * s.max(0.01)), p.on_accent);
     }
     let ty = tile.bottom() + 14.0;
-    let tg = painter.layout_no_wrap(title.to_string(), egui::FontId::new(16.0, style::semibold()), p.text);
+    let tg = style::text_galley(ui, title, egui::FontId::new(16.0, style::semibold()), p.text, f32::INFINITY);
     let tw = tg.size().x;
-    painter.galley(egui::pos2(rect.left() + pad, ty), tg, p.text);
+    painter.galley(egui::pos2(mr.x(pad), ty), tg, p.text);
     if m == ScanMode::Safe {
         let g = painter.layout_no_wrap(tr("Recommended").into(), egui::FontId::new(11.0, style::semibold()), p.success);
-        let r = egui::Rect::from_min_size(egui::pos2(rect.left() + pad + tw + 8.0, ty + 1.0), g.size() + Vec2::new(14.0, 4.0));
+        let r = mr.rect(pad + tw + 8.0, ty + 1.0, g.size() + Vec2::new(14.0, 4.0));
         painter.rect_filled(r, 9.0, egui::Color32::from_rgba_unmultiplied(p.success.r(), p.success.g(), p.success.b(), 30));
         painter.galley(r.min + Vec2::new(7.0, 2.0), g, p.success);
     }
-    let dg = painter.layout(desc.to_string(), egui::FontId::proportional(13.0), p.muted, rect.width() - pad * 2.0);
-    painter.galley(egui::pos2(rect.left() + pad, ty + 24.0), dg, p.muted);
+    let dg = style::text_galley(ui, desc, egui::FontId::proportional(13.0), p.muted, rect.width() - pad * 2.0);
+    painter.galley(egui::pos2(mr.x(pad), ty + 24.0), dg, p.muted);
     // Depth meter and category count along the bottom.
     let by = rect.bottom() - pad - 4.0;
     for i in 0..3 {
-        let bar = egui::Rect::from_min_size(egui::pos2(rect.left() + pad + i as f32 * 22.0, by - 3.0), Vec2::new(18.0, 6.0));
+        let bar = mr.rect(pad + i as f32 * 22.0, by - 3.0, Vec2::new(18.0, 6.0));
         painter.rect_filled(bar, 3.0, if i < level { p.accent } else { p.surface_alt.lerp_to_gamma(p.border, 0.6) });
     }
     if rect.width() >= 260.0 {
-        painter.text(egui::pos2(rect.left() + pad + 72.0, by), egui::Align2::LEFT_CENTER, tr("Depth"), egui::FontId::proportional(12.0), p.faint);
+        painter.text(mr.pos(pad + 72.0, by), mr.start(egui::Align::Center), tr("Depth"), egui::FontId::proportional(12.0), p.faint);
     }
-    painter.text(egui::pos2(rect.right() - pad, by), egui::Align2::RIGHT_CENTER, crate::tf!("{categories} categories"), egui::FontId::proportional(12.0), p.muted);
+    painter.text(mr.pos(rect.width() - pad, by), mr.end(egui::Align::Center), crate::tf!("{categories} categories"), egui::FontId::proportional(12.0), p.muted);
     resp
 }
 
@@ -707,27 +708,28 @@ fn mode_card(ui: &mut Ui, size: Vec2, ic: &str, title: &str, desc: &str, tag: Op
     resp.widget_info(|| egui::WidgetInfo::labeled(egui::Role::Button, ui.is_enabled(), title));
     if ui.is_rect_visible(rect) {
         let t = style::tile_frame(ui, rect, &resp, false);
-        let tile = egui::Rect::from_min_size(rect.min + Vec2::new(18.0, 18.0), Vec2::splat(40.0));
+        let mr = style::Mirror::new(rect);
+        let tile = mr.rect(18.0, rect.top() + 18.0, Vec2::splat(40.0));
         ui.painter().rect_filled(tile, 11.0, p.accent_soft.lerp_to_gamma(p.accent, t * 0.15));
         ui.painter().text(tile.center(), egui::Align2::CENTER_CENTER, ic, egui::FontId::new(20.0, style::icon_fill()), p.accent);
-        let tx = tile.right() + 14.0;
-        let width = rect.right() - tx - 18.0;
-        let painter = ui.painter();
-        let tg = painter.layout_no_wrap(title.to_string(), egui::FontId::new(16.0, style::semibold()), p.text);
+        let d = 18.0 + 40.0 + 14.0;
+        let width = rect.width() - d - 18.0;
+        let tg = style::text_galley(ui, title, egui::FontId::new(16.0, style::semibold()), p.text, f32::INFINITY);
         let title_w = tg.size().x;
-        painter.galley(egui::pos2(tx, tile.top() + 1.0), tg, p.text);
-        if let Some(t) = tag {
-            let tg2 = painter.layout_no_wrap(t.to_string(), egui::FontId::new(11.5, style::semibold()), p.success);
-            let r = egui::Rect::from_min_size(egui::pos2(tx + title_w + 10.0, tile.top() + 2.0), tg2.size() + Vec2::new(14.0, 4.0));
+        let tag_g = tag.map(|t| ui.painter().layout_no_wrap(t.to_string(), egui::FontId::new(11.5, style::semibold()), p.success));
+        let dg = style::text_galley(ui, desc, egui::FontId::proportional(13.5), p.muted, width);
+        let painter = ui.painter();
+        painter.galley(egui::pos2(mr.x(d), tile.top() + 1.0), tg, p.text);
+        if let Some(tg2) = tag_g {
+            let r = mr.rect(d + title_w + 10.0, tile.top() + 2.0, tg2.size() + Vec2::new(14.0, 4.0));
             painter.rect_filled(r, 9.0, egui::Color32::from_rgba_unmultiplied(p.success.r(), p.success.g(), p.success.b(), 30));
             painter.galley(r.min + Vec2::new(7.0, 2.0), tg2, p.success);
         }
-        let dg = painter.layout(desc.to_string(), egui::FontId::proportional(13.5), p.muted, width);
-        painter.galley(egui::pos2(tx, tile.top() + 26.0), dg, p.muted);
-        // An arrow slides in on hover: this card starts something.
+        painter.galley(egui::pos2(mr.x(d), tile.top() + 26.0), dg, p.muted);
+        // An arrow slides in on hover, at the far end: this card starts something.
         if t > 0.0 {
-            let c = egui::pos2(rect.right() - 22.0 - 6.0 * (1.0 - t), rect.top() + 26.0);
-            painter.text(c, egui::Align2::CENTER_CENTER, style::icon::ARROW_RIGHT, egui::FontId::proportional(16.0), p.accent.gamma_multiply(t));
+            let c = mr.pos(rect.width() - 22.0 - 6.0 * (1.0 - t), rect.top() + 26.0);
+            painter.text(c, egui::Align2::CENTER_CENTER, crate::gui::style::icon_forward(), egui::FontId::proportional(16.0), p.accent.gamma_multiply(t));
         }
     }
     resp

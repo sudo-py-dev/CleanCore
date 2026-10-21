@@ -2748,8 +2748,14 @@ msgstr "Запис у фоні вимкнено"
 msgid "Choose what to watch"
 msgstr "Виберіть, за чим стежити"
 
+msgid "Use a quick pick on the right"
+msgstr "Скористайтеся швидким вибором праворуч"
+
 msgid "Use a quick pick on the left"
 msgstr "Скористайтеся швидким вибором ліворуч"
+
+msgid "The button at the top left"
+msgstr "Кнопка ліворуч угорі"
 
 msgid "The button at the top right"
 msgstr "Кнопка праворуч угорі"
@@ -2856,11 +2862,17 @@ msgstr "Фільтр змін"
 msgid "Nothing to show yet"
 msgstr "Поки нічого показати"
 
+msgid "Choose what to watch on the right, then start recording."
+msgstr "Виберіть праворуч, за чим стежити, і почніть запис."
+
 msgid "Choose what to watch on the left, then start recording."
 msgstr "Виберіть ліворуч, за чим стежити, і почніть запис."
 
 msgid "Not recording"
 msgstr "Запис не йде"
+
+msgid "Press Start recording at the top left, then use your program."
+msgstr "Натисніть «Почати запис» ліворуч угорі й працюйте з програмою."
 
 msgid "Press Start recording at the top right, then use your program."
 msgstr "Натисніть «Почати запис» праворуч угорі й працюйте з програмою."

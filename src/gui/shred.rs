@@ -18,7 +18,7 @@ struct Job<T> {
 }
 
 fn passes_picker(ui: &mut Ui, cx: &mut Cx) {
-    ui.horizontal(|ui| {
+    crate::gui::style::row(ui, |ui| {
         ui.label(tr("Overwrite passes"));
         for (n, tip) in [(1, "Fast; enough for modern drives"), (3, "Zeros, ones, random (default)"), (7, "Seven passes; slow")] {
             if style::segment(ui, cx.settings.shred_passes == n, &n.to_string()).on_hover_text(tip).clicked() {
@@ -32,7 +32,7 @@ fn passes_picker(ui: &mut Ui, cx: &mut Cx) {
 fn ssd_note(ui: &mut Ui, p: Palette) {
     egui::Frame::new().fill(p.warning.gamma_multiply(if p.dark { 0.18 } else { 0.10 })).corner_radius(10).inner_margin(egui::Margin::symmetric(14, 10)).show(ui, |ui| {
         ui.set_width(ui.available_width());
-        ui.horizontal_top(|ui| {
+        crate::gui::style::row_top(ui, |ui| {
             ui.label(RichText::new(icon::INFO).size(17.0).color(p.warning));
             ui.add(
                 egui::Label::new(RichText::new(tr("On SSDs, flash drives and copy-on-write filesystems (btrfs, ZFS) the drive may keep old copies of data in places software can't reach. Overwriting is most reliable on hard disks; full-disk encryption protects SSDs best.")).size(12.5).color(p.text))
@@ -46,7 +46,7 @@ fn ssd_note(ui: &mut Ui, p: Palette) {
 fn job_progress(ui: &mut Ui, ctl: &Control, label: &str, p: Palette) {
     style::card(ui, |ui| {
         let paused = ctl.pause.load(Ordering::Relaxed);
-        ui.horizontal(|ui| {
+        crate::gui::style::row(ui, |ui| {
             if !paused {
                 ui.spinner();
             }
@@ -58,7 +58,7 @@ fn job_progress(ui: &mut Ui, ctl: &Control, label: &str, p: Palette) {
             } else {
                 label.to_string()
             }));
-            ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
+            ui.with_layout(crate::gui::style::far_layout(egui::Align::Center), |ui| {
                 if style::secondary(ui, icon::X, "Cancel").clicked() {
                     ctl.cancel.store(true, Ordering::Relaxed);
                 }
@@ -134,9 +134,9 @@ impl ShredView {
             }
         }
 
-        ui.horizontal(|ui| {
+        crate::gui::style::row(ui, |ui| {
             passes_picker(ui, cx);
-            ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
+            ui.with_layout(crate::gui::style::far_layout(egui::Align::Center), |ui| {
                 ui.add_enabled_ui(!self.items.is_empty(), |ui| {
                     if style::danger(ui, icon::TRASH, &crate::tf!("Destroy {} item(s)", self.items.len())).clicked() {
                         self.confirm = true;
@@ -154,11 +154,11 @@ impl ShredView {
                 ui.label(RichText::new(tr("Nothing added yet")).color(p.faint));
             }
             for (i, item) in self.items.iter().enumerate() {
-                ui.horizontal(|ui| {
+                crate::gui::style::row(ui, |ui| {
                     let ic = if item.dir { icon::FOLDER } else { icon::FILE };
                     ui.label(RichText::new(ic).color(p.accent));
                     ui.add(egui::Label::new(RichText::new(item.path.display().to_string()).monospace().size(12.5)).truncate());
-                    ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
+                    ui.with_layout(crate::gui::style::far_layout(egui::Align::Center), |ui| {
                         if style::icon_button(ui, icon::X, "Remove from the list").clicked() {
                             remove = Some(i);
                         }
@@ -170,7 +170,7 @@ impl ShredView {
                 self.items.remove(i);
             }
             ui.add_space(6.0);
-            ui.horizontal(|ui| {
+            crate::gui::style::row(ui, |ui| {
                 let r = style::text_input(ui, &mut self.new_path, if cfg!(windows) { r"C:\Users\me\secret.docx" } else { "/home/me/secret.pdf" }, 460.0);
                 let enter = r.lost_focus() && ui.input(|i| i.key_pressed(egui::Key::Enter));
                 if let Some(p) = style::browse_button(ui, "shred-add", style::Pick::Any, &self.new_path) {
@@ -200,7 +200,7 @@ impl ShredView {
                     ),
                 ));
                 ui.add_space(12.0);
-                ui.horizontal(|ui| {
+                crate::gui::style::row(ui, |ui| {
                     if style::danger(ui, icon::TRASH, "Destroy").clicked() {
                         let ctl = Arc::new(Control::default());
                         let (c, items, passes) = (ctl.clone(), self.items.iter().map(|i| i.path.clone()).collect::<Vec<_>>(), cx.settings.shred_passes);
@@ -261,9 +261,9 @@ impl EvidenceView {
         }
 
         let drive = self.selected.and_then(|i| self.drives.get(i)).cloned();
-        ui.horizontal(|ui| {
+        crate::gui::style::row(ui, |ui| {
             passes_picker(ui, cx);
-            ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
+            ui.with_layout(crate::gui::style::far_layout(egui::Align::Center), |ui| {
                 ui.add_enabled_ui(drive.is_some(), |ui| {
                     if style::primary(ui, icon::DRIVES, "Wipe free space").on_hover_text(tr("Pick a drive first")).clicked() {
                         self.confirm = true;
@@ -277,24 +277,26 @@ impl EvidenceView {
             tr("Deleted files stay on the drive until something overwrites them. This fills the drive's free space with random data, then deletes it again. Pick a drive:"),
         ));
         ui.add_space(10.0);
-        ui.horizontal_wrapped(|ui| {
+        crate::gui::style::row_wrapped(ui, |ui| {
             for (i, d) in self.drives.iter().enumerate() {
                 let sel = self.selected == Some(i);
                 let (rect, r) = ui.allocate_exact_size(egui::vec2(250.0, 92.0), egui::Sense::click());
                 r.widget_info(|| egui::WidgetInfo::selected(egui::Role::Button, true, sel, &d.label));
                 style::tile_frame(ui, rect, &r, sel);
                 let painter = ui.painter();
-                let left = rect.left_top() + egui::vec2(16.0, 16.0);
-                painter.text(left, egui::Align2::LEFT_TOP, icon::DRIVES, egui::FontId::proportional(22.0), if sel { p.accent } else { p.muted });
-                painter.text(left + egui::vec2(34.0, 0.0), egui::Align2::LEFT_TOP, &d.label, egui::FontId::new(14.5, style::semibold()), p.text);
-                painter.text(left + egui::vec2(34.0, 20.0), egui::Align2::LEFT_TOP, crate::tf!("{} · {}", d.path.display(), d.fs), egui::FontId::proportional(12.0), p.muted);
+                let mr = crate::gui::style::Mirror::new(rect);
+                let top = rect.top() + 16.0;
+                painter.text(mr.pos(16.0, top), mr.start(egui::Align::Min), icon::DRIVES, egui::FontId::proportional(22.0), if sel { p.accent } else { p.muted });
+                painter.text(mr.pos(50.0, top), mr.start(egui::Align::Min), &d.label, egui::FontId::new(14.5, style::semibold()), p.text);
+                painter.text(mr.pos(50.0, top + 20.0), mr.start(egui::Align::Min), crate::tf!("{} · {}", d.path.display(), d.fs), egui::FontId::proportional(12.0), p.muted);
                 let bar = egui::Rect::from_min_size(rect.left_bottom() + egui::vec2(16.0, -26.0), egui::vec2(rect.width() - 32.0, 6.0));
                 painter.rect_filled(bar, 3.0, p.surface_alt);
                 let used = if d.total > 0 { 1.0 - d.free as f32 / d.total as f32 } else { 0.0 };
-                painter.rect_filled(egui::Rect::from_min_size(bar.min, egui::vec2(bar.width() * used, bar.height())), 3.0, p.accent);
+                // The used part fills from the start edge.
+                painter.rect_filled(crate::gui::style::Mirror::new(bar).rect(0.0, bar.top(), egui::vec2(bar.width() * used, bar.height())), 3.0, p.accent);
                 painter.text(
-                    bar.left_bottom() + egui::vec2(0.0, 4.0),
-                    egui::Align2::LEFT_TOP,
+                    mr.pos(16.0, bar.bottom() + 4.0),
+                    mr.start(egui::Align::Min),
                     crate::tf!("{} free of {}", super::human(d.free), super::human(d.total)),
                     egui::FontId::proportional(11.5),
                     p.muted,
@@ -318,7 +320,7 @@ impl EvidenceView {
                     let passes = cx.settings.shred_passes.min(7);
                     ui.label(style::muted(ui, crate::tf!("{} of random data is written {passes} time(s). This can take a long time, and the drive is briefly full — programs saving files meanwhile may fail. Your files are not touched.", super::human(d.free))));
                     ui.add_space(12.0);
-                    ui.horizontal(|ui| {
+                    crate::gui::style::row(ui, |ui| {
                         if style::primary(ui, icon::DRIVES, "Wipe").clicked() {
                             let ctl = Arc::new(Control::default());
                             let (c, dir) = (ctl.clone(), d.path.clone());

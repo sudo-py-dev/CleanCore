@@ -66,9 +66,9 @@ impl HistoryView {
 
         let picked: Vec<HistoryItem> = self.items.iter().filter(|i| self.checked.contains(&i.id)).cloned().collect();
         let size: u64 = picked.iter().map(|i| i.size).sum();
-        ui.horizontal(|ui| {
+        crate::gui::style::row(ui, |ui| {
             ui.label(style::strong(crate::tf!("{} selected · {}", picked.len(), super::human(size))));
-            ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
+            ui.with_layout(crate::gui::style::far_layout(egui::Align::Center), |ui| {
                 ui.add_enabled_ui(!picked.is_empty(), |ui| {
                     if style::primary(ui, icon::BROOM, "Clean").clicked() {
                         self.check_running();
@@ -98,7 +98,7 @@ impl HistoryView {
                 let in_group: Vec<HistoryItem> = self.items.iter().filter(|i| i.group == g).cloned().collect();
                 let browser = in_group.iter().find_map(|i| i.browser);
                 style::card(ui, |ui| {
-                    ui.horizontal(|ui| {
+                    crate::gui::style::row(ui, |ui| {
                         let ic = if browser.is_some() {
                             icon::GLOBE
                         } else if g == "Office" {
@@ -111,7 +111,7 @@ impl HistoryView {
                         if browser.is_some_and(|b| self.running.contains(&b)) {
                             style::badge(ui, "Open — close it to clean", p.warning);
                         }
-                        ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
+                        ui.with_layout(crate::gui::style::far_layout(egui::Align::Center), |ui| {
                             let all = in_group.iter().all(|i| self.checked.contains(&i.id));
                             if style::ghost(ui, "", if all { tr("None") } else { tr("All") }).clicked() {
                                 for i in &in_group {
@@ -126,7 +126,7 @@ impl HistoryView {
                     });
                     ui.add_space(4.0);
                     for i in &in_group {
-                        ui.horizontal(|ui| {
+                        crate::gui::style::row(ui, |ui| {
                             let mut on = self.checked.contains(&i.id);
                             if ui.checkbox(&mut on, "").on_hover_text(&i.description).changed() {
                                 if on {
@@ -135,12 +135,12 @@ impl HistoryView {
                                     self.checked.remove(&i.id);
                                 }
                             }
-                            ui.vertical(|ui| {
+                            crate::gui::style::column(ui, |ui| {
                                 ui.spacing_mut().item_spacing.y = 1.0;
                                 ui.label(tr(&i.name));
                                 ui.label(style::muted(ui, &i.description).size(12.0));
                             });
-                            ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
+                            ui.with_layout(crate::gui::style::far_layout(egui::Align::Center), |ui| {
                                 if i.size > 0 {
                                     ui.label(style::muted(ui, super::human(i.size)));
                                 }
@@ -167,7 +167,7 @@ impl HistoryView {
                     );
                 }
                 ui.add_space(12.0);
-                ui.horizontal(|ui| {
+                crate::gui::style::row(ui, |ui| {
                     if style::primary(ui, icon::BROOM, "Clean").clicked() {
                         cx.settings.history_selected = self.checked.iter().cloned().collect();
                         cx.save_settings();

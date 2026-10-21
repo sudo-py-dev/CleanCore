@@ -117,9 +117,9 @@ impl SlopView {
             };
             let admin = matches!(&self.scan, Some(Ok(s)) if s.admin);
             let picked = found.iter().filter(|f| self.checked.contains(f.app.name)).count();
-            ui.horizontal(|ui| {
+            crate::gui::style::row(ui, |ui| {
                 style::section_title(ui, "Preinstalled and promoted apps");
-                ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
+                ui.with_layout(crate::gui::style::far_layout(egui::Align::Center), |ui| {
                     ui.add_enabled_ui(picked > 0 && self.removing.is_none(), |ui| {
                         if style::primary(ui, icon::TRASH, &crate::tf!("Remove ({picked})")).clicked() {
                             self.confirm = true;
@@ -158,7 +158,7 @@ impl SlopView {
                 );
                 ui.add_space(4.0);
             }
-            ui.horizontal(|ui| {
+            crate::gui::style::row(ui, |ui| {
                 ui.add_enabled_ui(admin, |ui| {
                     style::toggle(ui, &mut self.all_users, "For every user account");
                     ui.label(tr("For every user account"));
@@ -179,7 +179,7 @@ impl SlopView {
                     ui.label(style::strong(f.app.group).size(13.5));
                     last = f.app.group;
                 }
-                ui.horizontal(|ui| {
+                crate::gui::style::row(ui, |ui| {
                     let mut on = self.checked.contains(f.app.name);
                     if ui.checkbox(&mut on, f.app.name).changed() {
                         if on {
@@ -210,9 +210,9 @@ impl SlopView {
         style::card(ui, |ui| {
             let off: Vec<Tweak> = self.tweaks.iter().filter(|t| self.status.get(&t.id).is_some_and(|s| s.available.is_ok() && s.current.is_none())).cloned().collect();
             let mut apply_all = false;
-            ui.horizontal(|ui| {
+            crate::gui::style::row(ui, |ui| {
                 style::section_title(ui, "AI, ads and suggestions");
-                ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
+                ui.with_layout(crate::gui::style::far_layout(egui::Align::Center), |ui| {
                     ui.add_enabled_ui(!off.is_empty(), |ui| {
                         apply_all = style::primary(ui, icon::SHIELD_CHECK, &crate::tf!("Turn all off ({})", off.len())).clicked();
                     });
@@ -228,7 +228,7 @@ impl SlopView {
             let mut change: Option<(Tweak, bool)> = None;
             for t in &self.tweaks {
                 let st = self.status.get(&t.id);
-                ui.horizontal(|ui| {
+                crate::gui::style::row(ui, |ui| {
                     let mut applied = st.is_some_and(|s| s.current.is_some());
                     let available = st.is_none_or(|s| s.available.is_ok());
                     ui.add_enabled_ui(available, |ui| {
@@ -236,9 +236,9 @@ impl SlopView {
                             change = Some((t.clone(), applied));
                         }
                     });
-                    ui.vertical(|ui| {
+                    crate::gui::style::column(ui, |ui| {
                         ui.spacing_mut().item_spacing.y = 1.0;
-                        ui.horizontal(|ui| {
+                        crate::gui::style::row(ui, |ui| {
                             ui.label(tr(&t.name));
                             if st.is_some_and(|s| s.ours.is_some()) {
                                 style::badge(ui, "by CleanCore", p.accent);
@@ -314,7 +314,7 @@ impl SlopView {
             };
             ui.label(style::muted(ui, crate::tf!("{scope} They can be reinstalled from the Microsoft Store.")));
             ui.add_space(12.0);
-            ui.horizontal(|ui| {
+            crate::gui::style::row(ui, |ui| {
                 if style::primary(ui, icon::TRASH, "Remove").clicked() {
                     let (s, list, all, dep) = (cx.settings.clone(), picked.clone(), self.all_users, self.deprovision);
                     self.removing = Some(Pending::spawn(ui.ctx(), "Removing apps", move || slop::remove(&s, &list, all, dep)));

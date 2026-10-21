@@ -4,6 +4,7 @@
 use super::style::{self, icon, Palette};
 use super::{Cx, Pending};
 use crate::autorun::{self, AddMethod, AutorunEntry, Source};
+use crate::gui::style::ColumnsInOrder;
 use crate::i18n::tr;
 use eframe::egui::{self, RichText, Ui};
 use egui_extras::{Column, TableBuilder};
@@ -123,7 +124,7 @@ impl AutorunView {
                 sources.push(e.source);
             }
         }
-        ui.horizontal(|ui| {
+        crate::gui::style::row(ui, |ui| {
             style::search_field(ui, &mut self.search, "Search name, command or publisher", 250.0);
             ui.add_space(6.0);
             if style::segment(ui, self.source.is_none(), "All").clicked() {
@@ -135,7 +136,7 @@ impl AutorunView {
                     self.source = Some(s);
                 }
             }
-            ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
+            ui.with_layout(crate::gui::style::far_layout(egui::Align::Center), |ui| {
                 if style::toggle(ui, &mut cx.settings.autorun_show_system, "Show system entries").changed() {
                     cx.save_settings();
                     if !cx.settings.autorun_show_system {
@@ -174,14 +175,16 @@ impl AutorunView {
         let mut focus = None;
         TableBuilder::new(ui)
             .sense(egui::Sense::click())
-            .cell_layout(egui::Layout::left_to_right(egui::Align::Center))
-            .column(Column::exact(56.0))
-            .column(Column::remainder().at_least(260.0).clip(true))
-            .column(Column::exact(130.0))
-            .column(Column::exact(180.0).clip(true))
-            .column(Column::exact(120.0))
+            .cell_layout(crate::gui::style::near_layout(egui::Align::Center))
+            .columns_in_order(vec![
+                Column::exact(56.0),
+                Column::remainder().at_least(260.0).clip(true),
+                Column::exact(130.0),
+                Column::exact(180.0).clip(true),
+                Column::exact(120.0),
+            ])
             .header(26.0, |mut h| {
-                for t in ["On", "Program", "Type", "Publisher", ""] {
+                for t in crate::gui::style::ordered(vec!["On", "Program", "Type", "Publisher", ""]) {
                     h.col(|ui| {
                         ui.label(style::muted(ui, tr(t)).size(12.5));
                     });
@@ -191,78 +194,83 @@ impl AutorunView {
                 body.rows(52.0, rows.len(), |mut row| {
                     let e = &rows[row.index()];
                     row.set_selected(self.focus.as_deref() == Some(&e.id));
-                    row.col(|ui| {
-                        let mut on = e.enabled;
-                        let can = e.source != Source::RunOnce;
-                        ui.add_enabled_ui(can, |ui| {
-                            if style::toggle(ui, &mut on, &crate::tf!("Start {} automatically", e.name)).changed() {
-                                toggled = Some((e.clone(), on));
-                            }
-                        });
-                    });
-                    row.col(|ui| {
-                        ui.vertical(|ui| {
-                            ui.spacing_mut().item_spacing.y = 2.0;
-                            ui.horizontal(|ui| {
-                                ui.label(style::strong(&e.name).color(if e.enabled { p.text } else { p.faint }));
-                                if e.running {
-                                    style::badge(ui, "Running", p.success);
-                                }
-                                if !e.valid {
-                                    style::badge(ui, "Program missing", p.danger);
-                                }
-                                if e.all_users {
-                                    ui.label(RichText::new(icon::USERS).color(p.faint).size(13.0)).on_hover_text(tr("For all users"));
-                                }
-                            });
-                            ui.add(egui::Label::new(RichText::new(&e.command).monospace().size(11.5).color(p.muted)).truncate()).on_hover_text(&e.location);
-                        });
-                    });
-                    row.col(|ui| {
-                        ui.label(style::muted(ui, e.source.label()));
-                    });
-                    row.col(|ui| {
-                        ui.add(egui::Label::new(style::muted(ui, e.publisher.as_deref().unwrap_or(""))).truncate());
-                    });
-                    row.col(|ui| {
-                        ui.horizontal(|ui| {
-                            let tip = if e.removable { tr("Remove (backed up)") } else { tr("Can't be deleted — disable it instead") };
-                            ui.add_enabled_ui(e.removable, |ui| {
-                                if style::icon_button(ui, icon::TRASH, tip).clicked() {
-                                    remove = Some(e.clone());
-                                }
-                            });
-                            let r = style::icon_button(ui, icon::DOTS, "More");
-                            egui::Popup::menu(&r).width(220.0).show(|ui| {
-                                if style::ghost(ui, icon::PLAY, "Run now").clicked() {
-                                    match autorun::run_now(e) {
-                                        Ok(()) => cx.info(crate::tf!("Started {}", e.name)),
-                                        Err(err) => cx.error(crate::tf!("{err:#}")),
-                                    }
-                                    ui.close();
-                                }
-                                ui.add_enabled_ui(e.running, |ui| {
-                                    if style::ghost(ui, icon::X_CIRCLE, "Stop it").clicked() {
-                                        match autorun::kill(e) {
-                                            Ok(n) => cx.info(crate::tf!("Stopped {} ({n} process(es))", e.name)),
-                                            Err(err) => cx.error(crate::tf!("{err:#}")),
-                                        }
-                                        refresh = true;
-                                        ui.close();
+                    crate::gui::style::cells_in_order(
+                        &mut row,
+                        vec![
+                            Box::new(|ui: &mut Ui| {
+                                let mut on = e.enabled;
+                                let can = e.source != Source::RunOnce;
+                                ui.add_enabled_ui(can, |ui| {
+                                    if style::toggle(ui, &mut on, &crate::tf!("Start {} automatically", e.name)).changed() {
+                                        toggled = Some((e.clone(), on));
                                     }
                                 });
-                            });
-                            if let Some(exe) = &e.exe {
-                                if style::icon_button(ui, icon::FOLDER_OPEN, "Open file location").clicked() {
-                                    let path = std::path::Path::new(exe);
-                                    if let Err(err) = crate::platform::open_folder(path.parent().unwrap_or(path)) {
-                                        cx.error(crate::tf!("{err:#}"));
+                            }),
+                            Box::new(|ui: &mut Ui| {
+                                crate::gui::style::column(ui, |ui| {
+                                    ui.spacing_mut().item_spacing.y = 2.0;
+                                    crate::gui::style::row(ui, |ui| {
+                                        ui.label(style::strong(&e.name).color(if e.enabled { p.text } else { p.faint }));
+                                        if e.running {
+                                            style::badge(ui, "Running", p.success);
+                                        }
+                                        if !e.valid {
+                                            style::badge(ui, "Program missing", p.danger);
+                                        }
+                                        if e.all_users {
+                                            ui.label(RichText::new(icon::USERS).color(p.faint).size(13.0)).on_hover_text(tr("For all users"));
+                                        }
+                                    });
+                                    ui.add(egui::Label::new(RichText::new(&e.command).monospace().size(11.5).color(p.muted)).truncate()).on_hover_text(&e.location);
+                                });
+                            }),
+                            Box::new(|ui: &mut Ui| {
+                                ui.label(style::muted(ui, e.source.label()));
+                            }),
+                            Box::new(|ui: &mut Ui| {
+                                ui.add(egui::Label::new(style::muted(ui, e.publisher.as_deref().unwrap_or(""))).truncate());
+                            }),
+                            Box::new(|ui: &mut Ui| {
+                                crate::gui::style::row(ui, |ui| {
+                                    let tip = if e.removable { tr("Remove (backed up)") } else { tr("Can't be deleted — disable it instead") };
+                                    ui.add_enabled_ui(e.removable, |ui| {
+                                        if style::icon_button(ui, icon::TRASH, tip).clicked() {
+                                            remove = Some(e.clone());
+                                        }
+                                    });
+                                    let r = style::icon_button(ui, icon::DOTS, "More");
+                                    egui::Popup::menu(&r).width(220.0).show(|ui| {
+                                        if style::ghost(ui, icon::PLAY, "Run now").clicked() {
+                                            match autorun::run_now(e) {
+                                                Ok(()) => cx.info(crate::tf!("Started {}", e.name)),
+                                                Err(err) => cx.error(crate::tf!("{err:#}")),
+                                            }
+                                            ui.close();
+                                        }
+                                        ui.add_enabled_ui(e.running, |ui| {
+                                            if style::ghost(ui, icon::X_CIRCLE, "Stop it").clicked() {
+                                                match autorun::kill(e) {
+                                                    Ok(n) => cx.info(crate::tf!("Stopped {} ({n} process(es))", e.name)),
+                                                    Err(err) => cx.error(crate::tf!("{err:#}")),
+                                                }
+                                                refresh = true;
+                                                ui.close();
+                                            }
+                                        });
+                                    });
+                                    if let Some(exe) = &e.exe {
+                                        if style::icon_button(ui, icon::FOLDER_OPEN, "Open file location").clicked() {
+                                            let path = std::path::Path::new(exe);
+                                            if let Err(err) = crate::platform::open_folder(path.parent().unwrap_or(path)) {
+                                                cx.error(crate::tf!("{err:#}"));
+                                            }
+                                        }
                                     }
-                                }
-                            }
-                        })
-                        .inner
-                    });
+                                })
+                                .inner
+                            }),
+                        ],
+                    );
                     if row.response().clicked() {
                         focus = Some(e.id.clone());
                     }
@@ -307,7 +315,7 @@ impl AutorunView {
                 ui.add_space(6.0);
                 ui.label(style::muted(ui, tr("The programs themselves stay installed; they just won't start automatically. Removed entries are backed up.")));
                 ui.add_space(12.0);
-                ui.horizontal(|ui| {
+                crate::gui::style::row(ui, |ui| {
                     if style::primary(ui, icon::TRASH, "Remove").clicked() {
                         match autorun::remove(cx.settings, &list) {
                             Ok((r, d)) => cx.info(if d > 0 { crate::tf!("Removed {r}, disabled {d}") } else { crate::tf!("Removed {r} entry(ies)") }),
@@ -336,7 +344,7 @@ impl AutorunView {
                 style::text_input(ui, &mut f.name, "My program", 460.0);
                 ui.add_space(4.0);
                 ui.label(style::muted(ui, tr("Command")));
-                ui.horizontal(|ui| {
+                crate::gui::style::row(ui, |ui| {
                     ui.spacing_mut().item_spacing.x = 6.0;
                     style::text_input(
                         ui,
@@ -350,7 +358,7 @@ impl AutorunView {
                 });
                 ui.add_space(8.0);
                 if cfg!(windows) {
-                    ui.horizontal(|ui| {
+                    crate::gui::style::row(ui, |ui| {
                         for (m, l) in [(AddMethod::Run, "Registry Run"), (AddMethod::RunOnce, "Run once"), (AddMethod::StartupFolder, "Startup folder")] {
                             if style::segment(ui, f.method == m, l).clicked() {
                                 f.method = m;
@@ -358,7 +366,7 @@ impl AutorunView {
                         }
                     });
                     ui.add_space(4.0);
-                    ui.horizontal(|ui| {
+                    crate::gui::style::row(ui, |ui| {
                         style::toggle(ui, &mut f.all_users, "For all users");
                         ui.label(tr("For all users (needs administrator rights)"));
                     });
@@ -367,7 +375,7 @@ impl AutorunView {
                     f.method = AddMethod::StartupFolder;
                 }
                 ui.add_space(12.0);
-                ui.horizontal(|ui| {
+                crate::gui::style::row(ui, |ui| {
                     ui.add_enabled_ui(!f.name.trim().is_empty() && !f.command.trim().is_empty(), |ui| {
                         if style::primary(ui, icon::PLUS, "Add").clicked() {
                             match autorun::add(&f.name, &f.command, f.all_users, f.method) {

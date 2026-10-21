@@ -2748,8 +2748,14 @@ msgstr "L'enregistreur ne s'exécute plus en arrière-plan"
 msgid "Choose what to watch"
 msgstr "Choisissez quoi surveiller"
 
+msgid "Use a quick pick on the right"
+msgstr "Utilisez un choix rapide à droite"
+
 msgid "Use a quick pick on the left"
 msgstr "Utilisez un choix rapide à gauche"
+
+msgid "The button at the top left"
+msgstr "Le bouton en haut à gauche"
 
 msgid "The button at the top right"
 msgstr "Le bouton en haut à droite"
@@ -2856,11 +2862,17 @@ msgstr "Filtrer les modifications"
 msgid "Nothing to show yet"
 msgstr "Rien à afficher pour l'instant"
 
+msgid "Choose what to watch on the right, then start recording."
+msgstr "Choisissez à droite quoi surveiller, puis démarrez l'enregistrement."
+
 msgid "Choose what to watch on the left, then start recording."
 msgstr "Choisissez à gauche quoi surveiller, puis démarrez l'enregistrement."
 
 msgid "Not recording"
 msgstr "Pas d'enregistrement"
+
+msgid "Press Start recording at the top left, then use your program."
+msgstr "Cliquez sur Démarrer l'enregistrement en haut à gauche, puis utilisez votre programme."
 
 msgid "Press Start recording at the top right, then use your program."
 msgstr "Cliquez sur Démarrer l'enregistrement en haut à droite, puis utilisez votre programme."

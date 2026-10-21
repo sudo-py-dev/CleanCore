@@ -3,6 +3,7 @@
 
 use super::style::{self, icon, Palette};
 use super::{tree::Browser, Cx};
+use crate::gui::style::ColumnsInOrder;
 use crate::i18n::tr;
 use crate::watcher::{self, Watch, WatchEvent};
 use eframe::egui::{self, Color32, RichText, Ui};
@@ -178,10 +179,12 @@ impl WatcherView {
         let watching = self.watches.iter().any(|w| w.active);
         let gap = 10.0;
         let sw = ((ui.available_width() - 2.0 * gap) / 3.0).max(150.0);
-        ui.horizontal(|ui| {
+        crate::gui::style::row(ui, |ui| {
             ui.spacing_mut().item_spacing.x = gap;
-            step_tile(ui, sw, 1, "Choose what to watch", "Use a quick pick on the left", watching, p);
-            step_tile(ui, sw, 2, "Start recording", "The button at the top right", running, p);
+            // Where things are depends on the reading direction (the layout is mirrored).
+            let rtl = crate::gui::style::rtl();
+            step_tile(ui, sw, 1, "Choose what to watch", if rtl { "Use a quick pick on the right" } else { "Use a quick pick on the left" }, watching, p);
+            step_tile(ui, sw, 2, "Start recording", if rtl { "The button at the top left" } else { "The button at the top right" }, running, p);
             step_tile(ui, sw, 3, "Use your program", "Its changes appear below", !self.events.is_empty(), p);
         });
         ui.add_space(12.0);
@@ -189,7 +192,7 @@ impl WatcherView {
         let avail = ui.available_size();
         let left_w = (avail.x * 0.38).clamp(290.0, 420.0);
         let mut action = None;
-        ui.horizontal_top(|ui| {
+        crate::gui::style::row_top(ui, |ui| {
             ui.spacing_mut().item_spacing.x = 12.0;
             ui.allocate_ui_with_layout(egui::vec2(left_w, avail.y), egui::Layout::top_down(egui::Align::Min), |ui| {
                 style::card(ui, |ui| {
@@ -232,7 +235,7 @@ impl WatcherView {
         style::section_title(ui, "What to watch");
         ui.label(style::muted(ui, tr("Pick a place a program is likely to change, or choose your own.")).size(12.5));
         ui.add_space(6.0);
-        ui.horizontal_wrapped(|ui| {
+        crate::gui::style::row_wrapped(ui, |ui| {
             for (ic, label, path) in quick_picks() {
                 if style::secondary(ui, ic, label).on_hover_text(&path).clicked() {
                     self.add_path = path;
@@ -247,7 +250,7 @@ impl WatcherView {
         if split {
             style::text_input(ui, &mut self.add_path, if cfg!(windows) { tr("A registry key") } else { tr("A folder, file or dconf: path") }, ui.available_width());
         }
-        ui.horizontal(|ui| {
+        crate::gui::style::row(ui, |ui| {
             ui.spacing_mut().item_spacing.x = 6.0;
             if !split {
                 style::text_input(
@@ -270,7 +273,7 @@ impl WatcherView {
             ui.checkbox(&mut self.add_reads, tr("Also record reads (very noisy)"));
         }
         let label = if self.show_browser { tr("Hide all locations") } else { tr("Browse all locations") };
-        ui.horizontal(|ui| {
+        crate::gui::style::row(ui, |ui| {
             if style::ghost(ui, if self.show_browser { icon::X } else { icon::TREE }, label).clicked() {
                 self.show_browser = !self.show_browser;
             }
@@ -291,10 +294,10 @@ impl WatcherView {
         ui.add_space(8.0);
         style::divider(ui);
         ui.add_space(8.0);
-        ui.horizontal(|ui| {
+        crate::gui::style::row(ui, |ui| {
             ui.label(style::strong(tr("Watching")));
             style::badge(ui, &self.watches.len().to_string(), p.accent);
-            ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
+            ui.with_layout(crate::gui::style::far_layout(egui::Align::Center), |ui| {
                 let r = style::icon_button(ui, icon::EXPORT, "Export all");
                 egui::Popup::menu(&r).width(360.0).show(|ui| {
                     ui.label(style::muted(ui, tr("Folder (one CSV per watched place)")));
@@ -336,17 +339,17 @@ impl WatcherView {
         let fill = if sel { p.accent_soft } else { Color32::TRANSPARENT };
         let resp = egui::Frame::new().fill(fill).corner_radius(8).inner_margin(egui::Margin::symmetric(10, 6)).show(ui, |ui| {
             ui.set_width(ui.available_width());
-            ui.horizontal(|ui| {
+            crate::gui::style::row(ui, |ui| {
                 let (dot, col, state) = if w.active { (icon::RECORD, p.success, "watching") } else { (icon::PAUSE, p.faint, "paused") };
                 ui.label(RichText::new(dot).color(col)).on_hover_text(state);
-                ui.vertical(|ui| {
+                crate::gui::style::column(ui, |ui| {
                     // Leave room for the action icons of the selected row.
                     ui.set_max_width((ui.available_width() - if sel { 150.0 } else { 0.0 }).max(60.0));
                     ui.add(egui::Label::new(RichText::new(watch_name(&w.path)).color(if sel { p.accent } else { p.text })).truncate());
                     ui.add(egui::Label::new(RichText::new(friendly_path(&w.path)).size(11.5).color(p.muted)).truncate());
                 });
                 if sel {
-                    ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
+                    ui.with_layout(crate::gui::style::far_layout(egui::Align::Center), |ui| {
                         if style::icon_button(ui, icon::TRASH, "Stop watching").clicked() {
                             out = Some(RowAction::Delete(w.clone()));
                         }
@@ -380,13 +383,13 @@ impl WatcherView {
             ui.set_min_height(fill_h - 34.0);
             // Narrow: the filter goes on its own line under the title.
             let narrow = ui.available_width() < 470.0;
-            ui.horizontal(|ui| {
+            crate::gui::style::row(ui, |ui| {
                 ui.label(style::strong(tr("Changes")));
                 style::badge(ui, &self.events.len().to_string(), p.accent);
                 if let Some(w) = self.selected_watch() {
                     ui.add(egui::Label::new(RichText::new(crate::tf!("in {}", watch_name(&w.path))).size(12.5).color(p.muted)).truncate());
                 }
-                ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
+                ui.with_layout(crate::gui::style::far_layout(egui::Align::Center), |ui| {
                     if style::segment(ui, self.table_view, "Details").on_hover_text(tr("Every field, as a table")).clicked() {
                         self.table_view = true;
                     }
@@ -405,9 +408,23 @@ impl WatcherView {
             ui.add_space(6.0);
             if self.events.is_empty() {
                 let (title, text) = if self.watches.is_empty() {
-                    ("Nothing to show yet", "Choose what to watch on the left, then start recording.")
+                    (
+                        "Nothing to show yet",
+                        if crate::gui::style::rtl() {
+                            "Choose what to watch on the right, then start recording."
+                        } else {
+                            "Choose what to watch on the left, then start recording."
+                        },
+                    )
                 } else if !running {
-                    ("Not recording", "Press Start recording at the top right, then use your program.")
+                    (
+                        "Not recording",
+                        if crate::gui::style::rtl() {
+                            "Press Start recording at the top left, then use your program."
+                        } else {
+                            "Press Start recording at the top right, then use your program."
+                        },
+                    )
                 } else {
                     ("Waiting for changes", "Use your program now: install it, change a setting, close it. Changes appear here.")
                 };
@@ -436,7 +453,7 @@ impl WatcherView {
                 }
                 return;
             }
-            ui.horizontal(|ui| {
+            crate::gui::style::row(ui, |ui| {
                 style::search_field(ui, &mut self.highlight, "Highlight rows", 160.0);
             });
             let h = self.highlight.to_lowercase();
@@ -448,17 +465,19 @@ impl WatcherView {
                     .striped(true)
                     .auto_shrink([false, false])
                     .sense(egui::Sense::click())
-                    .column(Column::exact(95.0))
-                    .column(Column::initial(110.0).clip(true))
-                    .column(Column::exact(55.0))
-                    .column(Column::exact(110.0))
-                    .column(Column::initial(230.0).clip(true))
-                    .column(Column::initial(120.0).clip(true))
-                    .column(Column::initial(110.0).clip(true))
-                    .column(Column::initial(110.0).clip(true))
-                    .column(Column::remainder().at_least(80.0))
+                    .columns_in_order(vec![
+                        Column::exact(95.0),
+                        Column::initial(110.0).clip(true),
+                        Column::exact(55.0),
+                        Column::exact(110.0),
+                        Column::initial(230.0).clip(true),
+                        Column::initial(120.0).clip(true),
+                        Column::initial(110.0).clip(true),
+                        Column::initial(110.0).clip(true),
+                        Column::remainder().at_least(80.0),
+                    ])
                     .header(26.0, |mut hd| {
-                        for t in ["Time", "Process", "PID", "Operation", "Key", "Value", "New data", "Old data", "Type"] {
+                        for t in crate::gui::style::ordered(vec!["Time", "Process", "PID", "Operation", "Key", "Value", "New data", "Old data", "Type"]) {
                             hd.col(|ui| {
                                 ui.label(RichText::new(tr(t)).size(12.5).color(p.muted));
                             });
@@ -485,12 +504,15 @@ impl WatcherView {
                                 (e.data_type.clone().unwrap_or_default(), p.muted),
                             ];
                             for (c, col) in cells {
-                                row.col(|ui| {
-                                    if lit {
-                                        ui.painter().rect_filled(ui.max_rect(), 0.0, hl);
-                                    }
-                                    ui.add(egui::Label::new(RichText::new(c).color(col)).truncate()).on_hover_text(&e.key);
-                                });
+                                crate::gui::style::cells_in_order(
+                                    &mut row,
+                                    vec![Box::new(|ui: &mut Ui| {
+                                        if lit {
+                                            ui.painter().rect_filled(ui.max_rect(), 0.0, hl);
+                                        }
+                                        ui.add(egui::Label::new(RichText::new(c).color(col)).truncate()).on_hover_text(&e.key);
+                                    })],
+                                );
                             }
                             row.response().context_menu(|ui| {
                                 if style::ghost(ui, icon::FOLDER_OPEN, if cfg!(windows) { tr("Open in Registry Editor") } else { tr("Open containing folder") }).clicked() {
@@ -527,7 +549,8 @@ fn step_tile(ui: &mut Ui, width: f32, n: usize, title: &str, text: &str, done: b
     let (rect, _) = ui.allocate_exact_size(egui::vec2(width, 58.0), egui::Sense::hover());
     let fill = if done { p.surface.lerp_to_gamma(p.success, if p.dark { 0.10 } else { 0.06 }) } else { p.surface };
     ui.painter().rect(rect, 12.0, fill, egui::Stroke::new(1.0, if done { p.success.gamma_multiply(0.5) } else { p.border }), egui::StrokeKind::Inside);
-    let c = egui::pos2(rect.left() + 26.0, rect.center().y);
+    let mr = crate::gui::style::Mirror::new(rect);
+    let c = mr.pos(26.0, rect.center().y);
     if done {
         ui.painter().circle_filled(c, 12.0, p.success);
         ui.painter().text(c, egui::Align2::CENTER_CENTER, icon::CHECK, egui::FontId::proportional(13.0), Color32::WHITE);
@@ -535,10 +558,9 @@ fn step_tile(ui: &mut Ui, width: f32, n: usize, title: &str, text: &str, done: b
         ui.painter().circle_stroke(c, 11.0, egui::Stroke::new(1.5, p.accent));
         ui.painter().text(c, egui::Align2::CENTER_CENTER, n.to_string(), egui::FontId::new(12.5, style::semibold()), p.accent);
     }
-    let x = c.x + 22.0;
     let painter = ui.painter().with_clip_rect(rect.shrink(4.0));
-    painter.text(egui::pos2(x, rect.center().y - 9.0), egui::Align2::LEFT_CENTER, title, egui::FontId::new(14.0, style::semibold()), p.text);
-    painter.text(egui::pos2(x, rect.center().y + 10.0), egui::Align2::LEFT_CENTER, text, egui::FontId::proportional(12.0), p.muted);
+    painter.text(mr.pos(48.0, rect.center().y - 9.0), mr.start(egui::Align::Center), title, egui::FontId::new(14.0, style::semibold()), p.text);
+    painter.text(mr.pos(48.0, rect.center().y + 10.0), mr.start(egui::Align::Center), text, egui::FontId::proportional(12.0), p.muted);
 }
 
 /// The usual places programs keep their settings, for one-click watching.
@@ -611,10 +633,10 @@ fn change_row(ui: &mut Ui, e: &WatchEvent, p: Palette) -> bool {
             let (rect, _) = ui.allocate_exact_size(egui::vec2(30.0, 30.0), egui::Sense::hover());
             ui.painter().rect_filled(rect, 9.0, col.gamma_multiply(0.14));
             ui.painter().text(rect.center(), egui::Align2::CENTER_CENTER, ic, egui::FontId::proportional(15.0), col);
-            ui.vertical(|ui| {
+            crate::gui::style::column(ui, |ui| {
                 ui.spacing_mut().item_spacing.y = 2.0;
                 ui.set_width((ui.available_width() - 110.0).max(140.0));
-                ui.horizontal(|ui| {
+                crate::gui::style::row(ui, |ui| {
                     ui.spacing_mut().item_spacing.x = 5.0;
                     ui.add(egui::Label::new(style::strong(&what)).truncate());
                     ui.label(RichText::new(tr(verb)).color(p.muted));
@@ -623,10 +645,10 @@ fn change_row(ui: &mut Ui, e: &WatchEvent, p: Palette) -> bool {
                 let short = |s: &str| if s.chars().count() > 60 { s.chars().take(59).collect::<String>() + "…" } else { s.to_string() };
                 match (e.old_data.as_deref(), e.new_data.as_deref()) {
                     (Some(old), Some(new)) => {
-                        ui.horizontal(|ui| {
+                        crate::gui::style::row(ui, |ui| {
                             ui.spacing_mut().item_spacing.x = 6.0;
                             ui.label(RichText::new(short(old)).monospace().size(12.0).color(p.danger).strikethrough());
-                            ui.label(RichText::new(icon::ARROW_RIGHT).size(12.0).color(p.faint));
+                            ui.label(RichText::new(crate::gui::style::icon_forward()).size(12.0).color(p.faint));
                             ui.label(RichText::new(short(new)).monospace().size(12.0).color(p.success));
                         });
                     }
@@ -640,8 +662,8 @@ fn change_row(ui: &mut Ui, e: &WatchEvent, p: Palette) -> bool {
                 }
                 ui.add(egui::Label::new(RichText::new(friendly_path(&e.key)).size(11.5).color(p.faint)).truncate()).on_hover_text(&e.key);
             });
-            ui.with_layout(egui::Layout::right_to_left(egui::Align::Min), |ui| {
-                ui.vertical(|ui| {
+            ui.with_layout(crate::gui::style::far_layout(egui::Align::Min), |ui| {
+                crate::gui::style::column(ui, |ui| {
                     ui.with_layout(egui::Layout::top_down(egui::Align::Max), |ui| {
                         ui.label(RichText::new(e.time.format("%H:%M:%S").to_string()).size(12.0).color(p.muted));
                         if !e.process.is_empty() {

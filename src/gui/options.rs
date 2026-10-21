@@ -356,10 +356,10 @@ fn list_editor(ui: &mut Ui, list: &mut Vec<ListEntry>, new: &mut String, title: 
         ui.label(RichText::new(tr("Empty")).color(p.faint));
     }
     for (i, e) in list.iter_mut().enumerate() {
-        ui.horizontal(|ui| {
+        crate::gui::style::row(ui, |ui| {
             style::toggle(ui, &mut e.enabled, &e.path.clone());
             ui.add(egui::Label::new(RichText::new(&e.path).monospace().color(if e.enabled { p.text } else { p.faint })).truncate());
-            ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
+            ui.with_layout(crate::gui::style::far_layout(egui::Align::Center), |ui| {
                 if style::icon_button(ui, icon::TRASH, "Remove").clicked() {
                     remove = Some(i);
                 }
@@ -371,7 +371,7 @@ fn list_editor(ui: &mut Ui, list: &mut Vec<ListEntry>, new: &mut String, title: 
         list.remove(i);
     }
     ui.add_space(4.0);
-    ui.horizontal(|ui| {
+    crate::gui::style::row(ui, |ui| {
         let picker = if cfg!(windows) { 0.0 } else { 2.0 * (style::CONTROL_H + 8.0) };
         style::text_input(ui, new, if cfg!(windows) { r"HKEY_LOCAL_MACHINE\SOFTWARE\..." } else { "/home/you/.config/..." }, ui.available_width() - 90.0 - picker);
         if !cfg!(windows) {

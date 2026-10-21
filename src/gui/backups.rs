@@ -4,6 +4,7 @@ use super::schedule::{Kind, TaskPanel};
 use super::style::{self, icon, Palette};
 use super::{human, take, tree::Browser, Cx, Pending};
 use crate::backup::{self, Backup, BackupKind, Manifest};
+use crate::gui::style::ColumnsInOrder;
 use crate::i18n::tr;
 use eframe::egui::{self, RichText, Ui};
 use egui_extras::{Column, TableBuilder};
@@ -174,7 +175,7 @@ impl BackupView {
             }
             // Action bar for the selected backup.
             let sel = self.selected.clone();
-            ui.horizontal(|ui| {
+            crate::gui::style::row(ui, |ui| {
                 match self.list.iter().find(|m| Some(&m.id) == sel.as_ref()) {
                     Some(m) => {
                         ui.label(style::strong(&m.name));
@@ -184,7 +185,7 @@ impl BackupView {
                         ui.label(style::muted(ui, tr("Select a backup to restore or delete it.")));
                     }
                 }
-                ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
+                ui.with_layout(crate::gui::style::far_layout(egui::Align::Center), |ui| {
                     let r = style::icon_button(ui, icon::DOTS, "More");
                     egui::Popup::menu(&r).show(|ui| {
                         if style::ghost(ui, icon::TRASH, "Delete all backups").clicked() {
@@ -218,17 +219,19 @@ impl BackupView {
         TableBuilder::new(ui)
             .striped(true)
             .sense(egui::Sense::click())
-            .cell_layout(egui::Layout::left_to_right(egui::Align::Center))
+            .cell_layout(crate::gui::style::near_layout(egui::Align::Center))
             .auto_shrink([false, false])
-            .column(Column::exact(36.0))
-            .column(Column::initial(240.0).at_least(140.0).clip(true))
-            .column(Column::exact(150.0))
-            .column(Column::exact(150.0))
-            .column(Column::exact(80.0))
-            .column(Column::exact(90.0))
-            .column(Column::remainder())
+            .columns_in_order(vec![
+                Column::exact(36.0),
+                Column::initial(240.0).at_least(140.0).clip(true),
+                Column::exact(150.0),
+                Column::exact(150.0),
+                Column::exact(80.0),
+                Column::exact(90.0),
+                Column::remainder(),
+            ])
             .header(28.0, |mut h| {
-                for t in ["", "Name", "Type", "Date", "Entries", "Size", "Note"] {
+                for t in crate::gui::style::ordered(vec!["", "Name", "Type", "Date", "Entries", "Size", "Note"]) {
                     h.col(|ui| {
                         ui.label(RichText::new(tr(t)).size(12.5).color(p.muted));
                     });
@@ -239,27 +242,32 @@ impl BackupView {
                     let m = &self.list[row.index()];
                     row.set_selected(self.selected.as_deref() == Some(m.id.as_str()));
                     let (ic, col) = kind_icon(m.kind, p);
-                    row.col(|ui| {
-                        ui.label(RichText::new(ic).size(18.0).color(col));
-                    });
-                    row.col(|ui| {
-                        ui.add(egui::Label::new(&m.name).truncate());
-                    });
-                    row.col(|ui| {
-                        style::badge(ui, kind_label(m.kind), col);
-                    });
-                    row.col(|ui| {
-                        ui.label(RichText::new(m.created.format("%d %b %Y, %H:%M").to_string()).color(p.muted));
-                    });
-                    row.col(|ui| {
-                        ui.label(m.entries.len().to_string());
-                    });
-                    row.col(|ui| {
-                        ui.label(RichText::new(human(m.size_bytes)).color(p.muted));
-                    });
-                    row.col(|ui| {
-                        ui.add(egui::Label::new(RichText::new(&m.note).color(p.muted)).truncate());
-                    });
+                    crate::gui::style::cells_in_order(
+                        &mut row,
+                        vec![
+                            Box::new(|ui: &mut Ui| {
+                                ui.label(RichText::new(ic).size(18.0).color(col));
+                            }),
+                            Box::new(|ui: &mut Ui| {
+                                ui.add(egui::Label::new(&m.name).truncate());
+                            }),
+                            Box::new(|ui: &mut Ui| {
+                                style::badge(ui, kind_label(m.kind), col);
+                            }),
+                            Box::new(|ui: &mut Ui| {
+                                ui.label(RichText::new(m.created.format("%d %b %Y, %H:%M").to_string()).color(p.muted));
+                            }),
+                            Box::new(|ui: &mut Ui| {
+                                ui.label(m.entries.len().to_string());
+                            }),
+                            Box::new(|ui: &mut Ui| {
+                                ui.label(RichText::new(human(m.size_bytes)).color(p.muted));
+                            }),
+                            Box::new(|ui: &mut Ui| {
+                                ui.add(egui::Label::new(RichText::new(&m.note).color(p.muted)).truncate());
+                            }),
+                        ],
+                    );
                     let r = row.response();
                     if r.clicked() {
                         clicked = Some(m.id.clone());
@@ -313,7 +321,7 @@ impl BackupView {
                 ui.add_space(8.0);
                 ui.label(style::strong(text).size(17.0));
                 ui.add_space(14.0);
-                ui.horizontal(|ui| {
+                crate::gui::style::row(ui, |ui| {
                     if style::primary(ui, "", if restore { tr("Restore") } else { tr("Delete") }).clicked() {
                         answer = Some(true);
                     }
@@ -355,7 +363,7 @@ impl BackupView {
             egui::Modal::new(egui::Id::unique("custom-restore")).show(ctx, |ui| {
                 ui.label(style::strong(tr("Custom restore")).size(19.0));
                 ui.label(style::muted(ui, crate::tf!("Choose what to restore from {}", c.id)));
-                ui.horizontal(|ui| {
+                crate::gui::style::row(ui, |ui| {
                     if style::ghost(ui, icon::CHECK, "Select all").clicked() {
                         c.checked.iter_mut().for_each(|x| *x = true);
                     }
@@ -370,7 +378,7 @@ impl BackupView {
                 });
                 ui.add_space(6.0);
                 let n = c.checked.iter().filter(|x| **x).count();
-                ui.horizontal(|ui| {
+                crate::gui::style::row(ui, |ui| {
                     if ui.add_enabled_ui(n > 0, |ui| style::primary(ui, icon::UNDO, &crate::tf!("Restore {n} item(s)"))).inner.clicked() {
                         done = Some(true);
                     }
@@ -404,7 +412,7 @@ impl BackupView {
                     style::text_input(ui, &mut f.note, "Optional", 460.0);
                     ui.end_row();
                     ui.label(style::muted(ui, tr("Back up")));
-                    ui.horizontal(|ui| {
+                    crate::gui::style::row(ui, |ui| {
                         if style::segment(ui, f.whole, if cfg!(windows) { tr("Whole registry") } else { tr("Whole config store") }).clicked() {
                             f.whole = true;
                         }
@@ -426,7 +434,7 @@ impl BackupView {
                     style::key_or_path_input(ui, "backup-key", &mut f.key, "or type a path", 600.0, style::Pick::Any);
                 }
                 ui.add_space(6.0);
-                ui.horizontal(|ui| {
+                crate::gui::style::row(ui, |ui| {
                     if style::primary(ui, icon::FLOPPY, "Create").clicked() {
                         done = Some(true);
                     }

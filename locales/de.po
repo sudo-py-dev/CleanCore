@@ -2748,8 +2748,14 @@ msgstr "Die Aufzeichnung läuft nicht mehr im Hintergrund"
 msgid "Choose what to watch"
 msgstr "Auswählen, was überwacht wird"
 
+msgid "Use a quick pick on the right"
+msgstr "Eine Schnellauswahl rechts verwenden"
+
 msgid "Use a quick pick on the left"
 msgstr "Eine Schnellauswahl links verwenden"
+
+msgid "The button at the top left"
+msgstr "Die Schaltfläche oben links"
 
 msgid "The button at the top right"
 msgstr "Die Schaltfläche oben rechts"
@@ -2856,11 +2862,17 @@ msgstr "Änderungen filtern"
 msgid "Nothing to show yet"
 msgstr "Noch nichts anzuzeigen"
 
+msgid "Choose what to watch on the right, then start recording."
+msgstr "Rechts auswählen, was überwacht wird, dann Aufzeichnung starten."
+
 msgid "Choose what to watch on the left, then start recording."
 msgstr "Links auswählen, was überwacht wird, dann Aufzeichnung starten."
 
 msgid "Not recording"
 msgstr "Keine Aufzeichnung"
+
+msgid "Press Start recording at the top left, then use your program."
+msgstr "Klicken Sie oben links auf „Aufzeichnung starten“ und verwenden Sie dann Ihr Programm."
 
 msgid "Press Start recording at the top right, then use your program."
 msgstr "Klicken Sie oben rechts auf „Aufzeichnung starten“ und verwenden Sie dann Ihr Programm."

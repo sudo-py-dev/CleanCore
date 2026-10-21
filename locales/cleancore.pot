@@ -2748,7 +2748,13 @@ msgstr ""
 msgid "Choose what to watch"
 msgstr ""
 
+msgid "Use a quick pick on the right"
+msgstr ""
+
 msgid "Use a quick pick on the left"
+msgstr ""
+
+msgid "The button at the top left"
 msgstr ""
 
 msgid "The button at the top right"
@@ -2856,10 +2862,16 @@ msgstr ""
 msgid "Nothing to show yet"
 msgstr ""
 
+msgid "Choose what to watch on the right, then start recording."
+msgstr ""
+
 msgid "Choose what to watch on the left, then start recording."
 msgstr ""
 
 msgid "Not recording"
+msgstr ""
+
+msgid "Press Start recording at the top left, then use your program."
 msgstr ""
 
 msgid "Press Start recording at the top right, then use your program."

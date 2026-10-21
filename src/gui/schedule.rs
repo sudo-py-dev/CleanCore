@@ -143,16 +143,16 @@ impl TaskPanel {
     pub fn ui(&mut self, ui: &mut Ui, cx: &mut Cx) {
         let p = Palette::get(ui.ctx());
         let mine: Vec<Task> = self.mine().cloned().collect();
-        ui.horizontal_top(|ui| {
+        crate::gui::style::row_top(ui, |ui| {
             // Saved tasks
             ui.allocate_ui_with_layout(egui::vec2(290.0, ui.available_height()), egui::Layout::top_down(egui::Align::LEFT), |ui| {
                 style::card(ui, |ui| {
-                    ui.horizontal(|ui| {
+                    crate::gui::style::row(ui, |ui| {
                         ui.label(style::strong(tr(match self.kind {
                             Kind::Clean => "Scheduled cleans",
                             Kind::Backup => "Scheduled backups",
                         })));
-                        ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
+                        ui.with_layout(crate::gui::style::far_layout(egui::Align::Center), |ui| {
                             if style::icon_button(ui, icon::PLUS, "New task").clicked() {
                                 self.form = Form::new(self.kind);
                             }
@@ -172,7 +172,7 @@ impl TaskPanel {
             });
             ui.add_space(6.0);
             // Form
-            ui.vertical(|ui| {
+            crate::gui::style::column(ui, |ui| {
                 egui::ScrollArea::vertical().id_salt(("form", self.kind == Kind::Clean)).show(ui, |ui| style::card(ui, |ui| self.form_ui(ui, cx)));
             });
         });
@@ -207,7 +207,7 @@ impl TaskPanel {
             style::text_input(ui, &mut f.note, "Optional", 320.0);
             ui.end_row();
             ui.label(style::muted(ui, tr("Repeat")));
-            ui.horizontal(|ui| {
+            crate::gui::style::row(ui, |ui| {
                 for (e, l) in [(Every::Daily, "Daily"), (Every::Weekly, "Weekly"), (Every::Monthly, "Monthly")] {
                     if style::segment(ui, f.every == e, l).clicked() {
                         f.every = e;
@@ -218,7 +218,7 @@ impl TaskPanel {
             match f.every {
                 Every::Weekly => {
                     ui.label(style::muted(ui, tr("On")));
-                    ui.horizontal(|ui| {
+                    crate::gui::style::row(ui, |ui| {
                         for d in [Weekday::Mon, Weekday::Tue, Weekday::Wed, Weekday::Thu, Weekday::Fri, Weekday::Sat, Weekday::Sun] {
                             if style::segment(ui, f.weekday == d, &d.to_string()).clicked() {
                                 f.weekday = d;
@@ -229,7 +229,7 @@ impl TaskPanel {
                 }
                 Every::Monthly => {
                     ui.label(style::muted(ui, tr("Day")));
-                    ui.horizontal(|ui| {
+                    crate::gui::style::row(ui, |ui| {
                         ui.add_enabled(!f.last_day, egui::DragValue::new(&mut f.month_day).range(1..=28));
                         ui.checkbox(&mut f.last_day, tr("Last day of the month"));
                     });
@@ -238,7 +238,7 @@ impl TaskPanel {
                 Every::Daily => {}
             }
             ui.label(style::muted(ui, tr("At")));
-            ui.horizontal(|ui| {
+            crate::gui::style::row(ui, |ui| {
                 ui.add(egui::DragValue::new(&mut f.hour).range(0..=23).custom_formatter(|v, _| crate::tf!("{v:02.0}")));
                 ui.label(":");
                 ui.add(egui::DragValue::new(&mut f.minute).range(0..=59).custom_formatter(|v, _| crate::tf!("{v:02.0}")));
@@ -246,7 +246,7 @@ impl TaskPanel {
             ui.end_row();
             if self.kind == Kind::Clean {
                 ui.label(style::muted(ui, tr("Scan")));
-                ui.horizontal(|ui| {
+                crate::gui::style::row(ui, |ui| {
                     for (m, l) in [(ScanMode::Safe, "Safe"), (ScanMode::Moderate, "Moderate"), (ScanMode::Advanced, "Advanced")] {
                         if style::segment(ui, f.mode == m, l).clicked() {
                             f.mode = m;
@@ -255,7 +255,7 @@ impl TaskPanel {
                 });
                 ui.end_row();
                 ui.label(style::muted(ui, tr("Accounts")));
-                ui.horizontal(|ui| {
+                crate::gui::style::row(ui, |ui| {
                     if style::segment(ui, !f.all_users, "Current account").clicked() {
                         f.all_users = false;
                     }
@@ -266,7 +266,7 @@ impl TaskPanel {
                 ui.end_row();
             } else {
                 ui.label(style::muted(ui, tr("Back up")));
-                ui.horizontal(|ui| {
+                crate::gui::style::row(ui, |ui| {
                     let everything = if cfg!(windows) { tr("Whole registry") } else { tr("Whole config store") };
                     if style::segment(ui, f.whole, everything).clicked() {
                         f.whole = true;
@@ -299,18 +299,18 @@ impl TaskPanel {
         ui.add_space(10.0);
         let now = chrono::Local::now();
         let sched = self.form.schedule();
-        ui.horizontal(|ui| {
+        crate::gui::style::row(ui, |ui| {
             ui.label(RichText::new(icon::CLOCK).color(p.muted));
             ui.label(style::muted(ui, crate::tf!("Next run {}", scheduler::next_run(&sched, now).format("%a %d %b %Y, %H:%M"))));
         });
         if let Some(id) = &self.form.id {
             if let Some(t) = self.tasks.iter().find(|t| &t.id == id) {
-                ui.horizontal(|ui| {
+                crate::gui::style::row(ui, |ui| {
                     ui.label(RichText::new(icon::CALENDAR).color(p.muted));
                     ui.label(style::muted(ui, crate::tf!("System scheduler: {}", crate::platform::sched_status(id))));
                 });
                 if let Some(r) = &t.last_run {
-                    ui.horizontal(|ui| {
+                    crate::gui::style::row(ui, |ui| {
                         let (ic, col) = if r.ok { (icon::CHECK_CIRCLE, p.success) } else { (icon::WARNING, p.danger) };
                         ui.label(RichText::new(ic).color(col));
                         ui.label(RichText::new(crate::tf!("Last run {} — {}", r.time.format("%d %b %H:%M"), r.summary)).color(if r.ok { p.muted } else { p.danger }));
@@ -319,7 +319,7 @@ impl TaskPanel {
             }
         }
         ui.add_space(12.0);
-        ui.horizontal(|ui| {
+        crate::gui::style::row(ui, |ui| {
             if style::primary(ui, icon::FLOPPY, "Save").clicked() {
                 self.save(cx);
             }
@@ -407,11 +407,11 @@ fn task_row(ui: &mut Ui, t: &Task, selected: bool, p: Palette) -> egui::Response
     };
     ui.painter().rect_filled(rect, 8.0, bg);
     let ic = if matches!(t.action, Action::AutoClean { .. }) { icon::BROOM } else { icon::ARCHIVE };
-    let x = rect.left() + 12.0;
-    ui.painter().text(egui::pos2(x, rect.center().y), egui::Align2::LEFT_CENTER, ic, egui::FontId::proportional(18.0), if selected { p.accent } else { p.muted });
+    let mr = crate::gui::style::Mirror::new(rect);
+    ui.painter().text(mr.pos(12.0, rect.center().y), mr.start(egui::Align::Center), ic, egui::FontId::proportional(18.0), if selected { p.accent } else { p.muted });
     ui.painter().text(
-        egui::pos2(x + 28.0, rect.top() + 16.0),
-        egui::Align2::LEFT_CENTER,
+        mr.pos(40.0, rect.top() + 16.0),
+        mr.start(egui::Align::Center),
         &t.name,
         egui::FontId::new(14.0, style::semibold()),
         if selected { p.accent } else { p.text },
@@ -420,6 +420,6 @@ fn task_row(ui: &mut Ui, t: &Task, selected: bool, p: Palette) -> egui::Response
         Some(r) if !r.ok => crate::tf!("{} · last run failed", t.schedule),
         _ => t.schedule.to_string(),
     };
-    ui.painter().text(egui::pos2(x + 28.0, rect.top() + 35.0), egui::Align2::LEFT_CENTER, sub, egui::FontId::proportional(12.5), p.muted);
+    ui.painter().text(mr.pos(40.0, rect.top() + 35.0), mr.start(egui::Align::Center), sub, egui::FontId::proportional(12.5), p.muted);
     resp
 }

@@ -37,7 +37,7 @@ impl SystemToolsView {
             .iter()
             .filter(|t| q.is_empty() || t.name.to_lowercase().contains(&q) || t.description.to_lowercase().contains(&q) || t.command.to_lowercase().contains(&q))
             .collect();
-        ui.horizontal(|ui| {
+        crate::gui::style::row(ui, |ui| {
             style::search_field(ui, &mut self.search, "Search tools", 220.0);
         });
         ui.add_space(8.0);
@@ -51,20 +51,21 @@ impl SystemToolsView {
                 }
             }
             for g in groups {
-                ui.horizontal(|ui| {
+                crate::gui::style::row(ui, |ui| {
                     ui.label(RichText::new(group_icon(g)).color(p.accent));
                     ui.label(style::strong(tr(g)));
                 });
                 ui.add_space(4.0);
-                ui.horizontal_wrapped(|ui| {
+                crate::gui::style::row_wrapped(ui, |ui| {
                     for t in shown.iter().filter(|t| t.group == g) {
                         let (rect, r) = ui.allocate_exact_size(egui::vec2(262.0, 64.0), egui::Sense::click());
                         r.widget_info(|| egui::WidgetInfo::labeled(egui::Role::Button, true, &t.name));
                         style::tile_frame(ui, rect, &r, false);
-                        let left = rect.left_top() + egui::vec2(14.0, 14.0);
+                        let mr = crate::gui::style::Mirror::new(rect);
+                        let top = rect.top() + 14.0;
                         ui.painter().text(
-                            left + egui::vec2(0.0, 2.0),
-                            egui::Align2::LEFT_TOP,
+                            mr.pos(14.0, top + 2.0),
+                            mr.start(egui::Align::Min),
                             if t.terminal { icon::DOTS } else { icon::APP_WINDOW },
                             egui::FontId::proportional(18.0),
                             p.accent,
@@ -73,10 +74,10 @@ impl SystemToolsView {
                         if t.admin {
                             name += "  \u{E2FA}"; // lock: needs administrator rights
                         }
-                        ui.painter().text(left + egui::vec2(28.0, 0.0), egui::Align2::LEFT_TOP, name, egui::FontId::new(14.0, style::semibold()), p.text);
+                        ui.painter().text(mr.pos(42.0, top), mr.start(egui::Align::Min), name, egui::FontId::new(14.0, style::semibold()), p.text);
                         let desc: String = if t.description.is_empty() { t.command.clone() } else { tr(&t.description).to_string() };
                         let desc = if desc.chars().count() > 38 { desc.chars().take(37).collect::<String>() + "…" } else { desc };
-                        ui.painter().text(left + egui::vec2(28.0, 20.0), egui::Align2::LEFT_TOP, desc, egui::FontId::proportional(12.0), p.muted);
+                        ui.painter().text(mr.pos(42.0, top + 20.0), mr.start(egui::Align::Min), desc, egui::FontId::proportional(12.0), p.muted);
                         let r = r.on_hover_text(crate::tf!("{}{}", t.command, if t.admin { tr(" (asks for administrator rights)") } else { "" }));
                         if r.clicked() {
                             run = Some((*t).clone());
@@ -97,7 +98,7 @@ impl SystemToolsView {
                 style::section_title(ui, "Add your own tool");
                 ui.label(style::muted(ui, tr("Any program or command line. Right-click one of your tools to remove it.")).size(12.5));
                 ui.add_space(4.0);
-                ui.horizontal(|ui| {
+                crate::gui::style::row(ui, |ui| {
                     style::text_input(ui, &mut self.new_name, "Name", 180.0);
                     style::text_input(ui, &mut self.new_command, if cfg!(windows) { r"C:\Tools\app.exe --flag" } else { tr("/usr/bin/app --flag") }, 340.0);
                     if let Some(p) = style::browse_button(ui, "systool-command", style::Pick::File, &self.new_command) {
