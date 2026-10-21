@@ -330,9 +330,12 @@ mod tests {
         let r = shred(&[root.join("d")], 3, &ctl).unwrap();
         assert_eq!((r.files, r.folders), (2, 2));
         assert!(r.failed.is_empty(), "{:?}", r.failed);
-        assert!(!root.join("d").exists() && Path::new("/etc/hostname").exists());
+        assert!(!root.join("d").exists());
+        // The symlink was removed, not the file it points to.
+        #[cfg(unix)]
+        assert!(Path::new("/etc/hostname").exists());
         assert_eq!(ctl.done.load(Ordering::Relaxed), ctl.total.load(Ordering::Relaxed));
-        assert!(shred(&[PathBuf::from("/")], 1, &ctl).is_err());
+        assert!(shred(&[PathBuf::from(if cfg!(windows) { "C:\\" } else { "/" })], 1, &ctl).is_err());
         assert!(shred(&[dirs::home_dir().unwrap()], 1, &ctl).is_err());
         let _ = fs::remove_dir_all(&root);
     }

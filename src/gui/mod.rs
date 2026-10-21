@@ -22,6 +22,7 @@ mod tray;
 mod tree;
 mod tuner;
 mod uninstaller;
+mod updates;
 mod watcher;
 
 use crate::config::Settings;
@@ -227,6 +228,7 @@ pub struct App {
     startup: Option<(String, String)>,
     /// Today's automatic full backup, made in the background at start.
     daily: Option<Pending<anyhow::Result<Option<String>>>>,
+    updates: updates::Updates,
     options: options::SettingsView,
     /// The page drawn last frame and when it appeared, for the page fade-in.
     shown: Option<Tool>,
@@ -244,6 +246,9 @@ impl App {
         let s = settings.clone();
         let daily = settings.daily_full_backup.then(|| Pending::spawn(&cc.egui_ctx, "Daily backup", move || crate::backup::daily_full_if_due(&s)));
         apply_theme(&cc.egui_ctx, &settings);
+        let mut settings = settings;
+        let mut updates = updates::Updates::new();
+        updates.startup(&cc.egui_ctx, &mut settings);
         Self {
             options: options::SettingsView::new(&settings),
             settings,
@@ -264,6 +269,7 @@ impl App {
                 a.iter().position(|x| x == "--trace" || x == "--uninstall").and_then(|i| Some((a[i].clone(), a.get(i + 1)?.clone())))
             },
             daily,
+            updates,
             shown: None,
             page_since: 0.0,
         }
@@ -516,8 +522,9 @@ impl eframe::App for App {
                 Tool::Watcher => self.watcher.main(ui, &mut cx),
                 Tool::Backups => self.backups.main(ui, &mut cx),
                 Tool::Tools => self.tools.main(ui, &mut cx),
-                Tool::Settings => self.options.main(ui, &mut cx),
+                Tool::Settings => self.options.main(ui, &mut cx, &mut self.updates),
             }
+            self.updates.poll(&mut cx);
         });
         match take(&mut self.daily) {
             Some(Ok(Some(id))) => self.notices.push(Notice { text: format!("Daily full backup created ({id})"), error: false, at: chrono::Local::now(), shown: Instant::now() }),

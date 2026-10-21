@@ -1,0 +1,11 @@
+[Desktop Entry]
+Type=Application
+Name=CleanCore
+GenericName=Uninstaller and System Cleaner
+Comment=Uninstall programs, remove their leftovers and clean up your system
+Exec=cleancore-gui
+Icon=cleancore
+Terminal=false
+Categories=System;
+Keywords=uninstall;cleaner;junk;startup;leftovers;
+StartupWMClass=cleancore

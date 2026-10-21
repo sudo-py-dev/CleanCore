@@ -169,6 +169,12 @@ enum Cmd {
     /// System Tools: open the operating system's utilities
     #[command(subcommand)]
     Tools(ToolsCmd),
+    /// Update CleanCore to the latest release (signature and checksum verified first)
+    Update {
+        /// Only say whether a newer version exists
+        #[arg(long)]
+        check: bool,
+    },
     /// Microsoft slop cleaner (Windows): preinstalled apps, Copilot and other AI, ads, telemetry
     #[command(subcommand)]
     Slop(SlopCmd),
@@ -801,6 +807,7 @@ fn main() {
         std::env::set_var("CLEANCORE_DATA_DIR", std::path::absolute(d).unwrap_or_else(|_| d.clone()));
     }
     cleancore::migrate::from_old_name();
+    cleancore::update::cleanup_after_update();
     if let Err(e) = run(cli) {
         eprintln!("error: {e:#}");
         std::process::exit(1);
@@ -1069,6 +1076,7 @@ fn run(cli: Cli) -> Result<()> {
         Cmd::Shred { paths, passes, yes } => run_shred(&settings, &paths, passes, yes)?,
         Cmd::WipeFree { drive, passes, max_mb, yes } => run_wipe(&settings, drive, passes, max_mb, yes)?,
         Cmd::Tools(c) => run_tools(&mut settings, c)?,
+        Cmd::Update { check } => run_update(check)?,
         Cmd::Slop(c) => run_slop(&settings, c)?,
         Cmd::Groups(c) => run_groups(&settings, c)?,
         Cmd::App(c) => run_app(&settings, c)?,
@@ -2684,3 +2692,21 @@ fn run_tune(cmd: TuneCmd) -> Result<()> {
 }
 
 use cleancore::backup::human_size as human;
+
+fn run_update(check_only: bool) -> Result<()> {
+    use cleancore::update;
+    println!("CleanCore {}", update::CURRENT);
+    let Some(r) = update::check()? else {
+        println!("You have the latest version.");
+        return Ok(());
+    };
+    println!("Version {} is available: {}", r.version, r.url);
+    if check_only {
+        return Ok(());
+    }
+    println!("Downloading and verifying the signature and checksum…");
+    let file = update::download(&r)?;
+    println!("Verified {}", file.display());
+    println!("{}", update::install(&file)?);
+    Ok(())
+}

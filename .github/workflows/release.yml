@@ -1,0 +1,99 @@
+name: Release
+
+# Push a tag like v0.2.0 (matching the version in Cargo.toml) to build, sign and publish.
+on:
+  push:
+    tags: ["v*"]
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  linux:
+    name: Linux packages
+    # The oldest supported Ubuntu, so the binaries run on older systems too (glibc).
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: System packages
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y pkg-config libwayland-dev dpkg-dev
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+      - name: Build
+        run: cargo build --release --locked --features gui --bins
+      - name: Package
+        run: |
+          v="${GITHUB_REF_NAME#v}"
+          name="cleancore-$v-linux-x86_64"
+          mkdir -p "out/$name"
+          cp target/release/cleancore target/release/cleancore-gui README.md LICENSE "out/$name/"
+          tar -C out -czf "out/$name.tar.gz" "$name"
+          packaging/linux/build-deb.sh "$v" target/release out
+      - uses: actions/upload-artifact@v4
+        with:
+          name: linux
+          path: |
+            out/*.tar.gz
+            out/*.deb
+
+  windows:
+    name: Windows package
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+      - name: Build
+        run: cargo build --release --locked --features gui --bins
+      - name: Package
+        shell: pwsh
+        run: |
+          $v = "$env:GITHUB_REF_NAME".TrimStart("v")
+          New-Item -ItemType Directory -Force out | Out-Null
+          Compress-Archive -Path target/release/cleancore.exe, target/release/cleancore-gui.exe, README.md, LICENSE -DestinationPath "out/cleancore-$v-windows-x64.zip"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: windows
+          path: out/*.zip
+
+  publish:
+    name: Sign and publish
+    needs: [linux, windows]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Tag matches Cargo.toml
+        run: |
+          want="$(sed -n 's/^version = "\(.*\)"/\1/p' Cargo.toml | head -1)"
+          test "${GITHUB_REF_NAME#v}" = "$want" || { echo "tag $GITHUB_REF_NAME but Cargo.toml says $want"; exit 1; }
+      - uses: actions/download-artifact@v4
+        with:
+          path: dist
+          merge-multiple: true
+      - name: Checksums
+        working-directory: dist
+        run: sha256sum * > SHA256SUMS.txt && cat SHA256SUMS.txt
+      # The app installs an update only if SHA256SUMS.txt carries this signature.
+      - name: Sign
+        working-directory: dist
+        env:
+          MINISIGN_SECRET_KEY: ${{ secrets.MINISIGN_SECRET_KEY }}
+        run: |
+          sudo apt-get update && sudo apt-get install -y minisign
+          test -n "$MINISIGN_SECRET_KEY" || { echo "the MINISIGN_SECRET_KEY secret is not set"; exit 1; }
+          key="$(mktemp)"
+          printf '%s\n' "$MINISIGN_SECRET_KEY" > "$key"
+          minisign -S -s "$key" -m SHA256SUMS.txt -t "CleanCore $GITHUB_REF_NAME"
+          rm -f "$key"
+          # Check it with the public key built into the app, so a wrong key never ships.
+          pub="$(sed -n 's/^pub const PUBLIC_KEY: &str = "\(.*\)";/\1/p' ../src/update.rs)"
+          minisign -V -P "$pub" -m SHA256SUMS.txt
+      - name: Publish
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" dist/* --title "CleanCore ${GITHUB_REF_NAME#v}" --generate-notes

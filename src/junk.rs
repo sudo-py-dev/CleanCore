@@ -215,7 +215,7 @@ mod tests {
             std::fs::File::options().write(true).open(root.join(f)).unwrap().set_modified(old).unwrap();
         }
         let s = Settings { junk_locations: vec![root.display().to_string()], junk_exclude: vec![root.join("sub/skip").display().to_string()], ..Settings::default() };
-        let found: Vec<String> = scan(&s, &Progress::default()).into_iter().map(|f| f.path.strip_prefix(&root).unwrap().display().to_string()).collect();
+        let found: Vec<String> = scan(&s, &Progress::default()).into_iter().map(|f| f.path.strip_prefix(&root).unwrap().display().to_string().replace('\\', "/")).collect();
         assert_eq!(found, ["a.tmp", "sub/b.bak"]);
         let _ = std::fs::remove_dir_all(&root);
     }

@@ -25,4 +25,5 @@ pub mod systools;
 pub mod tracer;
 pub mod tuner;
 pub mod uninstaller;
+pub mod update;
 pub mod watcher;

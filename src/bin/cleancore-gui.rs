@@ -12,5 +12,6 @@ fn main() -> eframe::Result {
         default(info);
     }));
     cleancore::migrate::from_old_name();
+    cleancore::update::cleanup_after_update();
     cleancore::gui::run()
 }

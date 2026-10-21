@@ -36,6 +36,9 @@ rfd = { version = "0.17", optional = true }
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 rusqlite = { version = "0.37", features = ["bundled"] }
+# Self-update: checking the signed checksum list of a release, and the downloads against it
+minisign-verify = "0.2"
+sha2 = "0.10"
 toml = "1.1.8"
 
 [target.'cfg(windows)'.dependencies]

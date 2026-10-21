@@ -48,7 +48,7 @@ impl SettingsView {
         d
     }
 
-    pub fn main(&mut self, ui: &mut Ui, cx: &mut Cx) {
+    pub fn main(&mut self, ui: &mut Ui, cx: &mut Cx, updates: &mut super::updates::Updates) {
         let dirty = serde_json::to_string(&self.finished()).ok() != serde_json::to_string(&*cx.settings).ok();
         let (mut save, mut discard) = (false, false);
         style::page_header(ui, "Settings", "Appearance, safety options, lists and storage", |ui| {
@@ -88,6 +88,8 @@ impl SettingsView {
             });
             ui.add_space(14.0);
             self.backups(ui);
+            ui.add_space(14.0);
+            updates.card(ui, cx, &mut self.draft.check_updates);
             ui.add_space(14.0);
             style::card(ui, |ui| {
                 style::section_title(ui, "Watcher and notifications");

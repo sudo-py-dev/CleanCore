@@ -32,7 +32,9 @@ fn wait_for(h: &mut Harness<'_, App>, text: &str) {
         if h.query_all_by_label_contains(text).next().is_some() {
             return;
         }
-        if start.elapsed() > Duration::from_secs(20) {
+        // CI runners are slower, and their /opt holds gigabytes of toolchains to snapshot.
+        let limit = if std::env::var_os("CI").is_some() { 240 } else { 20 };
+        if start.elapsed() > Duration::from_secs(limit) {
             if let Ok(img) = h.render() {
                 let _ = img.save(shots_dir().join("zz-timeout.png"));
             }
