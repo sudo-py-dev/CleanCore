@@ -12,6 +12,7 @@ pub mod extensions;
 pub mod gui;
 pub mod history;
 pub mod hunter;
+pub mod i18n;
 pub mod icons;
 pub mod junk;
 pub mod migrate;

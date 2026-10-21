@@ -4,6 +4,7 @@
 use super::style::{self, icon, Palette};
 use super::{take, Cx, Pending};
 use crate::history::{self, CleanReport, HistoryItem};
+use crate::i18n::tr;
 use eframe::egui::{self, RichText, Ui};
 use std::collections::BTreeSet;
 
@@ -42,14 +43,14 @@ impl HistoryView {
             self.check_running();
         }
         if let Some(r) = take(&mut self.cleaning) {
-            let mut msg = format!("Cleaned {} item(s), {}", r.cleaned, super::human(r.bytes));
+            let mut msg = crate::tf!("Cleaned {} item(s), {}", r.cleaned, super::human(r.bytes));
             if !r.skipped.is_empty() {
-                msg += &format!(". Skipped {} item(s) of open browsers", r.skipped.len());
+                msg += &crate::tf!(". Skipped {} item(s) of open browsers", r.skipped.len());
             }
             if r.failed.is_empty() {
                 cx.info(msg);
             } else {
-                cx.error(format!("{msg}. Failed: {}", r.failed.iter().map(|(i, e)| format!("{i} ({e})")).collect::<Vec<_>>().join("; ")));
+                cx.error(crate::tf!("{msg}. Failed: {}", r.failed.iter().map(|(i, e)| crate::tf!("{i} ({e})")).collect::<Vec<_>>().join("; ")));
             }
             self.loaded = false;
         }
@@ -66,7 +67,7 @@ impl HistoryView {
         let picked: Vec<HistoryItem> = self.items.iter().filter(|i| self.checked.contains(&i.id)).cloned().collect();
         let size: u64 = picked.iter().map(|i| i.size).sum();
         ui.horizontal(|ui| {
-            ui.label(style::strong(format!("{} selected · {}", picked.len(), super::human(size))));
+            ui.label(style::strong(crate::tf!("{} selected · {}", picked.len(), super::human(size))));
             ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
                 ui.add_enabled_ui(!picked.is_empty(), |ui| {
                     if style::primary(ui, icon::BROOM, "Clean").clicked() {
@@ -112,7 +113,7 @@ impl HistoryView {
                         }
                         ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
                             let all = in_group.iter().all(|i| self.checked.contains(&i.id));
-                            if style::ghost(ui, "", if all { "None" } else { "All" }).clicked() {
+                            if style::ghost(ui, "", if all { tr("None") } else { tr("All") }).clicked() {
                                 for i in &in_group {
                                     if all {
                                         self.checked.remove(&i.id);
@@ -136,7 +137,7 @@ impl HistoryView {
                             }
                             ui.vertical(|ui| {
                                 ui.spacing_mut().item_spacing.y = 1.0;
-                                ui.label(&i.name);
+                                ui.label(tr(&i.name));
                                 ui.label(style::muted(ui, &i.description).size(12.0));
                             });
                             ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
@@ -156,12 +157,14 @@ impl HistoryView {
             let (mut close, mut recheck) = (false, false);
             egui::Modal::new(egui::Id::unique("history-confirm")).show(ui.ctx(), |ui| {
                 ui.set_width(440.0);
-                ui.label(style::strong(format!("Clean {} item(s)?", picked.len())).size(18.0));
+                ui.label(style::strong(crate::tf!("Clean {} item(s)?", picked.len())).size(18.0));
                 ui.add_space(6.0);
-                ui.label(style::muted(ui, "History, caches and recent lists are deleted for good; there is no backup of them."));
+                ui.label(style::muted(ui, tr("History, caches and recent lists are deleted for good; there is no backup of them.")));
                 if !open.is_empty() {
                     ui.add_space(6.0);
-                    ui.label(RichText::new(format!("{}  {} is open; its items will be skipped. Close it first to clean them.", icon::WARNING, open.join(", "))).color(p.warning));
+                    ui.label(
+                        RichText::new(crate::tf!("{}  {} is open; its items will be skipped. Close it first to clean them.", icon::WARNING, open.join(", "))).color(p.warning),
+                    );
                 }
                 ui.add_space(12.0);
                 ui.horizontal(|ui| {

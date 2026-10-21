@@ -4,6 +4,7 @@
 use super::style::{self, icon, Palette};
 use super::{Cx, Pending};
 use crate::autorun::{self, AddMethod, AutorunEntry, Source};
+use crate::i18n::tr;
 use eframe::egui::{self, RichText, Ui};
 use egui_extras::{Column, TableBuilder};
 
@@ -51,7 +52,7 @@ impl AutorunView {
         // replaced (its result is dropped), so the last toggle always wins.
         let sys = cx.settings.autorun_show_system;
         if self.loading.as_ref().is_none_or(|(_, s)| *s != sys) {
-            let label = if sys { "Reading startup entries, including system ones" } else { "Reading startup entries" };
+            let label = if sys { tr("Reading startup entries, including system ones") } else { tr("Reading startup entries") };
             self.loading = Some((Pending::spawn(ctx, label, move || autorun::list(sys)), sys));
         }
         self.loaded = true;
@@ -78,7 +79,7 @@ impl AutorunView {
         }
         let p = Palette::get(ui.ctx());
         let enabled = self.list.iter().filter(|e| e.enabled).count();
-        let subtitle = if self.loading.is_some() { "Reading startup entries…".to_string() } else { format!("{} entries · {enabled} start automatically", self.list.len()) };
+        let subtitle = if self.loading.is_some() { "Reading startup entries…".to_string() } else { crate::tf!("{} entries · {enabled} start automatically", self.list.len()) };
         // Counted every frame; the entries are only copied when the action is picked.
         let is_invalid = |e: &&AutorunEntry| !e.valid && !e.system;
         let is_disabled = |e: &&AutorunEntry| !e.enabled && !e.system;
@@ -92,13 +93,13 @@ impl AutorunView {
             let r = style::secondary(ui, icon::DOTS, "More");
             egui::Popup::menu(&r).width(360.0).show(|ui| {
                 ui.add_enabled_ui(n_invalid > 0, |ui| {
-                    if style::ghost(ui, icon::WARNING, &format!("Remove invalid entries ({n_invalid})")).on_hover_text("Entries whose program no longer exists").clicked() {
+                    if style::ghost(ui, icon::WARNING, &crate::tf!("Remove invalid entries ({n_invalid})")).on_hover_text(tr("Entries whose program no longer exists")).clicked() {
                         self.confirm = Some(self.list.iter().filter(is_invalid).cloned().collect());
                         ui.close();
                     }
                 });
                 ui.add_enabled_ui(n_disabled > 0, |ui| {
-                    if style::ghost(ui, icon::PAUSE, &format!("Remove disabled entries ({n_disabled})")).clicked() {
+                    if style::ghost(ui, icon::PAUSE, &crate::tf!("Remove disabled entries ({n_disabled})")).clicked() {
                         self.confirm = Some(self.list.iter().filter(is_disabled).cloned().collect());
                         ui.close();
                     }
@@ -107,7 +108,7 @@ impl AutorunView {
                 let list: Vec<AutorunEntry> = self.shown().into_iter().cloned().collect();
                 super::export_fields(ui, cx, &mut self.export_path, "Export (.txt .html .csv .json)", |f| {
                     autorun::export(&list, f)?;
-                    Ok(format!("Exported {} entries to {}", list.len(), f.display()))
+                    Ok(crate::tf!("Exported {} entries to {}", list.len(), f.display()))
                 });
             });
             if style::icon_button(ui, icon::REFRESH, "Refresh").clicked() {
@@ -130,7 +131,7 @@ impl AutorunView {
             }
             for s in sources {
                 let n = self.list.iter().filter(|e| e.source == s).count();
-                if style::segment(ui, self.source == Some(s), &format!("{}  {n}", s.label())).clicked() {
+                if style::segment(ui, self.source == Some(s), &crate::tf!("{}  {n}", s.label())).clicked() {
                     self.source = Some(s);
                 }
             }
@@ -143,7 +144,7 @@ impl AutorunView {
                     }
                     self.loaded = false;
                 }
-                ui.label(style::muted(ui, if cfg!(windows) { "Windows entries" } else { "System entries" }));
+                ui.label(style::muted(ui, if cfg!(windows) { tr("Windows entries") } else { tr("System entries") }));
             });
         });
         ui.add_space(8.0);
@@ -158,7 +159,7 @@ impl AutorunView {
                 ui,
                 icon::ROCKET,
                 "Nothing starts automatically",
-                if self.list.is_empty() { "No startup entries were found." } else { "Nothing matches the filter." },
+                if self.list.is_empty() { tr("No startup entries were found.") } else { tr("Nothing matches the filter.") },
             );
         } else {
             self.table(ui, cx, &shown, p);
@@ -182,7 +183,7 @@ impl AutorunView {
             .header(26.0, |mut h| {
                 for t in ["On", "Program", "Type", "Publisher", ""] {
                     h.col(|ui| {
-                        ui.label(style::muted(ui, t).size(12.5));
+                        ui.label(style::muted(ui, tr(t)).size(12.5));
                     });
                 }
             })
@@ -194,7 +195,7 @@ impl AutorunView {
                         let mut on = e.enabled;
                         let can = e.source != Source::RunOnce;
                         ui.add_enabled_ui(can, |ui| {
-                            if style::toggle(ui, &mut on, &format!("Start {} automatically", e.name)).changed() {
+                            if style::toggle(ui, &mut on, &crate::tf!("Start {} automatically", e.name)).changed() {
                                 toggled = Some((e.clone(), on));
                             }
                         });
@@ -211,7 +212,7 @@ impl AutorunView {
                                     style::badge(ui, "Program missing", p.danger);
                                 }
                                 if e.all_users {
-                                    ui.label(RichText::new(icon::USERS).color(p.faint).size(13.0)).on_hover_text("For all users");
+                                    ui.label(RichText::new(icon::USERS).color(p.faint).size(13.0)).on_hover_text(tr("For all users"));
                                 }
                             });
                             ui.add(egui::Label::new(RichText::new(&e.command).monospace().size(11.5).color(p.muted)).truncate()).on_hover_text(&e.location);
@@ -225,7 +226,7 @@ impl AutorunView {
                     });
                     row.col(|ui| {
                         ui.horizontal(|ui| {
-                            let tip = if e.removable { "Remove (backed up)" } else { "Can't be deleted — disable it instead" };
+                            let tip = if e.removable { tr("Remove (backed up)") } else { tr("Can't be deleted — disable it instead") };
                             ui.add_enabled_ui(e.removable, |ui| {
                                 if style::icon_button(ui, icon::TRASH, tip).clicked() {
                                     remove = Some(e.clone());
@@ -235,16 +236,16 @@ impl AutorunView {
                             egui::Popup::menu(&r).width(220.0).show(|ui| {
                                 if style::ghost(ui, icon::PLAY, "Run now").clicked() {
                                     match autorun::run_now(e) {
-                                        Ok(()) => cx.info(format!("Started {}", e.name)),
-                                        Err(err) => cx.error(format!("{err:#}")),
+                                        Ok(()) => cx.info(crate::tf!("Started {}", e.name)),
+                                        Err(err) => cx.error(crate::tf!("{err:#}")),
                                     }
                                     ui.close();
                                 }
                                 ui.add_enabled_ui(e.running, |ui| {
                                     if style::ghost(ui, icon::X_CIRCLE, "Stop it").clicked() {
                                         match autorun::kill(e) {
-                                            Ok(n) => cx.info(format!("Stopped {} ({n} process{})", e.name, if n == 1 { "" } else { "es" })),
-                                            Err(err) => cx.error(format!("{err:#}")),
+                                            Ok(n) => cx.info(crate::tf!("Stopped {} ({n} process(es))", e.name)),
+                                            Err(err) => cx.error(crate::tf!("{err:#}")),
                                         }
                                         refresh = true;
                                         ui.close();
@@ -255,7 +256,7 @@ impl AutorunView {
                                 if style::icon_button(ui, icon::FOLDER_OPEN, "Open file location").clicked() {
                                     let path = std::path::Path::new(exe);
                                     if let Err(err) = crate::platform::open_folder(path.parent().unwrap_or(path)) {
-                                        cx.error(format!("{err:#}"));
+                                        cx.error(crate::tf!("{err:#}"));
                                     }
                                 }
                             }
@@ -276,9 +277,9 @@ impl AutorunView {
                     if let Some(x) = self.list.iter_mut().find(|x| x.id == e.id) {
                         x.enabled = on;
                     }
-                    cx.info(format!("{} {}", e.name, if on { "will start automatically" } else { "won't start automatically" }));
+                    cx.info(crate::tf!("{} {}", e.name, if on { tr("will start automatically") } else { tr("won't start automatically") }));
                 }
-                Err(err) => cx.error(format!("{err:#}")),
+                Err(err) => cx.error(crate::tf!("{err:#}")),
             }
         }
         if let Some(e) = remove {
@@ -294,23 +295,23 @@ impl AutorunView {
             let mut close = false;
             egui::Modal::new(egui::Id::unique("autorun-remove")).show(ctx, |ui| {
                 ui.set_width(460.0);
-                let title = if list.len() == 1 { format!("Remove \"{}\"?", list[0].name) } else { format!("Remove {} entries?", list.len()) };
+                let title = if list.len() == 1 { crate::tf!("Remove \"{}\"?", list[0].name) } else { crate::tf!("Remove {} entries?", list.len()) };
                 ui.label(style::strong(title).size(18.0));
                 ui.add_space(6.0);
                 for e in list.iter().take(8) {
-                    ui.add(egui::Label::new(RichText::new(format!("• {}  —  {}", e.name, e.command)).size(12.5)).truncate());
+                    ui.add(egui::Label::new(RichText::new(crate::tf!("• {}  —  {}", e.name, e.command)).size(12.5)).truncate());
                 }
                 if list.len() > 8 {
-                    ui.label(style::muted(ui, format!("and {} more", list.len() - 8)));
+                    ui.label(style::muted(ui, crate::tf!("and {} more", list.len() - 8)));
                 }
                 ui.add_space(6.0);
-                ui.label(style::muted(ui, "The programs themselves stay installed; they just won't start automatically. Removed entries are backed up."));
+                ui.label(style::muted(ui, tr("The programs themselves stay installed; they just won't start automatically. Removed entries are backed up.")));
                 ui.add_space(12.0);
                 ui.horizontal(|ui| {
                     if style::primary(ui, icon::TRASH, "Remove").clicked() {
                         match autorun::remove(cx.settings, &list) {
-                            Ok((r, d)) => cx.info(if d > 0 { format!("Removed {r}, disabled {d}") } else { format!("Removed {r} entr{}", if r == 1 { "y" } else { "ies" }) }),
-                            Err(e) => cx.error(format!("{e:#}")),
+                            Ok((r, d)) => cx.info(if d > 0 { crate::tf!("Removed {r}, disabled {d}") } else { crate::tf!("Removed {r} entry(ies)") }),
+                            Err(e) => cx.error(crate::tf!("{e:#}")),
                         }
                         self.loaded = false;
                         close = true;
@@ -329,18 +330,18 @@ impl AutorunView {
             let (mut close, mut done) = (false, false);
             egui::Modal::new(egui::Id::unique("autorun-add")).show(ctx, |ui| {
                 ui.set_width(480.0);
-                ui.label(style::strong("Add a startup entry").size(18.0));
+                ui.label(style::strong(tr("Add a startup entry")).size(18.0));
                 ui.add_space(8.0);
-                ui.label(style::muted(ui, "Name"));
+                ui.label(style::muted(ui, tr("Name")));
                 style::text_input(ui, &mut f.name, "My program", 460.0);
                 ui.add_space(4.0);
-                ui.label(style::muted(ui, "Command"));
+                ui.label(style::muted(ui, tr("Command")));
                 ui.horizontal(|ui| {
                     ui.spacing_mut().item_spacing.x = 6.0;
                     style::text_input(
                         ui,
                         &mut f.command,
-                        if cfg!(windows) { r#""C:\Program Files\App\app.exe" --minimized"# } else { "/usr/bin/app --minimized" },
+                        if cfg!(windows) { r#""C:\Program Files\App\app.exe" --minimized"# } else { tr("/usr/bin/app --minimized") },
                         460.0 - style::CONTROL_H - 6.0,
                     );
                     if let Some(p) = style::browse_button(ui, "autorun-command", style::Pick::File, &f.command) {
@@ -359,10 +360,10 @@ impl AutorunView {
                     ui.add_space(4.0);
                     ui.horizontal(|ui| {
                         style::toggle(ui, &mut f.all_users, "For all users");
-                        ui.label("For all users (needs administrator rights)");
+                        ui.label(tr("For all users (needs administrator rights)"));
                     });
                 } else {
-                    ui.label(style::muted(ui, "Added to your autostart folder (~/.config/autostart).").size(12.5));
+                    ui.label(style::muted(ui, tr("Added to your autostart folder (~/.config/autostart).")).size(12.5));
                     f.method = AddMethod::StartupFolder;
                 }
                 ui.add_space(12.0);
@@ -371,10 +372,10 @@ impl AutorunView {
                         if style::primary(ui, icon::PLUS, "Add").clicked() {
                             match autorun::add(&f.name, &f.command, f.all_users, f.method) {
                                 Ok(()) => {
-                                    cx.info(format!("Added \"{}\"", f.name.trim()));
+                                    cx.info(crate::tf!("Added \"{}\"", f.name.trim()));
                                     done = true;
                                 }
-                                Err(e) => cx.error(format!("{e:#}")),
+                                Err(e) => cx.error(crate::tf!("{e:#}")),
                             }
                         }
                     });

@@ -1,0 +1,4529 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Language: ru\n"
+
+msgid "Reading startup entries, including system ones"
+msgstr "Чтение элементов автозапуска, включая системные"
+
+msgid "Reading startup entries"
+msgstr "Чтение элементов автозапуска"
+
+msgid "Reading startup entries…"
+msgstr "Чтение элементов автозапуска…"
+
+msgid "{} entries · {enabled} start automatically"
+msgstr "Элементов: {} · запускаются автоматически: {enabled}"
+
+msgid "Autorun"
+msgstr "Автозапуск"
+
+msgid "Add"
+msgstr "Добавить"
+
+msgid "More"
+msgstr "Ещё"
+
+msgid "Remove invalid entries ({n_invalid})"
+msgstr "Удалить недействительные ({n_invalid})"
+
+msgid "Entries whose program no longer exists"
+msgstr "Элементы, программа которых больше не существует"
+
+msgid "Remove disabled entries ({n_disabled})"
+msgstr "Удалить отключённые ({n_disabled})"
+
+msgid "Export (.txt .html .csv .json)"
+msgstr "Экспорт (.txt .html .csv .json)"
+
+msgid "Exported {} entries to {}"
+msgstr "Экспортировано элементов: {} в {}"
+
+msgid "Refresh"
+msgstr "Обновить"
+
+msgid "Search name, command or publisher"
+msgstr "Поиск по имени, команде или издателю"
+
+msgid "All"
+msgstr "Все"
+
+msgid "Show system entries"
+msgstr "Показывать системные элементы"
+
+msgid "Windows entries"
+msgstr "Элементы Windows"
+
+msgid "System entries"
+msgstr "Системные элементы"
+
+msgid "Nothing starts automatically"
+msgstr "Ничего не запускается автоматически"
+
+msgid "No startup entries were found."
+msgstr "Элементы автозапуска не найдены."
+
+msgid "Nothing matches the filter."
+msgstr "Ничего не соответствует фильтру."
+
+msgid "On"
+msgstr "Вкл."
+
+msgid "Program"
+msgstr "Программа"
+
+msgid "Type"
+msgstr "Тип"
+
+msgid "Publisher"
+msgstr "Издатель"
+
+msgid "Start {} automatically"
+msgstr "Запускать {} автоматически"
+
+msgid "Running"
+msgstr "Запущено"
+
+msgid "Program missing"
+msgstr "Программа отсутствует"
+
+msgid "For all users"
+msgstr "Для всех пользователей"
+
+msgid "Remove (backed up)"
+msgstr "Удалить (с резервной копией)"
+
+msgid "Can't be deleted — disable it instead"
+msgstr "Нельзя удалить — отключите вместо этого"
+
+msgid "Run now"
+msgstr "Запустить сейчас"
+
+msgid "Started {}"
+msgstr "{} запущен"
+
+msgid "Stop it"
+msgstr "Остановить"
+
+msgid "Stopped {} ({n} process(es))"
+msgstr "{} остановлен (процессов: {n})"
+
+msgid "Open file location"
+msgstr "Открыть расположение файла"
+
+msgid "will start automatically"
+msgstr "будет запускаться автоматически"
+
+msgid "won't start automatically"
+msgstr "не будет запускаться автоматически"
+
+msgid "Remove \"{}\"?"
+msgstr "Удалить «{}»?"
+
+msgid "Remove {} entries?"
+msgstr "Удалить элементы: {}?"
+
+msgid "and {} more"
+msgstr "и ещё {}"
+
+msgid "The programs themselves stay installed; they just won't start automatically. Removed entries are backed up."
+msgstr "Сами программы остаются установленными; они просто не будут запускаться автоматически. Удалённые элементы сохраняются в резервной копии."
+
+msgid "Remove"
+msgstr "Удалить"
+
+msgid "Removed {r}, disabled {d}"
+msgstr "Удалено: {r}, отключено: {d}"
+
+msgid "Removed {r} entry(ies)"
+msgstr "Удалено элементов: {r}"
+
+msgid "Cancel"
+msgstr "Отмена"
+
+msgid "Add a startup entry"
+msgstr "Добавить элемент автозапуска"
+
+msgid "Name"
+msgstr "Имя"
+
+msgid "My program"
+msgstr "Моя программа"
+
+msgid "Command"
+msgstr "Команда"
+
+msgid " --minimized"
+msgstr " --minimized"
+
+msgid "/usr/bin/app --minimized"
+msgstr "/usr/bin/app --minimized"
+
+msgid "Registry Run"
+msgstr "Registry Run"
+
+msgid "Run once"
+msgstr "Запустить один раз"
+
+msgid "Startup folder"
+msgstr "Папка автозагрузки"
+
+msgid "For all users (needs administrator rights)"
+msgstr "Для всех пользователей (нужны права администратора)"
+
+msgid "Added to your autostart folder (~/.config/autostart)."
+msgstr "Добавлено в вашу папку автозапуска (~/.config/autostart)."
+
+msgid "Added \"{}\""
+msgstr "Добавлено «{}»"
+
+msgid "Delete by time range"
+msgstr "Удалить за период"
+
+msgid "Reading backups failed: {e:#}"
+msgstr "Не удалось прочитать резервные копии: {e:#}"
+
+msgid "Restoring…"
+msgstr "Восстановление…"
+
+msgid "{n} item(s) restored from {id}"
+msgstr "Восстановлено элементов: {n} из {id}"
+
+msgid "Auto Backup"
+msgstr "Автоматическое резервирование"
+
+msgid "Create backups automatically on a schedule"
+msgstr "Создавать резервные копии автоматически по расписанию"
+
+msgid "{} backup(s) · {} · {}"
+msgstr "Копий: {} · {} · {}"
+
+msgid "Backups"
+msgstr "Резервные копии"
+
+msgid "Create backup"
+msgstr "Создать копию"
+
+msgid "Scheduled backups"
+msgstr "Резервирование по расписанию"
+
+msgid "Open backup folder"
+msgstr "Открыть папку резервных копий"
+
+msgid "Delete backups made between"
+msgstr "Удалить копии, созданные между"
+
+msgid "Dates like 2026-10-01, or 2026-10-01 14:30. An end date includes that whole day; leave it empty for \"now\"."
+msgstr "Даты вида 2026-10-01 или 2026-10-01 14:30. Конечная дата включает весь день; оставьте пустой для «сейчас»."
+
+msgid "From"
+msgstr "С"
+
+msgid "To (optional)"
+msgstr "По (необязательно)"
+
+msgid "Delete {n} backup(s)"
+msgstr "Удалить копий: {n}"
+
+msgid "Deleted {} backup(s)"
+msgstr "Удалено копий: {}"
+
+msgid "Manual backup"
+msgstr "Ручная копия"
+
+msgid "No backups yet"
+msgstr "Резервных копий пока нет"
+
+msgid "A backup is made automatically before every clean, or create one now."
+msgstr "Копия создаётся автоматически перед каждой очисткой, или создайте её сейчас."
+
+msgid "Select a backup to restore or delete it."
+msgstr "Выберите копию, чтобы восстановить или удалить её."
+
+msgid "Delete all backups"
+msgstr "Удалить все копии"
+
+msgid "Delete"
+msgstr "Удалить"
+
+msgid "Custom restore"
+msgstr "Выборочное восстановление"
+
+msgid "Restore"
+msgstr "Восстановить"
+
+msgid "Date"
+msgstr "Дата"
+
+msgid "Entries"
+msgstr "Записи"
+
+msgid "Size"
+msgstr "Размер"
+
+msgid "Note"
+msgstr "Примечание"
+
+msgid "Delete all"
+msgstr "Удалить всё"
+
+msgid "Restore everything in backup {id}?"
+msgstr "Восстановить всё из копии {id}?"
+
+msgid "Are you sure you want to delete \"{id}\"?"
+msgstr "Удалить «{id}»?"
+
+msgid "Are you sure you want to delete all backups?"
+msgstr "Удалить все резервные копии?"
+
+msgid "Deleted backup {id}"
+msgstr "Копия {id} удалена"
+
+msgid "Deleted {n} backup(s)"
+msgstr "Удалено копий: {n}"
+
+msgid "Choose what to restore from {}"
+msgstr "Выберите, что восстановить из {}"
+
+msgid "Select all"
+msgstr "Выбрать все"
+
+msgid "Select none"
+msgstr "Снять выбор"
+
+msgid "Restore {n} item(s)"
+msgstr "Восстановить элементов: {n}"
+
+msgid "Optional"
+msgstr "Необязательно"
+
+msgid "Back up"
+msgstr "Резервировать"
+
+msgid "Whole registry"
+msgstr "Весь реестр"
+
+msgid "Whole config store"
+msgstr "Все настройки"
+
+msgid "One key / folder"
+msgstr "Один раздел или папка"
+
+msgid "or type a path"
+msgstr "или введите путь"
+
+msgid "Create"
+msgstr "Создать"
+
+msgid "Please enter a name."
+msgstr "Введите имя."
+
+msgid "Please select a key to backup."
+msgstr "Выберите раздел для резервирования."
+
+msgid "Creating backup…"
+msgstr "Создание копии…"
+
+msgid "Backup creation failed!"
+msgstr "Не удалось создать копию!"
+
+msgid "Created backup {} ({} entries)"
+msgstr "Создана копия {} (записей: {})"
+
+msgid "Full"
+msgstr "Полная"
+
+msgid "Partial"
+msgstr "Частичная"
+
+msgid "Auto Full"
+msgstr "Полная авто"
+
+msgid "Auto Partial"
+msgstr "Частичная авто"
+
+msgid "Full before cleaning"
+msgstr "Полная перед очисткой"
+
+msgid "Deleted items"
+msgstr "Удалённые элементы"
+
+msgid "Safe Scan"
+msgstr "Безопасное сканирование"
+
+msgid "Only entries that are certainly safe to delete. The fastest scan."
+msgstr "Только записи, которые точно безопасно удалить. Самое быстрое сканирование."
+
+msgid "Moderate Scan"
+msgstr "Умеренное сканирование"
+
+msgid "Looks deeper for invalid and orphaned entries."
+msgstr "Ищет глубже недействительные и потерянные записи."
+
+msgid "Advanced Scan"
+msgstr "Расширенное сканирование"
+
+msgid "Exhaustive. Review the results before you clean."
+msgstr "Исчерпывающее. Проверьте результаты перед очисткой."
+
+msgid "Forced scan"
+msgstr "Принудительное сканирование"
+
+msgid "Forced scan for \"{text}\""
+msgstr "Принудительное сканирование «{text}»"
+
+msgid "Forced scan…"
+msgstr "Принудительное сканирование…"
+
+msgid "Cleaning {n} item(s)…"
+msgstr "Очистка элементов: {n}…"
+
+msgid "{}: found {} item(s)"
+msgstr "{}: найдено элементов: {}"
+
+msgid "Scan failed: {e}"
+msgstr "Сканирование не удалось: {e}"
+
+msgid "Failed to create a restore point: {e}"
+msgstr "Не удалось создать точку восстановления: {e}"
+
+msgid "Deleted {} item(s). All deleted data has been backed up ({})."
+msgstr "Удалено элементов: {}. Все удалённые данные сохранены в резервной копии ({})."
+
+msgid "{msg} {} could not be deleted: {}"
+msgstr "{msg} Не удалось удалить: {}: {}"
+
+msgid "Cleaning failed: {e}"
+msgstr "Очистка не удалась: {e}"
+
+msgid "Auto Clean"
+msgstr "Автоочистка"
+
+msgid "Scan and clean automatically on a schedule"
+msgstr "Сканировать и очищать автоматически по расписанию"
+
+msgid "Find and remove invalid and leftover registry entries"
+msgstr "Поиск и удаление недействительных и оставшихся записей реестра"
+
+msgid "Find and remove settings left behind by removed apps"
+msgstr "Поиск и удаление настроек, оставшихся от удалённых приложений"
+
+msgid "Cleaner"
+msgstr "Очистка"
+
+msgid "Quick Clean"
+msgstr "Быстрая очистка"
+
+msgid "Scan and clean with one click"
+msgstr "Сканировать и очистить одним щелчком"
+
+msgid "Scheduled scans and cleans"
+msgstr "Сканирование и очистка по расписанию"
+
+msgid "every account"
+msgstr "все учётные записи"
+
+msgid "your account"
+msgstr "ваша учётная запись"
+
+msgid "Ready to scan"
+msgstr "Готово к сканированию"
+
+msgid "{title} · {} categories · {scope}"
+msgstr "{title} · категорий: {} · {scope}"
+
+msgid "{}  Current account"
+msgstr "{}  Текущая учётная запись"
+
+msgid "{}  All accounts"
+msgstr "{}  Все учётные записи"
+
+msgid "Start scan"
+msgstr "Начать сканирование"
+
+msgid "Scan depth"
+msgstr "Глубина сканирования"
+
+msgid "Other ways to scan"
+msgstr "Другие способы сканирования"
+
+msgid "Custom Scan"
+msgstr "Выборочное сканирование"
+
+msgid "Choose exactly which categories to scan."
+msgstr "Выберите, какие именно категории сканировать."
+
+msgid "Forced Scan"
+msgstr "Принудительное сканирование"
+
+msgid "Find every entry that mentions a program or vendor."
+msgstr "Найти все записи, где упоминается программа или производитель."
+
+msgid "All accounts"
+msgstr "Все учётные записи"
+
+msgid "Current account"
+msgstr "Текущая учётная запись"
+
+msgid "Scanning"
+msgstr "Сканирование"
+
+msgid "Looking for leftovers…"
+msgstr "Поиск остатков…"
+
+msgid "{n} of {total} categories checked · {secs:.0}s"
+msgstr "Проверено категорий: {n} из {total} · {secs:.0} с"
+
+msgid "Searching · {secs:.0}s"
+msgstr "Поиск · {secs:.0} с"
+
+msgid "Categories"
+msgstr "Категории"
+
+msgid "Pick the categories to look at"
+msgstr "Выберите категории для проверки"
+
+msgid "Scan {n} categories"
+msgstr "Сканировать категорий: {n}"
+
+msgid "Find every entry under a location that mentions a word"
+msgstr "Найти все записи в расположении, где упоминается слово"
+
+msgid "Scan"
+msgstr "Сканировать"
+
+msgid "Registry key"
+msgstr "Раздел реестра"
+
+msgid "Folder"
+msgstr "Папка"
+
+msgid "Search for"
+msgstr "Искать"
+
+msgid "e.g. a program or vendor name"
+msgstr "например, имя программы или производителя"
+
+msgid "{total} item(s) in {cats} category(ies) · {sel} selected"
+msgstr "Элементов: {total} в категориях: {cats} · выбрано: {sel}"
+
+msgid "Scan results"
+msgstr "Результаты сканирования"
+
+msgid "Clean ({sel})"
+msgstr "Очистить ({sel})"
+
+msgid "Export"
+msgstr "Экспорт"
+
+msgid "File (.txt .csv .html .xml .json)"
+msgstr "Файл (.txt .csv .html .xml .json)"
+
+msgid "Exported to {}"
+msgstr "Экспортировано в {}"
+
+msgid "New scan"
+msgstr "Новое сканирование"
+
+msgid "All clean"
+msgstr "Всё чисто"
+
+msgid "No problems found"
+msgstr "Проблем не найдено"
+
+msgid "Everything we checked looks fine."
+msgstr "Всё проверенное в порядке."
+
+msgid "Expand all"
+msgstr "Развернуть всё"
+
+msgid "Collapse all"
+msgstr "Свернуть всё"
+
+msgid "Show details"
+msgstr "Показать подробности"
+
+msgid "Could not open: {e:#}"
+msgstr "Не удалось открыть: {e:#}"
+
+msgid "Copied {}"
+msgstr "Скопировано: {}"
+
+msgid "Added to exclude list: {path}"
+msgstr "Добавлено в исключения: {path}"
+
+msgid "Delete {n} item(s)?"
+msgstr "Удалить элементов: {n}?"
+
+msgid "Everything deleted is backed up first and can be restored from Backups."
+msgstr "Всё удаляемое сначала сохраняется и может быть восстановлено в разделе «Резервные копии»."
+
+msgid "Create a System Restore Point"
+msgstr "Создать точку восстановления системы"
+
+msgid "Create a system snapshot (snapper / timeshift)"
+msgstr "Создать снимок системы (snapper / timeshift)"
+
+msgid "Create a full registry backup"
+msgstr "Создать полную копию реестра"
+
+msgid "Create a full config backup"
+msgstr "Создать полную копию настроек"
+
+msgid "Recommended"
+msgstr "Рекомендуется"
+
+msgid "Depth"
+msgstr "Глубина"
+
+msgid "{categories} categories"
+msgstr "Категорий: {categories}"
+
+msgid "Unselect this"
+msgstr "Снять отметку"
+
+msgid "Select this"
+msgstr "Отметить"
+
+msgid "Open in Registry Editor"
+msgstr "Открыть в редакторе реестра"
+
+msgid "Open containing folder"
+msgstr "Открыть папку"
+
+msgid "Add to exclude list"
+msgstr "Добавить в исключения"
+
+msgid "Copy"
+msgstr "Копировать"
+
+msgid "Reading browser extensions"
+msgstr "Чтение расширений браузера"
+
+msgid "Removed {} item(s). Backup: {}"
+msgstr "Удалено элементов: {}. Резервная копия: {}"
+
+msgid "{} item(s) could not be removed: {}"
+msgstr "Не удалось удалить элементов: {}: {}"
+
+msgid "Search extensions"
+msgstr "Поиск расширений"
+
+msgid "All browsers"
+msgstr "Все браузеры"
+
+msgid "Remove ({})"
+msgstr "Удалить ({})"
+
+msgid "Show built-in extensions"
+msgstr "Показывать встроенные расширения"
+
+msgid "Built-in"
+msgstr "Встроенное"
+
+msgid "No extensions"
+msgstr "Расширений нет"
+
+msgid "No extensions were found in Chrome, Edge, Brave, Opera, Vivaldi, Chromium or Firefox."
+msgstr "Расширения не найдены в Chrome, Edge, Brave, Opera, Vivaldi, Chromium и Firefox."
+
+msgid "Nothing matches the search."
+msgstr "Ничего не найдено."
+
+msgid "Running — close it before removing"
+msgstr "Запущен — закройте перед удалением"
+
+msgid "Theme"
+msgstr "Тема"
+
+msgid "Extension"
+msgstr "Расширение"
+
+msgid "Disabled"
+msgstr "Отключено"
+
+msgid "Open folder"
+msgstr "Открыть папку"
+
+msgid "Remove {} extension(s)?"
+msgstr "Удалить расширений: {}?"
+
+msgid "Their files, stored data and browser settings entries are removed. Everything is backed up first."
+msgstr "Удаляются их файлы, сохранённые данные и записи в настройках браузера. Всё сначала сохраняется в резервной копии."
+
+msgid "{}  Close {} first."
+msgstr "{}  Сначала закройте {}."
+
+msgid "Check again"
+msgstr "Проверить снова"
+
+msgid "Removing extensions"
+msgstr "Удаление расширений"
+
+msgid "Measuring history and caches"
+msgstr "Подсчёт истории и кэша"
+
+msgid "Cleaned {} item(s), {}"
+msgstr "Очищено элементов: {}, {}"
+
+msgid ". Skipped {} item(s) of open browsers"
+msgstr ". Пропущено элементов открытых браузеров: {}"
+
+msgid "{msg}. Failed: {}"
+msgstr "{msg}. Ошибок: {}"
+
+msgid "{} selected · {}"
+msgstr "Выбрано: {} · {}"
+
+msgid "Clean"
+msgstr "Очистить"
+
+msgid "Nothing to clean"
+msgstr "Нечего очищать"
+
+msgid "No browser profiles, recent-file lists or caches were found."
+msgstr "Профили браузеров, списки недавних файлов и кэш не найдены."
+
+msgid "Office"
+msgstr "Office"
+
+msgid "Open — close it to clean"
+msgstr "Открыт — закройте для очистки"
+
+msgid "None"
+msgstr "Нет"
+
+msgid "Clean {} item(s)?"
+msgstr "Очистить элементов: {}?"
+
+msgid "History, caches and recent lists are deleted for good; there is no backup of them."
+msgstr "История, кэш и списки недавних удаляются навсегда; резервной копии нет."
+
+msgid "{}  {} is open; its items will be skipped. Close it first to clean them."
+msgstr "{}  {} открыт; его элементы будут пропущены. Сначала закройте его, чтобы очистить их."
+
+msgid "Cleaning"
+msgstr "Очистка"
+
+msgid "Pick in 3 s"
+msgstr "Выбор через 3 с"
+
+msgid "Identifying"
+msgstr "Определение"
+
+msgid "Open CleanCore"
+msgstr "Открыть CleanCore"
+
+msgid "CleanCore Hunter"
+msgstr "CleanCore Hunter"
+
+msgid "Move"
+msgstr "Переместить"
+
+msgid "Exit Hunter Mode"
+msgstr "Выйти из режима охоты"
+
+msgid "Floating hunter target"
+msgstr "Плавающая мишень"
+
+msgid "Drag me"
+msgstr "Перетащите меня"
+
+msgid "Identifying the window under the pointer"
+msgstr "Определение окна под указателем"
+
+msgid "No other program's window is under the pointer."
+msgstr "Под указателем нет окна другой программы."
+
+msgid "Hunter Mode"
+msgstr "Режим охоты"
+
+msgid "Point at any window to find out which program it belongs to"
+msgstr "Наведите на окно, чтобы узнать, какой программе оно принадлежит"
+
+msgid "Floating target"
+msgstr "Плавающая мишень"
+
+msgid "Hide CleanCore and keep a small target on top of every window"
+msgstr "Скрыть CleanCore и держать маленькую мишень поверх всех окон"
+
+msgid "Refresh running programs"
+msgstr "Обновить запущенные программы"
+
+msgid "Hunter target: drag onto a window"
+msgstr "Мишень: перетащите на окно"
+
+msgid "Drag the target onto a window"
+msgstr "Перетащите мишень на окно"
+
+msgid "Hold the mouse button on the crosshair, move it over another program's window and let go."
+msgstr "Удерживайте кнопку мыши на прицеле, наведите его на окно другой программы и отпустите."
+
+msgid "{}  Move the pointer over the window… {left:.0}"
+msgstr "{}  Наведите указатель на окно… {left:.0}"
+
+msgid "Pick in 3 seconds"
+msgstr "Выбор через 3 секунды"
+
+msgid "For windows you can't drag onto"
+msgstr "Для окон, на которые нельзя перетащить"
+
+msgid "{}  Wayland doesn't allow reading other windows; pick from the list below."
+msgstr "{}  Wayland не позволяет читать другие окна; выберите из списка ниже."
+
+msgid "Running programs"
+msgstr "Запущенные программы"
+
+msgid "Filter"
+msgstr "Фильтр"
+
+msgid "Show all processes"
+msgstr "Показать все процессы"
+
+msgid "All processes"
+msgstr "Все процессы"
+
+msgid "No target yet"
+msgstr "Цель не выбрана"
+
+msgid "Drag the crosshair onto a window or pick a running program."
+msgstr "Перетащите прицел на окно или выберите запущенную программу."
+
+msgid "Close {} and delete its program file?"
+msgstr "Закрыть {} и удалить файл программы?"
+
+msgid "Unsaved work in it is lost. The file is backed up and can be restored from Backups."
+msgstr "Несохранённая работа будет потеряна. Файл сохраняется в резервной копии и может быть восстановлен."
+
+msgid "Close and delete"
+msgstr "Закрыть и удалить"
+
+msgid "Deleted {}. Backup: {id}"
+msgstr "{} удалён. Резервная копия: {id}"
+
+msgid "{} · {n} process(es)"
+msgstr "{} · процессов: {n}"
+
+msgid "Window"
+msgstr "Окно"
+
+msgid "File"
+msgstr "Файл"
+
+msgid "Installed as"
+msgstr "Установлено как"
+
+msgid "Not in the list of installed programs"
+msgstr "Нет в списке установленных программ"
+
+msgid "Doesn't start automatically"
+msgstr "Не запускается автоматически"
+
+msgid " (disabled)"
+msgstr " (отключено)"
+
+msgid "Actions"
+msgstr "Действия"
+
+msgid "Uninstall"
+msgstr "Удалить"
+
+msgid "Uninstall the program and scan for leftovers"
+msgstr "Удалить программу и найти остатки"
+
+msgid "Stop autorun"
+msgstr "Отключить автозапуск"
+
+msgid "Don't start this program automatically"
+msgstr "Не запускать эту программу автоматически"
+
+msgid "Disabled {n} startup entry(ies)"
+msgstr "Отключено элементов автозапуска: {n}"
+
+msgid "Kill process"
+msgstr "Завершить процесс"
+
+msgid "Force-close it; unsaved work is lost"
+msgstr "Принудительно закрыть; несохранённая работа будет потеряна"
+
+msgid "Stopped {n} process(es)"
+msgstr "Остановлено процессов: {n}"
+
+msgid "Kill and delete"
+msgstr "Завершить и удалить"
+
+msgid "Search online"
+msgstr "Искать в интернете"
+
+msgid "Look the program up on the web"
+msgstr "Найти программу в интернете"
+
+msgid "add location"
+msgstr "добавить расположение"
+
+msgid "Deleted {} junk file(s), {}"
+msgstr "Удалено ненужных файлов: {}, {}"
+
+msgid "Deleted {} file(s); {} could not be deleted (first: {})"
+msgstr "Удалено файлов: {}; не удалось удалить: {} (первый: {})"
+
+msgid "{} folders searched, {} junk files found"
+msgstr "Просмотрено папок: {}, найдено ненужных файлов: {}"
+
+msgid "Stop"
+msgstr "Стоп"
+
+msgid "Looking for junk files"
+msgstr "Поиск ненужных файлов"
+
+msgid "the default locations"
+msgstr "стандартных расположениях"
+
+msgid "{} location(s)"
+msgstr "Расположений: {}"
+
+msgid "{n_pat} patterns in {where_}"
+msgstr "Шаблонов: {n_pat} в {where_}"
+
+msgid "Scan for junk files"
+msgstr "Найти ненужные файлы"
+
+msgid "Where to look"
+msgstr "Где искать"
+
+msgid "{} (default)"
+msgstr "{} (по умолчанию)"
+
+msgid "Remove location"
+msgstr "Удалить расположение"
+
+msgid "/home/me/Downloads or /media/disk"
+msgstr "/home/me/Downloads или /media/disk"
+
+msgid "Add location"
+msgstr "Добавить расположение"
+
+msgid "Add {path}"
+msgstr "Добавить {path}"
+
+msgid "Never look in"
+msgstr "Никогда не искать в"
+
+msgid "A folder to skip"
+msgstr "Папка, которую пропускать"
+
+msgid "The Windows component store, Installer folder, Recycle Bin and CleanCore's backups are always skipped."
+msgstr "Хранилище компонентов Windows, папка Installer, корзина и резервные копии CleanCore всегда пропускаются."
+
+msgid "System folders (/usr, /proc, /var/lib, …), the Trash and CleanCore's backups are always skipped."
+msgstr "Системные папки (/usr, /proc, /var/lib, …), корзина и резервные копии CleanCore всегда пропускаются."
+
+msgid "What counts as junk"
+msgstr "Что считается мусором"
+
+msgid "Reset to defaults"
+msgstr "Сбросить по умолчанию"
+
+msgid "File name patterns: * matches anything, ? one character. Click a pattern to switch it off."
+msgstr "Шаблоны имён файлов: * — что угодно, ? — один символ. Щёлкните по шаблону, чтобы выключить его."
+
+msgid "Click to switch on/off · right-click to remove"
+msgstr "Щелчок — вкл./выкл. · правый щелчок — удалить"
+
+msgid "Add pattern"
+msgstr "Добавить шаблон"
+
+msgid "Skip files changed in the last 24 hours"
+msgstr "Пропускать файлы, изменённые за последние 24 часа"
+
+msgid "They may still be in use."
+msgstr "Они могут ещё использоваться."
+
+msgid "Delete to the Recycle Bin"
+msgstr "Удалять в корзину"
+
+msgid "Delete to the Trash"
+msgstr "Удалять в корзину"
+
+msgid "Otherwise files are deleted permanently."
+msgstr "Иначе файлы удаляются навсегда."
+
+msgid "Delete to the trash"
+msgstr "Удалять в корзину"
+
+msgid "{} junk files · {}"
+msgstr "Ненужных файлов: {} · {}"
+
+msgid "Delete ({}, {})"
+msgstr "Удалить ({}, {})"
+
+msgid "Export list"
+msgstr "Экспорт списка"
+
+msgid "File (.txt or .csv)"
+msgstr "Файл (.txt или .csv)"
+
+msgid "No junk files"
+msgstr "Ненужных файлов нет"
+
+msgid "Nothing matched the junk patterns in the chosen locations."
+msgstr "В выбранных расположениях ничего не подходит под шаблоны."
+
+msgid "Changed"
+msgstr "Изменён"
+
+msgid "Pattern"
+msgstr "Шаблон"
+
+msgid "Delete {} junk file(s)?"
+msgstr "Удалить ненужных файлов: {}?"
+
+msgid "They go to the Trash, so you can still get them back."
+msgstr "Они попадают в корзину, их ещё можно вернуть."
+
+msgid "They are deleted permanently."
+msgstr "Они удаляются навсегда."
+
+msgid "Deleting junk files"
+msgstr "Удаление ненужных файлов"
+
+msgid "Logs database updated: {n} new log(s)"
+msgstr "База журналов обновлена: новых журналов: {n}"
+
+msgid "Search logs"
+msgstr "Поиск журналов"
+
+msgid "Only logs for this system"
+msgstr "Только журналы этой системы"
+
+msgid "Only {} {}"
+msgstr "Только {} {}"
+
+msgid "Update"
+msgstr "Обновить"
+
+msgid "Download new logs from the database URL"
+msgstr "Загрузить новые журналы по адресу базы"
+
+msgid "Set a database URL in Settings › Uninstaller first"
+msgstr "Сначала укажите адрес базы в Настройки › Удаление программ"
+
+msgid "Downloading logs"
+msgstr "Загрузка журналов"
+
+msgid "No logs database URL is set. Add one in Settings › Uninstaller, or copy .cptrace files into the database folder."
+msgstr "Адрес базы журналов не задан. Укажите его в Настройки › Удаление программ или скопируйте файлы .cptrace в папку базы."
+
+msgid "Open the database folder"
+msgstr "Открыть папку базы"
+
+msgid "Put shared .cptrace logs in {} or download them with Update. Add your own from Traced programs."
+msgstr "Положите общие журналы .cptrace в {} или загрузите их кнопкой «Обновить». Свои добавляйте из «Отслеженных программ»."
+
+msgid "No log matches. Turn off \"Only logs for this system\" to see the others."
+msgstr "Подходящих журналов нет. Выключите «Только журналы этой системы», чтобы увидеть остальные."
+
+msgid "The logs database is empty"
+msgstr "База журналов пуста"
+
+msgid "{} {} · {} settings · {} files · {}"
+msgstr "{} {} · настроек: {} · файлов: {} · {}"
+
+msgid "Imports the log into Traced programs and removes what it recorded"
+msgstr "Импортирует журнал в «Отслеженные программы» и удаляет записанное"
+
+msgid "Custom uninstall"
+msgstr "Выборочное удаление"
+
+msgid "Recorded on another system"
+msgstr "Записан на другой системе"
+
+msgid "Select a log. Uninstalling with it imports it into Traced programs first."
+msgstr "Выберите журнал. При удалении с ним он сначала импортируется в «Отслеженные программы»."
+
+msgid "System"
+msgstr "Система"
+
+msgid "Settings"
+msgstr "Настройки"
+
+msgid "Files"
+msgstr "Файлы"
+
+msgid "Recorded"
+msgstr "Записан"
+
+msgid "CleanCore"
+msgstr "CleanCore"
+
+msgid "Saving settings failed: {e:#}"
+msgstr "Не удалось сохранить настройки: {e:#}"
+
+msgid "Export failed: {e:#}"
+msgstr "Ошибка экспорта: {e:#}"
+
+msgid "Programs"
+msgstr "Программы"
+
+msgid "Clean up"
+msgstr "Очистка"
+
+msgid "Monitor & restore"
+msgstr "Мониторинг и восстановление"
+
+msgid "Uninstaller"
+msgstr "Удаление программ"
+
+msgid "Tuner"
+msgstr "Твикер"
+
+msgid "Watcher"
+msgstr "Наблюдатель"
+
+msgid "Tools"
+msgstr "Инструменты"
+
+msgid "Settings could not be read, using defaults: {e:#}"
+msgstr "Не удалось прочитать настройки, используются значения по умолчанию: {e:#}"
+
+msgid "Daily backup"
+msgstr "Ежедневная копия"
+
+msgid "Uninstaller & cleaner"
+msgstr "Удаление и очистка"
+
+msgid "Recorder running"
+msgstr "Запись идёт"
+
+msgid "Recorder stopped"
+msgstr "Запись остановлена"
+
+msgid "Switch to light"
+msgstr "Светлая тема"
+
+msgid "Switch to dark"
+msgstr "Тёмная тема"
+
+msgid "Notifications ({unread} new)"
+msgstr "Уведомления (новых: {unread})"
+
+msgid "Notifications"
+msgstr "Уведомления"
+
+msgid "Nothing yet."
+msgstr "Пока ничего."
+
+msgid "Clear all"
+msgstr "Очистить всё"
+
+msgid "Daily full backup created ({id})"
+msgstr "Создана ежедневная полная копия ({id})"
+
+msgid "Daily backup failed: {e:#}"
+msgstr "Ежедневная копия не удалась: {e:#}"
+
+msgid "Welcome to CleanCore"
+msgstr "Добро пожаловать в CleanCore"
+
+msgid "Pick a look. You can change it any time in Settings."
+msgstr "Выберите оформление. Его можно изменить в любой момент в настройках."
+
+msgid "Light"
+msgstr "Светлая"
+
+msgid "Dark"
+msgstr "Тёмная"
+
+msgid "Save changes"
+msgstr "Сохранить изменения"
+
+msgid "Appearance, safety options, lists and storage"
+msgstr "Оформление, безопасность, списки и хранилище"
+
+msgid "Discard"
+msgstr "Отменить изменения"
+
+msgid "Settings saved"
+msgstr "Настройки сохранены"
+
+msgid "Exclude list"
+msgstr "Список исключений"
+
+msgid "Never reported or deleted. Subkeys / subfolders can be included."
+msgstr "Никогда не показывается и не удаляется. Можно включить подразделы и подпапки."
+
+msgid "Include list"
+msgstr "Список включений"
+
+msgid "Contents are always deleted by a Custom Scan with the \"Include list\" category. Be careful."
+msgstr "Содержимое всегда удаляется выборочным сканированием с категорией «Список включений». Будьте осторожны."
+
+msgid "Watcher and notifications"
+msgstr "Наблюдатель и уведомления"
+
+msgid "Maximum log folder size"
+msgstr "Максимальный размер папки журналов"
+
+msgid "When the logs reach this size, all watches pause. 0 means no limit."
+msgstr "Когда журналы достигают этого размера, все наблюдения приостанавливаются. 0 — без ограничений."
+
+msgid " MB"
+msgstr " МБ"
+
+msgid "Notify after Auto Clean"
+msgstr "Уведомлять после автоочистки"
+
+msgid "Failures always notify."
+msgstr "О сбоях уведомляется всегда."
+
+msgid "Notify after Auto Backup"
+msgstr "Уведомлять после автоматического резервирования"
+
+msgid "Skip confirmation dialogs"
+msgstr "Не спрашивать подтверждение"
+
+msgid "Clean without asking. Backups are still made."
+msgstr "Очищать без вопросов. Резервные копии всё равно создаются."
+
+msgid "Data folder: {}"
+msgstr "Папка данных: {}"
+
+msgid "Appearance"
+msgstr "Оформление"
+
+msgid "{}  System"
+msgstr "{}  Системная"
+
+msgid "{}  Dark"
+msgstr "{}  Тёмная"
+
+msgid "{}  Light"
+msgstr "{}  Светлая"
+
+msgid "Language"
+msgstr "Язык"
+
+msgid "English"
+msgstr "English"
+
+msgid "System ({n})"
+msgstr "Системный ({n})"
+
+msgid "Accent color"
+msgstr "Цвет акцента"
+
+msgid "Add to Explorer's right-click menu"
+msgstr "Добавить в контекстное меню Проводника"
+
+msgid "Add to the file manager's right-click menu"
+msgstr "Добавить в контекстное меню файлового менеджера"
+
+msgid "\"Install with CleanCore\" on installers, \"Uninstall with CleanCore\" on programs, shortcuts and folders. Applies at once."
+msgstr "«Установить с CleanCore» для установщиков, «Удалить с CleanCore» для программ, ярлыков и папок. Применяется сразу."
+
+msgid "File manager menu"
+msgstr "Меню файлового менеджера"
+
+msgid "Added CleanCore to the right-click menu"
+msgstr "CleanCore добавлен в контекстное меню"
+
+msgid "Removed CleanCore from the right-click menu"
+msgstr "CleanCore удалён из контекстного меню"
+
+msgid "Leftover scan mode"
+msgstr "Режим поиска остатков"
+
+msgid "Used after a program's own uninstaller finishes."
+msgstr "Используется после завершения собственного деинсталлятора программы."
+
+msgid "Advanced"
+msgstr "Расширенный"
+
+msgid "Moderate"
+msgstr "Умеренный"
+
+msgid "Safe"
+msgstr "Безопасный"
+
+msgid "Create a restore point before uninstalling"
+msgstr "Создавать точку восстановления перед удалением"
+
+msgid "Create a system snapshot before uninstalling"
+msgstr "Создавать снимок системы перед удалением"
+
+msgid "Create a full backup before uninstalling"
+msgstr "Создавать полную копию перед удалением"
+
+msgid "Delete leftover files to the Recycle Bin"
+msgstr "Удалять остатки в корзину"
+
+msgid "Delete leftover files to the Trash"
+msgstr "Удалять остатки в корзину"
+
+msgid "Files are also backed up either way."
+msgstr "Файлы в любом случае сохраняются в резервной копии."
+
+msgid "Delete leftover files to the trash"
+msgstr "Удалять остатки в корзину"
+
+msgid "Close the program before uninstalling"
+msgstr "Закрывать программу перед удалением"
+
+msgid "Stops its running processes so the uninstaller can remove every file."
+msgstr "Останавливает её процессы, чтобы деинсталлятор мог удалить все файлы."
+
+msgid "Only run the built-in uninstaller"
+msgstr "Запускать только встроенный деинсталлятор"
+
+msgid "Skip the leftover scan afterwards."
+msgstr "Не искать остатки после этого."
+
+msgid "Tick leftovers by default"
+msgstr "Отмечать остатки по умолчанию"
+
+msgid "Otherwise you pick each item to delete."
+msgstr "Иначе вы выбираете каждый элемент для удаления сами."
+
+msgid "Mark programs as new for"
+msgstr "Отмечать программы как новые в течение"
+
+msgid " days"
+msgstr " дн."
+
+msgid "Only record what the installer itself changes"
+msgstr "Записывать только то, что меняет сам установщик"
+
+msgid "Follows the installer's processes with ETW (needs administrator rights), so other programs' changes during a trace are left out."
+msgstr "Следит за процессами установщика через ETW (нужны права администратора), поэтому изменения других программ во время записи не учитываются."
+
+msgid "Follows the installer's processes with strace, so other programs' changes during a trace are left out."
+msgstr "Следит за процессами установщика через strace, поэтому изменения других программ во время записи не учитываются."
+
+msgid "Delete a trace log after uninstalling with it"
+msgstr "Удалять журнал записи после удаления по нему"
+
+msgid "Show system entries in Autorun"
+msgstr "Показывать системные элементы в автозапуске"
+
+msgid "Microsoft services and tasks."
+msgstr "Службы и задачи Microsoft."
+
+msgid "Vendor services and desktop components."
+msgstr "Службы производителей и компоненты рабочего стола."
+
+msgid "Logs database folder (a shared or network folder works too)"
+msgstr "Папка базы журналов (подойдёт и общая или сетевая папка)"
+
+msgid "Logs database URL (serves index.json and the .cptrace files; optional)"
+msgstr "Адрес базы журналов (отдаёт index.json и файлы .cptrace; необязательно)"
+
+msgid "Skip paths on external drives"
+msgstr "Пропускать пути на внешних дисках"
+
+msgid "Items on drives that are not plugged in are never reported."
+msgstr "Элементы на неподключённых дисках не показываются."
+
+msgid "Skip Windows defaults"
+msgstr "Пропускать стандартные записи Windows"
+
+msgid "Skip system defaults"
+msgstr "Пропускать стандартные записи системы"
+
+msgid "Known entries the system recreates or keeps on purpose."
+msgstr "Известные записи, которые система создаёт заново или хранит намеренно."
+
+msgid "Force delete registry keys"
+msgstr "Принудительно удалять разделы реестра"
+
+msgid "Take ownership when a key is protected."
+msgstr "Становиться владельцем защищённого раздела."
+
+msgid "Create a restore point before cleaning"
+msgstr "Создавать точку восстановления перед очисткой"
+
+msgid "Create a system snapshot before cleaning"
+msgstr "Создавать снимок системы перед очисткой"
+
+msgid "Uses Windows System Restore."
+msgstr "Использует восстановление системы Windows."
+
+msgid "Uses snapper or timeshift if installed."
+msgstr "Использует snapper или timeshift, если установлены."
+
+msgid "Create a full backup before cleaning"
+msgstr "Создавать полную копию перед очисткой"
+
+msgid "In addition to the backup of deleted items."
+msgstr "В дополнение к копии удалённых элементов."
+
+msgid "Quick Clean scan mode"
+msgstr "Режим сканирования быстрой очистки"
+
+msgid "Backup folder"
+msgstr "Папка резервных копий"
+
+msgid "Delete backups older than"
+msgstr "Удалять копии старше"
+
+msgid "Delete oldest when all backups exceed"
+msgstr "Удалять старые, когда все копии больше"
+
+msgid "Delete oldest when backups exceed"
+msgstr "Удалять старые, когда копии больше"
+
+msgid "Daily full registry backup"
+msgstr "Ежедневная полная копия реестра"
+
+msgid "Daily full settings backup"
+msgstr "Ежедневная полная копия настроек"
+
+msgid "The first time CleanCore opens each day, it backs up everything automatically."
+msgstr "При первом запуске CleanCore за день всё сохраняется автоматически."
+
+msgid "Daily full backup"
+msgstr "Ежедневная полная копия"
+
+msgid "Only delete automatic backups"
+msgstr "Удалять только автоматические копии"
+
+msgid "Manual backups are always kept."
+msgstr "Ручные копии всегда сохраняются."
+
+msgid "Empty"
+msgstr "Пусто"
+
+msgid "Subkeys"
+msgstr "Подразделы"
+
+msgid "Weekly clean"
+msgstr "Еженедельная очистка"
+
+msgid "Please select a key to back up."
+msgstr "Выберите раздел для резервирования."
+
+msgid "Reading scheduled tasks failed: {e:#}"
+msgstr "Не удалось прочитать задания: {e:#}"
+
+msgid "Scheduled cleans"
+msgstr "Очистка по расписанию"
+
+msgid "New task"
+msgstr "Новое задание"
+
+msgid "No tasks yet. Fill in the form and save."
+msgstr "Заданий пока нет. Заполните форму и сохраните."
+
+msgid "Deleted task {id}"
+msgstr "Задание {id} удалено"
+
+msgid "Deleting task failed: {e:#}"
+msgstr "Не удалось удалить задание: {e:#}"
+
+msgid "Edit task"
+msgstr "Изменить задание"
+
+msgid "Repeat"
+msgstr "Повтор"
+
+msgid "Daily"
+msgstr "Ежедневно"
+
+msgid "Weekly"
+msgstr "Еженедельно"
+
+msgid "Monthly"
+msgstr "Ежемесячно"
+
+msgid "Day"
+msgstr "День"
+
+msgid "Last day of the month"
+msgstr "Последний день месяца"
+
+msgid "At"
+msgstr "В"
+
+msgid "Accounts"
+msgstr "Учётные записи"
+
+msgid "Location"
+msgstr "Расположение"
+
+msgid "Pick below or type a path"
+msgstr "Выберите ниже или введите путь"
+
+msgid "Next run {}"
+msgstr "Следующий запуск {}"
+
+msgid "System scheduler: {}"
+msgstr "Планировщик системы: {}"
+
+msgid "Last run {} — {}"
+msgstr "Последний запуск {} — {}"
+
+msgid "Save"
+msgstr "Сохранить"
+
+msgid "Running {id}"
+msgstr "Выполняется {id}"
+
+msgid "Task ran: {s}"
+msgstr "Задание выполнено: {s}"
+
+msgid "Task failed: {e}"
+msgstr "Задание не выполнено: {e}"
+
+msgid "A task with the same parameters already exists!"
+msgstr "Задание с такими параметрами уже существует!"
+
+msgid "Saved task {id}"
+msgstr "Задание {id} сохранено"
+
+msgid "Saving task failed: {e:#}"
+msgstr "Не удалось сохранить задание: {e:#}"
+
+msgid "{} · last run failed"
+msgstr "{} · последний запуск не удался"
+
+msgid "Overwrite passes"
+msgstr "Проходы перезаписи"
+
+msgid "Fast; enough for modern drives"
+msgstr "Быстро; достаточно для современных дисков"
+
+msgid "Zeros, ones, random (default)"
+msgstr "Нули, единицы, случайные (по умолчанию)"
+
+msgid "Seven passes; slow"
+msgstr "Семь проходов; медленно"
+
+msgid "On SSDs, flash drives and copy-on-write filesystems (btrfs, ZFS) the drive may keep old copies of data in places software can't reach. Overwriting is most reliable on hard disks; full-disk encryption protects SSDs best."
+msgstr "На SSD, флешках и файловых системах copy-on-write (btrfs, ZFS) накопитель может хранить старые копии данных там, куда программы не добираются. Перезапись надёжнее всего на жёстких дисках; SSD лучше защищает полное шифрование диска."
+
+msgid "{label} — paused"
+msgstr "{label} — на паузе"
+
+msgid "{label} — pass {pass}"
+msgstr "{label} — проход {pass}"
+
+msgid "Resume"
+msgstr "Продолжить"
+
+msgid "Pause"
+msgstr "Пауза"
+
+msgid "{} of {}"
+msgstr "{} из {}"
+
+msgid "{} doesn't exist"
+msgstr "{} не существует"
+
+msgid "Shredded {} file(s) and {} folder(s), {}"
+msgstr "Уничтожено файлов: {}, папок: {}, {}"
+
+msgid "Shredded {} file(s); {} item(s) failed: {}"
+msgstr "Уничтожено файлов: {}; ошибок: {}: {}"
+
+msgid "Shredding"
+msgstr "Уничтожение"
+
+msgid "Destroy {} item(s)"
+msgstr "Уничтожить элементов: {}"
+
+msgid "Files and folders to destroy"
+msgstr "Файлы и папки для уничтожения"
+
+msgid "Drop files or folders on this window, or type a path."
+msgstr "Перетащите файлы или папки в это окно или введите путь."
+
+msgid "Nothing added yet"
+msgstr "Пока ничего не добавлено"
+
+msgid "Remove from the list"
+msgstr "Убрать из списка"
+
+msgid "Destroy {} item(s)?"
+msgstr "Уничтожить элементов: {}?"
+
+msgid "They are overwritten {} time(s) and deleted. Nothing is backed up and they can't be recovered — not from the Trash, not by CleanCore."
+msgstr "Они перезаписываются {} раз(а) и удаляются. Резервной копии нет, восстановить их нельзя — ни из корзины, ни через CleanCore."
+
+msgid "Destroy"
+msgstr "Уничтожить"
+
+msgid "Free space wiped: wrote {} of overwrite data"
+msgstr "Свободное место очищено: записано {} данных"
+
+msgid "Wiping free space"
+msgstr "Очистка свободного места"
+
+msgid "Wipe free space"
+msgstr "Очистить свободное место"
+
+msgid "Pick a drive first"
+msgstr "Сначала выберите диск"
+
+msgid "Deleted files stay on the drive until something overwrites them. This fills the drive's free space with random data, then deletes it again. Pick a drive:"
+msgstr "Удалённые файлы остаются на диске, пока их что-то не перезапишет. Это заполнит свободное место случайными данными, а затем удалит их. Выберите диск:"
+
+msgid "{} free of {}"
+msgstr "Свободно {} из {}"
+
+msgid "Wipe the free space of {}?"
+msgstr "Очистить свободное место на {}?"
+
+msgid "{} of random data is written {passes} time(s). This can take a long time, and the drive is briefly full — programs saving files meanwhile may fail. Your files are not touched."
+msgstr "{} случайных данных записываются {passes} раз(а). Это может занять много времени, и диск ненадолго заполнится — программы, сохраняющие файлы в это время, могут выдать ошибку. Ваши файлы не затрагиваются."
+
+msgid "Wipe"
+msgstr "Очистить"
+
+msgid "Wiping"
+msgstr "Очистка"
+
+msgid "Windows only"
+msgstr "Только Windows"
+
+msgid "The Microsoft slop cleaner removes Windows' preinstalled apps and turns off Copilot, ads and telemetry. There's nothing like it to clean on Linux."
+msgstr "Очистка Microsoft удаляет предустановленные приложения Windows и отключает Copilot, рекламу и телеметрию. В Linux подобного мусора нет."
+
+msgid "Looking for preinstalled apps"
+msgstr "Поиск предустановленных приложений"
+
+msgid "Removed {} app(s)"
+msgstr "Удалено приложений: {}"
+
+msgid "Removed {}; {} failed: {}"
+msgstr "Удалено: {}; ошибок: {}: {}"
+
+msgid "Preinstalled and promoted apps"
+msgstr "Предустановленные и продвигаемые приложения"
+
+msgid "Remove ({picked})"
+msgstr "Удалить ({picked})"
+
+msgid "Scan again"
+msgstr "Сканировать снова"
+
+msgid "Apps Windows installs or pushes on its own. Removed apps can be reinstalled from the Microsoft Store."
+msgstr "Приложения, которые Windows устанавливает или продвигает сама. Удалённые приложения можно переустановить из Microsoft Store."
+
+msgid "{}  Run CleanCore as administrator to remove apps for every user and stop them from coming back."
+msgstr "{}  Запустите CleanCore от имени администратора, чтобы удалить приложения для всех пользователей и не дать им вернуться."
+
+msgid "For every user account"
+msgstr "Для всех учётных записей"
+
+msgid "Also remove the preinstalled copy"
+msgstr "Удалить и предустановленную копию"
+
+msgid "New accounts and feature updates won't bring the app back"
+msgstr "Новые учётные записи и обновления не вернут приложение"
+
+msgid "{}  None of the known preinstalled apps are installed."
+msgstr "{}  Ни одно из известных предустановленных приложений не установлено."
+
+msgid "Preinstalled for new users"
+msgstr "Предустановлено для новых пользователей"
+
+msgid "Only the preinstalled copy"
+msgstr "Только предустановленная копия"
+
+msgid "AI, ads and suggestions"
+msgstr "ИИ, реклама и подсказки"
+
+msgid "Turn all off ({})"
+msgstr "Выключить всё ({})"
+
+msgid "Each switch can be turned back on here or in the Tuner. Some need administrator rights."
+msgstr "Каждый переключатель можно снова включить здесь или в Твикере. Некоторым нужны права администратора."
+
+msgid "by CleanCore"
+msgstr "через CleanCore"
+
+msgid "\"{}\" was set outside CleanCore, so there is nothing to restore. Change it in Windows Settings."
+msgstr "«{}» изменён вне CleanCore, восстанавливать нечего. Измените это в параметрах Windows."
+
+msgid "Done"
+msgstr "Готово"
+
+msgid "Restored"
+msgstr "Восстановлено"
+
+msgid "Remove {} app(s)?"
+msgstr "Удалить приложений: {}?"
+
+msgid "For every user, and they won't come back for new accounts."
+msgstr "Для всех пользователей, и в новых учётных записях они не появятся."
+
+msgid "For every user account."
+msgstr "Для всех учётных записей."
+
+msgid "For you, and they won't come back for new accounts."
+msgstr "Для вас, и в новых учётных записях они не появятся."
+
+msgid "For you only."
+msgstr "Только для вас."
+
+msgid "{scope} They can be reinstalled from the Microsoft Store."
+msgstr "{scope} Их можно переустановить из Microsoft Store."
+
+msgid "Removing apps"
+msgstr "Удаление приложений"
+
+msgid "Default"
+msgstr "По умолчанию"
+
+msgid "Icon {key}"
+msgstr "Значок {key}"
+
+msgid "Default icon"
+msgstr "Значок по умолчанию"
+
+msgid "Blue"
+msgstr "Синий"
+
+msgid "Indigo"
+msgstr "Индиго"
+
+msgid "Violet"
+msgstr "Фиолетовый"
+
+msgid "Teal"
+msgstr "Бирюзовый"
+
+msgid "Green"
+msgstr "Зелёный"
+
+msgid "Rose"
+msgstr "Розовый"
+
+msgid "Back"
+msgstr "Назад"
+
+msgid "Clear"
+msgstr "Очистить"
+
+msgid "Choose a folder"
+msgstr "Выбрать папку"
+
+msgid "Choose a file"
+msgstr "Выбрать файл"
+
+msgid "Choose where to save"
+msgstr "Выбрать, куда сохранить"
+
+msgid "Disks"
+msgstr "Диски"
+
+msgid "Network"
+msgstr "Сеть"
+
+msgid "Security"
+msgstr "Безопасность"
+
+msgid "Software"
+msgstr "Программы"
+
+msgid "My tools"
+msgstr "Мои инструменты"
+
+msgid "Search tools"
+msgstr "Поиск инструментов"
+
+msgid " (asks for administrator rights)"
+msgstr " (запрашивает права администратора)"
+
+msgid "Add your own tool"
+msgstr "Добавить свой инструмент"
+
+msgid "Any program or command line. Right-click one of your tools to remove it."
+msgstr "Любая программа или командная строка. Щёлкните правой кнопкой по своему инструменту, чтобы удалить его."
+
+msgid "/usr/bin/app --flag"
+msgstr "/usr/bin/app --flag"
+
+msgid "Removed \"{n}\""
+msgstr "Удалено «{n}»"
+
+msgid "Junk Files"
+msgstr "Ненужные файлы"
+
+msgid "Temporary files, editor backups and crash dumps left on your drives"
+msgstr "Временные файлы, резервные копии редакторов и дампы сбоев на ваших дисках"
+
+msgid "History Cleaner"
+msgstr "Очистка истории"
+
+msgid "Browser history and caches, recent files and other traces"
+msgstr "История и кэш браузеров, недавние файлы и другие следы"
+
+msgid "Unrecoverable Delete"
+msgstr "Безвозвратное удаление"
+
+msgid "Overwrite files and folders so they can't be recovered"
+msgstr "Перезапись файлов и папок, чтобы их нельзя было восстановить"
+
+msgid "Evidence Remover"
+msgstr "Удаление следов"
+
+msgid "Overwrite free space so already-deleted files can't be recovered"
+msgstr "Перезапись свободного места, чтобы уже удалённые файлы нельзя было восстановить"
+
+msgid "Windows Tools"
+msgstr "Инструменты Windows"
+
+msgid "System Tools"
+msgstr "Системные инструменты"
+
+msgid "The operating system's own utilities in one place"
+msgstr "Утилиты операционной системы в одном месте"
+
+msgid "Microsoft Slop Cleaner"
+msgstr "Очистка Microsoft"
+
+msgid "Remove preinstalled apps and turn off Copilot, ads and telemetry"
+msgstr "Удалить предустановленные приложения и отключить Copilot, рекламу и телеметрию"
+
+msgid "Junk files"
+msgstr "Ненужные файлы"
+
+msgid "History"
+msgstr "История"
+
+msgid "Unrecoverable delete"
+msgstr "Безвозвратное удаление"
+
+msgid "Evidence remover"
+msgstr "Удаление следов"
+
+msgid "Windows tools"
+msgstr "Инструменты Windows"
+
+msgid "System tools"
+msgstr "Системные инструменты"
+
+msgid "Microsoft slop"
+msgstr "Мусор Microsoft"
+
+msgid "Install & trace"
+msgstr "Установка с записью"
+
+msgid "Recording the current state"
+msgstr "Запись текущего состояния"
+
+msgid "Install with CleanCore"
+msgstr "Установить с CleanCore"
+
+msgid "Every change the installation makes is recorded, so it can be undone exactly"
+msgstr "Каждое изменение при установке записывается, чтобы его можно было точно отменить"
+
+msgid "Snapshot"
+msgstr "Снимок"
+
+msgid "Install"
+msgstr "Установка"
+
+msgid "Analyze"
+msgstr "Анализ"
+
+msgid "Recording the current state…"
+msgstr "Запись текущего состояния…"
+
+msgid "Comparing with the snapshot…"
+msgstr "Сравнение со снимком…"
+
+msgid "Finding everything the installation created"
+msgstr "Поиск всего, что создала установка"
+
+msgid "The installer finished ({st}). Run and configure the program if you like, close it, then stop the trace."
+msgstr "Установщик завершил работу ({st}). При желании запустите и настройте программу, закройте её, затем остановите запись."
+
+msgid "Tracing  {:02}:{:02}"
+msgstr "Запись  {:02}:{:02}"
+
+msgid "Install the program now: run its installer below, or start it any way you like. Install one program at a time and close other programs."
+msgstr "Установите программу сейчас: запустите её установщик ниже или любым другим способом. Устанавливайте по одной программе и закройте остальные."
+
+msgid "/home/you/Downloads/install.sh or a .deb"
+msgstr "/home/you/Downloads/install.sh или .deb"
+
+msgid "Run installer"
+msgstr "Запустить установщик"
+
+msgid "The installer is running…"
+msgstr "Установщик работает…"
+
+msgid "Could not start the installer: {e:#}"
+msgstr "Не удалось запустить установщик: {e:#}"
+
+msgid "Stop & analyze"
+msgstr "Остановить и проанализировать"
+
+msgid "Analyzing"
+msgstr "Анализ"
+
+msgid "Nothing was installed"
+msgstr "Ничего не установлено"
+
+msgid "No new files, settings or packages appeared during the trace."
+msgstr "Во время записи не появилось новых файлов, настроек или пакетов."
+
+msgid "{} change(s) made by other programs during the trace were left out (only the installer's own processes count)."
+msgstr "Изменений других программ во время записи пропущено: {} (учитываются только процессы самого установщика)."
+
+msgid "Comment"
+msgstr "Комментарий"
+
+msgid "{created} item(s) created, removable with this log · {modified} existing item(s) changed (kept on uninstall)"
+msgstr "Создано элементов: {created}, удаляются по этому журналу · изменено существующих: {modified} (сохраняются при удалении)"
+
+msgid "Save log"
+msgstr "Сохранить журнал"
+
+msgid "Saved trace log \"{}\""
+msgstr "Журнал «{}» сохранён"
+
+msgid "Registry"
+msgstr "Реестр"
+
+msgid "Settings (dconf)"
+msgstr "Настройки (dconf)"
+
+msgid "Packages"
+msgstr "Пакеты"
+
+msgid "Files and folders"
+msgstr "Файлы и папки"
+
+msgid "Created: removed on uninstall"
+msgstr "Создан: удаляется при удалении программы"
+
+msgid "Existed before: kept on uninstall"
+msgstr "Существовал раньше: сохраняется при удалении"
+
+msgid "Remove from log"
+msgstr "Убрать из журнала"
+
+msgid "… and {} more (export the log to see all)"
+msgstr "… и ещё {} (экспортируйте журнал, чтобы увидеть всё)"
+
+msgid "Import a .cptrace log"
+msgstr "Импортировать журнал .cptrace"
+
+msgid "Import"
+msgstr "Импорт"
+
+msgid "Imported \"{}\""
+msgstr "Импортирован «{}»"
+
+msgid "Back up or restore every log (one file)"
+msgstr "Резервировать или восстановить все журналы (один файл)"
+
+msgid "Back up all"
+msgstr "Сохранить все"
+
+msgid "Saved {n} log(s) to {}"
+msgstr "Сохранено журналов: {n} в {}"
+
+msgid "Restored {n} log(s)"
+msgstr "Восстановлено журналов: {n}"
+
+msgid "{n} logs selected"
+msgstr "Выбрано журналов: {n}"
+
+msgid "Merge"
+msgstr "Объединить"
+
+msgid "Merged into \"{}\""
+msgstr "Объединено в «{}»"
+
+msgid "Name of the merged log"
+msgstr "Имя объединённого журнала"
+
+msgid "{} · {} settings · {} files · {}"
+msgstr "{} · настроек: {} · файлов: {} · {}"
+
+msgid "Rename"
+msgstr "Переименовать"
+
+msgid "{}  Group"
+msgstr "{}  Группа"
+
+msgid "New group"
+msgstr "Новая группа"
+
+msgid "Remove from group"
+msgstr "Убрать из группы"
+
+msgid "{}  Change icon"
+msgstr "{}  Сменить значок"
+
+msgid "Delete log"
+msgstr "Удалить журнал"
+
+msgid "Add to logs database"
+msgstr "Добавить в базу журналов"
+
+msgid "Share this log through the logs database folder"
+msgstr "Поделиться журналом через папку базы журналов"
+
+msgid "Added to the logs database: {}"
+msgstr "Добавлено в базу журналов: {}"
+
+msgid "Export (.cptrace to share, .html / .txt to read)"
+msgstr "Экспорт (.cptrace для обмена, .html / .txt для чтения)"
+
+msgid "Edit"
+msgstr "Изменить"
+
+msgid "No traced programs"
+msgstr "Нет отслеженных программ"
+
+msgid "Use Install & trace to record an installation; it can then be undone exactly."
+msgstr "Используйте «Установку с записью», чтобы записать установку; потом её можно будет точно отменить."
+
+msgid "Created"
+msgstr "Создан"
+
+msgid "Imported"
+msgstr "Импортирован"
+
+msgid "Rename log"
+msgstr "Переименовать журнал"
+
+msgid "Log renamed"
+msgstr "Журнал переименован"
+
+msgid "Delete this log?"
+msgstr "Удалить этот журнал?"
+
+msgid "The program stays installed; only the record of its installation is deleted."
+msgstr "Программа остаётся установленной; удаляется только запись о её установке."
+
+msgid "Log deleted"
+msgstr "Журнал удалён"
+
+msgid "Edit log"
+msgstr "Изменить журнал"
+
+msgid "Author"
+msgstr "Автор"
+
+msgid "Add item"
+msgstr "Добавить элемент"
+
+msgid "dconf folder"
+msgstr "Папка dconf"
+
+msgid "Registry value"
+msgstr "Параметр реестра"
+
+msgid "dconf key"
+msgstr "Ключ dconf"
+
+msgid "Path / key"
+msgstr "Путь / ключ"
+
+msgid "Value name"
+msgstr "Имя параметра"
+
+msgid "Log saved"
+msgstr "Журнал сохранён"
+
+msgid "CleanCore Hunter Mode"
+msgstr "Режим охоты CleanCore"
+
+msgid "Drag the target onto a program's window"
+msgstr "Перетащите мишень на окно программы"
+
+msgid "Show the target"
+msgstr "Показать мишень"
+
+msgid "\"{name}\" was changed outside CleanCore, so there is no original value to restore. Change it in system settings instead."
+msgstr "«{name}» изменён вне CleanCore, исходного значения для восстановления нет. Измените его в настройках системы."
+
+msgid "Applied: {}"
+msgstr "Применено: {}"
+
+msgid "Restored the original setting: {}"
+msgstr "Восстановлена исходная настройка: {}"
+
+msgid "Hidden Windows settings, switched on and off safely"
+msgstr "Скрытые настройки Windows, которые безопасно включать и выключать"
+
+msgid "Desktop settings, switched on and off safely"
+msgstr "Настройки рабочего стола, которые безопасно включать и выключать"
+
+msgid "Reset all ({ours})"
+msgstr "Сбросить всё ({ours})"
+
+msgid "Restore every setting changed by CleanCore"
+msgstr "Восстановить все настройки, изменённые CleanCore"
+
+msgid "Search tweaks"
+msgstr "Поиск настроек"
+
+msgid "Some changes need one more step: {}."
+msgstr "Некоторым изменениям нужен ещё один шаг: {}."
+
+msgid "Restart Explorer"
+msgstr "Перезапустить Проводник"
+
+msgid "File Explorer restarted"
+msgstr "Проводник перезапущен"
+
+msgid "No tweaks match"
+msgstr "Подходящих настроек нет"
+
+msgid "Try another word."
+msgstr "Попробуйте другое слово."
+
+msgid "Log out"
+msgstr "Выйти из системы"
+
+msgid "Restart PC"
+msgstr "Перезагрузить ПК"
+
+msgid "Caution"
+msgstr "Осторожно"
+
+msgid "Not available: {why}"
+msgstr "Недоступно: {why}"
+
+msgid "Restore original"
+msgstr "Восстановить исходное"
+
+msgid "Are you sure?"
+msgstr "Вы уверены?"
+
+msgid "Apply anyway"
+msgstr "Всё равно применить"
+
+msgid "Uninstall with CleanCore"
+msgstr "Удалить с CleanCore"
+
+msgid "Reading installed programs"
+msgstr "Чтение установленных программ"
+
+msgid "New"
+msgstr "Новое"
+
+msgid "Uninstalling {}"
+msgstr "Удаление {}"
+
+msgid "Removing"
+msgstr "Удаление"
+
+msgid "{} program(s)"
+msgstr "Программ: {}"
+
+msgid "Creating restore point and backup"
+msgstr "Создание точки восстановления и копии"
+
+msgid "Finding the program"
+msgstr "Поиск программы"
+
+msgid "\"{name}\" isn't in the list of installed programs: Forced Uninstall finds what it left."
+msgstr "«{name}» нет в списке установленных программ: принудительное удаление найдёт, что от неё осталось."
+
+msgid "Reading installed programs…"
+msgstr "Чтение установленных программ…"
+
+msgid "{} programs · {}"
+msgstr "Программ: {} · {}"
+
+msgid "Forced Uninstall"
+msgstr "Принудительное удаление"
+
+msgid "Remove a program that isn't listed or was partly removed"
+msgstr "Удалить программу, которой нет в списке или которая удалена не полностью"
+
+msgid "Record an installation so it can be undone exactly"
+msgstr "Записать установку, чтобы её можно было точно отменить"
+
+msgid "File (.txt .html .csv .json)"
+msgstr "Файл (.txt .html .csv .json)"
+
+msgid "Exported {} programs to {}"
+msgstr "Экспортировано программ: {} в {}"
+
+msgid "Finish uninstalling {}"
+msgstr "Завершить удаление {}"
+
+msgid "Its uninstaller asked for a restart"
+msgstr "Деинсталлятор запросил перезагрузку"
+
+msgid "The uninstall was interrupted"
+msgstr "Удаление было прервано"
+
+msgid "{why} ({}). Scan for the leftovers it left behind."
+msgstr "{why} ({}). Найдите оставшиеся после неё следы."
+
+msgid "Dismiss"
+msgstr "Скрыть"
+
+msgid "Scan for leftovers"
+msgstr "Найти остатки"
+
+msgid "Continuing the uninstall started {}."
+msgstr "Продолжение удаления, начатого {}."
+
+msgid "Windows Apps"
+msgstr "Приложения Windows"
+
+msgid "Flatpak & Snap"
+msgstr "Flatpak и Snap"
+
+msgid "All programs"
+msgstr "Все программы"
+
+msgid "Traced programs"
+msgstr "Отслеженные программы"
+
+msgid "Browser extensions"
+msgstr "Расширения браузеров"
+
+msgid "Logs database"
+msgstr "База журналов"
+
+msgid "Search programs"
+msgstr "Поиск программ"
+
+msgid "Search name, publisher or comment"
+msgstr "Поиск по имени, издателю или комментарию"
+
+msgid "All groups"
+msgstr "Все группы"
+
+msgid "New ({new_n})"
+msgstr "Новые ({new_n})"
+
+msgid "{}  Manage groups…"
+msgstr "{}  Управление группами…"
+
+msgid "Filters"
+msgstr "Фильтры"
+
+msgid "Show system components"
+msgstr "Показывать системные компоненты"
+
+msgid "Updates, runtimes and Windows parts."
+msgstr "Обновления, среды выполнения и компоненты Windows."
+
+msgid "Libraries and packages without an app."
+msgstr "Библиотеки и пакеты без приложения."
+
+msgid "Quick uninstall ({n_checked})"
+msgstr "Быстрое удаление ({n_checked})"
+
+msgid "Clear selection"
+msgstr "Снять выделение"
+
+msgid "Run its uninstaller, then scan for leftovers"
+msgstr "Запустить её деинсталлятор, затем найти остатки"
+
+msgid "Quick uninstall"
+msgstr "Быстрое удаление"
+
+msgid "Quick uninstall: silent uninstall and automatic leftover removal"
+msgstr "Быстрое удаление: тихое удаление и автоматическая очистка остатков"
+
+msgid "No programs match"
+msgstr "Подходящих программ нет"
+
+msgid "Try another search or group."
+msgstr "Попробуйте другой запрос или группу."
+
+msgid "Version"
+msgstr "Версия"
+
+msgid "Installed"
+msgstr "Установлено"
+
+msgid "Change/Repair is a Windows feature ({cmd})"
+msgstr "Изменение/восстановление доступно только в Windows ({cmd})"
+
+msgid "Added to group {g}"
+msgstr "Добавлено в группу {g}"
+
+msgid "{} wasn't running"
+msgstr "{} не был запущен"
+
+msgid "Stopped {}"
+msgstr "{} остановлен"
+
+msgid "Resetting the Microsoft Store…"
+msgstr "Сброс Microsoft Store…"
+
+msgid "{} removed for all users"
+msgstr "{} удалён для всех пользователей"
+
+msgid "{} was reset"
+msgstr "{} сброшен"
+
+msgid "Shown under the program name"
+msgstr "Показывается под названием программы"
+
+msgid "Comment saved"
+msgstr "Комментарий сохранён"
+
+msgid "Nothing uninstalled yet"
+msgstr "Пока ничего не удалено"
+
+msgid "Programs you remove with CleanCore are listed here."
+msgstr "Здесь появятся программы, удалённые с помощью CleanCore."
+
+msgid "{}  {}   ·  {}  ·  {} removed"
+msgstr "{}  {}   ·  {}  ·  удалено: {}"
+
+msgid "Backup {b} (restore it from Backups)"
+msgstr "Резервная копия {b} (восстановите её в «Резервных копиях»)"
+
+msgid "Copy as text"
+msgstr "Копировать как текст"
+
+msgid "Select an entry to see what was removed."
+msgstr "Выберите запись, чтобы увидеть, что было удалено."
+
+msgid "The uninstaller finished successfully ({})"
+msgstr "Деинсталлятор успешно завершился ({})"
+
+msgid "The uninstaller ended with exit code {c} ({})"
+msgstr "Деинсталлятор завершился с кодом {c} ({})"
+
+msgid "The uninstaller ended without an exit code ({})"
+msgstr "Деинсталлятор завершился без кода выхода ({})"
+
+msgid "No built-in uninstaller: CleanCore removes the program's files and leftovers itself."
+msgstr "Встроенного деинсталлятора нет: CleanCore сам удалит файлы и остатки программы."
+
+msgid "The built-in uninstaller could not run: {e}"
+msgstr "Не удалось запустить встроенный деинсталлятор: {e}"
+
+msgid "Finishing"
+msgstr "Завершение"
+
+msgid "{}: removed {} leftover(s)"
+msgstr "{}: удалено остатков: {}"
+
+msgid "Removing leftovers failed: {e}"
+msgstr "Не удалось удалить остатки: {e}"
+
+msgid "Undo exactly what the installation changed"
+msgstr "Точно отменить изменения установки"
+
+msgid "Run the program's uninstaller, then remove what it leaves behind"
+msgstr "Запустить деинсталлятор программы, затем удалить то, что она оставит"
+
+msgid "Running the program's uninstaller"
+msgstr "Запущен деинсталлятор программы"
+
+msgid "Follow its window. When it closes, CleanCore looks for what it left behind."
+msgstr "Следуйте его окну. Когда оно закроется, CleanCore найдёт оставшееся."
+
+msgid "It's done, continue"
+msgstr "Готово, продолжить"
+
+msgid "Continued before the uninstaller reported back."
+msgstr "Продолжено до ответа деинсталлятора."
+
+msgid "Use this if the uninstaller's window is gone but this screen is still waiting."
+msgstr "Нажмите, если окно деинсталлятора исчезло, а этот экран всё ещё ждёт."
+
+msgid "What happened so far"
+msgstr "Что произошло"
+
+msgid "How deep to look for leftovers"
+msgstr "Насколько глубоко искать остатки"
+
+msgid "The usual places in settings and on disk. Fastest."
+msgstr "Обычные места в настройках и на диске. Быстрее всего."
+
+msgid "Safe, plus everything that points to the program. Recommended."
+msgstr "Безопасный плюс всё, что указывает на программу. Рекомендуется."
+
+msgid "Moderate, plus a deep name search. Review the results."
+msgstr "Умеренный плюс глубокий поиск по имени. Проверьте результаты."
+
+msgid "Scan all user accounts"
+msgstr "Сканировать все учётные записи"
+
+msgid "Also look in other user accounts"
+msgstr "Искать и в других учётных записях"
+
+msgid "Scanning for leftovers"
+msgstr "Поиск остатков"
+
+msgid "{mode} scan · {secs:.0}s"
+msgstr "Сканирование: {mode} · {secs:.0} с"
+
+msgid "Backing up and removing {n} item(s)…"
+msgstr "Резервирование и удаление элементов: {n}…"
+
+msgid "Everything is backed up first · {secs:.0}s"
+msgstr "Сначала всё сохраняется · {secs:.0} с"
+
+msgid "{} is uninstalled"
+msgstr "{} удалена"
+
+msgid "Nothing was left behind."
+msgstr "Ничего не осталось."
+
+msgid "Most of it is gone; a few items could not be removed."
+msgstr "Почти всё удалено; несколько элементов удалить не удалось."
+
+msgid "Back to programs"
+msgstr "К списку программ"
+
+msgid "Leftovers removed"
+msgstr "Удалено остатков"
+
+msgid "Could not be removed"
+msgstr "Не удалось удалить"
+
+msgid "Backup (restore it in Backups)"
+msgstr "Резервная копия (восстановите в «Резервных копиях»)"
+
+msgid "{} item(s) could not be removed"
+msgstr "Не удалось удалить элементов: {}"
+
+msgid "…and {} more"
+msgstr "…и ещё {}"
+
+msgid "Advanced uninstall"
+msgstr "Расширенное удаление"
+
+msgid "Look for related data the log didn't capture, such as settings the program created later."
+msgstr "Найти связанные данные, которых нет в журнале, например настройки, созданные программой позже."
+
+msgid "Scan for related leftovers"
+msgstr "Найти связанные остатки"
+
+msgid "Saving"
+msgstr "Сохранение"
+
+msgid "Removing leftovers"
+msgstr "Удаление остатков"
+
+msgid "No leftovers found"
+msgstr "Остатков не найдено"
+
+msgid "The program removed itself cleanly."
+msgstr "Программа удалилась начисто."
+
+msgid "Finish"
+msgstr "Готово"
+
+msgid "Leftovers found"
+msgstr "Найдено остатков"
+
+msgid "Selected to delete"
+msgstr "Выбрано для удаления"
+
+msgid "Registry entries"
+msgstr "Записи реестра"
+
+msgid "Settings entries"
+msgstr "Записи настроек"
+
+msgid "Filter leftovers"
+msgstr "Фильтр остатков"
+
+msgid "Delete {n_sel} item(s)"
+msgstr "Удалить элементов: {n_sel}"
+
+msgid "Backed up before deleting"
+msgstr "Сохраняется перед удалением"
+
+msgid "Select the whole group"
+msgstr "Выбрать всю группу"
+
+msgid "Quick uninstall finished: {} program(s)"
+msgstr "Быстрое удаление завершено: программ: {}"
+
+msgid "Quick uninstall finished: {failed} of {} program(s) failed"
+msgstr "Быстрое удаление завершено: ошибок {failed} из {}"
+
+msgid "Quick Uninstall"
+msgstr "Быстрое удаление"
+
+msgid "{total} program(s) · silent uninstallers, then a {mode} leftover scan · leftovers removed automatically"
+msgstr "Программ: {total} · тихие деинсталляторы, затем поиск остатков ({mode}) · остатки удаляются автоматически"
+
+msgid "Preparing: restore point and backup…"
+msgstr "Подготовка: точка восстановления и копия…"
+
+msgid "All {total} program(s) uninstalled"
+msgstr "Удалены все программы: {total}"
+
+msgid "Finished with {failed} problem(s)"
+msgstr "Завершено с проблемами: {failed}"
+
+msgid "Uninstalling {} of {total}: {current}"
+msgstr "Удаление {} из {total}: {current}"
+
+msgid "{ok} done"
+msgstr "Готово: {ok}"
+
+msgid "{failed} failed"
+msgstr "Ошибок: {failed}"
+
+msgid "{waiting} waiting"
+msgstr "Ожидают: {waiting}"
+
+msgid "{removed} leftovers removed"
+msgstr "Удалено остатков: {removed}"
+
+msgid "Before starting"
+msgstr "Перед началом"
+
+msgid "Waiting its turn"
+msgstr "Ожидает очереди"
+
+msgid "Running the silent uninstaller, then scanning · {secs:.0}s"
+msgstr "Тихое удаление, затем сканирование · {secs:.0} с"
+
+msgid "{} leftover(s) removed"
+msgstr "Удалено остатков: {}"
+
+msgid "Leftover scan off in settings"
+msgstr "Поиск остатков выключен в настройках"
+
+msgid "{} could not be removed"
+msgstr "Не удалось удалить: {}"
+
+msgid "uninstaller exit code {c}"
+msgstr "код выхода деинсталлятора {c}"
+
+msgid "{}  Still appears to be installed: try a normal Uninstall"
+msgstr "{}  Похоже, всё ещё установлена: попробуйте обычное удаление"
+
+msgid "Waiting"
+msgstr "Ожидание"
+
+msgid "Uninstalling"
+msgstr "Удаление"
+
+msgid "Check"
+msgstr "Проверить"
+
+msgid "Removed"
+msgstr "Удалено"
+
+msgid "Failed"
+msgstr "Ошибка"
+
+msgid "For programs that aren't listed, were partly removed or have a broken uninstaller"
+msgstr "Для программ, которых нет в списке, удалённых не полностью или со сломанным деинсталлятором"
+
+msgid "Program name"
+msgstr "Название программы"
+
+msgid "Exact name; several separated by ;"
+msgstr "Точное имя; несколько — через ;"
+
+msgid "Folder or main file"
+msgstr "Папка или главный файл"
+
+msgid "Pick below or type; several separated by ;"
+msgstr "Выберите ниже или введите; несколько — через ;"
+
+msgid "Next"
+msgstr "Далее"
+
+msgid "Find uninstallers"
+msgstr "Найти деинсталляторы"
+
+msgid "Preparing"
+msgstr "Подготовка"
+
+msgid "Found {} program(s) with an uninstaller"
+msgstr "Найдено программ с деинсталлятором: {}"
+
+msgid "None: Next scans for leftovers by name and path."
+msgstr "Нет: «Далее» найдёт остатки по имени и пути."
+
+msgid "Don't run an uninstaller, only remove leftovers"
+msgstr "Не запускать деинсталлятор, только удалить остатки"
+
+msgid "Run the uninstaller of {} {}"
+msgstr "Запустить деинсталлятор {} {}"
+
+msgid "Found {} trace log(s)"
+msgstr "Найдено журналов: {}"
+
+msgid " from the logs database"
+msgstr " из базы журналов"
+
+msgid "Use the log \"{}\"{from} ({})"
+msgstr "Использовать журнал «{}»{from} ({})"
+
+msgid "Groups"
+msgstr "Группы"
+
+msgid "Programs are added to a group from their right-click menu."
+msgstr "Программы добавляются в группу через их контекстное меню."
+
+msgid "Delete group {g}"
+msgstr "Удалить группу {g}"
+
+msgid "Rename group {g}"
+msgstr "Переименовать группу {g}"
+
+msgid "Move down"
+msgstr "Вниз"
+
+msgid "Move up"
+msgstr "Вверх"
+
+msgid "Forced MSI Uninstall"
+msgstr "Принудительное удаление MSI"
+
+msgid "Uninstall for all users"
+msgstr "Удалить для всех пользователей"
+
+msgid "Reset the app"
+msgstr "Сбросить приложение"
+
+msgid "Run"
+msgstr "Запустить"
+
+msgid "Terminate"
+msgstr "Завершить"
+
+msgid "Reset Microsoft Store"
+msgstr "Сбросить Microsoft Store"
+
+msgid "Change / Repair"
+msgstr "Изменить / Восстановить"
+
+msgid "Install location"
+msgstr "Папка установки"
+
+msgid "Open registry key"
+msgstr "Открыть раздел реестра"
+
+msgid "About link"
+msgstr "Ссылка «О программе»"
+
+msgid "Help link"
+msgstr "Ссылка на справку"
+
+msgid "Update link"
+msgstr "Ссылка на обновление"
+
+msgid "Add / edit comment"
+msgstr "Добавить / изменить комментарий"
+
+msgid "{}  Add to group"
+msgstr "{}  Добавить в группу"
+
+msgid "Leftovers"
+msgstr "Остатки"
+
+msgid "Summary"
+msgstr "Итог"
+
+msgid "Traced installation · {items} recorded change(s)"
+msgstr "Записанная установка · изменений: {items}"
+
+msgid "Version {}"
+msgstr "Версия {}"
+
+msgid "Installed {}"
+msgstr "Установлено {}"
+
+msgid "Key"
+msgstr "Раздел"
+
+msgid "Value"
+msgstr "Параметр"
+
+msgid "Setting"
+msgstr "Настройка"
+
+msgid "Entry"
+msgstr "Запись"
+
+msgid "Package"
+msgstr "Пакет"
+
+msgid "up to date"
+msgstr "актуально"
+
+msgid "Checking for updates"
+msgstr "Проверка обновлений"
+
+msgid "CleanCore {} is available. Install it from Settings › Updates."
+msgstr "Доступна версия CleanCore {}. Установите её в Настройки › Обновления."
+
+msgid "Checking for updates failed: {e}"
+msgstr "Не удалось проверить обновления: {e}"
+
+msgid "The update was not installed: {e}"
+msgstr "Обновление не установлено: {e}"
+
+msgid "Updates"
+msgstr "Обновления"
+
+msgid "CleanCore {}"
+msgstr "CleanCore {}"
+
+msgid "Update installed. Restart CleanCore to use it."
+msgstr "Обновление установлено. Перезапустите CleanCore."
+
+msgid "Version {} is available."
+msgstr "Доступна версия {}."
+
+msgid "You have the latest version."
+msgstr "У вас последняя версия."
+
+msgid "Updates come from the project's GitHub releases."
+msgstr "Обновления берутся из релизов проекта на GitHub."
+
+msgid "Install {}"
+msgstr "Установить {}"
+
+msgid "Downloading and verifying the update"
+msgstr "Загрузка и проверка обновления"
+
+msgid "What's new"
+msgstr "Что нового"
+
+msgid "Check for updates"
+msgstr "Проверить обновления"
+
+msgid "Check for updates automatically"
+msgstr "Проверять обновления автоматически"
+
+msgid "Once a day, when CleanCore starts. Updates are installed only when you choose to."
+msgstr "Раз в день при запуске CleanCore. Обновления устанавливаются только по вашему выбору."
+
+msgid "{}  Every update is checked against the CleanCore release signature and its checksum before it is installed."
+msgstr "{}  Каждое обновление перед установкой проверяется по подписи релизов CleanCore и контрольной сумме."
+
+msgid "Pick or type a key/path to watch."
+msgstr "Выберите или введите раздел или путь для наблюдения."
+
+msgid "Resumed watching {path}"
+msgstr "Наблюдение за {path} возобновлено"
+
+msgid "Watching {path}"
+msgstr "Наблюдение за {path}"
+
+msgid "Find out exactly what a program changes in the registry"
+msgstr "Узнайте, что именно программа меняет в реестре"
+
+msgid "Find out exactly what a program changes in your settings and config files"
+msgstr "Узнайте, что именно программа меняет в настройках и файлах конфигурации"
+
+msgid "{}  Recording"
+msgstr "{}  Запись"
+
+msgid "Start recording"
+msgstr "Начать запись"
+
+msgid "Record changes while CleanCore is open"
+msgstr "Записывать изменения, пока CleanCore открыт"
+
+msgid "Start recorder at login"
+msgstr "Запускать запись при входе в систему"
+
+msgid "Keep recording in the background, even when CleanCore is closed"
+msgstr "Продолжать запись в фоне, даже когда CleanCore закрыт"
+
+msgid "Record in the background"
+msgstr "Записывать в фоне"
+
+msgid "Recorder started"
+msgstr "Запись запущена"
+
+msgid "The recorder now runs in the background from login"
+msgstr "Теперь запись идёт в фоне с момента входа"
+
+msgid "The recorder no longer runs in the background"
+msgstr "Запись в фоне отключена"
+
+msgid "Choose what to watch"
+msgstr "Выберите, за чем следить"
+
+msgid "Use a quick pick on the left"
+msgstr "Используйте быстрый выбор слева"
+
+msgid "The button at the top right"
+msgstr "Кнопка справа вверху"
+
+msgid "Use your program"
+msgstr "Работайте с программой"
+
+msgid "Its changes appear below"
+msgstr "Её изменения появятся ниже"
+
+msgid "not found"
+msgstr "не найдено"
+
+msgid "Resumed"
+msgstr "Возобновлено"
+
+msgid "Paused"
+msgstr "Приостановлено"
+
+msgid "Changes cleared"
+msgstr "Изменения очищены"
+
+msgid "Stopped watching {}"
+msgstr "Наблюдение за {} остановлено"
+
+msgid "What to watch"
+msgstr "За чем следить"
+
+msgid "Pick a place a program is likely to change, or choose your own."
+msgstr "Выберите место, которое программа, скорее всего, изменит, или своё."
+
+msgid "A registry key"
+msgstr "Раздел реестра"
+
+msgid "A folder, file or dconf: path"
+msgstr "Папка, файл или путь dconf:"
+
+msgid "Watch"
+msgstr "Следить"
+
+msgid "Also record reads (very noisy)"
+msgstr "Записывать и чтение (очень много записей)"
+
+msgid "Hide all locations"
+msgstr "Скрыть все расположения"
+
+msgid "Browse all locations"
+msgstr "Просмотреть все расположения"
+
+msgid "Reload"
+msgstr "Перезагрузить"
+
+msgid "Watching"
+msgstr "Под наблюдением"
+
+msgid "Export all"
+msgstr "Экспортировать всё"
+
+msgid "Folder (one CSV per watched place)"
+msgstr "Папка (по одному CSV на каждое место)"
+
+msgid "Exported {n} log(s) to {}"
+msgstr "Экспортировано журналов: {n} в {}"
+
+msgid "Nothing yet. Use a quick pick above to start."
+msgstr "Пока ничего. Начните с быстрого выбора выше."
+
+msgid "Stop watching"
+msgstr "Перестать следить"
+
+msgid "Clear its changes"
+msgstr "Очистить его изменения"
+
+msgid "Export its changes"
+msgstr "Экспортировать его изменения"
+
+msgid "File (.txt .csv .json)"
+msgstr "Файл (.txt .csv .json)"
+
+msgid "Pause watching"
+msgstr "Приостановить наблюдение"
+
+msgid "Resume watching"
+msgstr "Возобновить наблюдение"
+
+msgid "Changes"
+msgstr "Изменения"
+
+msgid "in {}"
+msgstr "в {}"
+
+msgid "Details"
+msgstr "Подробности"
+
+msgid "Every field, as a table"
+msgstr "Все поля в виде таблицы"
+
+msgid "Simple"
+msgstr "Просто"
+
+msgid "Filter changes"
+msgstr "Фильтр изменений"
+
+msgid "Nothing to show yet"
+msgstr "Пока нечего показать"
+
+msgid "Choose what to watch on the left, then start recording."
+msgstr "Выберите слева, за чем следить, и начните запись."
+
+msgid "Not recording"
+msgstr "Запись не идёт"
+
+msgid "Press Start recording at the top right, then use your program."
+msgstr "Нажмите «Начать запись» справа вверху и работайте с программой."
+
+msgid "Waiting for changes"
+msgstr "Ожидание изменений"
+
+msgid "Use your program now: install it, change a setting, close it. Changes appear here."
+msgstr "Поработайте с программой: установите её, измените настройку, закройте. Изменения появятся здесь."
+
+msgid "Highlight rows"
+msgstr "Подсветить строки"
+
+msgid "Time"
+msgstr "Время"
+
+msgid "Process"
+msgstr "Процесс"
+
+msgid "Operation"
+msgstr "Операция"
+
+msgid "New data"
+msgstr "Новые данные"
+
+msgid "Old data"
+msgstr "Старые данные"
+
+msgid "Clear log"
+msgstr "Очистить журнал"
+
+msgid "how it works"
+msgstr "как это работает"
+
+msgid "Your programs"
+msgstr "Ваши программы"
+
+msgid "Startup"
+msgstr "Автозагрузка"
+
+msgid "App settings"
+msgstr "Настройки приложений"
+
+msgid "App data"
+msgstr "Данные приложений"
+
+msgid "Desktop settings"
+msgstr "Настройки рабочего стола"
+
+msgid "Desktop settings (dconf)"
+msgstr "Настройки рабочего стола (dconf)"
+
+msgid "Desktop setting {rest}"
+msgstr "Настройка рабочего стола {rest}"
+
+msgid "was created"
+msgstr "создан"
+
+msgid "was deleted"
+msgstr "удалён"
+
+msgid "was renamed"
+msgstr "переименован"
+
+msgid "was added"
+msgstr "добавлен"
+
+msgid "was changed"
+msgstr "изменён"
+
+msgid "was removed"
+msgstr "удалён"
+
+msgid "was updated"
+msgstr "обновлён"
+
+msgid "was read"
+msgstr "прочитан"
+
+msgid "Open"
+msgstr "Открыть"
+
+msgid "Broken application launchers"
+msgstr "Неисправные ярлыки приложений"
+
+msgid "Desktop entries whose program no longer exists."
+msgstr "Ярлыки, программа которых больше не существует."
+
+msgid "Missing start-up items"
+msgstr "Отсутствующие элементы автозапуска"
+
+msgid "Autostart entries and systemd user services whose program no longer exists."
+msgstr "Элементы автозапуска и пользовательские службы systemd, программа которых больше не существует."
+
+msgid "Invalid file associations"
+msgstr "Недействительные ассоциации файлов"
+
+msgid "mimeapps.list entries that point to applications that are not installed."
+msgstr "Записи mimeapps.list, указывающие на неустановленные приложения."
+
+msgid "Recently used and history lists"
+msgstr "Списки недавних и история"
+
+msgid "Recent-file entries that point to files which no longer exist."
+msgstr "Записи недавних файлов, указывающие на уже несуществующие файлы."
+
+msgid "Broken symbolic links"
+msgstr "Неработающие символические ссылки"
+
+msgid "Symbolic links in your configuration and local folders whose target is gone."
+msgstr "Символические ссылки в папках настроек и локальных папках, цель которых исчезла."
+
+msgid "Empty folders"
+msgstr "Пустые папки"
+
+msgid "Empty folders left in configuration and data directories."
+msgstr "Пустые папки, оставшиеся в каталогах настроек и данных."
+
+msgid "Leftover application data"
+msgstr "Оставшиеся данные приложений"
+
+msgid "Configuration and data folders of applications that are no longer installed."
+msgstr "Папки настроек и данных приложений, которые больше не установлены."
+
+msgid "Contents of folders added to the include list."
+msgstr "Содержимое папок из списка включений."
+
+msgid "Missing Shared DLLs"
+msgstr "Отсутствующие общие DLL"
+
+msgid "Shared dynamic-link libraries that do not exist."
+msgstr "Общие библиотеки DLL, которых не существует."
+
+msgid "Unused Shared DLLs"
+msgstr "Неиспользуемые общие DLL"
+
+msgid "Shared DLLs whose usage counter is 0."
+msgstr "Общие DLL со счётчиком использования 0."
+
+msgid "Missing Windows start-up items"
+msgstr "Отсутствующие элементы автозапуска Windows"
+
+msgid "Programs set to start with Windows that no longer exist."
+msgstr "Программы, настроенные на запуск с Windows, которых больше нет."
+
+msgid "Wrong applications/paths"
+msgstr "Неверные приложения/пути"
+
+msgid "App Paths and Applications entries whose program is missing."
+msgstr "Записи App Paths и Applications, программа которых отсутствует."
+
+msgid "Incorrect uninstaller data"
+msgstr "Неверные данные удаления"
+
+msgid "Uninstall entries for programs that are gone, or empty entries."
+msgstr "Записи удаления исчезнувших программ или пустые записи."
+
+msgid "Invalid firewall rules"
+msgstr "Недействительные правила брандмауэра"
+
+msgid "Firewall rules for programs that no longer exist."
+msgstr "Правила брандмауэра для несуществующих программ."
+
+msgid "Invalid cache entries"
+msgstr "Недействительные записи кэша"
+
+msgid "MUI cache and compatibility-assistant entries for missing files."
+msgstr "Записи кэша MUI и помощника совместимости для отсутствующих файлов."
+
+msgid "Unavailable Windows services"
+msgstr "Недоступные службы Windows"
+
+msgid "Services whose executable or driver file is missing."
+msgstr "Службы, у которых отсутствует исполняемый файл или драйвер."
+
+msgid "Most recently used and history lists"
+msgstr "Списки недавно использованного и история"
+
+msgid "Recent files, typed paths, run history and dialog history."
+msgstr "Недавние файлы, введённые пути, история «Выполнить» и диалогов."
+
+msgid "Unused file extensions"
+msgstr "Неиспользуемые расширения файлов"
+
+msgid "Extensions not associated with any program."
+msgstr "Расширения, не связанные ни с одной программой."
+
+msgid "Corrupted context menu commands"
+msgstr "Повреждённые команды контекстного меню"
+
+msgid "Context menu commands and handlers that point to missing files or classes."
+msgstr "Команды и обработчики контекстного меню, указывающие на отсутствующие файлы или классы."
+
+msgid "COM and ActiveX missing components"
+msgstr "Отсутствующие компоненты COM и ActiveX"
+
+msgid "COM class and type-library registrations whose files are missing."
+msgstr "Регистрации классов COM и библиотек типов, файлы которых отсутствуют."
+
+msgid "Invalid MSI paths"
+msgstr "Недействительные пути MSI"
+
+msgid "Windows Installer folder references to folders that no longer exist."
+msgstr "Ссылки Windows Installer на несуществующие папки."
+
+msgid "Invalid system settings items"
+msgstr "Недействительные элементы системных настроек"
+
+msgid "Fonts, sound events and shell icons that point to missing files."
+msgstr "Шрифты, звуки и значки оболочки, указывающие на отсутствующие файлы."
+
+msgid "Invalid Class keys items"
+msgstr "Недействительные элементы разделов Class"
+
+msgid "File-type icons and class data that reference missing files."
+msgstr "Значки типов файлов и данные классов со ссылками на отсутствующие файлы."
+
+msgid "Empty keys"
+msgstr "Пустые разделы"
+
+msgid "Software-related keys that do not contain any data."
+msgstr "Разделы программ, не содержащие данных."
+
+msgid "Contents of keys added to the include list."
+msgstr "Содержимое разделов из списка включений."
+
+msgid "Win32"
+msgstr "Win32"
+
+msgid "Windows App"
+msgstr "Приложение Windows"
+
+msgid "Flatpak"
+msgstr "Flatpak"
+
+msgid "Snap"
+msgstr "Snap"
+
+msgid "AppImage"
+msgstr "AppImage"
+
+msgid "Manual"
+msgstr "Вручную"
+
+msgid "Leftovers removal"
+msgstr "Удаление остатков"
+
+msgid "Traced Uninstall"
+msgstr "Удаление по журналу"
+
+msgid "Registry RunOnce"
+msgstr "Registry RunOnce"
+
+msgid "Autostart"
+msgstr "Автозапуск"
+
+msgid "Service"
+msgstr "Служба"
+
+msgid "Scheduled task"
+msgstr "Запланированное задание"
+
+msgid "User service"
+msgstr "Пользовательская служба"
+
+msgid "Cron @reboot"
+msgstr "Cron @reboot"
+
+msgid "Login script"
+msgstr "Сценарий входа"
+
+msgid "Recently used files"
+msgstr "Недавние файлы"
+
+msgid "Thumbnail cache"
+msgstr "Кэш миниатюр"
+
+msgid "Small previews of pictures and videos"
+msgstr "Маленькие превью изображений и видео"
+
+msgid "Trash"
+msgstr "Корзина"
+
+msgid "Files you deleted"
+msgstr "Удалённые вами файлы"
+
+msgid "Clipboard"
+msgstr "Буфер обмена"
+
+msgid "What was last copied"
+msgstr "Последнее скопированное"
+
+msgid "Command history"
+msgstr "История команд"
+
+msgid "Commands typed in terminals (bash, zsh, fish, Python, less)"
+msgstr "Команды, введённые в терминалах (bash, zsh, fish, Python, less)"
+
+msgid "Application caches"
+msgstr "Кэш приложений"
+
+msgid "Crash reports"
+msgstr "Отчёты о сбоях"
+
+msgid "Reports left by programs that crashed"
+msgstr "Отчёты, оставленные упавшими программами"
+
+msgid "LibreOffice recent documents"
+msgstr "Недавние документы LibreOffice"
+
+msgid "The Start Center and File › Recent lists"
+msgstr "Стартовый центр и списки «Файл › Недавние»"
+
+msgid "HistoryInfo['PickList']"
+msgstr "HistoryInfo['PickList']"
+
+msgid "System Monitor"
+msgstr "Системный монитор"
+
+msgid "Running processes and resource use"
+msgstr "Запущенные процессы и использование ресурсов"
+
+msgid "Processes in a terminal"
+msgstr "Процессы в терминале"
+
+msgid "System settings"
+msgstr "Параметры системы"
+
+msgid "System Settings"
+msgstr "Параметры системы"
+
+msgid "dconf Editor"
+msgstr "Редактор dconf"
+
+msgid "Low-level desktop settings"
+msgstr "Низкоуровневые настройки рабочего стола"
+
+msgid "Logs"
+msgstr "Журналы"
+
+msgid "System journal"
+msgstr "Системный журнал"
+
+msgid "Journal (errors)"
+msgstr "Журнал (ошибки)"
+
+msgid "Errors since the last start"
+msgstr "Ошибки с последнего запуска"
+
+msgid "journalctl -b -p err --no-pager"
+msgstr "journalctl -b -p err --no-pager"
+
+msgid "Services"
+msgstr "Службы"
+
+msgid "Running system services"
+msgstr "Запущенные системные службы"
+
+msgid "systemctl list-units --type=service --no-pager"
+msgstr "systemctl list-units --type=service --no-pager"
+
+msgid "System Information"
+msgstr "Сведения о системе"
+
+msgid "Hardware and benchmarks"
+msgstr "Оборудование и тесты производительности"
+
+msgid "Hardware summary"
+msgstr "Сводка оборудования"
+
+msgid "CPU, memory, disks"
+msgstr "Процессор, память, диски"
+
+msgid "inxi -Fxz"
+msgstr "inxi -Fxz"
+
+msgid "Partitions, SMART data, formatting"
+msgstr "Разделы, данные SMART, форматирование"
+
+msgid "Disk Usage Analyzer"
+msgstr "Анализатор использования диска"
+
+msgid "What fills the disk"
+msgstr "Чем занят диск"
+
+msgid "Filelight"
+msgstr "Filelight"
+
+msgid "Partition editor"
+msgstr "Редактор разделов"
+
+msgid "Free space"
+msgstr "Свободное место"
+
+msgid "Free space on every drive"
+msgstr "Свободное место на каждом диске"
+
+msgid "df -h"
+msgstr "df -h"
+
+msgid "Network Connections"
+msgstr "Сетевые подключения"
+
+msgid "Edit network connections"
+msgstr "Изменить сетевые подключения"
+
+msgid "Network information"
+msgstr "Сведения о сети"
+
+msgid "Addresses and routes"
+msgstr "Адреса и маршруты"
+
+msgid "ip -c a"
+msgstr "ip -c a"
+
+msgid "Ping"
+msgstr "Ping"
+
+msgid "Check the internet connection"
+msgstr "Проверить подключение к интернету"
+
+msgid "ping -c 4 1.1.1.1"
+msgstr "ping -c 4 1.1.1.1"
+
+msgid "Trace route"
+msgstr "Трассировка маршрута"
+
+msgid "The path to a server"
+msgstr "Путь до сервера"
+
+msgid "tracepath -n 1.1.1.1"
+msgstr "tracepath -n 1.1.1.1"
+
+msgid "Firewall"
+msgstr "Брандмауэр"
+
+msgid "Firewall rules"
+msgstr "Правила брандмауэра"
+
+msgid "Passwords and Keys"
+msgstr "Пароли и ключи"
+
+msgid "Stored passwords and keys"
+msgstr "Сохранённые пароли и ключи"
+
+msgid "Software Updater"
+msgstr "Обновление приложений"
+
+msgid "Install updates"
+msgstr "Установить обновления"
+
+msgid "Software & Updates"
+msgstr "Программы и обновления"
+
+msgid "Repositories and drivers"
+msgstr "Репозитории и драйверы"
+
+msgid "Install and remove apps"
+msgstr "Установка и удаление приложений"
+
+msgid "Discover"
+msgstr "Discover"
+
+msgid "Terminal"
+msgstr "Терминал"
+
+msgid "A command line"
+msgstr "Командная строка"
+
+msgid "no terminal emulator found"
+msgstr "эмулятор терминала не найден"
+
+msgid "all drives, no UI"
+msgstr "все диски, без интерфейса"
+
+msgid "the clipboard is in use by another program"
+msgstr "буфер обмена занят другой программой"
+
+msgid "the clipboard could not be cleared"
+msgstr "не удалось очистить буфер обмена"
+
+msgid "Windows"
+msgstr "Windows"
+
+msgid "SystemRoot"
+msgstr "SystemRoot"
+
+msgid "ProgramData"
+msgstr "ProgramData"
+
+msgid "Recent documents"
+msgstr "Недавние документы"
+
+msgid "Recent files and jump lists"
+msgstr "Недавние файлы и списки переходов"
+
+msgid "RecentDocs"
+msgstr "RecentDocs"
+
+msgid "Run history"
+msgstr "История «Выполнить»"
+
+msgid "Commands typed in Win+R"
+msgstr "Команды, введённые в Win+R"
+
+msgid "RunMRU"
+msgstr "RunMRU"
+
+msgid "Typed paths"
+msgstr "Введённые пути"
+
+msgid "Addresses typed in File Explorer"
+msgstr "Адреса, введённые в Проводнике"
+
+msgid "TypedPaths"
+msgstr "TypedPaths"
+
+msgid "File Explorer search history"
+msgstr "История поиска Проводника"
+
+msgid "Searches typed in File Explorer"
+msgstr "Поисковые запросы в Проводнике"
+
+msgid "WordWheelQuery"
+msgstr "WordWheelQuery"
+
+msgid "Recent files and folders in Open and Save dialogs"
+msgstr "Недавние файлы и папки в окнах открытия и сохранения"
+
+msgid "Temporary files"
+msgstr "Временные файлы"
+
+msgid "Your temp folder and the Windows temp folder (files in use are skipped)"
+msgstr "Ваша папка временных файлов и папка Windows (используемые файлы пропускаются)"
+
+msgid "Crash dumps and error reports"
+msgstr "Дампы сбоев и отчёты об ошибках"
+
+msgid "Memory dumps and Windows Error Reporting files"
+msgstr "Дампы памяти и файлы отчётов об ошибках Windows"
+
+msgid "Recycle Bin"
+msgstr "Корзина"
+
+msgid "File MRU"
+msgstr "File MRU"
+
+msgid "Place MRU"
+msgstr "Place MRU"
+
+msgid "User MRU"
+msgstr "User MRU"
+
+msgid "Microsoft Office recent documents"
+msgstr "Недавние документы Microsoft Office"
+
+msgid "Recent files and places in Word, Excel, PowerPoint and the others"
+msgstr "Недавние файлы и места в Word, Excel, PowerPoint и других"
+
+msgid "Hardware, drivers and software summary"
+msgstr "Сводка оборудования, драйверов и программ"
+
+msgid "Task Manager"
+msgstr "Диспетчер задач"
+
+msgid "Running programs and performance"
+msgstr "Запущенные программы и производительность"
+
+msgid "Resource Monitor"
+msgstr "Монитор ресурсов"
+
+msgid "CPU, memory, disk and network use per process"
+msgstr "Использование ЦП, памяти, диска и сети по процессам"
+
+msgid "Performance Monitor"
+msgstr "Системный монитор производительности"
+
+msgid "Performance counters and reports"
+msgstr "Счётчики производительности и отчёты"
+
+msgid "Event Viewer"
+msgstr "Просмотр событий"
+
+msgid "System and application logs"
+msgstr "Журналы системы и приложений"
+
+msgid "Start, stop and configure services"
+msgstr "Запуск, остановка и настройка служб"
+
+msgid "Device Manager"
+msgstr "Диспетчер устройств"
+
+msgid "Hardware and drivers"
+msgstr "Оборудование и драйверы"
+
+msgid "Computer Management"
+msgstr "Управление компьютером"
+
+msgid "Users, shares, disks, services"
+msgstr "Пользователи, общие папки, диски, службы"
+
+msgid "System Configuration"
+msgstr "Конфигурация системы"
+
+msgid "Boot options and startup"
+msgstr "Параметры загрузки и автозагрузки"
+
+msgid "Registry Editor"
+msgstr "Редактор реестра"
+
+msgid "Edit the registry"
+msgstr "Изменить реестр"
+
+msgid "Group Policy Editor"
+msgstr "Редактор групповой политики"
+
+msgid "Local policies (Pro editions)"
+msgstr "Локальные политики (выпуски Pro)"
+
+msgid "DirectX Diagnostic Tool"
+msgstr "Средство диагностики DirectX"
+
+msgid "Graphics and sound details"
+msgstr "Сведения о графике и звуке"
+
+msgid "System Restore"
+msgstr "Восстановление системы"
+
+msgid "Go back to a restore point"
+msgstr "Вернуться к точке восстановления"
+
+msgid "Memory Diagnostic"
+msgstr "Диагностика памяти"
+
+msgid "Test the RAM at the next restart"
+msgstr "Проверить ОЗУ при следующей перезагрузке"
+
+msgid "System File Checker"
+msgstr "Проверка системных файлов"
+
+msgid "Find and repair damaged Windows files"
+msgstr "Найти и исправить повреждённые файлы Windows"
+
+msgid "Disk Cleanup"
+msgstr "Очистка диска"
+
+msgid "Windows' own cleanup of system files"
+msgstr "Встроенная очистка системных файлов Windows"
+
+msgid "Optimize Drives"
+msgstr "Оптимизация дисков"
+
+msgid "Disk Management"
+msgstr "Управление дисками"
+
+msgid "Partitions and volumes"
+msgstr "Разделы и тома"
+
+msgid "Check Disk"
+msgstr "Проверка диска"
+
+msgid "Check the system drive for errors (read-only)"
+msgstr "Проверить системный диск на ошибки (только чтение)"
+
+msgid "Network adapters"
+msgstr "Сетевые адаптеры"
+
+msgid "IP addresses, DNS and gateways"
+msgstr "IP-адреса, DNS и шлюзы"
+
+msgid "ping 1.1.1.1"
+msgstr "ping 1.1.1.1"
+
+msgid "tracert 1.1.1.1"
+msgstr "tracert 1.1.1.1"
+
+msgid "Windows Firewall"
+msgstr "Брандмауэр Windows"
+
+msgid "Windows Security"
+msgstr "Безопасность Windows"
+
+msgid "Antivirus and protection"
+msgstr "Антивирус и защита"
+
+msgid "Programs and Features"
+msgstr "Программы и компоненты"
+
+msgid "Windows' own uninstaller list"
+msgstr "Встроенный список удаления программ Windows"
+
+msgid "Windows Features"
+msgstr "Компоненты Windows"
+
+msgid "Turn Windows features on or off"
+msgstr "Включение и отключение компонентов Windows"
+
+msgid "Windows Update"
+msgstr "Windows Update"
+
+msgid "Power Options"
+msgstr "Электропитание"
+
+msgid "Power plans"
+msgstr "Схемы электропитания"
+
+msgid "Remote Desktop"
+msgstr "Удалённый рабочий стол"
+
+msgid "Connect to another PC"
+msgstr "Подключиться к другому ПК"
+
+msgid "Command Prompt"
+msgstr "Командная строка"
+
+msgid "Games and promoted apps"
+msgstr "Игры и продвигаемые приложения"
+
+msgid "Microsoft extras"
+msgstr "Дополнения Microsoft"
+
+msgid "AI and Copilot"
+msgstr "ИИ и Copilot"
+
+msgid "Xbox"
+msgstr "Xbox"
+
+msgid "Communication"
+msgstr "Общение"
+
+msgid "Candy Crush and other King games"
+msgstr "Candy Crush и другие игры King"
+
+msgid "Pushed by Windows"
+msgstr "Навязано Windows"
+
+msgid "Microsoft.MicrosoftSolitaireCollection"
+msgstr "Microsoft.MicrosoftSolitaireCollection"
+
+msgid "Solitaire Collection"
+msgstr "Solitaire Collection"
+
+msgid "Ads unless you pay"
+msgstr "Реклама, если не платить"
+
+msgid "SpotifyAB.SpotifyMusic"
+msgstr "SpotifyAB.SpotifyMusic"
+
+msgid "Spotify"
+msgstr "Spotify"
+
+msgid "Disney+"
+msgstr "Disney+"
+
+msgid "Facebook.*"
+msgstr "Facebook.*"
+
+msgid "BytedancePte.Ltd.TikTok"
+msgstr "BytedancePte.Ltd.TikTok"
+
+msgid "TikTok"
+msgstr "TikTok"
+
+msgid "AmazonVideo.PrimeVideo"
+msgstr "AmazonVideo.PrimeVideo"
+
+msgid "Prime Video"
+msgstr "Prime Video"
+
+msgid "LinkedIn"
+msgstr "LinkedIn"
+
+msgid "Clipchamp.Clipchamp"
+msgstr "Clipchamp.Clipchamp"
+
+msgid "Clipchamp"
+msgstr "Clipchamp"
+
+msgid "Video editor, online account needed"
+msgstr "Видеоредактор, нужна учётная запись"
+
+msgid "Microsoft.BingNews"
+msgstr "Microsoft.BingNews"
+
+msgid "News"
+msgstr "Новости"
+
+msgid "Microsoft.BingWeather"
+msgstr "Microsoft.BingWeather"
+
+msgid "Weather"
+msgstr "Погода"
+
+msgid "Microsoft.BingSearch"
+msgstr "Microsoft.BingSearch"
+
+msgid "Bing Search"
+msgstr "Поиск Bing"
+
+msgid "Microsoft.BingFinance"
+msgstr "Microsoft.BingFinance"
+
+msgid "Money"
+msgstr "Финансы"
+
+msgid "Microsoft.BingSports"
+msgstr "Microsoft.BingSports"
+
+msgid "Sports"
+msgstr "Спорт"
+
+msgid "Microsoft.GetHelp"
+msgstr "Microsoft.GetHelp"
+
+msgid "Get Help"
+msgstr "Техническая поддержка"
+
+msgid "Microsoft.Getstarted"
+msgstr "Microsoft.Getstarted"
+
+msgid "Tips"
+msgstr "Советы"
+
+msgid "Microsoft.MicrosoftOfficeHub"
+msgstr "Microsoft.MicrosoftOfficeHub"
+
+msgid "Microsoft 365 (Office) hub"
+msgstr "Центр Microsoft 365 (Office)"
+
+msgid "An ad for Microsoft 365, not Office itself"
+msgstr "Реклама Microsoft 365, а не сам Office"
+
+msgid "Microsoft.WindowsFeedbackHub"
+msgstr "Microsoft.WindowsFeedbackHub"
+
+msgid "Feedback Hub"
+msgstr "Центр отзывов"
+
+msgid "Microsoft.WindowsMaps"
+msgstr "Microsoft.WindowsMaps"
+
+msgid "Maps"
+msgstr "Карты"
+
+msgid "Microsoft.People"
+msgstr "Microsoft.People"
+
+msgid "People"
+msgstr "Люди"
+
+msgid "Microsoft.MixedReality.Portal"
+msgstr "Microsoft.MixedReality.Portal"
+
+msgid "Mixed Reality Portal"
+msgstr "Портал смешанной реальности"
+
+msgid "Microsoft.Microsoft3DViewer"
+msgstr "Microsoft.Microsoft3DViewer"
+
+msgid "3D Viewer"
+msgstr "Средство 3D-просмотра"
+
+msgid "Microsoft.Print3D"
+msgstr "Microsoft.Print3D"
+
+msgid "Print 3D"
+msgstr "3D-печать"
+
+msgid "Microsoft.PowerAutomateDesktop"
+msgstr "Microsoft.PowerAutomateDesktop"
+
+msgid "Power Automate"
+msgstr "Power Automate"
+
+msgid "Microsoft.Todos"
+msgstr "Microsoft.Todos"
+
+msgid "Microsoft To Do"
+msgstr "Microsoft To Do"
+
+msgid "Microsoft.MicrosoftStickyNotes"
+msgstr "Microsoft.MicrosoftStickyNotes"
+
+msgid "Sticky Notes"
+msgstr "Записки"
+
+msgid "Useful for many"
+msgstr "Полезно многим"
+
+msgid "Microsoft.Windows.DevHome"
+msgstr "Microsoft.Windows.DevHome"
+
+msgid "Dev Home"
+msgstr "Dev Home"
+
+msgid "Retired by Microsoft"
+msgstr "Больше не поддерживается Microsoft"
+
+msgid "Microsoft.Wallet"
+msgstr "Microsoft.Wallet"
+
+msgid "Wallet"
+msgstr "Кошелёк"
+
+msgid "Microsoft.ZuneVideo"
+msgstr "Microsoft.ZuneVideo"
+
+msgid "Movies & TV"
+msgstr "Кино и ТВ"
+
+msgid "Microsoft.Office.Sway"
+msgstr "Microsoft.Office.Sway"
+
+msgid "Sway"
+msgstr "Sway"
+
+msgid "Microsoft.OneConnect"
+msgstr "Microsoft.OneConnect"
+
+msgid "Mobile Plans"
+msgstr "Мобильные тарифы"
+
+msgid "Microsoft.Copilot"
+msgstr "Microsoft.Copilot"
+
+msgid "Copilot"
+msgstr "Copilot"
+
+msgid "Microsoft.Windows.Ai.Copilot.Provider"
+msgstr "Microsoft.Windows.Ai.Copilot.Provider"
+
+msgid "Copilot provider"
+msgstr "Поставщик Copilot"
+
+msgid "Microsoft.549981C3F5F10"
+msgstr "Microsoft.549981C3F5F10"
+
+msgid "Cortana"
+msgstr "Cortana"
+
+msgid "Microsoft.MicrosoftJournal"
+msgstr "Microsoft.MicrosoftJournal"
+
+msgid "Journal"
+msgstr "Журнал"
+
+msgid "Microsoft.XboxApp"
+msgstr "Microsoft.XboxApp"
+
+msgid "Xbox Console Companion"
+msgstr "Xbox Console Companion"
+
+msgid "Old Xbox app"
+msgstr "Старое приложение Xbox"
+
+msgid "Microsoft.GamingApp"
+msgstr "Microsoft.GamingApp"
+
+msgid "Needed for Game Pass"
+msgstr "Нужно для Game Pass"
+
+msgid "Microsoft.XboxGamingOverlay"
+msgstr "Microsoft.XboxGamingOverlay"
+
+msgid "Xbox Game Bar"
+msgstr "Xbox Game Bar"
+
+msgid "Win+G overlay, screen recording"
+msgstr "Оверлей Win+G, запись экрана"
+
+msgid "Microsoft.XboxGameOverlay"
+msgstr "Microsoft.XboxGameOverlay"
+
+msgid "Xbox Game Overlay"
+msgstr "Xbox Game Overlay"
+
+msgid "Microsoft.XboxSpeechToTextOverlay"
+msgstr "Microsoft.XboxSpeechToTextOverlay"
+
+msgid "Xbox speech-to-text"
+msgstr "Преобразование речи в текст Xbox"
+
+msgid "Microsoft.Xbox.TCUI"
+msgstr "Microsoft.Xbox.TCUI"
+
+msgid "Xbox TCUI"
+msgstr "Xbox TCUI"
+
+msgid "Some games need it to sign in"
+msgstr "Нужно некоторым играм для входа"
+
+msgid "MicrosoftTeams"
+msgstr "MicrosoftTeams"
+
+msgid "Teams (personal)"
+msgstr "Teams (личный)"
+
+msgid "Not Teams for work or school"
+msgstr "Не Teams для работы или учёбы"
+
+msgid "Teams"
+msgstr "Teams"
+
+msgid "Needed for work or school accounts"
+msgstr "Нужно для рабочих и учебных учётных записей"
+
+msgid "Microsoft.SkypeApp"
+msgstr "Microsoft.SkypeApp"
+
+msgid "Skype"
+msgstr "Skype"
+
+msgid "Microsoft.YourPhone"
+msgstr "Microsoft.YourPhone"
+
+msgid "Phone Link"
+msgstr "Связь с телефоном"
+
+msgid "Connects an Android phone or iPhone"
+msgstr "Подключает телефон Android или iPhone"
+
+msgid "Microsoft.OutlookForWindows"
+msgstr "Microsoft.OutlookForWindows"
+
+msgid "Outlook (new)"
+msgstr "Outlook (новый)"
+
+msgid "Microsoft.windowscommunicationsapps"
+msgstr "Microsoft.windowscommunicationsapps"
+
+msgid "Mail and Calendar"
+msgstr "Почта и Календарь"
+
+msgid "Retired; replaced by the new Outlook"
+msgstr "Больше не поддерживается; заменено новым Outlook"
+
+msgid "Microsoft.Messaging"
+msgstr "Microsoft.Messaging"
+
+msgid "Messaging"
+msgstr "Сообщения"
+
+msgid "DisplayName"
+msgstr "DisplayName"
+
+msgid "PackageName"
+msgstr "PackageName"
+
+msgid "the Microsoft slop cleaner is for Windows"
+msgstr "очистка Microsoft предназначена для Windows"
+
+msgid " -AllUsers"
+msgstr " -AllUsers"
+
+msgid "Google Chrome › Work"
+msgstr "Google Chrome › Work"
+
+msgid "Cache"
+msgstr "Кэш"
+
+msgid "Downloaded copies of web pages and images"
+msgstr "Загруженные копии веб-страниц и изображений"
+
+msgid "Browsing and download history"
+msgstr "История просмотров и загрузок"
+
+msgid "Visited pages and downloads; bookmarks are kept"
+msgstr "Посещённые страницы и загрузки; закладки сохраняются"
+
+msgid "DELETE FROM moz_historyvisits"
+msgstr "DELETE FROM moz_historyvisits"
+
+msgid "DELETE FROM moz_inputhistory"
+msgstr "DELETE FROM moz_inputhistory"
+
+msgid "DELETE FROM moz_annos"
+msgstr "DELETE FROM moz_annos"
+
+msgid "DELETE FROM moz_places WHERE id NOT IN (SELECT fk FROM moz_bookmarks WHERE fk IS NOT NULL)"
+msgstr "DELETE FROM moz_places WHERE id NOT IN (SELECT fk FROM moz_bookmarks WHERE fk IS NOT NULL)"
+
+msgid "UPDATE moz_places SET visit_count = 0, last_visit_date = NULL, frecency = 0"
+msgstr "UPDATE moz_places SET visit_count = 0, last_visit_date = NULL, frecency = 0"
+
+msgid "Form and search history"
+msgstr "История форм и поиска"
+
+msgid "Text typed into forms and the search bar"
+msgstr "Текст, введённый в формы и строку поиска"
+
+msgid "Cookies"
+msgstr "Файлы cookie"
+
+msgid "Signs you out of websites"
+msgstr "Выход с сайтов"
+
+msgid "Session"
+msgstr "Сеанс"
+
+msgid "Open tabs restored at the next start"
+msgstr "Открытые вкладки, восстанавливаемые при следующем запуске"
+
+msgid "Visited pages, downloads, top sites and typed addresses"
+msgstr "Посещённые страницы, загрузки, популярные сайты и введённые адреса"
+
+msgid "History-journal"
+msgstr "History-journal"
+
+msgid "Visited Links"
+msgstr "Visited Links"
+
+msgid "Top Sites"
+msgstr "Top Sites"
+
+msgid "Top Sites-journal"
+msgstr "Top Sites-journal"
+
+msgid "Shortcuts"
+msgstr "Shortcuts"
+
+msgid "Shortcuts-journal"
+msgstr "Shortcuts-journal"
+
+msgid "Network Action Predictor"
+msgstr "Network Action Predictor"
+
+msgid "Network Action Predictor-journal"
+msgstr "Network Action Predictor-journal"
+
+msgid "Form data"
+msgstr "Данные форм"
+
+msgid "Text typed into forms (autofill)"
+msgstr "Текст, введённый в формы (автозаполнение)"
+
+msgid "Color scheme"
+msgstr "Цветовая схема"
+
+msgid "Light or dark style for apps that follow the system preference."
+msgstr "Светлый или тёмный стиль для приложений, следующих системной настройке."
+
+msgid "Prefer dark"
+msgstr "Предпочитать тёмную"
+
+msgid "Prefer light"
+msgstr "Предпочитать светлую"
+
+msgid "Disable animations"
+msgstr "Отключить анимацию"
+
+msgid "Windows, menus and the overview open instantly."
+msgstr "Окна, меню и обзор открываются мгновенно."
+
+msgid "Show battery percentage"
+msgstr "Показывать заряд батареи в процентах"
+
+msgid "Title bar buttons"
+msgstr "Кнопки заголовка окна"
+
+msgid "Which window buttons are shown and on which side."
+msgstr "Какие кнопки окна показываются и с какой стороны."
+
+msgid "Minimize, maximize, close on the right"
+msgstr "Свернуть, развернуть, закрыть справа"
+
+msgid "Close, minimize, maximize on the left"
+msgstr "Закрыть, свернуть, развернуть слева"
+
+msgid "Open folders in list view"
+msgstr "Открывать папки в виде списка"
+
+msgid "The Files app shows details (size, type, date) by default."
+msgstr "Приложение «Файлы» по умолчанию показывает подробности (размер, тип, дату)."
+
+msgid "Add \"Delete Permanently\" to the Files menu"
+msgstr "Добавить «Удалить навсегда» в меню «Файлов»"
+
+msgid "Add \"Create Link\" to the Files menu"
+msgstr "Добавить «Создать ссылку» в меню «Файлов»"
+
+msgid "Open items with a single click"
+msgstr "Открывать одним щелчком"
+
+msgid "Search inside subfolders"
+msgstr "Искать во вложенных папках"
+
+msgid "Where the Files app searches subfolders."
+msgstr "Где «Файлы» ищут во вложенных папках."
+
+msgid "Everywhere, including network locations"
+msgstr "Везде, включая сетевые расположения"
+
+msgid "Never (faster)"
+msgstr "Никогда (быстрее)"
+
+msgid "Show hidden files in file dialogs"
+msgstr "Показывать скрытые файлы в диалогах"
+
+msgid "Show seconds in the top-bar clock"
+msgstr "Показывать секунды в часах верхней панели"
+
+msgid "Show the weekday in the top-bar clock"
+msgstr "Показывать день недели в часах верхней панели"
+
+msgid "Disable the hot corner"
+msgstr "Отключить активный угол"
+
+msgid "Moving the pointer to the top-left corner no longer opens the overview."
+msgstr "Перемещение указателя в левый верхний угол больше не открывает обзор."
+
+msgid "Open new windows in the center"
+msgstr "Открывать новые окна по центру"
+
+msgid "Snap windows to screen edges"
+msgstr "Прилипание окон к краям экрана"
+
+msgid "Dock position"
+msgstr "Положение дока"
+
+msgid "Ubuntu Dock / Dash to Dock placement."
+msgstr "Расположение Ubuntu Dock / Dash to Dock."
+
+msgid "Left"
+msgstr "Слева"
+
+msgid "Bottom"
+msgstr "Снизу"
+
+msgid "Right"
+msgstr "Справа"
+
+msgid "Locate the pointer with Ctrl"
+msgstr "Находить указатель клавишей Ctrl"
+
+msgid "Pressing Ctrl highlights where the mouse pointer is."
+msgstr "Нажатие Ctrl подсвечивает, где находится указатель мыши."
+
+msgid "Never autorun software on inserted media"
+msgstr "Никогда не запускать программы с подключённых носителей"
+
+msgid "Reduces the risk of malware starting from USB drives and discs."
+msgstr "Снижает риск запуска вредоносных программ с USB-накопителей и дисков."
+
+msgid "Hide notifications on the lock screen"
+msgstr "Скрывать уведомления на экране блокировки"
+
+msgid "Don't remember recently used files"
+msgstr "Не запоминать недавние файлы"
+
+msgid "Empty trash and temp files older than 30 days"
+msgstr "Очищать корзину и временные файлы старше 30 дней"
+
+msgid "Don't send problem reports or usage statistics"
+msgstr "Не отправлять отчёты о проблемах и статистику"
+
+msgid "Block camera access"
+msgstr "Запретить доступ к камере"
+
+msgid "Apps using the GNOME camera portal can't use the camera."
+msgstr "Приложения, использующие портал камеры GNOME, не смогут использовать камеру."
+
+msgid "Tap to click on the touchpad"
+msgstr "Касание для щелчка на тачпаде"
+
+msgid "Natural scrolling for the mouse"
+msgstr "Естественная прокрутка мышью"
+
+msgid "Turn Num Lock on at login"
+msgstr "Включать Num Lock при входе"
+
+msgid "Disable event sounds"
+msgstr "Отключить звуки событий"
+
+msgid "Enable Night Light"
+msgstr "Включить ночной свет"
+
+msgid "Never suspend automatically when plugged in"
+msgstr "Никогда не засыпать автоматически при питании от сети"
+
+msgid "Power button action"
+msgstr "Действие кнопки питания"
+
+msgid "Suspend"
+msgstr "Ждущий режим"
+
+msgid "Show the power-off dialog"
+msgstr "Показать окно выключения"
+
+msgid "Do nothing"
+msgstr "Ничего не делать"
+
+msgid "Don't download software updates automatically"
+msgstr "Не загружать обновления автоматически"
+
+msgid "GNOME Software stops downloading updates in the background."
+msgstr "GNOME Software перестаёт загружать обновления в фоне."
+
+msgid "Disable external search providers"
+msgstr "Отключить внешние поставщики поиска"
+
+msgid "Overview search only shows local results."
+msgstr "Поиск в обзоре показывает только локальные результаты."
+
+msgid "Use a fixed number of workspaces"
+msgstr "Фиксированное число рабочих столов"
+
+msgid "Show taskbar thumbnails faster"
+msgstr "Быстрее показывать эскизы на панели задач"
+
+msgid "Hovering over a taskbar button shows window thumbnails with almost no delay."
+msgstr "При наведении на кнопку панели задач эскизы окон появляются почти без задержки."
+
+msgid "Show Peek at desktop faster"
+msgstr "Быстрее показывать просмотр рабочего стола"
+
+msgid "Shorter delay before the desktop preview appears when hovering the corner of the taskbar."
+msgstr "Меньшая задержка перед предпросмотром рабочего стола при наведении на угол панели задач."
+
+msgid "Speed up Windows menus"
+msgstr "Ускорить меню Windows"
+
+msgid "Minimizes the delay before a submenu opens (default 400 ms)."
+msgstr "Сокращает задержку перед открытием подменю (по умолчанию 400 мс)."
+
+msgid "Use the Windows 10 context menu"
+msgstr "Использовать контекстное меню Windows 10"
+
+msgid "Opens the full classic right-click menu directly instead of the Windows 11 compact menu."
+msgstr "Сразу открывает полное классическое контекстное меню вместо компактного меню Windows 11."
+
+msgid "Disable ads and suggested apps"
+msgstr "Отключить рекламу и предлагаемые приложения"
+
+msgid "Stops Start suggestions, silently installed promoted apps, tips and sync-provider ads in File Explorer."
+msgstr "Отключает предложения в «Пуске», тихо устанавливаемые приложения, советы и рекламу синхронизации в Проводнике."
+
+msgid "Disable blur on the sign-in screen"
+msgstr "Отключить размытие на экране входа"
+
+msgid "Shows the sign-in background image sharp instead of blurred."
+msgstr "Фон экрана входа отображается чётким, а не размытым."
+
+msgid "Use the classic battery indicator"
+msgstr "Классический индикатор батареи"
+
+msgid "Replaces the modern battery flyout with the Windows 7 style one."
+msgstr "Заменяет современное окно батареи окном в стиле Windows 7."
+
+msgid "Show estimated battery time remaining"
+msgstr "Показывать оставшееся время работы батареи"
+
+msgid "Shows remaining battery time in the battery tooltip and flyout."
+msgstr "Показывает оставшееся время в подсказке и окне батареи."
+
+msgid "Disable Widgets"
+msgstr "Отключить виджеты"
+
+msgid "Removes the Widgets board and its taskbar button."
+msgstr "Удаляет панель виджетов и её кнопку на панели задач."
+
+msgid "Remove the shortcut arrow overlay"
+msgstr "Убрать стрелку с ярлыков"
+
+msgid "Hides the small arrow drawn on shortcut icons."
+msgstr "Скрывает маленькую стрелку на значках ярлыков."
+
+msgid "Disable Peek at desktop"
+msgstr "Отключить просмотр рабочего стола"
+
+msgid "Turns off the desktop preview when hovering the end of the taskbar."
+msgstr "Отключает предпросмотр рабочего стола при наведении на край панели задач."
+
+msgid "Use the classic volume control"
+msgstr "Классический регулятор громкости"
+
+msgid "Shows the Windows 7 style volume slider from the tray icon."
+msgstr "Показывает регулятор громкости в стиле Windows 7 из значка в трее."
+
+msgid "Disable \"You have new apps that can open this type of file\""
+msgstr "Отключить «У вас есть новые приложения, которые могут открывать этот тип файлов»"
+
+msgid "Stops the prompt that appears after installing an app that handles a file type."
+msgstr "Убирает запрос после установки приложения, работающего с типом файлов."
+
+msgid "Add \"Command Prompt as Administrator\" to the folder context menu"
+msgstr "Добавить «Командная строка (администратор)» в контекстное меню папок"
+
+msgid "Right-click the background of a folder to open an elevated command prompt there."
+msgstr "Правый щелчок по фону папки открывает в ней командную строку с правами администратора."
+
+msgid "Check \"Do this for all current items\" by default"
+msgstr "Отмечать «Выполнить для всех текущих элементов» по умолчанию"
+
+msgid "Pre-checks the box in the file conflict dialog."
+msgstr "Заранее отмечает флажок в окне конфликта файлов."
+
+msgid "Enable inline AutoComplete"
+msgstr "Включить встроенное автозаполнение"
+
+msgid "Completes typed text in the address bar, Run dialog and Open/Save dialogs."
+msgstr "Дополняет текст в адресной строке, окне «Выполнить» и диалогах открытия/сохранения."
+
+msgid "Open File Explorer to"
+msgstr "Открывать Проводник в"
+
+msgid "Choose the folder a new File Explorer window starts in."
+msgstr "Выберите папку, в которой открывается новое окно Проводника."
+
+msgid "This PC"
+msgstr "Этот компьютер"
+
+msgid "Quick access / Home"
+msgstr "Быстрый доступ / Главная"
+
+msgid "Downloads"
+msgstr "Загрузки"
+
+msgid "Disable pop-up descriptions"
+msgstr "Отключить всплывающие описания"
+
+msgid "Hides the tooltip shown when hovering over files and folders."
+msgstr "Скрывает подсказку при наведении на файлы и папки."
+
+msgid "Show drive letters first"
+msgstr "Показывать букву диска первой"
+
+msgid "Shows \"(C:) Local Disk\" instead of \"Local Disk (C:)\"."
+msgstr "Показывает «(C:) Локальный диск» вместо «Локальный диск (C:)»."
+
+msgid "Show full details in file operation dialogs"
+msgstr "Показывать подробности в окнах операций с файлами"
+
+msgid "Copy, move and delete dialogs open with \"More details\" expanded."
+msgstr "Окна копирования, перемещения и удаления открываются с развёрнутыми «Подробностями»."
+
+msgid "Add Rotate left/right to the image context menu"
+msgstr "Добавить поворот влево/вправо в контекстное меню изображений"
+
+msgid "Adds rotate commands for JPEG, PNG and BMP files."
+msgstr "Добавляет команды поворота для файлов JPEG, PNG и BMP."
+
+msgid "Use the classic File Explorer ribbon"
+msgstr "Использовать классическую ленту Проводника"
+
+msgid "Restores the Windows 10 tabbed ribbon. Works on early Windows 11 releases only."
+msgstr "Возвращает ленту с вкладками Windows 10. Работает только в ранних версиях Windows 11."
+
+msgid "Don't add \"- Shortcut\" to new shortcuts"
+msgstr "Не добавлять «- ярлык» к новым ярлыкам"
+
+msgid "New shortcuts keep the original name."
+msgstr "Новые ярлыки сохраняют исходное имя."
+
+msgid "Speed up mouse hover"
+msgstr "Ускорить реакцию на наведение"
+
+msgid "Tooltips and hover previews appear faster (default 400 ms)."
+msgstr "Подсказки и превью при наведении появляются быстрее (по умолчанию 400 мс)."
+
+msgid "Increase the icon cache"
+msgstr "Увеличить кэш значков"
+
+msgid "Lets Windows keep more icons in memory, so folders and the desktop load faster."
+msgstr "Windows хранит больше значков в памяти, и папки с рабочим столом загружаются быстрее."
+
+msgid "Disable Bing in taskbar search"
+msgstr "Отключить Bing в поиске на панели задач"
+
+msgid "Search on the taskbar only looks at your PC, not the web."
+msgstr "Поиск на панели задач ищет только на компьютере, не в интернете."
+
+msgid "Add \"End task\" to the taskbar menu"
+msgstr "Добавить «Завершить задачу» в меню панели задач"
+
+msgid "Right-click a taskbar button to force-close the app."
+msgstr "Правый щелчок по кнопке на панели задач принудительно закрывает приложение."
+
+msgid "Align taskbar buttons to the left"
+msgstr "Выровнять кнопки панели задач по левому краю"
+
+msgid "Moves the centered Windows 11 taskbar icons to the left."
+msgstr "Перемещает центрированные значки панели задач Windows 11 влево."
+
+msgid "Show seconds in the taskbar clock"
+msgstr "Показывать секунды в часах панели задач"
+
+msgid "Show the Windows version on the desktop"
+msgstr "Показывать версию Windows на рабочем столе"
+
+msgid "Draws the Windows edition and build in the lower-right corner."
+msgstr "Показывает выпуск и сборку Windows в правом нижнем углу."
+
+msgid "Disable AutoPlay on all drives"
+msgstr "Отключить автозапуск на всех дисках"
+
+msgid "Close unresponsive apps automatically"
+msgstr "Автоматически закрывать зависшие приложения"
+
+msgid "Ends hung apps faster and skips the \"This app is preventing shutdown\" screen."
+msgstr "Быстрее завершает зависшие приложения и пропускает экран «Это приложение препятствует завершению работы»."
+
+msgid "Never end apps automatically at shutdown"
+msgstr "Никогда не закрывать приложения автоматически при выключении"
+
+msgid "Windows waits for you instead of closing apps with unsaved work."
+msgstr "Windows ждёт вас, а не закрывает приложения с несохранённой работой."
+
+msgid "Disable the security warning on downloaded files"
+msgstr "Отключить предупреждение безопасности для загруженных файлов"
+
+msgid "Downloaded files are no longer marked as coming from the internet."
+msgstr "Загруженные файлы больше не помечаются как полученные из интернета."
+
+msgid "Add \"Take Ownership\" to the context menu"
+msgstr "Добавить «Стать владельцем» в контекстное меню"
+
+msgid "Right-click a file or folder to give Administrators full access to it."
+msgstr "Правый щелчок по файлу или папке даёт администраторам полный доступ."
+
+msgid "Disable SmartScreen"
+msgstr "Отключить SmartScreen"
+
+msgid "Turns off SmartScreen checks for apps and files."
+msgstr "Отключает проверки SmartScreen для приложений и файлов."
+
+msgid "Show details on blue screens"
+msgstr "Показывать подробности на синем экране"
+
+msgid "Shows the classic stop-error details instead of the sad face."
+msgstr "Показывает классические сведения об ошибке вместо грустного смайлика."
+
+msgid "Let elevated apps see mapped network drives"
+msgstr "Разрешить приложениям с правами администратора видеть сетевые диски"
+
+msgid "Apps run as administrator can access drives mapped by your normal session."
+msgstr "Приложения, запущенные от администратора, видят диски, подключённые в обычном сеансе."
+
+msgid "Disable User Account Control (UAC)"
+msgstr "Отключить контроль учётных записей (UAC)"
+
+msgid "Every app runs with full administrator rights and no prompt."
+msgstr "Все приложения работают с полными правами администратора без запроса."
+
+msgid "Block potentially unwanted apps (adware) in Defender"
+msgstr "Блокировать потенциально нежелательные приложения (рекламное ПО) в Defender"
+
+msgid "Make USB storage read-only"
+msgstr "Сделать USB-накопители только для чтения"
+
+msgid "Nothing can be written to USB mass storage devices."
+msgstr "На USB-накопители ничего нельзя записать."
+
+msgid "Notify when the camera turns on or off"
+msgstr "Уведомлять о включении и выключении камеры"
+
+msgid "Save a crash dump when a program crashes"
+msgstr "Сохранять дамп при сбое программы"
+
+msgid "Writes full dumps to %LOCALAPPDATA%\\CrashDumps (keeps the last 10)."
+msgstr "Записывает полные дампы в %LOCALAPPDATA%\\CrashDumps (хранит 10 последних)."
+
+msgid "Allow Windows 11 upgrade on unsupported hardware"
+msgstr "Разрешить обновление до Windows 11 на неподдерживаемом оборудовании"
+
+msgid "Lets the Windows 11 installer skip the TPM 2.0 and CPU checks."
+msgstr "Позволяет установщику Windows 11 пропустить проверки TPM 2.0 и процессора."
+
+msgid "Enable Windows Photo Viewer"
+msgstr "Включить средство просмотра фотографий Windows"
+
+msgid "Makes the classic Photo Viewer available in \"Open with\" for common image types."
+msgstr "Делает классическое средство просмотра доступным в «Открыть с помощью» для обычных изображений."
+
+msgid "Disable background apps"
+msgstr "Отключить фоновые приложения"
+
+msgid "Store apps can't run in the background, which saves power."
+msgstr "Приложения Store не работают в фоне, что экономит энергию."
+
+msgid "Add classic User Accounts to Control Panel"
+msgstr "Добавить классические учётные записи пользователей в панель управления"
+
+msgid "Adds an entry that opens the advanced user accounts dialog (netplwiz)."
+msgstr "Добавляет пункт, открывающий расширенное окно учётных записей (netplwiz)."
+
+msgid "Use classic Alt+Tab"
+msgstr "Классический Alt+Tab"
+
+msgid "Small icons instead of large window previews."
+msgstr "Маленькие значки вместо больших превью окон."
+
+msgid "Disable driver updates via Windows Update"
+msgstr "Отключить обновление драйверов через Windows Update"
+
+msgid "Disable automatic Store app updates"
+msgstr "Отключить автообновление приложений Store"
+
+msgid "Disable power throttling"
+msgstr "Отключить ограничение мощности"
+
+msgid "Background apps keep full CPU speed. Uses more battery."
+msgstr "Фоновые приложения сохраняют полную скорость ЦП. Расходует больше заряда."
+
+msgid "Minimize telemetry and data collection"
+msgstr "Свести к минимуму телеметрию и сбор данных"
+
+msgid "Sets diagnostic data to the lowest level the edition allows."
+msgstr "Устанавливает самый низкий уровень диагностических данных, разрешённый выпуском."
+
+msgid "Stop Microsoft Edge running in the background"
+msgstr "Запретить работу Microsoft Edge в фоне"
+
+msgid "Clear the page file at shutdown"
+msgstr "Очищать файл подкачки при выключении"
+
+msgid "Wipes virtual memory on shutdown for privacy. Shutdown takes longer."
+msgstr "Очищает виртуальную память при выключении ради приватности. Выключение длится дольше."
+
+msgid "Turn off Copilot"
+msgstr "Отключить Copilot"
+
+msgid "Turns off Windows Copilot and hides its taskbar button (policy for this user and the PC)."
+msgstr "Отключает Windows Copilot и скрывает его кнопку на панели задач (политика для пользователя и ПК)."
+
+msgid "Turn off Recall snapshots"
+msgstr "Отключить снимки Recall"
+
+msgid "Stops Recall from saving screenshots of your activity (Copilot+ PCs)."
+msgstr "Не даёт Recall сохранять снимки вашей активности (ПК Copilot+)."
+
+msgid "Turn off Click to Do"
+msgstr "Отключить Click to Do"
+
+msgid "Disables the AI actions overlay (Win + click) on Copilot+ PCs."
+msgstr "Отключает оверлей действий ИИ (Win + щелчок) на ПК Copilot+."
+
+msgid "Turn off AI features in Paint and Notepad"
+msgstr "Отключить функции ИИ в Paint и Блокноте"
+
+msgid "Hides Cocreator, Image Creator and generative erase in Paint, and Copilot rewrite in Notepad."
+msgstr "Скрывает Cocreator, Image Creator и генеративное удаление в Paint, а также переписывание Copilot в Блокноте."
+
+msgid "Turn off the advertising ID"
+msgstr "Отключить рекламный идентификатор"
+
+msgid "Apps can no longer use your advertising ID to show personalized ads."
+msgstr "Приложения больше не смогут использовать ваш рекламный идентификатор для персональной рекламы."
+
+msgid "Turn off tips and ads on the lock screen"
+msgstr "Отключить советы и рекламу на экране блокировки"
+
+msgid "Removes \"fun facts, tips, tricks and more\" and promoted content from the lock screen."
+msgstr "Убирает «интересные факты, советы и прочее» и рекламный контент с экрана блокировки."
+
+msgid "Turn off Start menu recommendations"
+msgstr "Отключить рекомендации в меню «Пуск»"
+
+msgid "Stops promoted apps and \"recommended\" tips in the Start menu."
+msgstr "Убирает продвигаемые приложения и «рекомендуемые» советы из меню «Пуск»."
+
+msgid "Turn off Copilot and shopping in Microsoft Edge"
+msgstr "Отключить Copilot и покупки в Microsoft Edge"
+
+msgid "Hides Edge's sidebar (Copilot), shopping assistant and Microsoft Rewards."
+msgstr "Скрывает боковую панель Edge (Copilot), помощника покупок и Microsoft Rewards."
+

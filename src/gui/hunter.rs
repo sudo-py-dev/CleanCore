@@ -5,6 +5,7 @@
 use super::style::{self, icon, Palette};
 use super::{take, Cx, Pending};
 use crate::hunter::{self, Target};
+use crate::i18n::tr;
 use crate::platform::Proc;
 use eframe::egui::{self, RichText, Ui, Vec2};
 use std::time::{Duration, Instant};
@@ -57,7 +58,7 @@ impl HunterView {
 
     fn identify_pid(&mut self, ctx: &egui::Context, cx: &Cx, pid: u32) {
         let s = cx.settings.clone();
-        self.finding = Some(Pending::spawn(ctx, "Identifying", move || hunter::identify(pid, &s).map(Some).map_err(|e| format!("{e:#}"))));
+        self.finding = Some(Pending::spawn(ctx, "Identifying", move || hunter::identify(pid, &s).map(Some).map_err(|e| crate::tf!("{e:#}"))));
     }
 
     pub fn active(&self) -> bool {
@@ -121,7 +122,7 @@ impl HunterView {
                     if r.drag_started() {
                         ui.ctx().send_viewport_cmd(egui::ViewportCommand::StartDrag);
                     }
-                    r.on_hover_text("Move");
+                    r.on_hover_text(tr("Move"));
                     hide = style::icon_button(ui, icon::APP_WINDOW, "Open CleanCore").clicked();
                     close = style::icon_button(ui, icon::X, "Exit Hunter Mode").clicked() || close;
                 });
@@ -137,7 +138,7 @@ impl HunterView {
                     if r.drag_stopped() {
                         hunted = true;
                     }
-                    ui.label(RichText::new("Drag me").size(11.0).color(p.muted));
+                    ui.label(RichText::new(tr("Drag me")).size(11.0).color(p.muted));
                 });
             });
         });
@@ -161,7 +162,7 @@ impl HunterView {
 
     fn identify_pointer(&mut self, ctx: &egui::Context, cx: &Cx) {
         let s = cx.settings.clone();
-        self.finding = Some(Pending::spawn(ctx, "Identifying the window under the pointer", move || hunter::identify_at_pointer(&s).map_err(|e| format!("{e:#}"))));
+        self.finding = Some(Pending::spawn(ctx, "Identifying the window under the pointer", move || hunter::identify_at_pointer(&s).map_err(|e| crate::tf!("{e:#}"))));
     }
 
     pub fn main(&mut self, ui: &mut Ui, cx: &mut Cx) -> Option<HunterAction> {
@@ -173,7 +174,7 @@ impl HunterView {
         if let Some(r) = take(&mut self.finding) {
             match r {
                 Ok(Some(t)) => self.target = Some(t),
-                Ok(None) => cx.error("No other program's window is under the pointer."),
+                Ok(None) => cx.error(tr("No other program's window is under the pointer.")),
                 Err(e) => cx.error(e),
             }
         }
@@ -190,7 +191,7 @@ impl HunterView {
 
         let mut float = false;
         style::page_header(ui, "Hunter Mode", "Point at any window to find out which program it belongs to", |ui| {
-            float = style::primary(ui, icon::CROSSHAIR, "Floating target").on_hover_text("Hide CleanCore and keep a small target on top of every window").clicked();
+            float = style::primary(ui, icon::CROSSHAIR, "Floating target").on_hover_text(tr("Hide CleanCore and keep a small target on top of every window")).clicked();
             if style::icon_button(ui, icon::REFRESH, "Refresh running programs").clicked() {
                 self.loaded = false;
             }
@@ -218,17 +219,17 @@ impl HunterView {
                         self.identify_pointer(ui.ctx(), cx);
                     }
                     ui.vertical(|ui| {
-                        ui.label(style::strong("Drag the target onto a window").size(15.0));
-                        ui.label(style::muted(ui, "Hold the mouse button on the crosshair, move it over another program's window and let go.").size(12.5));
+                        ui.label(style::strong(tr("Drag the target onto a window")).size(15.0));
+                        ui.label(style::muted(ui, tr("Hold the mouse button on the crosshair, move it over another program's window and let go.")).size(12.5));
                         ui.add_space(4.0);
                         ui.horizontal(|ui| {
                             match self.countdown {
                                 Some(end) => {
                                     let left = end.saturating_duration_since(Instant::now()).as_secs_f32().ceil();
-                                    ui.label(RichText::new(format!("{}  Move the pointer over the window… {left:.0}", icon::CLOCK)).color(p.accent));
+                                    ui.label(RichText::new(crate::tf!("{}  Move the pointer over the window… {left:.0}", icon::CLOCK)).color(p.accent));
                                 }
                                 None => {
-                                    if style::secondary(ui, icon::CLOCK, "Pick in 3 seconds").on_hover_text("For windows you can't drag onto").clicked() {
+                                    if style::secondary(ui, icon::CLOCK, "Pick in 3 seconds").on_hover_text(tr("For windows you can't drag onto")).clicked() {
                                         self.countdown = Some(Instant::now() + Duration::from_secs(3));
                                     }
                                 }
@@ -238,20 +239,22 @@ impl HunterView {
                             }
                         });
                         if cfg!(not(windows)) && std::env::var_os("WAYLAND_DISPLAY").is_some() {
-                            ui.label(RichText::new(format!("{}  Wayland doesn't allow reading other windows; pick from the list below.", icon::INFO)).size(12.0).color(p.warning));
+                            ui.label(
+                                RichText::new(crate::tf!("{}  Wayland doesn't allow reading other windows; pick from the list below.", icon::INFO)).size(12.0).color(p.warning),
+                            );
                         }
                     });
                 });
             });
             ui.add_space(10.0);
             ui.horizontal(|ui| {
-                ui.label(style::strong("Running programs"));
+                ui.label(style::strong(tr("Running programs")));
                 ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
                     style::search_field(ui, &mut self.search, "Filter", 140.0);
                     if style::toggle(ui, &mut self.all, "Show all processes").changed() {
                         self.loaded = false;
                     }
-                    ui.label(style::muted(ui, "All processes"));
+                    ui.label(style::muted(ui, tr("All processes")));
                 });
             });
             ui.add_space(4.0);
@@ -291,17 +294,17 @@ impl HunterView {
                 let mut close = false;
                 egui::Modal::new(egui::Id::unique("hunter-kill-delete")).show(ui.ctx(), |ui| {
                     ui.set_width(440.0);
-                    ui.label(style::strong(format!("Close {} and delete its program file?", t.name)).size(18.0));
+                    ui.label(style::strong(crate::tf!("Close {} and delete its program file?", t.name)).size(18.0));
                     ui.add_space(6.0);
                     ui.label(RichText::new(t.exe.clone().unwrap_or_default()).monospace().size(12.0));
                     ui.add_space(6.0);
-                    ui.label(style::muted(ui, "Unsaved work in it is lost. The file is backed up and can be restored from Backups."));
+                    ui.label(style::muted(ui, tr("Unsaved work in it is lost. The file is backed up and can be restored from Backups.")));
                     ui.add_space(12.0);
                     ui.horizontal(|ui| {
                         if style::danger(ui, icon::TRASH, "Close and delete").clicked() {
                             match hunter::kill_and_delete(&t, cx.settings) {
-                                Ok(id) => cx.info(format!("Deleted {}. Backup: {id}", t.name)),
-                                Err(e) => cx.error(format!("{e:#}")),
+                                Ok(id) => cx.info(crate::tf!("Deleted {}. Backup: {id}", t.name)),
+                                Err(e) => cx.error(crate::tf!("{e:#}")),
                             }
                             self.target = None;
                             self.loaded = false;
@@ -330,7 +333,7 @@ impl HunterView {
                 ui.vertical(|ui| {
                     ui.label(style::strong(t.program.as_ref().map(|x| x.name.clone()).unwrap_or(t.name.clone())).size(18.0));
                     let n = t.pids.len();
-                    ui.label(style::muted(ui, format!("{} · {n} process{}", t.name, if n == 1 { "" } else { "es" })).size(12.5));
+                    ui.label(style::muted(ui, crate::tf!("{} · {n} process(es)", t.name)).size(12.5));
                 });
             });
             ui.add_space(10.0);
@@ -350,14 +353,14 @@ impl HunterView {
                 row(ui, "Publisher", pb);
             }
             match &t.program {
-                Some(pr) => row(ui, "Installed as", &format!("{} {} ({})", pr.name, pr.version, pr.kind.label())),
+                Some(pr) => row(ui, "Installed as", &crate::tf!("{} {} ({})", pr.name, pr.version, pr.kind.label())),
                 None => row(ui, "Installed as", "Not in the list of installed programs"),
             }
             if t.autoruns.is_empty() {
                 row(ui, "Autorun", "Doesn't start automatically");
             }
             for a in &t.autoruns {
-                row(ui, "Autorun", &format!("{} — {}{}", a.name, a.source.label(), if a.enabled { "" } else { " (disabled)" }));
+                row(ui, "Autorun", &crate::tf!("{} — {}{}", a.name, a.source.label(), if a.enabled { "" } else { tr(" (disabled)") }));
             }
         });
         ui.add_space(10.0);
@@ -365,7 +368,7 @@ impl HunterView {
             style::section_title(ui, "Actions");
             ui.add_space(4.0);
             ui.horizontal(|ui| {
-                if style::primary(ui, icon::TRASH, "Uninstall").on_hover_text("Uninstall the program and scan for leftovers").clicked() {
+                if style::primary(ui, icon::TRASH, "Uninstall").on_hover_text(tr("Uninstall the program and scan for leftovers")).clicked() {
                     action = Some(match &t.program {
                         Some(pr) => HunterAction::Uninstall(Box::new(pr.clone())),
                         None => HunterAction::Forced {
@@ -376,18 +379,18 @@ impl HunterView {
                 }
                 let can_stop = t.autoruns.iter().any(|a| a.enabled);
                 ui.add_enabled_ui(can_stop, |ui| {
-                    if style::secondary(ui, icon::PAUSE, "Stop autorun").on_hover_text("Don't start this program automatically").clicked() {
+                    if style::secondary(ui, icon::PAUSE, "Stop autorun").on_hover_text(tr("Don't start this program automatically")).clicked() {
                         match hunter::stop_autostart(t) {
-                            Ok(n) => cx.info(format!("Disabled {n} startup entr{}", if n == 1 { "y" } else { "ies" })),
-                            Err(e) => cx.error(format!("{e:#}")),
+                            Ok(n) => cx.info(crate::tf!("Disabled {n} startup entry(ies)")),
+                            Err(e) => cx.error(crate::tf!("{e:#}")),
                         }
                         self.identify_pid(ui.ctx(), cx, t.pid);
                     }
                 });
-                if style::secondary(ui, icon::X_CIRCLE, "Kill process").on_hover_text("Force-close it; unsaved work is lost").clicked() {
+                if style::secondary(ui, icon::X_CIRCLE, "Kill process").on_hover_text(tr("Force-close it; unsaved work is lost")).clicked() {
                     match hunter::kill(t) {
-                        Ok(n) => cx.info(format!("Stopped {n} process{}", if n == 1 { "" } else { "es" })),
-                        Err(e) => cx.error(format!("{e:#}")),
+                        Ok(n) => cx.info(crate::tf!("Stopped {n} process(es)")),
+                        Err(e) => cx.error(crate::tf!("{e:#}")),
                     }
                     self.target = None;
                     self.loaded = false;
@@ -401,13 +404,13 @@ impl HunterView {
                     }
                     if style::secondary(ui, icon::FOLDER_OPEN, "Open folder").clicked() {
                         if let Err(e) = hunter::open_folder(t) {
-                            cx.error(format!("{e:#}"));
+                            cx.error(crate::tf!("{e:#}"));
                         }
                     }
                 });
-                if style::secondary(ui, icon::GLOBE, "Search online").on_hover_text("Look the program up on the web").clicked() {
+                if style::secondary(ui, icon::GLOBE, "Search online").on_hover_text(tr("Look the program up on the web")).clicked() {
                     if let Err(e) = hunter::search_online(t) {
-                        cx.error(format!("{e:#}"));
+                        cx.error(crate::tf!("{e:#}"));
                     }
                 }
             });

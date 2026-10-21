@@ -29,6 +29,15 @@
   <img src="docs/uninstall.png" width="820" alt="Leftovers after an uninstall">
 </p>
 
+## Languages
+
+English, עברית, Español, Français, Deutsch, Русский and Українська. CleanCore follows your
+desktop's language, or pick one in Settings › Appearance.
+
+Translations are standard gettext catalogs in [`locales/`](locales). To add or fix one, edit
+the `.po` file with any PO editor (Poedit, Weblate, Lokalize). After changing interface text
+in the code, run `python3 locales/extract.py` to update the catalogs.
+
 ## Build
 
 You need a recent [Rust toolchain](https://rustup.rs).

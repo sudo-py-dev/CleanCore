@@ -41,7 +41,7 @@ impl Updates {
     fn start_check(&mut self, ctx: &egui::Context, manual: bool) {
         self.manual = manual;
         self.up_to_date = false;
-        self.check = Some(Pending::spawn(ctx, "Checking for updates", || update::check().map_err(|e| format!("{e:#}"))));
+        self.check = Some(Pending::spawn(ctx, "Checking for updates", || update::check().map_err(|e| crate::tf!("{e:#}"))));
     }
 
     /// Collect finished background work; called every frame, whatever page is open.
@@ -49,12 +49,12 @@ impl Updates {
         if let Some(r) = take(&mut self.check) {
             match r {
                 Ok(Some(rel)) => {
-                    cx.info(format!("CleanCore {} is available. Install it from Settings › Updates.", rel.version));
+                    cx.info(crate::tf!("CleanCore {} is available. Install it from Settings › Updates.", rel.version));
                     self.available = Some(rel);
                 }
                 Ok(None) => self.up_to_date = true,
                 // A failed automatic check (offline, say) is not worth an error.
-                Err(e) if self.manual => cx.error(format!("Checking for updates failed: {e}")),
+                Err(e) if self.manual => cx.error(crate::tf!("Checking for updates failed: {e}")),
                 Err(_) => {}
             }
         }
@@ -64,7 +64,7 @@ impl Updates {
                     self.installed = true;
                     cx.info(msg);
                 }
-                Err(e) => cx.error(format!("The update was not installed: {e}")),
+                Err(e) => cx.error(crate::tf!("The update was not installed: {e}")),
             }
         }
     }
@@ -76,11 +76,11 @@ impl Updates {
             style::section_title(ui, "Updates");
             ui.horizontal(|ui| {
                 ui.vertical(|ui| {
-                    ui.label(format!("CleanCore {}", update::CURRENT));
+                    ui.label(crate::tf!("CleanCore {}", update::CURRENT));
                     let (text, col) = if self.installed {
                         ("Update installed. Restart CleanCore to use it.".to_string(), p.success)
                     } else if let Some(r) = &self.available {
-                        (format!("Version {} is available.", r.version), p.accent)
+                        (crate::tf!("Version {} is available.", r.version), p.accent)
                     } else if self.up_to_date {
                         ("You have the latest version.".to_string(), p.success)
                     } else {
@@ -91,16 +91,16 @@ impl Updates {
                 ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
                     let busy = self.check.is_some() || self.install.is_some();
                     if let (Some(r), false) = (&self.available, self.installed) {
-                        if ui.add_enabled_ui(!busy, |ui| style::primary(ui, icon::DOWNLOAD, &format!("Install {}", r.version))).inner.clicked() {
+                        if ui.add_enabled_ui(!busy, |ui| style::primary(ui, icon::DOWNLOAD, &crate::tf!("Install {}", r.version))).inner.clicked() {
                             let r = r.clone();
                             self.install = Some(Pending::spawn(ui.ctx(), "Downloading and verifying the update", move || {
-                                let file = update::download(&r).map_err(|e| format!("{e:#}"))?;
-                                update::install(&file).map_err(|e| format!("{e:#}"))
+                                let file = update::download(&r).map_err(|e| crate::tf!("{e:#}"))?;
+                                update::install(&file).map_err(|e| crate::tf!("{e:#}"))
                             }));
                         }
                         if !r.url.is_empty() && style::ghost(ui, icon::LINK, "What's new").clicked() {
                             if let Err(e) = crate::platform::open_folder(std::path::Path::new(&r.url)) {
-                                cx.error(format!("{e:#}"));
+                                cx.error(crate::tf!("{e:#}"));
                             }
                         }
                     } else if ui.add_enabled_ui(!busy, |ui| style::secondary(ui, icon::REFRESH, "Check for updates")).inner.clicked() {
@@ -119,7 +119,7 @@ impl Updates {
                 style::toggle(ui, check_updates, "Check for updates automatically");
             });
             ui.label(
-                RichText::new(format!("{}  Every update is checked against the CleanCore release signature and its checksum before it is installed.", icon::SHIELD_CHECK))
+                RichText::new(crate::tf!("{}  Every update is checked against the CleanCore release signature and its checksum before it is installed.", icon::SHIELD_CHECK))
                     .size(12.0)
                     .color(p.muted),
             );

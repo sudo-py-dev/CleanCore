@@ -5,6 +5,7 @@ use super::style::{self, icon, Palette};
 use super::{take, Cx, Pending};
 use crate::cleaner::CleanReport;
 use crate::extensions::{self as ext, Browser, Extension};
+use crate::i18n::tr;
 use eframe::egui::{self, RichText, Ui};
 use std::collections::BTreeSet;
 
@@ -23,7 +24,7 @@ pub struct ExtensionsTab {
 }
 
 fn key(e: &Extension) -> String {
-    format!("{}|{}", e.profile_dir.display(), e.id)
+    crate::tf!("{}|{}", e.profile_dir.display(), e.id)
 }
 
 impl ExtensionsTab {
@@ -74,8 +75,8 @@ impl ExtensionsTab {
         }
         if let Some(r) = take(&mut self.removing) {
             match r {
-                Ok(rep) if rep.failed.is_empty() => cx.info(format!("Removed {} item(s). Backup: {}", rep.cleaned, rep.backup_id)),
-                Ok(rep) => cx.error(format!("{} item(s) could not be removed: {}", rep.failed.len(), rep.failed[0].1)),
+                Ok(rep) if rep.failed.is_empty() => cx.info(crate::tf!("Removed {} item(s). Backup: {}", rep.cleaned, rep.backup_id)),
+                Ok(rep) => cx.error(crate::tf!("{} item(s) could not be removed: {}", rep.failed.len(), rep.failed[0].1)),
                 Err(e) => cx.error(e),
             }
             self.checked.clear();
@@ -102,13 +103,13 @@ impl ExtensionsTab {
             }
             for b in &browsers {
                 let n = self.list.iter().filter(|e| e.browser == *b).count();
-                if style::segment(ui, self.browser == Some(*b), &format!("{}  {n}", b.label())).clicked() {
+                if style::segment(ui, self.browser == Some(*b), &crate::tf!("{}  {n}", b.label())).clicked() {
                     self.browser = Some(*b);
                 }
             }
             ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
                 ui.add_enabled_ui(!selected.is_empty() && self.removing.is_none(), |ui| {
-                    if style::primary(ui, icon::TRASH, &format!("Remove ({})", selected.len())).clicked() {
+                    if style::primary(ui, icon::TRASH, &crate::tf!("Remove ({})", selected.len())).clicked() {
                         self.confirm = true;
                         self.check_running();
                     }
@@ -119,7 +120,7 @@ impl ExtensionsTab {
                 if style::toggle(ui, &mut self.show_builtin, "Show built-in extensions").changed() {
                     self.loaded = false;
                 }
-                ui.label(style::muted(ui, "Built-in"));
+                ui.label(style::muted(ui, tr("Built-in")));
             });
         });
         ui.add_space(8.0);
@@ -142,7 +143,7 @@ impl ExtensionsTab {
                 ui,
                 icon::GLOBE,
                 "No extensions",
-                if self.list.is_empty() { "No extensions were found in Chrome, Edge, Brave, Opera, Vivaldi, Chromium or Firefox." } else { "Nothing matches the search." },
+                if self.list.is_empty() { tr("No extensions were found in Chrome, Edge, Brave, Opera, Vivaldi, Chromium or Firefox.") } else { tr("Nothing matches the search.") },
             );
             return;
         }
@@ -157,7 +158,7 @@ impl ExtensionsTab {
                     }
                     ui.horizontal(|ui| {
                         ui.label(RichText::new(icon::GLOBE).size(16.0).color(p.accent));
-                        ui.label(style::strong(format!("{}  ›  {}", e.browser.label(), e.profile)));
+                        ui.label(style::strong(crate::tf!("{}  ›  {}", e.browser.label(), e.profile)));
                         if self.running.contains(&e.browser) {
                             style::badge(ui, "Running — close it before removing", p.warning);
                         }
@@ -201,7 +202,7 @@ impl ExtensionsTab {
                                 if style::icon_button(ui, icon::FOLDER_OPEN, "Open folder").clicked() {
                                     let dir = if path.is_dir() { path.clone() } else { path.parent().map(|p| p.to_path_buf()).unwrap_or(path.clone()) };
                                     if let Err(err) = crate::platform::open_folder(&dir) {
-                                        cx.error(format!("{err:#}"));
+                                        cx.error(crate::tf!("{err:#}"));
                                     }
                                 }
                             }
@@ -217,19 +218,19 @@ impl ExtensionsTab {
             let (mut close, mut recheck) = (false, false);
             egui::Modal::new(egui::Id::unique("ext-confirm")).show(ui.ctx(), |ui| {
                 ui.set_width(440.0);
-                ui.label(style::strong(format!("Remove {} extension(s)?", selected.len())).size(18.0));
+                ui.label(style::strong(crate::tf!("Remove {} extension(s)?", selected.len())).size(18.0));
                 ui.add_space(6.0);
                 for e in selected.iter().take(8) {
-                    ui.label(format!("• {} ({} › {})", e.name, e.browser.label(), e.profile));
+                    ui.label(crate::tf!("• {} ({} › {})", e.name, e.browser.label(), e.profile));
                 }
                 if selected.len() > 8 {
-                    ui.label(style::muted(ui, format!("and {} more", selected.len() - 8)));
+                    ui.label(style::muted(ui, crate::tf!("and {} more", selected.len() - 8)));
                 }
                 ui.add_space(6.0);
-                ui.label(style::muted(ui, "Their files, stored data and browser settings entries are removed. Everything is backed up first."));
+                ui.label(style::muted(ui, tr("Their files, stored data and browser settings entries are removed. Everything is backed up first.")));
                 if !running.is_empty() {
                     ui.add_space(6.0);
-                    ui.label(RichText::new(format!("{}  Close {} first.", icon::WARNING, running.join(", "))).color(p.warning));
+                    ui.label(RichText::new(crate::tf!("{}  Close {} first.", icon::WARNING, running.join(", "))).color(p.warning));
                 }
                 ui.add_space(12.0);
                 ui.horizontal(|ui| {
@@ -239,7 +240,7 @@ impl ExtensionsTab {
                     ui.add_enabled_ui(running.is_empty(), |ui| {
                         if style::primary(ui, icon::TRASH, "Remove").clicked() {
                             let (s, list) = (cx.settings.clone(), selected.clone());
-                            self.removing = Some(Pending::spawn(ui.ctx(), "Removing extensions", move || ext::remove(&s, &list).map_err(|e| format!("{e:#}"))));
+                            self.removing = Some(Pending::spawn(ui.ctx(), "Removing extensions", move || ext::remove(&s, &list).map_err(|e| crate::tf!("{e:#}"))));
                             close = true;
                         }
                     });

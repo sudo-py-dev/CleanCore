@@ -7,6 +7,7 @@
 //! pages fade in when they open. Everything runs off egui's frame clock, so it also works in
 //! the kittest harness.
 
+use crate::i18n::tr;
 use eframe::egui::{self, Color32, CornerRadius, FontData, FontDefinitions, FontFamily, FontId, Margin, RichText, Stroke, TextStyle, Ui, Vec2};
 use std::sync::Arc;
 
@@ -352,6 +353,9 @@ pub fn install_fonts(ctx: &egui::Context) {
         "phosphor".into(),
         Arc::new(FontData::from_static(include_bytes!("../../assets/fonts/Phosphor.ttf")).tweak(egui::FontTweak { y_offset_factor: 0.07, ..Default::default() })),
     );
+    // Hebrew (Noto Sans Hebrew): Inter has no Hebrew letters.
+    fonts.font_data.insert("hebrew".into(), Arc::new(FontData::from_static(include_bytes!("../../assets/fonts/NotoSansHebrew-Regular.ttf"))));
+    fonts.font_data.insert("hebrew-bold".into(), Arc::new(FontData::from_static(include_bytes!("../../assets/fonts/NotoSansHebrew-Bold.ttf"))));
     fonts.font_data.insert(
         "phosphor-fill".into(),
         Arc::new(FontData::from_static(include_bytes!("../../assets/fonts/Phosphor-Fill.ttf")).tweak(egui::FontTweak { y_offset_factor: 0.07, ..Default::default() })),
@@ -360,9 +364,9 @@ pub fn install_fonts(ctx: &egui::Context) {
     // The bundled fonts are subset so they never overlap: Inter has no private-use glyphs and
     // Phosphor has only private-use glyphs. egui's own fonts stay last as fallback for other scripts.
     let defaults = fonts.families.get(&FontFamily::Proportional).cloned().unwrap_or_default();
-    let mut prop = vec!["inter".to_string(), "phosphor".to_string()];
+    let mut prop = vec!["inter".to_string(), "phosphor".to_string(), "hebrew".to_string()];
     prop.extend(defaults.iter().cloned());
-    let mut bold = vec!["inter-semibold".to_string(), "phosphor".to_string(), "inter".to_string()];
+    let mut bold = vec!["inter-semibold".to_string(), "phosphor".to_string(), "hebrew-bold".to_string(), "inter".to_string()];
     bold.extend(defaults);
     fonts.families.insert(FontFamily::Proportional, prop);
     fonts.families.insert(semibold(), bold);
@@ -429,7 +433,7 @@ fn interaction(ui: &Ui, id: egui::Id) -> (f32, bool) {
 }
 
 fn button_text(icon: &str, text: &str) -> String {
-    with_icon(icon, text)
+    with_icon(icon, tr(text))
 }
 
 /// Filled accent button for the main action of a page. Darkens and glows on hover.
@@ -503,6 +507,7 @@ pub fn ghost(ui: &mut Ui, icon: &str, text: &str) -> egui::Response {
 
 /// Icon-only borderless button with a tooltip (the tooltip text is also its accessible name).
 pub fn icon_button(ui: &mut Ui, icon: &str, tip: &str) -> egui::Response {
+    let tip = tr(tip);
     let p = Palette::get(ui.ctx());
     let (t, pressed) = interaction(ui, ui.next_auto_id());
     let color = p.muted.lerp_to_gamma(p.text, t);
@@ -561,6 +566,7 @@ fn accent_gradient(ctx: &egui::Context, p: &Palette) -> egui::TextureHandle {
 
 /// A figure with a label under it, in a small card (summary rows).
 pub fn stat_tile(ui: &mut Ui, width: f32, glyph: &str, value: &str, label: &str, color: Color32) {
+    let label = tr(label);
     let p = Palette::get(ui.ctx());
     let (rect, resp) = ui.allocate_exact_size(Vec2::new(width, 74.0), egui::Sense::hover());
     resp.widget_info(|| egui::WidgetInfo::labeled(egui::Role::Label, true, format!("{label}: {value}")));
@@ -578,6 +584,7 @@ pub fn stat_tile(ui: &mut Ui, width: f32, glyph: &str, value: &str, label: &str,
 
 /// Small uppercase label above a group of cards.
 pub fn eyebrow(ui: &mut Ui, text: &str) {
+    let text = tr(text);
     let p = Palette::get(ui.ctx());
     ui.label(RichText::new(text.to_uppercase()).size(11.5).family(semibold()).color(p.faint));
     ui.add_space(2.0);
@@ -680,6 +687,7 @@ pub fn card<R>(ui: &mut Ui, add: impl FnOnce(&mut Ui) -> R) -> R {
 
 /// Small rounded label, e.g. a count or a status.
 pub fn badge(ui: &mut Ui, text: &str, color: Color32) {
+    let text = tr(text);
     // Painted at its natural size so it never stretches inside table cells.
     let galley = ui.painter().layout_no_wrap(text.to_string(), FontId::new(12.0, semibold()), color);
     let size = galley.size() + Vec2::new(16.0, 4.0);
@@ -708,6 +716,8 @@ pub fn page_header(ui: &mut Ui, title: &str, subtitle: &str, actions: impl FnOnc
 /// Title row shared by the page headers. The title column is kept clear of the actions (their
 /// width from the previous frame), so a long subtitle is cut short instead of running under them.
 fn header_row(ui: &mut Ui, title: &str, subtitle: &str, lead: impl FnOnce(&mut Ui), actions: impl FnOnce(&mut Ui)) {
+    let title = tr(title);
+    let subtitle = tr(subtitle);
     let key = egui::Id::unique(("header-actions", title));
     let actions_w = ui.ctx().data(|d| d.get_temp::<f32>(key)).unwrap_or(0.0);
     ui.horizontal(|ui| {
@@ -758,6 +768,8 @@ pub fn page_header_back(ui: &mut Ui, title: &str, subtitle: &str, actions: impl 
 /// Underlined tabs that switch a page's views: (value, icon, label, count). Returns true when
 /// the user picked another tab.
 pub fn tabs<T: PartialEq + Copy>(ui: &mut Ui, current: &mut T, items: &[(T, &str, &str, Option<usize>)]) -> bool {
+    let translated: Vec<(T, &str, &str, Option<usize>)> = items.iter().map(|(v, ic, l, c)| (*v, *ic, tr(l), *c)).collect();
+    let items = &translated[..];
     let p = Palette::get(ui.ctx());
     let mut changed = false;
     let mut underline = None;
@@ -862,6 +874,8 @@ pub fn dropdown<R>(ui: &mut Ui, id: &str, selected: &str, width: f32, contents: 
 
 /// Centered icon, title and text for empty pages.
 pub fn empty_state(ui: &mut Ui, icon: &str, title: &str, text: &str) {
+    let title = tr(title);
+    let text = tr(text);
     let p = Palette::get(ui.ctx());
     ui.add_space(48.0);
     ui.vertical_centered(|ui| {
@@ -877,6 +891,7 @@ pub fn empty_state(ui: &mut Ui, icon: &str, title: &str, text: &str) {
 
 /// Label above a group of settings.
 pub fn section_title(ui: &mut Ui, text: &str) {
+    let text = tr(text);
     ui.label(strong(text).size(15.0));
     ui.add_space(2.0);
 }
@@ -884,6 +899,7 @@ pub fn section_title(ui: &mut Ui, text: &str) {
 /// Side navigation entry. The selected entry's background is painted by `nav_indicator`, so it
 /// can slide between entries.
 pub fn nav_item(ui: &mut Ui, icon: &str, label: &str, selected: bool) -> egui::Response {
+    let label = tr(label);
     let p = Palette::get(ui.ctx());
     // Shorter entries when the window is short, so the whole list fits without scrolling.
     let h = if ui.ctx().content_rect().height() < 700.0 { 34.0 } else { 38.0 };
@@ -926,6 +942,7 @@ pub fn nav_indicator(ui: &Ui, slot: egui::layers::ShapeIdx, target: egui::Rect, 
 
 /// Pill-shaped option in a segmented control.
 pub fn segment(ui: &mut Ui, selected: bool, text: &str) -> egui::Response {
+    let text = tr(text);
     let p = Palette::get(ui.ctx());
     let (t, _) = interaction(ui, ui.next_auto_id());
     let text = if selected { RichText::new(text).color(p.accent).family(semibold()) } else { RichText::new(text).color(p.muted.lerp_to_gamma(p.text, t)) };
@@ -937,6 +954,7 @@ pub fn segment(ui: &mut Ui, selected: bool, text: &str) -> egui::Response {
 
 /// On/off switch with an accessible name.
 pub fn toggle(ui: &mut Ui, on: &mut bool, label: &str) -> egui::Response {
+    let label = tr(label);
     let p = Palette::get(ui.ctx());
     let size = Vec2::new(40.0, 22.0);
     let (rect, mut resp) = ui.allocate_exact_size(size, egui::Sense::click());
@@ -971,6 +989,7 @@ pub fn toggle(ui: &mut Ui, on: &mut bool, label: &str) -> egui::Response {
 /// A bordered single-line field of CONTROL_H height: optional leading icon, a clear button
 /// when there is text (search fields), and an accent border while focused.
 fn field(ui: &mut Ui, text: &mut String, hint: &str, width: f32, lead: Option<&str>) -> egui::Response {
+    let hint = tr(hint);
     let p = Palette::get(ui.ctx());
     let clearable = lead.is_some();
     let (rect, _) = ui.allocate_exact_size(Vec2::new(width.max(80.0), CONTROL_H), egui::Sense::hover());
@@ -1097,8 +1116,8 @@ pub fn browse_button(ui: &mut Ui, salt: &str, pick: Pick, current: &str) -> Opti
         let id = base.with(*tip);
         let open = dialog_open(ui.ctx(), id);
         let r = ui.add_enabled_ui(!open, |ui| secondary(ui, ic, "")).inner;
-        r.widget_info(|| egui::WidgetInfo::labeled(egui::Role::Button, !open, *tip));
-        if r.on_hover_text(*tip).clicked() {
+        r.widget_info(|| egui::WidgetInfo::labeled(egui::Role::Button, !open, tr(tip)));
+        if r.on_hover_text(tr(tip)).clicked() {
             open_dialog(ui.ctx(), id, *kind, current);
         }
         if let Some(p) = dialog_result(ui.ctx(), id) {
@@ -1147,6 +1166,8 @@ pub fn command_from_path(path: &str) -> String {
 
 /// A setting row: title + help text on the left, control on the right.
 pub fn setting_row(ui: &mut Ui, title: &str, help: &str, control: impl FnOnce(&mut Ui)) {
+    let title = tr(title);
+    let help = tr(help);
     ui.add_space(2.0);
     ui.horizontal(|ui| {
         ui.set_min_height(42.0);

@@ -3,6 +3,7 @@
 use super::style::{self, icon, Palette, ACCENTS};
 use super::{apply_theme, Cx};
 use crate::config::{ListEntry, Settings};
+use crate::i18n::tr;
 use crate::model::ScanMode;
 use eframe::egui::{self, RichText, Ui, Vec2};
 
@@ -60,7 +61,7 @@ impl SettingsView {
         if save {
             *cx.settings = self.finished();
             cx.save_settings();
-            cx.info("Settings saved");
+            cx.info(tr("Settings saved"));
         }
         if discard {
             *self = SettingsView::new(cx.settings);
@@ -108,7 +109,7 @@ impl SettingsView {
                 });
             });
             ui.add_space(10.0);
-            ui.label(style::muted(ui, format!("Data folder: {}", crate::config::data_dir().display())).size(12.0));
+            ui.label(style::muted(ui, crate::tf!("Data folder: {}", crate::config::data_dir().display())).size(12.0));
         });
     }
 
@@ -123,13 +124,43 @@ impl SettingsView {
                     "system" => "system",
                     _ => "light",
                 };
-                for (id, label) in [("system", format!("{}  System", icon::MONITOR)), ("dark", format!("{}  Dark", icon::MOON)), ("light", format!("{}  Light", icon::SUN))] {
+                for (id, label) in
+                    [("system", crate::tf!("{}  System", icon::MONITOR)), ("dark", crate::tf!("{}  Dark", icon::MOON)), ("light", crate::tf!("{}  Light", icon::SUN))]
+                {
                     if style::segment(ui, norm == id, &label).clicked() {
                         cx.settings.gui_theme = Some(id.into());
                         self.draft.gui_theme = Some(id.into());
                         apply_theme(ui.ctx(), cx.settings);
                         cx.save_settings();
                     }
+                }
+            });
+            style::divider(ui);
+            style::setting_row(ui, "Language", "", |ui| {
+                let names = |code: &str| -> String {
+                    if code == "system" {
+                        let sys = crate::i18n::system_language();
+                        let n = crate::i18n::LANGUAGES.iter().find(|l| l.code == sys).map_or("English", |l| l.name);
+                        crate::tf!("System ({n})")
+                    } else {
+                        crate::i18n::LANGUAGES.iter().find(|l| l.code == code).map_or(code.to_string(), |l| l.name.to_string())
+                    }
+                };
+                let cur = cx.settings.language.clone();
+                let mut pick = None;
+                style::dropdown(ui, "language", &tf_icon(icon::GLOBE, &names(&cur)), 200.0, |ui| {
+                    for code in std::iter::once("system").chain(crate::i18n::LANGUAGES.iter().map(|l| l.code)) {
+                        if ui.selectable_label(cur == code, names(code)).clicked() {
+                            pick = Some(code.to_string());
+                        }
+                    }
+                });
+                if let Some(code) = pick {
+                    crate::i18n::set_language(&code);
+                    cx.settings.language = code.clone();
+                    self.draft.language = code;
+                    cx.save_settings();
+                    ui.ctx().request_repaint();
                 }
             });
             style::divider(ui);
@@ -144,7 +175,7 @@ impl SettingsView {
                         ui.painter().circle_stroke(rect.center(), 13.5, egui::Stroke::new(2.0, shown));
                         ui.painter().text(rect.center(), egui::Align2::CENTER_CENTER, icon::CHECK, egui::FontId::proportional(13.0), egui::Color32::WHITE);
                     }
-                    let r = r.on_hover_text(*label);
+                    let r = r.on_hover_text(tr(label));
                     if r.clicked() {
                         cx.settings.gui_accent = Some(id.to_string());
                         self.draft.gui_accent = Some(id.to_string());
@@ -162,14 +193,14 @@ impl SettingsView {
             style::section_title(ui, "Uninstaller");
             style::setting_row(
                 ui,
-                if cfg!(windows) { "Add to Explorer's right-click menu" } else { "Add to the file manager's right-click menu" },
+                if cfg!(windows) { tr("Add to Explorer's right-click menu") } else { tr("Add to the file manager's right-click menu") },
                 "\"Install with CleanCore\" on installers, \"Uninstall with CleanCore\" on programs, shortcuts and folders. Applies at once.",
                 |ui| {
                     let mut on = crate::shell::is_integrated();
                     if style::toggle(ui, &mut on, "File manager menu").changed() {
                         match crate::shell::integrate(on) {
-                            Ok(()) => cx.info(if on { "Added CleanCore to the right-click menu" } else { "Removed CleanCore from the right-click menu" }),
-                            Err(e) => cx.error(format!("{e:#}")),
+                            Ok(()) => cx.info(if on { tr("Added CleanCore to the right-click menu") } else { tr("Removed CleanCore from the right-click menu") }),
+                            Err(e) => cx.error(crate::tf!("{e:#}")),
                         }
                     }
                 },
@@ -181,7 +212,7 @@ impl SettingsView {
                     }
                 }
             });
-            style::setting_row(ui, if cfg!(windows) { "Create a restore point before uninstalling" } else { "Create a system snapshot before uninstalling" }, "", |ui| {
+            style::setting_row(ui, if cfg!(windows) { tr("Create a restore point before uninstalling") } else { tr("Create a system snapshot before uninstalling") }, "", |ui| {
                 style::toggle(ui, &mut d.uninstall_restore_point, "Create a restore point before uninstalling");
             });
             style::setting_row(ui, "Create a full backup before uninstalling", "", |ui| {
@@ -189,7 +220,7 @@ impl SettingsView {
             });
             style::setting_row(
                 ui,
-                if cfg!(windows) { "Delete leftover files to the Recycle Bin" } else { "Delete leftover files to the Trash" },
+                if cfg!(windows) { tr("Delete leftover files to the Recycle Bin") } else { tr("Delete leftover files to the Trash") },
                 "Files are also backed up either way.",
                 |ui| {
                     style::toggle(ui, &mut d.delete_to_trash, "Delete leftover files to the trash");
@@ -212,9 +243,9 @@ impl SettingsView {
                 ui,
                 "Only record what the installer itself changes",
                 if cfg!(windows) {
-                    "Follows the installer's processes with ETW (needs administrator rights), so other programs' changes during a trace are left out."
+                    tr("Follows the installer's processes with ETW (needs administrator rights), so other programs' changes during a trace are left out.")
                 } else {
-                    "Follows the installer's processes with strace, so other programs' changes during a trace are left out."
+                    tr("Follows the installer's processes with strace, so other programs' changes during a trace are left out.")
                 },
                 |ui| {
                     style::toggle(ui, &mut d.trace_follow_process, "Only record what the installer itself changes");
@@ -226,16 +257,16 @@ impl SettingsView {
             style::setting_row(
                 ui,
                 "Show system entries in Autorun",
-                if cfg!(windows) { "Microsoft services and tasks." } else { "Vendor services and desktop components." },
+                if cfg!(windows) { tr("Microsoft services and tasks.") } else { tr("Vendor services and desktop components.") },
                 |ui| {
                     style::toggle(ui, &mut d.autorun_show_system, "Show system entries in Autorun");
                 },
             );
             style::divider(ui);
-            ui.label(style::muted(ui, "Logs database folder (a shared or network folder works too)"));
+            ui.label(style::muted(ui, tr("Logs database folder (a shared or network folder works too)")));
             style::path_input(ui, "logsdb-folder", &mut self.db_folder, "", ui.available_width(), style::Pick::Folder);
             ui.add_space(4.0);
-            ui.label(style::muted(ui, "Logs database URL (serves index.json and the .cptrace files; optional)"));
+            ui.label(style::muted(ui, tr("Logs database URL (serves index.json and the .cptrace files; optional)")));
             style::text_input(ui, &mut self.db_url, "https://example.org/cleancore-logs", ui.available_width());
         });
     }
@@ -247,9 +278,14 @@ impl SettingsView {
             style::setting_row(ui, "Skip paths on external drives", "Items on drives that are not plugged in are never reported.", |ui| {
                 style::toggle(ui, &mut d.exclude_external_drives, "Skip paths on external drives");
             });
-            style::setting_row(ui, if cfg!(windows) { "Skip Windows defaults" } else { "Skip system defaults" }, "Known entries the system recreates or keeps on purpose.", |ui| {
-                style::toggle(ui, &mut d.exclude_os_defaults, "Skip system defaults");
-            });
+            style::setting_row(
+                ui,
+                if cfg!(windows) { tr("Skip Windows defaults") } else { tr("Skip system defaults") },
+                "Known entries the system recreates or keeps on purpose.",
+                |ui| {
+                    style::toggle(ui, &mut d.exclude_os_defaults, "Skip system defaults");
+                },
+            );
             if cfg!(windows) {
                 style::setting_row(ui, "Force delete registry keys", "Take ownership when a key is protected.", |ui| {
                     style::toggle(ui, &mut d.force_delete, "Force delete registry keys");
@@ -258,8 +294,8 @@ impl SettingsView {
             style::divider(ui);
             style::setting_row(
                 ui,
-                if cfg!(windows) { "Create a restore point before cleaning" } else { "Create a system snapshot before cleaning" },
-                if cfg!(windows) { "Uses Windows System Restore." } else { "Uses snapper or timeshift if installed." },
+                if cfg!(windows) { tr("Create a restore point before cleaning") } else { tr("Create a system snapshot before cleaning") },
+                if cfg!(windows) { tr("Uses Windows System Restore.") } else { tr("Uses snapper or timeshift if installed.") },
                 |ui| {
                     style::toggle(ui, &mut d.restore_point_before_clean, "Create a restore point before cleaning");
                 },
@@ -281,7 +317,7 @@ impl SettingsView {
     fn backups(&mut self, ui: &mut Ui) {
         style::card(ui, |ui| {
             style::section_title(ui, "Backups");
-            ui.label(style::muted(ui, "Backup folder"));
+            ui.label(style::muted(ui, tr("Backup folder")));
             style::path_input(ui, "backup-dir", &mut self.backup_dir, "", ui.available_width(), style::Pick::Folder);
             ui.add_space(6.0);
             style::divider(ui);
@@ -296,7 +332,7 @@ impl SettingsView {
             ui.add_enabled_ui(self.older_on || self.larger_on, |ui| {
                 style::setting_row(
                     ui,
-                    if cfg!(windows) { "Daily full registry backup" } else { "Daily full settings backup" },
+                    if cfg!(windows) { tr("Daily full registry backup") } else { tr("Daily full settings backup") },
                     "The first time CleanCore opens each day, it backs up everything automatically.",
                     |ui| {
                         style::toggle(ui, &mut self.draft.daily_full_backup, "Daily full backup");
@@ -317,7 +353,7 @@ fn list_editor(ui: &mut Ui, list: &mut Vec<ListEntry>, new: &mut String, title: 
     ui.add_space(6.0);
     let mut remove = None;
     if list.is_empty() {
-        ui.label(RichText::new("Empty").color(p.faint));
+        ui.label(RichText::new(tr("Empty")).color(p.faint));
     }
     for (i, e) in list.iter_mut().enumerate() {
         ui.horizontal(|ui| {
@@ -327,7 +363,7 @@ fn list_editor(ui: &mut Ui, list: &mut Vec<ListEntry>, new: &mut String, title: 
                 if style::icon_button(ui, icon::TRASH, "Remove").clicked() {
                     remove = Some(i);
                 }
-                ui.checkbox(&mut e.include_subkeys, "Subkeys");
+                ui.checkbox(&mut e.include_subkeys, tr("Subkeys"));
             });
         });
     }
@@ -339,7 +375,7 @@ fn list_editor(ui: &mut Ui, list: &mut Vec<ListEntry>, new: &mut String, title: 
         let picker = if cfg!(windows) { 0.0 } else { 2.0 * (style::CONTROL_H + 8.0) };
         style::text_input(ui, new, if cfg!(windows) { r"HKEY_LOCAL_MACHINE\SOFTWARE\..." } else { "/home/you/.config/..." }, ui.available_width() - 90.0 - picker);
         if !cfg!(windows) {
-            if let Some(p) = style::browse_button(ui, &format!("list-{:p}", list as *const _), style::Pick::Any, new) {
+            if let Some(p) = style::browse_button(ui, &crate::tf!("list-{:p}", list as *const _), style::Pick::Any, new) {
                 if !list.iter().any(|e| e.path == p) {
                     list.push(ListEntry { path: p, include_subkeys: true, enabled: true });
                 }
@@ -350,4 +386,8 @@ fn list_editor(ui: &mut Ui, list: &mut Vec<ListEntry>, new: &mut String, title: 
             new.clear();
         }
     });
+}
+
+fn tf_icon(icon: &str, text: &str) -> String {
+    format!("{icon}  {text}")
 }

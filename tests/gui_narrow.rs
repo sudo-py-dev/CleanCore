@@ -12,7 +12,9 @@ fn shot(h: &mut Harness<'_, App>, name: &str) {
     h.run_steps(6);
     let d = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("target/gui-shots");
     std::fs::create_dir_all(&d).unwrap();
-    h.render().expect("render").save(d.join(format!("narrow-{name}.png"))).unwrap();
+    let lang = std::env::var("CLEANCORE_LANG").unwrap_or_default();
+    let suffix = if lang == "en" { String::new() } else { format!("-{lang}") };
+    h.render().expect("render").save(d.join(format!("narrow{suffix}-{name}.png"))).unwrap();
 }
 
 #[test]
@@ -25,6 +27,10 @@ fn every_page_fits_a_small_window() {
     std::fs::create_dir_all(root.join("data")).unwrap();
     std::fs::write(root.join("data/settings.json"), r#"{"gui_theme":"light"}"#).unwrap();
     std::env::set_var("CLEANCORE_NO_TRAY", "1");
+    // English by default; CLEANCORE_TEST_LANG=he (etc.) takes the screenshots in another
+    // language. Widgets are found by English text, so only the tool pages are visited then.
+    let lang = std::env::var("CLEANCORE_TEST_LANG").unwrap_or_else(|_| "en".into());
+    std::env::set_var("CLEANCORE_LANG", &lang);
     std::env::set_var("HOME", &home);
     std::env::set_var("CLEANCORE_DATA_DIR", root.join("data"));
     std::env::set_var("CLEANCORE_SERVICE_DIR", root.join("units"));
@@ -37,13 +43,14 @@ fn every_page_fits_a_small_window() {
     // Wait for the program list.
     for _ in 0..200 {
         h.step();
-        if h.query_all_by_label_contains("programs ·").next().is_some() {
+        if h.query_all_by_label_contains(" · ").next().is_some() {
             break;
         }
         std::thread::sleep(std::time::Duration::from_millis(50));
     }
     shot(&mut h, "uninstaller");
-    for tab in ["Flatpak", "Traced", "Browser extensions", "Logs database", "History"] {
+    let english = lang == "en";
+    for tab in ["Flatpak", "Traced", "Browser extensions", "Logs database", "History"].into_iter().filter(|_| english) {
         let found = match h.query_all_by_label_contains(tab).next() {
             Some(t) => {
                 t.click();
@@ -56,7 +63,7 @@ fn every_page_fits_a_small_window() {
         }
     }
     for tool in ["Autorun", "Cleaner", "Tools", "Tuner", "Watcher", "Backups", "Settings"] {
-        h.get_by_role_and_label(Role::Button, tool).click();
+        h.get_by_role_and_label(Role::Button, cleancore::i18n::tr(tool)).click();
         shot(&mut h, &tool.to_lowercase());
     }
     let _ = std::fs::remove_dir_all(&root);

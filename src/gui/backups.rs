@@ -4,6 +4,7 @@ use super::schedule::{Kind, TaskPanel};
 use super::style::{self, icon, Palette};
 use super::{human, take, tree::Browser, Cx, Pending};
 use crate::backup::{self, Backup, BackupKind, Manifest};
+use crate::i18n::tr;
 use eframe::egui::{self, RichText, Ui};
 use egui_extras::{Column, TableBuilder};
 
@@ -52,7 +53,7 @@ impl BackupView {
     fn load(&mut self, cx: &mut Cx) {
         match backup::list(cx.settings) {
             Ok(l) => self.list = l,
-            Err(e) => cx.error(format!("Reading backups failed: {e:#}")),
+            Err(e) => cx.error(crate::tf!("Reading backups failed: {e:#}")),
         }
         if self.selected.as_ref().is_some_and(|s| !self.list.iter().any(|m| &m.id == s)) {
             self.selected = None;
@@ -61,7 +62,7 @@ impl BackupView {
     }
 
     fn run(&mut self, ctx: &egui::Context, label: &str, work: impl FnOnce() -> anyhow::Result<String> + Send + 'static) {
-        self.job = Some(Pending::spawn(ctx, label, move || work().map_err(|e| format!("{e:#}"))));
+        self.job = Some(Pending::spawn(ctx, label, move || work().map_err(|e| crate::tf!("{e:#}"))));
     }
 
     fn restore(&mut self, ctx: &egui::Context, cx: &Cx, id: String, only: Option<Vec<String>>) {
@@ -69,7 +70,7 @@ impl BackupView {
         self.run(ctx, "Restoring…", move || {
             let b = Backup::open(&settings, &id)?;
             let n = b.restore(only.as_deref())?;
-            Ok(format!("{n} item(s) restored from {id}"))
+            Ok(crate::tf!("{n} item(s) restored from {id}"))
         });
     }
 
@@ -80,7 +81,7 @@ impl BackupView {
                 let checked = vec![true; labels.len()];
                 self.custom = Some(CustomRestore { id, labels, checked });
             }
-            Err(e) => cx.error(format!("{e:#}")),
+            Err(e) => cx.error(crate::tf!("{e:#}")),
         }
     }
 
@@ -107,18 +108,18 @@ impl BackupView {
         let p = Palette::get(ui.ctx());
         let busy = self.job.is_some();
         let total: u64 = self.list.iter().map(|m| m.size_bytes).sum();
-        let subtitle = format!("{} backup(s) · {} · {}", self.list.len(), human(total), cx.settings.backup_dir().display());
+        let subtitle = crate::tf!("{} backup(s) · {} · {}", self.list.len(), human(total), cx.settings.backup_dir().display());
         let (mut create, mut auto, mut folder) = (false, false, false);
         style::page_header(ui, "Backups", &subtitle, |ui| {
             ui.add_enabled_ui(!busy, |ui| {
                 create = style::primary(ui, icon::PLUS, "Create backup").clicked();
-                auto = style::secondary(ui, icon::CALENDAR, "Auto Backup").on_hover_text("Scheduled backups").clicked();
+                auto = style::secondary(ui, icon::CALENDAR, "Auto Backup").on_hover_text(tr("Scheduled backups")).clicked();
             });
             folder = style::icon_button(ui, icon::FOLDER_OPEN, "Open backup folder").clicked();
             let r = style::icon_button(ui, icon::CALENDAR, "Delete by time range");
             egui::Popup::menu(&r).width(320.0).show(|ui| {
-                ui.label(style::strong("Delete backups made between"));
-                ui.label(style::muted(ui, "Dates like 2026-10-01, or 2026-10-01 14:30. An end date includes that whole day; leave it empty for \"now\".").size(12.0));
+                ui.label(style::strong(tr("Delete backups made between")));
+                ui.label(style::muted(ui, tr("Dates like 2026-10-01, or 2026-10-01 14:30. An end date includes that whole day; leave it empty for \"now\".")).size(12.0));
                 ui.add_space(4.0);
                 style::text_input(ui, &mut self.range.0, "From", 300.0);
                 style::text_input(ui, &mut self.range.1, "To (optional)", 300.0);
@@ -130,10 +131,10 @@ impl BackupView {
                     Ok((f, t)) => {
                         let n = self.list.iter().filter(|m| m.created >= *f && m.created <= *t).count();
                         ui.add_enabled_ui(n > 0, |ui| {
-                            if style::danger(ui, icon::TRASH, &format!("Delete {n} backup(s)")).clicked() {
+                            if style::danger(ui, icon::TRASH, &crate::tf!("Delete {n} backup(s)")).clicked() {
                                 match crate::backup::delete_range(cx.settings, *f, *t) {
-                                    Ok(r) => cx.info(format!("Deleted {} backup(s)", r.len())),
-                                    Err(e) => cx.error(format!("{e:#}")),
+                                    Ok(r) => cx.info(crate::tf!("Deleted {} backup(s)", r.len())),
+                                    Err(e) => cx.error(crate::tf!("{e:#}")),
                                 }
                                 self.loaded = false;
                                 ui.close();
@@ -141,7 +142,7 @@ impl BackupView {
                         });
                     }
                     Err(e) if !self.range.0.trim().is_empty() => {
-                        ui.label(egui::RichText::new(format!("{e:#}")).size(12.0).color(Palette::get(ui.ctx()).danger));
+                        ui.label(egui::RichText::new(crate::tf!("{e:#}")).size(12.0).color(Palette::get(ui.ctx()).danger));
                     }
                     Err(_) => {}
                 }
@@ -159,7 +160,7 @@ impl BackupView {
             let dir = cx.settings.backup_dir();
             let _ = crate::config::ensure_dir(&dir);
             if let Err(e) = crate::platform::open_folder(&dir) {
-                cx.error(format!("{e:#}"));
+                cx.error(crate::tf!("{e:#}"));
             }
         }
         if let Some(pend) = &self.job {
@@ -180,7 +181,7 @@ impl BackupView {
                         ui.label(style::muted(ui, m.created.format("%d %b %Y, %H:%M").to_string()));
                     }
                     None => {
-                        ui.label(style::muted(ui, "Select a backup to restore or delete it."));
+                        ui.label(style::muted(ui, tr("Select a backup to restore or delete it.")));
                     }
                 }
                 ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
@@ -229,7 +230,7 @@ impl BackupView {
             .header(28.0, |mut h| {
                 for t in ["", "Name", "Type", "Date", "Entries", "Size", "Note"] {
                     h.col(|ui| {
-                        ui.label(RichText::new(t).size(12.5).color(p.muted));
+                        ui.label(RichText::new(tr(t)).size(12.5).color(p.muted));
                     });
                 }
             })
@@ -299,8 +300,8 @@ impl BackupView {
         // Confirmation
         if let Some(c) = &self.confirm {
             let text = match c {
-                Confirm::Restore(id) => format!("Restore everything in backup {id}?"),
-                Confirm::Delete(id) => format!("Are you sure you want to delete \"{id}\"?"),
+                Confirm::Restore(id) => crate::tf!("Restore everything in backup {id}?"),
+                Confirm::Delete(id) => crate::tf!("Are you sure you want to delete \"{id}\"?"),
                 Confirm::DeleteAll => "Are you sure you want to delete all backups?".to_string(),
             };
             let mut answer = None;
@@ -313,7 +314,7 @@ impl BackupView {
                 ui.label(style::strong(text).size(17.0));
                 ui.add_space(14.0);
                 ui.horizontal(|ui| {
-                    if style::primary(ui, "", if restore { "Restore" } else { "Delete" }).clicked() {
+                    if style::primary(ui, "", if restore { tr("Restore") } else { tr("Delete") }).clicked() {
                         answer = Some(true);
                     }
                     if style::secondary(ui, "", "Cancel").clicked() {
@@ -330,8 +331,8 @@ impl BackupView {
                     match c {
                         Confirm::Restore(id) => self.restore(ctx, cx, id, None),
                         Confirm::Delete(id) => match backup::delete(cx.settings, &id) {
-                            Ok(()) => cx.info(format!("Deleted backup {id}")),
-                            Err(e) => cx.error(format!("{e:#}")),
+                            Ok(()) => cx.info(crate::tf!("Deleted backup {id}")),
+                            Err(e) => cx.error(crate::tf!("{e:#}")),
                         },
                         Confirm::DeleteAll => {
                             let mut n = 0;
@@ -340,7 +341,7 @@ impl BackupView {
                                     n += 1;
                                 }
                             }
-                            cx.info(format!("Deleted {n} backup(s)"));
+                            cx.info(crate::tf!("Deleted {n} backup(s)"));
                         }
                     }
                     self.loaded = false;
@@ -352,8 +353,8 @@ impl BackupView {
         if let Some(c) = &mut self.custom {
             let mut done = None;
             egui::Modal::new(egui::Id::unique("custom-restore")).show(ctx, |ui| {
-                ui.label(style::strong("Custom restore").size(19.0));
-                ui.label(style::muted(ui, format!("Choose what to restore from {}", c.id)));
+                ui.label(style::strong(tr("Custom restore")).size(19.0));
+                ui.label(style::muted(ui, crate::tf!("Choose what to restore from {}", c.id)));
                 ui.horizontal(|ui| {
                     if style::ghost(ui, icon::CHECK, "Select all").clicked() {
                         c.checked.iter_mut().for_each(|x| *x = true);
@@ -370,7 +371,7 @@ impl BackupView {
                 ui.add_space(6.0);
                 let n = c.checked.iter().filter(|x| **x).count();
                 ui.horizontal(|ui| {
-                    if ui.add_enabled_ui(n > 0, |ui| style::primary(ui, icon::UNDO, &format!("Restore {n} item(s)"))).inner.clicked() {
+                    if ui.add_enabled_ui(n > 0, |ui| style::primary(ui, icon::UNDO, &crate::tf!("Restore {n} item(s)"))).inner.clicked() {
                         done = Some(true);
                     }
                     if style::secondary(ui, "", "Cancel").clicked() {
@@ -393,18 +394,18 @@ impl BackupView {
             egui::Modal::new(egui::Id::unique("create-backup")).show(ctx, |ui| {
                 ui.set_width(620.0);
                 let p = Palette::get(ui.ctx());
-                ui.label(style::strong("Create backup").size(19.0));
+                ui.label(style::strong(tr("Create backup")).size(19.0));
                 ui.add_space(8.0);
                 egui::Grid::new("create-grid").num_columns(2).spacing([16.0, 10.0]).show(ui, |ui| {
-                    ui.label(style::muted(ui, "Name"));
+                    ui.label(style::muted(ui, tr("Name")));
                     style::text_input(ui, &mut f.name, "", 460.0);
                     ui.end_row();
-                    ui.label(style::muted(ui, "Note"));
+                    ui.label(style::muted(ui, tr("Note")));
                     style::text_input(ui, &mut f.note, "Optional", 460.0);
                     ui.end_row();
-                    ui.label(style::muted(ui, "Back up"));
+                    ui.label(style::muted(ui, tr("Back up")));
                     ui.horizontal(|ui| {
-                        if style::segment(ui, f.whole, if cfg!(windows) { "Whole registry" } else { "Whole config store" }).clicked() {
+                        if style::segment(ui, f.whole, if cfg!(windows) { tr("Whole registry") } else { tr("Whole config store") }).clicked() {
                             f.whole = true;
                         }
                         if style::segment(ui, !f.whole, "One key / folder").clicked() {
@@ -436,9 +437,9 @@ impl BackupView {
             });
             if let Some(yes) = done {
                 if yes && f.name.trim().is_empty() {
-                    cx.error("Please enter a name.");
+                    cx.error(tr("Please enter a name."));
                 } else if yes && !f.whole && f.key.trim().is_empty() {
-                    cx.error("Please select a key to backup.");
+                    cx.error(tr("Please select a key to backup."));
                 } else {
                     let f = self.create.take().unwrap();
                     if yes {
@@ -459,7 +460,7 @@ impl BackupView {
                                 }
                             }
                             b.save()?;
-                            Ok(format!("Created backup {} ({} entries)", b.manifest.id, b.manifest.entries.len()))
+                            Ok(crate::tf!("Created backup {} ({} entries)", b.manifest.id, b.manifest.entries.len()))
                         });
                     }
                 }

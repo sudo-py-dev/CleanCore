@@ -92,6 +92,8 @@ pub struct Settings {
     /// Installation monitor: keep only files the installer's own processes wrote (strace on
     /// Linux, ETW on Windows), so other programs' changes during the trace are left out.
     pub trace_follow_process: bool,
+    /// Interface language: a code from `i18n::LANGUAGES` ("he", "de", …) or "system".
+    pub language: String,
     /// Look for a newer release when the app starts (at most once a day).
     pub check_updates: bool,
     /// When updates were last looked for.
@@ -158,6 +160,7 @@ impl Default for Settings {
             uninstall_kill_running: false,
             uninstall_builtin_only: false,
             trace_follow_process: true,
+            language: "system".into(),
             check_updates: true,
             last_update_check: None,
         }

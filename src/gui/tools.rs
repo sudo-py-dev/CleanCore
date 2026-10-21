@@ -3,6 +3,7 @@
 
 use super::style::{self, icon};
 use super::Cx;
+use crate::i18n::tr;
 use eframe::egui::Ui;
 
 #[derive(Clone, Copy, PartialEq, Eq)]
@@ -50,7 +51,7 @@ impl ToolsView {
             Tab::History => ("History Cleaner", "Browser history and caches, recent files and other traces"),
             Tab::Shred => ("Unrecoverable Delete", "Overwrite files and folders so they can't be recovered"),
             Tab::Evidence => ("Evidence Remover", "Overwrite free space so already-deleted files can't be recovered"),
-            Tab::System => (if cfg!(windows) { "Windows Tools" } else { "System Tools" }, "The operating system's own utilities in one place"),
+            Tab::System => (if cfg!(windows) { tr("Windows Tools") } else { tr("System Tools") }, "The operating system's own utilities in one place"),
             Tab::Slop => ("Microsoft Slop Cleaner", "Remove preinstalled apps and turn off Copilot, ads and telemetry"),
         };
         style::page_header(ui, title, subtitle, |_| {});
@@ -59,7 +60,7 @@ impl ToolsView {
             (Tab::History, icon::HISTORY, "History", None),
             (Tab::Shred, icon::SHIELD_WARNING, "Unrecoverable delete", None),
             (Tab::Evidence, icon::DRIVES, "Evidence remover", None),
-            (Tab::System, icon::WRENCH, if cfg!(windows) { "Windows tools" } else { "System tools" }, None),
+            (Tab::System, icon::WRENCH, if cfg!(windows) { tr("Windows tools") } else { tr("System tools") }, None),
         ];
         // Only Windows has Microsoft slop to clean.
         if cfg!(windows) {

@@ -26,6 +26,7 @@ mod updates;
 mod watcher;
 
 use crate::config::Settings;
+use crate::i18n::tr;
 use eframe::egui::{self, RichText, Ui, Vec2};
 use std::sync::mpsc::Receiver;
 use std::time::{Duration, Instant};
@@ -75,13 +76,14 @@ impl<T: Send + 'static> Pending<T> {
     }
 
     pub fn show_progress(&self, ui: &mut Ui) {
+        let label = crate::i18n::tr(&self.label);
         let p = Palette::get(ui.ctx());
         ui.vertical(|ui| {
             ui.spacing_mut().item_spacing.y = 6.0;
             ui.horizontal(|ui| {
                 ui.add(egui::Spinner::new().size(16.0).color(p.accent));
-                ui.label(&self.label);
-                ui.label(RichText::new(format!("{:.0}s", self.started.elapsed().as_secs_f32())).color(p.faint));
+                ui.label(label);
+                ui.label(RichText::new(crate::tf!("{:.0}s", self.started.elapsed().as_secs_f32())).color(p.faint));
             });
             style::busy_bar(ui, ui.available_width().clamp(120.0, 360.0));
         });
@@ -118,7 +120,7 @@ impl Cx<'_> {
     }
     pub fn save_settings(&mut self) {
         if let Err(e) = self.settings.save() {
-            self.error(format!("Saving settings failed: {e:#}"));
+            self.error(crate::tf!("Saving settings failed: {e:#}"));
         }
     }
 }
@@ -133,7 +135,7 @@ pub fn export_fields(ui: &mut Ui, cx: &mut Cx, path: &mut String, formats: &str,
     if style::primary(ui, icon::EXPORT, "Export").clicked() {
         match export(std::path::Path::new(path.as_str())) {
             Ok(msg) => cx.info(msg),
-            Err(e) => cx.error(format!("Export failed: {e:#}")),
+            Err(e) => cx.error(crate::tf!("Export failed: {e:#}")),
         }
         ui.close();
     }
@@ -239,9 +241,10 @@ impl App {
     pub fn new(cc: &eframe::CreationContext<'_>) -> Self {
         let mut notices = Vec::new();
         let settings = Settings::load().unwrap_or_else(|e| {
-            notices.push(Notice { text: format!("Settings could not be read, using defaults: {e:#}"), error: true, at: chrono::Local::now(), shown: Instant::now() });
+            notices.push(Notice { text: crate::tf!("Settings could not be read, using defaults: {e:#}"), error: true, at: chrono::Local::now(), shown: Instant::now() });
             Settings::default()
         });
+        crate::i18n::set_language(&settings.language);
         style::install_fonts(&cc.egui_ctx);
         let s = settings.clone();
         let daily = settings.daily_full_backup.then(|| Pending::spawn(&cc.egui_ctx, "Daily backup", move || crate::backup::daily_full_if_due(&s)));
@@ -314,8 +317,8 @@ impl App {
             ui.vertical(|ui| {
                 ui.spacing_mut().item_spacing.y = 1.0;
                 ui.add_space(1.0);
-                ui.label(style::strong("CleanCore").size(17.0));
-                ui.label(style::muted(ui, "Uninstaller & cleaner").size(12.0));
+                ui.label(style::strong(tr("CleanCore")).size(17.0));
+                ui.label(style::muted(ui, tr("Uninstaller & cleaner")).size(12.0));
             });
         });
         ui.add_space(12.0);
@@ -338,7 +341,7 @@ impl App {
                         ui.ctx().request_repaint_after(Duration::from_millis(33));
                     }
                     ui.painter().circle_filled(r.center(), 4.0, if rec { p.success } else { p.faint });
-                    ui.label(RichText::new(if rec { "Recorder running" } else { "Recorder stopped" }).size(12.5).color(p.muted));
+                    ui.label(RichText::new(if rec { tr("Recorder running") } else { tr("Recorder stopped") }).size(12.5).color(p.muted));
                 });
             });
             ui.add_space(4.0);
@@ -355,7 +358,7 @@ impl App {
                     self.switch(Tool::Settings);
                 }
                 let dark = p.dark;
-                if style::icon_button(ui, if dark { icon::SUN } else { icon::MOON }, if dark { "Switch to light" } else { "Switch to dark" }).clicked() {
+                if style::icon_button(ui, if dark { icon::SUN } else { icon::MOON }, if dark { tr("Switch to light") } else { tr("Switch to dark") }).clicked() {
                     self.settings.gui_theme = Some(if dark { "light" } else { "dark" }.into());
                     apply_theme(ui.ctx(), &self.settings);
                     let _ = self.settings.save();
@@ -372,7 +375,7 @@ impl App {
                 ui.add_space(10.0);
                 ui.horizontal(|ui| {
                     ui.add_space(14.0);
-                    ui.label(RichText::new(section.to_uppercase()).size(11.0).family(style::semibold()).color(p.faint));
+                    ui.label(RichText::new(crate::i18n::tr(section).to_uppercase()).size(11.0).family(style::semibold()).color(p.faint));
                 });
                 ui.add_space(4.0);
                 for t in tools {
@@ -395,7 +398,7 @@ impl App {
 
     fn notifications_button(&mut self, ui: &mut Ui) {
         let unread = self.notices.len().saturating_sub(self.seen_notices);
-        let tip = if unread > 0 { format!("Notifications ({unread} new)") } else { "Notifications".to_string() };
+        let tip = if unread > 0 { crate::tf!("Notifications ({unread} new)") } else { "Notifications".to_string() };
         let r = style::icon_button(ui, icon::BELL, &tip);
         if unread > 0 {
             let p = Palette::get(ui.ctx());
@@ -403,10 +406,10 @@ impl App {
         }
         egui::Popup::menu(&r).width(380.0).show(|ui| {
             self.seen_notices = self.notices.len();
-            ui.label(style::strong("Notifications"));
+            ui.label(style::strong(tr("Notifications")));
             ui.add_space(4.0);
             if self.notices.is_empty() {
-                ui.label(style::muted(ui, "Nothing yet."));
+                ui.label(style::muted(ui, tr("Nothing yet.")));
             }
             egui::ScrollArea::vertical().max_height(360.0).show(ui, |ui| {
                 for n in self.notices.iter().rev() {
@@ -527,8 +530,8 @@ impl eframe::App for App {
             self.updates.poll(&mut cx);
         });
         match take(&mut self.daily) {
-            Some(Ok(Some(id))) => self.notices.push(Notice { text: format!("Daily full backup created ({id})"), error: false, at: chrono::Local::now(), shown: Instant::now() }),
-            Some(Err(e)) => self.notices.push(Notice { text: format!("Daily backup failed: {e:#}"), error: true, at: chrono::Local::now(), shown: Instant::now() }),
+            Some(Ok(Some(id))) => self.notices.push(Notice { text: crate::tf!("Daily full backup created ({id})"), error: false, at: chrono::Local::now(), shown: Instant::now() }),
+            Some(Err(e)) => self.notices.push(Notice { text: crate::tf!("Daily backup failed: {e:#}"), error: true, at: chrono::Local::now(), shown: Instant::now() }),
             _ => {}
         }
         if self.hunter.active() {
@@ -550,8 +553,8 @@ fn first_run(ctx: &egui::Context, settings: &mut Settings) {
         ui.set_width(420.0);
         style::logo(ui, icon::SPARKLE, 48.0);
         ui.add_space(10.0);
-        ui.label(style::strong("Welcome to CleanCore").size(20.0));
-        ui.label(style::muted(ui, "Pick a look. You can change it any time in Settings."));
+        ui.label(style::strong(tr("Welcome to CleanCore")).size(20.0));
+        ui.label(style::muted(ui, tr("Pick a look. You can change it any time in Settings.")));
         ui.add_space(14.0);
         ui.horizontal(|ui| {
             if style::secondary(ui, icon::SUN, "Light").clicked() {

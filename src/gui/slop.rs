@@ -3,6 +3,7 @@
 
 use super::style::{self, icon, Palette};
 use super::{take, Cx, Pending};
+use crate::i18n::tr;
 use crate::slop::{self, Found, RemoveReport, Scan};
 use crate::tuner::{self, Requires, State, Status, Tweak};
 use eframe::egui::{self, RichText, Ui};
@@ -61,7 +62,7 @@ impl SlopView {
         self.tweaks.sort_by_key(|t| slop::TWEAKS.iter().position(|i| *i == t.id));
         match State::load() {
             Ok(s) => self.state = s,
-            Err(e) => cx.error(format!("{e:#}")),
+            Err(e) => cx.error(crate::tf!("{e:#}")),
         }
         self.status = tuner::status_all(&self.tweaks, &self.state).into_iter().map(|s| (s.id.clone(), s)).collect();
         self.tweaks_loaded = true;
@@ -78,16 +79,21 @@ impl SlopView {
             return;
         }
         if self.scan.is_none() && self.scanning.is_none() {
-            self.scanning = Some(Pending::spawn(ui.ctx(), "Looking for preinstalled apps", || slop::scan().map_err(|e| format!("{e:#}"))));
+            self.scanning = Some(Pending::spawn(ui.ctx(), "Looking for preinstalled apps", || slop::scan().map_err(|e| crate::tf!("{e:#}"))));
         }
         if let Some(s) = take(&mut self.scanning) {
             self.set_scan(s);
         }
         if let Some(r) = take(&mut self.removing) {
             if r.failed.is_empty() {
-                cx.info(format!("Removed {} app(s)", r.removed.len()));
+                cx.info(crate::tf!("Removed {} app(s)", r.removed.len()));
             } else {
-                cx.error(format!("Removed {}; {} failed: {}", r.removed.len(), r.failed.len(), r.failed.iter().map(|(n, e)| format!("{n} ({e})")).collect::<Vec<_>>().join("; ")));
+                cx.error(crate::tf!(
+                    "Removed {}; {} failed: {}",
+                    r.removed.len(),
+                    r.failed.len(),
+                    r.failed.iter().map(|(n, e)| crate::tf!("{n} ({e})")).collect::<Vec<_>>().join("; ")
+                ));
             }
             self.scan = None;
         }
@@ -115,7 +121,7 @@ impl SlopView {
                 style::section_title(ui, "Preinstalled and promoted apps");
                 ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
                     ui.add_enabled_ui(picked > 0 && self.removing.is_none(), |ui| {
-                        if style::primary(ui, icon::TRASH, &format!("Remove ({picked})")).clicked() {
+                        if style::primary(ui, icon::TRASH, &crate::tf!("Remove ({picked})")).clicked() {
                             self.confirm = true;
                         }
                     });
@@ -130,7 +136,7 @@ impl SlopView {
                     }
                 });
             });
-            ui.label(style::muted(ui, "Apps Windows installs or pushes on its own. Removed apps can be reinstalled from the Microsoft Store.").size(12.5));
+            ui.label(style::muted(ui, tr("Apps Windows installs or pushes on its own. Removed apps can be reinstalled from the Microsoft Store.")).size(12.5));
             ui.add_space(6.0);
             if let Some(s) = &self.scanning {
                 s.show_progress(ui);
@@ -141,12 +147,12 @@ impl SlopView {
                 return;
             }
             if let Some(Err(e)) = &self.scan {
-                ui.label(RichText::new(format!("{}  {e}", icon::WARNING)).color(p.danger));
+                ui.label(RichText::new(crate::tf!("{}  {e}", icon::WARNING)).color(p.danger));
                 return;
             }
             if !admin {
                 ui.label(
-                    RichText::new(format!("{}  Run CleanCore as administrator to remove apps for every user and stop them from coming back.", icon::INFO))
+                    RichText::new(crate::tf!("{}  Run CleanCore as administrator to remove apps for every user and stop them from coming back.", icon::INFO))
                         .size(12.5)
                         .color(p.warning),
                 );
@@ -155,15 +161,15 @@ impl SlopView {
             ui.horizontal(|ui| {
                 ui.add_enabled_ui(admin, |ui| {
                     style::toggle(ui, &mut self.all_users, "For every user account");
-                    ui.label("For every user account");
+                    ui.label(tr("For every user account"));
                     ui.add_space(16.0);
                     style::toggle(ui, &mut self.deprovision, "Also remove the preinstalled copy");
-                    ui.label("Also remove the preinstalled copy").on_hover_text("New accounts and feature updates won't bring the app back");
+                    ui.label(tr("Also remove the preinstalled copy")).on_hover_text(tr("New accounts and feature updates won't bring the app back"));
                 });
             });
             ui.add_space(6.0);
             if found.is_empty() {
-                ui.label(RichText::new(format!("{}  None of the known preinstalled apps are installed.", icon::CHECK_CIRCLE)).color(p.success));
+                ui.label(RichText::new(crate::tf!("{}  None of the known preinstalled apps are installed.", icon::CHECK_CIRCLE)).color(p.success));
                 return;
             }
             let mut last = "";
@@ -208,15 +214,15 @@ impl SlopView {
                 style::section_title(ui, "AI, ads and suggestions");
                 ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
                     ui.add_enabled_ui(!off.is_empty(), |ui| {
-                        apply_all = style::primary(ui, icon::SHIELD_CHECK, &format!("Turn all off ({})", off.len())).clicked();
+                        apply_all = style::primary(ui, icon::SHIELD_CHECK, &crate::tf!("Turn all off ({})", off.len())).clicked();
                     });
                 });
             });
-            ui.label(style::muted(ui, "Each switch can be turned back on here or in the Tuner. Some need administrator rights.").size(12.5));
+            ui.label(style::muted(ui, tr("Each switch can be turned back on here or in the Tuner. Some need administrator rights.")).size(12.5));
             ui.add_space(6.0);
             if !self.pending.is_empty() {
                 let msgs: Vec<&str> = self.pending.iter().filter_map(|r| r.message()).collect();
-                ui.label(RichText::new(format!("{}  {}", icon::WARNING, msgs.join(" "))).size(12.5).color(p.warning));
+                ui.label(RichText::new(crate::tf!("{}  {}", icon::WARNING, msgs.join(" "))).size(12.5).color(p.warning));
                 ui.add_space(4.0);
             }
             let mut change: Option<(Tweak, bool)> = None;
@@ -233,14 +239,14 @@ impl SlopView {
                     ui.vertical(|ui| {
                         ui.spacing_mut().item_spacing.y = 1.0;
                         ui.horizontal(|ui| {
-                            ui.label(&t.name);
+                            ui.label(tr(&t.name));
                             if st.is_some_and(|s| s.ours.is_some()) {
                                 style::badge(ui, "by CleanCore", p.accent);
                             }
                         });
                         let note = match st.map(|s| &s.available) {
                             Some(Err(why)) => why.clone(),
-                            _ => t.description.clone(),
+                            _ => tr(&t.description).to_string(),
                         };
                         ui.label(style::muted(ui, note).size(12.0));
                     });
@@ -264,16 +270,16 @@ impl SlopView {
         } else if self.state.applied.contains_key(&t.id) {
             tuner::revert(t, &mut self.state)
         } else {
-            return cx.error(format!("\"{}\" was set outside CleanCore, so there is nothing to restore. Change it in Windows Settings.", t.name));
+            return cx.error(crate::tf!("\"{}\" was set outside CleanCore, so there is nothing to restore. Change it in Windows Settings.", t.name));
         };
         match r {
             Ok(req) => {
                 if req != Requires::None {
                     self.pending.insert(req);
                 }
-                cx.info(format!("{}: {}", if on { "Done" } else { "Restored" }, t.name));
+                cx.info(crate::tf!("{}: {}", if on { tr("Done") } else { tr("Restored") }, t.name));
             }
-            Err(e) => cx.error(format!("{}: {e:#}", t.name)),
+            Err(e) => cx.error(crate::tf!("{}: {e:#}", t.name)),
         }
         if let Some(s) = tuner::status_all(std::slice::from_ref(t), &self.state).pop() {
             self.status.insert(t.id.clone(), s);
@@ -291,22 +297,22 @@ impl SlopView {
         let mut close = false;
         egui::Modal::new(egui::Id::unique("slop-confirm")).show(ctx, |ui| {
             ui.set_width(460.0);
-            ui.label(style::strong(format!("Remove {} app(s)?", picked.len())).size(18.0));
+            ui.label(style::strong(crate::tf!("Remove {} app(s)?", picked.len())).size(18.0));
             ui.add_space(6.0);
             for f in picked.iter().take(10) {
-                ui.label(format!("• {}", f.app.name));
+                ui.label(crate::tf!("• {}", f.app.name));
             }
             if picked.len() > 10 {
-                ui.label(style::muted(ui, format!("and {} more", picked.len() - 10)));
+                ui.label(style::muted(ui, crate::tf!("and {} more", picked.len() - 10)));
             }
             ui.add_space(6.0);
             let scope = match (self.all_users, self.deprovision) {
-                (true, true) => "For every user, and they won't come back for new accounts.",
-                (true, false) => "For every user account.",
-                (false, true) => "For you, and they won't come back for new accounts.",
-                (false, false) => "For you only.",
+                (true, true) => tr("For every user, and they won't come back for new accounts."),
+                (true, false) => tr("For every user account."),
+                (false, true) => tr("For you, and they won't come back for new accounts."),
+                (false, false) => tr("For you only."),
             };
-            ui.label(style::muted(ui, format!("{scope} They can be reinstalled from the Microsoft Store.")));
+            ui.label(style::muted(ui, crate::tf!("{scope} They can be reinstalled from the Microsoft Store.")));
             ui.add_space(12.0);
             ui.horizontal(|ui| {
                 if style::primary(ui, icon::TRASH, "Remove").clicked() {

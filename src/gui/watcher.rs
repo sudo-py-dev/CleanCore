@@ -3,6 +3,7 @@
 
 use super::style::{self, icon, Palette};
 use super::{tree::Browser, Cx};
+use crate::i18n::tr;
 use crate::watcher::{self, Watch, WatchEvent};
 use eframe::egui::{self, Color32, RichText, Ui};
 use egui_extras::{Column, TableBuilder};
@@ -76,7 +77,7 @@ impl WatcherView {
         self.last_reload = Some(Instant::now());
         match watcher::load_watches() {
             Ok(w) => self.watches = w,
-            Err(e) => cx.error(format!("{e:#}")),
+            Err(e) => cx.error(crate::tf!("{e:#}")),
         }
         if self.selected_watch().is_none() {
             self.selected = self.watches.first().map(|w| w.path.clone());
@@ -97,7 +98,7 @@ impl WatcherView {
 
     fn edit(&mut self, cx: &mut Cx, f: impl FnOnce(&mut Vec<Watch>) -> Result<String, String>) {
         let mut all = watcher::load_watches().unwrap_or_default();
-        match f(&mut all).and_then(|msg| watcher::save_watches(&all).map(|_| msg).map_err(|e| format!("{e:#}"))) {
+        match f(&mut all).and_then(|msg| watcher::save_watches(&all).map(|_| msg).map_err(|e| crate::tf!("{e:#}"))) {
             Ok(m) => cx.info(m),
             Err(e) => cx.error(e),
         }
@@ -108,15 +109,15 @@ impl WatcherView {
         let path = watcher::normalize_target(&self.add_path);
         let reads = self.add_reads;
         if self.add_path.trim().is_empty() {
-            return cx.error("Pick or type a key/path to watch.");
+            return cx.error(tr("Pick or type a key/path to watch."));
         }
         self.edit(cx, |all| {
             if let Some(w) = all.iter_mut().find(|w| w.path.eq_ignore_ascii_case(&path)) {
                 w.active = true;
-                return Ok(format!("Resumed watching {path}"));
+                return Ok(crate::tf!("Resumed watching {path}"));
             }
             all.push(Watch { path: path.clone(), active: true, include_reads: reads, created: chrono::Local::now() });
-            Ok(format!("Watching {path}"))
+            Ok(crate::tf!("Watching {path}"))
         });
         self.selected = Some(path);
         self.add_path.clear();
@@ -127,8 +128,11 @@ impl WatcherView {
         ui.ctx().request_repaint_after(Duration::from_secs(1));
         let p = Palette::get(ui.ctx());
         let running = watcher::recorder_running();
-        let subtitle =
-            if cfg!(windows) { "Find out exactly what a program changes in the registry" } else { "Find out exactly what a program changes in your settings and config files" };
+        let subtitle = if cfg!(windows) {
+            tr("Find out exactly what a program changes in the registry")
+        } else {
+            tr("Find out exactly what a program changes in your settings and config files")
+        };
         let (mut start, mut login_changed) = (false, false);
         let status = self.at_login.get_or_insert_with(crate::platform::recorder_status).clone();
         let mut at_login = status.starts_with("starts at login");
@@ -139,14 +143,15 @@ impl WatcherView {
                     .corner_radius(8)
                     .inner_margin(egui::Margin::symmetric(12, 8))
                     .show(ui, |ui| {
-                        ui.label(RichText::new(format!("{}  Recording", icon::RECORD)).color(p.success).family(style::semibold()));
+                        ui.label(RichText::new(crate::tf!("{}  Recording", icon::RECORD)).color(p.success).family(style::semibold()));
                     });
             } else {
-                start = style::primary(ui, icon::PLAY, "Start recording").on_hover_text("Record changes while CleanCore is open").clicked();
+                start = style::primary(ui, icon::PLAY, "Start recording").on_hover_text(tr("Record changes while CleanCore is open")).clicked();
             }
             ui.add_space(6.0);
-            login_changed = style::toggle(ui, &mut at_login, "Start recorder at login").on_hover_text("Keep recording in the background, even when CleanCore is closed").changed();
-            ui.label("Record in the background");
+            login_changed =
+                style::toggle(ui, &mut at_login, "Start recorder at login").on_hover_text(tr("Keep recording in the background, even when CleanCore is closed")).changed();
+            ui.label(tr("Record in the background"));
         });
         if start {
             let settings = cx.settings.clone();
@@ -154,7 +159,7 @@ impl WatcherView {
                 let _ = watcher::run_recorder(&settings, |_| {});
             });
             self.in_app = true;
-            cx.info("Recorder started");
+            cx.info(tr("Recorder started"));
         }
         if login_changed {
             let r = if at_login {
@@ -163,8 +168,8 @@ impl WatcherView {
                 crate::platform::recorder_disable()
             };
             match r {
-                Ok(()) => cx.info(if at_login { "The recorder now runs in the background from login" } else { "The recorder no longer runs in the background" }),
-                Err(e) => cx.error(format!("{e:#}")),
+                Ok(()) => cx.info(if at_login { tr("The recorder now runs in the background from login") } else { tr("The recorder no longer runs in the background") }),
+                Err(e) => cx.error(crate::tf!("{e:#}")),
             }
             self.at_login = None;
         }
@@ -200,12 +205,12 @@ impl WatcherView {
             Some(RowAction::Toggle(path)) => self.edit(cx, |all| {
                 let w = all.iter_mut().find(|w| w.path == path).ok_or("not found")?;
                 w.active = !w.active;
-                Ok(format!("{} {path}", if w.active { "Resumed" } else { "Paused" }))
+                Ok(crate::tf!("{} {path}", if w.active { tr("Resumed") } else { tr("Paused") }))
             }),
             Some(RowAction::Clear(w)) => {
                 match watcher::clear_log(&w) {
-                    Ok(()) => cx.info("Changes cleared"),
-                    Err(e) => cx.error(format!("{e:#}")),
+                    Ok(()) => cx.info(tr("Changes cleared")),
+                    Err(e) => cx.error(crate::tf!("{e:#}")),
                 }
                 self.events_for = None;
                 self.last_reload = None;
@@ -214,7 +219,7 @@ impl WatcherView {
                 let _ = watcher::clear_log(&w);
                 self.edit(cx, |all| {
                     all.retain(|x| x.path != w.path);
-                    Ok(format!("Stopped watching {}", w.path))
+                    Ok(crate::tf!("Stopped watching {}", w.path))
                 });
                 self.selected = None;
             }
@@ -225,7 +230,7 @@ impl WatcherView {
     /// Left side: quick picks, a path field, the full browser on demand, and what is watched.
     fn watch_panel(&mut self, ui: &mut Ui, cx: &mut Cx, p: Palette) -> Option<RowAction> {
         style::section_title(ui, "What to watch");
-        ui.label(style::muted(ui, "Pick a place a program is likely to change, or choose your own.").size(12.5));
+        ui.label(style::muted(ui, tr("Pick a place a program is likely to change, or choose your own.")).size(12.5));
         ui.add_space(6.0);
         ui.horizontal_wrapped(|ui| {
             for (ic, label, path) in quick_picks() {
@@ -240,12 +245,17 @@ impl WatcherView {
         let picker = if cfg!(windows) { 0.0 } else { 2.0 * (style::CONTROL_H + 6.0) };
         let split = ui.available_width() - 96.0 - picker < 200.0;
         if split {
-            style::text_input(ui, &mut self.add_path, if cfg!(windows) { "A registry key" } else { "A folder, file or dconf: path" }, ui.available_width());
+            style::text_input(ui, &mut self.add_path, if cfg!(windows) { tr("A registry key") } else { tr("A folder, file or dconf: path") }, ui.available_width());
         }
         ui.horizontal(|ui| {
             ui.spacing_mut().item_spacing.x = 6.0;
             if !split {
-                style::text_input(ui, &mut self.add_path, if cfg!(windows) { "A registry key" } else { "A folder, file or dconf: path" }, ui.available_width() - 96.0 - picker);
+                style::text_input(
+                    ui,
+                    &mut self.add_path,
+                    if cfg!(windows) { tr("A registry key") } else { tr("A folder, file or dconf: path") },
+                    ui.available_width() - 96.0 - picker,
+                );
             }
             if !cfg!(windows) {
                 if let Some(p) = style::browse_button(ui, "watch-add", style::Pick::Any, &self.add_path) {
@@ -257,9 +267,9 @@ impl WatcherView {
             }
         });
         if cfg!(windows) {
-            ui.checkbox(&mut self.add_reads, "Also record reads (very noisy)");
+            ui.checkbox(&mut self.add_reads, tr("Also record reads (very noisy)"));
         }
-        let label = if self.show_browser { "Hide all locations" } else { "Browse all locations" };
+        let label = if self.show_browser { tr("Hide all locations") } else { tr("Browse all locations") };
         ui.horizontal(|ui| {
             if style::ghost(ui, if self.show_browser { icon::X } else { icon::TREE }, label).clicked() {
                 self.show_browser = !self.show_browser;
@@ -282,23 +292,23 @@ impl WatcherView {
         style::divider(ui);
         ui.add_space(8.0);
         ui.horizontal(|ui| {
-            ui.label(style::strong("Watching"));
+            ui.label(style::strong(tr("Watching")));
             style::badge(ui, &self.watches.len().to_string(), p.accent);
             ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
                 let r = style::icon_button(ui, icon::EXPORT, "Export all");
                 egui::Popup::menu(&r).width(360.0).show(|ui| {
-                    ui.label(style::muted(ui, "Folder (one CSV per watched place)"));
+                    ui.label(style::muted(ui, tr("Folder (one CSV per watched place)")));
                     style::path_input(ui, "watch-export-dir", &mut self.export_dir, "", 340.0, style::Pick::Folder);
                     if style::primary(ui, icon::EXPORT, "Export all").clicked() {
                         let dir = std::path::PathBuf::from(&self.export_dir);
                         let mut n = 0;
                         for w in &self.watches {
-                            let f = dir.join(format!("{}.csv", w.log_file().file_stem().unwrap().to_string_lossy()));
+                            let f = dir.join(crate::tf!("{}.csv", w.log_file().file_stem().unwrap().to_string_lossy()));
                             if watcher::read_log(w).and_then(|ev| watcher::export_events(&ev, &f)).is_ok() {
                                 n += 1;
                             }
                         }
-                        cx.info(format!("Exported {n} log(s) to {}", dir.display()));
+                        cx.info(crate::tf!("Exported {n} log(s) to {}", dir.display()));
                         ui.close();
                     }
                 });
@@ -309,7 +319,7 @@ impl WatcherView {
         egui::ScrollArea::vertical().id_salt("watched").auto_shrink([false, false]).show(ui, |ui| {
             if self.watches.is_empty() {
                 ui.add_space(10.0);
-                ui.label(style::muted(ui, "Nothing yet. Use a quick pick above to start."));
+                ui.label(style::muted(ui, tr("Nothing yet. Use a quick pick above to start.")));
             }
             for w in self.watches.clone() {
                 let sel = self.selected.as_deref() == Some(w.path.as_str());
@@ -346,7 +356,7 @@ impl WatcherView {
                         let r = style::icon_button(ui, icon::EXPORT, "Export its changes");
                         super::export_menu(&r, cx, &mut self.export_path, "File (.txt .csv .json)", |f| {
                             watcher::export_events(&watcher::read_log(w)?, f)?;
-                            Ok(format!("Exported to {}", f.display()))
+                            Ok(crate::tf!("Exported to {}", f.display()))
                         });
                         let (ic, tip) = if w.active { (icon::PAUSE, "Pause watching") } else { (icon::PLAY, "Resume watching") };
                         if style::icon_button(ui, ic, tip).clicked() {
@@ -371,13 +381,13 @@ impl WatcherView {
             // Narrow: the filter goes on its own line under the title.
             let narrow = ui.available_width() < 470.0;
             ui.horizontal(|ui| {
-                ui.label(style::strong("Changes"));
+                ui.label(style::strong(tr("Changes")));
                 style::badge(ui, &self.events.len().to_string(), p.accent);
                 if let Some(w) = self.selected_watch() {
-                    ui.add(egui::Label::new(RichText::new(format!("in {}", watch_name(&w.path))).size(12.5).color(p.muted)).truncate());
+                    ui.add(egui::Label::new(RichText::new(crate::tf!("in {}", watch_name(&w.path))).size(12.5).color(p.muted)).truncate());
                 }
                 ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
-                    if style::segment(ui, self.table_view, "Details").on_hover_text("Every field, as a table").clicked() {
+                    if style::segment(ui, self.table_view, "Details").on_hover_text(tr("Every field, as a table")).clicked() {
                         self.table_view = true;
                     }
                     if style::segment(ui, !self.table_view, "Simple").clicked() {
@@ -421,7 +431,7 @@ impl WatcherView {
                 });
                 if let Some(k) = open {
                     if let Err(e) = crate::platform::open_in_editor(k.trim_start_matches("dconf:")) {
-                        cx.error(format!("{e:#}"));
+                        cx.error(crate::tf!("{e:#}"));
                     }
                 }
                 return;
@@ -450,7 +460,7 @@ impl WatcherView {
                     .header(26.0, |mut hd| {
                         for t in ["Time", "Process", "PID", "Operation", "Key", "Value", "New data", "Old data", "Type"] {
                             hd.col(|ui| {
-                                ui.label(RichText::new(t).size(12.5).color(p.muted));
+                                ui.label(RichText::new(tr(t)).size(12.5).color(p.muted));
                             });
                         }
                     })
@@ -483,7 +493,7 @@ impl WatcherView {
                                 });
                             }
                             row.response().context_menu(|ui| {
-                                if style::ghost(ui, icon::FOLDER_OPEN, if cfg!(windows) { "Open in Registry Editor" } else { "Open containing folder" }).clicked() {
+                                if style::ghost(ui, icon::FOLDER_OPEN, if cfg!(windows) { tr("Open in Registry Editor") } else { tr("Open containing folder") }).clicked() {
                                     open = Some(e.key.clone());
                                     ui.close();
                                 }
@@ -497,7 +507,7 @@ impl WatcherView {
             });
             if let Some(k) = open {
                 if let Err(e) = crate::platform::open_in_editor(k.trim_start_matches("dconf:")) {
-                    cx.error(format!("{e:#}"));
+                    cx.error(crate::tf!("{e:#}"));
                 }
             }
             if clear {
@@ -513,6 +523,7 @@ impl WatcherView {
 
 /// One of the three "how it works" steps; ticked when done.
 fn step_tile(ui: &mut Ui, width: f32, n: usize, title: &str, text: &str, done: bool, p: Palette) {
+    let (title, text) = (tr(title), tr(text));
     let (rect, _) = ui.allocate_exact_size(egui::vec2(width, 58.0), egui::Sense::hover());
     let fill = if done { p.surface.lerp_to_gamma(p.success, if p.dark { 0.10 } else { 0.06 }) } else { p.surface };
     ui.painter().rect(rect, 12.0, fill, egui::Stroke::new(1.0, if done { p.success.gamma_multiply(0.5) } else { p.border }), egui::StrokeKind::Inside);
@@ -562,10 +573,10 @@ fn watch_name(path: &str) -> String {
 /// A path with the home folder shown as `~`, and dconf paths labelled.
 fn friendly_path(path: &str) -> String {
     if let Some(rest) = path.strip_prefix("dconf:") {
-        return format!("Desktop setting {rest}");
+        return crate::tf!("Desktop setting {rest}");
     }
     match dirs::home_dir().map(|h| h.display().to_string()) {
-        Some(h) if !h.is_empty() && path.starts_with(&h) => format!("~{}", &path[h.len()..]),
+        Some(h) if !h.is_empty() && path.starts_with(&h) => crate::tf!("~{}", &path[h.len()..]),
         _ => path.to_string(),
     }
 }
@@ -578,7 +589,7 @@ fn describe(e: &WatchEvent, p: Palette) -> (&'static str, Color32, &'static str)
         Op::DeletedKey => (icon::TRASH, p.danger, "was deleted"),
         Op::RenamedKey => (icon::TAG, p.accent, "was renamed"),
         Op::ValueSet if e.old_data.is_none() => (icon::PLUS, p.success, "was added"),
-        Op::ValueSet => (icon::REFRESH, p.accent, "changed"),
+        Op::ValueSet => (icon::REFRESH, p.accent, "was changed"),
         Op::DeletedValue => (icon::TRASH, p.danger, "was removed"),
         Op::SetInformationKey => (icon::REFRESH, p.accent, "was updated"),
         _ => (icon::EYE, p.muted, "was read"),
@@ -606,7 +617,7 @@ fn change_row(ui: &mut Ui, e: &WatchEvent, p: Palette) -> bool {
                 ui.horizontal(|ui| {
                     ui.spacing_mut().item_spacing.x = 5.0;
                     ui.add(egui::Label::new(style::strong(&what)).truncate());
-                    ui.label(RichText::new(verb).color(p.muted));
+                    ui.label(RichText::new(tr(verb)).color(p.muted));
                 });
                 // Old and new values, when the change has them.
                 let short = |s: &str| if s.chars().count() > 60 { s.chars().take(59).collect::<String>() + "…" } else { s.to_string() };
@@ -642,7 +653,7 @@ fn change_row(ui: &mut Ui, e: &WatchEvent, p: Palette) -> bool {
         })
         .response;
     r.interact(egui::Sense::click()).context_menu(|ui| {
-        if style::ghost(ui, icon::FOLDER_OPEN, if cfg!(windows) { "Open in Registry Editor" } else { "Open containing folder" }).clicked() {
+        if style::ghost(ui, icon::FOLDER_OPEN, if cfg!(windows) { tr("Open in Registry Editor") } else { tr("Open containing folder") }).clicked() {
             open = true;
             ui.close();
         }

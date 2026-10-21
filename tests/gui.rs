@@ -83,6 +83,8 @@ fn walk_through_every_tool() {
         r#"{"program":null,"label":"Zapp","version":"1","target":{"names":["Zapp"]},"op":"Uninstall","started":"2026-10-21T07:00:00+03:00","reboot_needed":true}"#,
     );
     std::env::set_var("CLEANCORE_NO_TRAY", "1");
+    // The walkthrough finds widgets by their English text.
+    std::env::set_var("CLEANCORE_LANG", "en");
     std::env::set_var("HOME", &home);
     std::env::set_var("CLEANCORE_DATA_DIR", root.join("data"));
     std::env::set_var("CLEANCORE_SERVICE_DIR", root.join("units"));

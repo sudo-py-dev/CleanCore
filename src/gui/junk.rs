@@ -4,6 +4,7 @@
 use super::style::{self, icon, Palette};
 use super::{take, Cx, Pending};
 use crate::config::Toggle;
+use crate::i18n::tr;
 use crate::junk::{self, DeleteReport, JunkFile, Progress};
 use eframe::egui::{self, RichText, Ui};
 use egui_extras::{Column, TableBuilder};
@@ -48,9 +49,9 @@ impl JunkView {
         }
         if let Some(r) = take(&mut self.deleting) {
             if r.failed.is_empty() {
-                cx.info(format!("Deleted {} junk file(s), {}", r.deleted, super::human(r.bytes)));
+                cx.info(crate::tf!("Deleted {} junk file(s), {}", r.deleted, super::human(r.bytes)));
             } else {
-                cx.error(format!("Deleted {} file(s); {} could not be deleted (first: {})", r.deleted, r.failed.len(), r.failed[0].0));
+                cx.error(crate::tf!("Deleted {} file(s); {} could not be deleted (first: {})", r.deleted, r.failed.len(), r.failed[0].0));
             }
             self.files = None;
         }
@@ -60,7 +61,7 @@ impl JunkView {
             style::card(ui, |ui| {
                 ui.horizontal(|ui| {
                     ui.spinner();
-                    ui.label(format!("{} folders searched, {} junk files found", prog.folders.load(Ordering::Relaxed), prog.found.load(Ordering::Relaxed)));
+                    ui.label(crate::tf!("{} folders searched, {} junk files found", prog.folders.load(Ordering::Relaxed), prog.found.load(Ordering::Relaxed)));
                     ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
                         if style::secondary(ui, icon::X, "Stop").clicked() {
                             prog.cancel.store(true, Ordering::Relaxed);
@@ -94,8 +95,9 @@ impl JunkView {
         let any = cx.settings.junk_patterns.iter().any(|t| t.enabled);
         ui.horizontal(|ui| {
             let n_pat = cx.settings.junk_patterns.iter().filter(|t| t.enabled).count();
-            let where_ = if cx.settings.junk_locations.is_empty() { "the default locations".to_string() } else { format!("{} location(s)", cx.settings.junk_locations.len()) };
-            ui.label(style::muted(ui, format!("{n_pat} patterns in {where_}")));
+            let where_ =
+                if cx.settings.junk_locations.is_empty() { tr("the default locations").to_string() } else { crate::tf!("{} location(s)", cx.settings.junk_locations.len()) };
+            ui.label(style::muted(ui, crate::tf!("{n_pat} patterns in {where_}")));
             ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
                 ui.add_enabled_ui(any, |ui| {
                     if style::primary(ui, icon::SEARCH, "Scan for junk files").clicked() {
@@ -110,7 +112,7 @@ impl JunkView {
                 style::section_title(ui, "Where to look");
                 let defaults: Vec<String> = junk::default_locations().iter().map(|d| d.display().to_string()).collect();
                 if cx.settings.junk_locations.is_empty() {
-                    ui.label(style::muted(ui, format!("{} (default)", defaults.join(", "))).size(12.5));
+                    ui.label(style::muted(ui, crate::tf!("{} (default)", defaults.join(", "))).size(12.5));
                 }
                 let mut remove = None;
                 for (i, l) in cx.settings.junk_locations.iter().enumerate() {
@@ -128,7 +130,7 @@ impl JunkView {
                 }
                 ui.horizontal_wrapped(|ui| {
                     let w = (ui.available_width() - 200.0).clamp(180.0, 420.0);
-                    style::text_input(ui, &mut self.new_location, if cfg!(windows) { r"D:\ or C:\Users\me\Downloads" } else { "/home/me/Downloads or /media/disk" }, w);
+                    style::text_input(ui, &mut self.new_location, if cfg!(windows) { r"D:\ or C:\Users\me\Downloads" } else { tr("/home/me/Downloads or /media/disk") }, w);
                     if let Some(p) = style::browse_button(ui, "junk-location", style::Pick::Folder, &self.new_location) {
                         if !cx.settings.junk_locations.contains(&p) {
                             cx.settings.junk_locations.push(p);
@@ -142,7 +144,7 @@ impl JunkView {
                     }
                     for d in self.drives.get_or_insert_with(crate::platform::drives).iter() {
                         let path = d.path.display().to_string();
-                        if !cx.settings.junk_locations.contains(&path) && style::ghost(ui, icon::DRIVES, &d.label).on_hover_text(format!("Add {path}")).clicked() {
+                        if !cx.settings.junk_locations.contains(&path) && style::ghost(ui, icon::DRIVES, &d.label).on_hover_text(crate::tf!("Add {path}")).clicked() {
                             cx.settings.junk_locations.push(path);
                             changed = true;
                         }
@@ -183,9 +185,9 @@ impl JunkView {
                     style::muted(
                         ui,
                         if cfg!(windows) {
-                            "The Windows component store, Installer folder, Recycle Bin and CleanCore's backups are always skipped."
+                            tr("The Windows component store, Installer folder, Recycle Bin and CleanCore's backups are always skipped.")
                         } else {
-                            "System folders (/usr, /proc, /var/lib, …), the Trash and CleanCore's backups are always skipped."
+                            tr("System folders (/usr, /proc, /var/lib, …), the Trash and CleanCore's backups are always skipped.")
                         },
                     )
                     .size(12.0),
@@ -202,12 +204,12 @@ impl JunkView {
                         }
                     });
                 });
-                ui.label(style::muted(ui, "File name patterns: * matches anything, ? one character. Click a pattern to switch it off.").size(12.5));
+                ui.label(style::muted(ui, tr("File name patterns: * matches anything, ? one character. Click a pattern to switch it off.")).size(12.5));
                 ui.add_space(4.0);
                 let mut remove = None;
                 ui.horizontal_wrapped(|ui| {
                     for (i, t) in cx.settings.junk_patterns.iter_mut().enumerate() {
-                        let r = style::segment(ui, t.enabled, &t.value).on_hover_text("Click to switch on/off · right-click to remove");
+                        let r = style::segment(ui, t.enabled, &t.value).on_hover_text(tr("Click to switch on/off · right-click to remove"));
                         if r.clicked() {
                             t.enabled = !t.enabled;
                             changed = true;
@@ -233,7 +235,7 @@ impl JunkView {
                 style::setting_row(ui, "Skip files changed in the last 24 hours", "They may still be in use.", |ui| {
                     changed |= style::toggle(ui, &mut cx.settings.junk_skip_recent, "Skip files changed in the last 24 hours").changed();
                 });
-                style::setting_row(ui, if cfg!(windows) { "Delete to the Recycle Bin" } else { "Delete to the Trash" }, "Otherwise files are deleted permanently.", |ui| {
+                style::setting_row(ui, if cfg!(windows) { tr("Delete to the Recycle Bin") } else { tr("Delete to the Trash") }, "Otherwise files are deleted permanently.", |ui| {
                     changed |= style::toggle(ui, &mut cx.settings.junk_to_trash, "Delete to the trash").changed();
                 });
             });
@@ -252,10 +254,10 @@ impl JunkView {
             if style::secondary(ui, icon::ARROW_LEFT, "New scan").clicked() {
                 self.files = None;
             }
-            ui.label(style::strong(format!("{} junk files · {}", files.len(), super::human(total))));
+            ui.label(style::strong(crate::tf!("{} junk files · {}", files.len(), super::human(total))));
             ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
                 ui.add_enabled_ui(!sel.is_empty(), |ui| {
-                    if style::primary(ui, icon::TRASH, &format!("Delete ({}, {})", sel.len(), super::human(sel_size))).clicked() {
+                    if style::primary(ui, icon::TRASH, &crate::tf!("Delete ({}, {})", sel.len(), super::human(sel_size))).clicked() {
                         if cx.settings.skip_warnings {
                             self.delete(ui.ctx(), cx, sel.clone());
                         } else {
@@ -266,7 +268,7 @@ impl JunkView {
                 let r = style::icon_button(ui, icon::EXPORT, "Export list");
                 super::export_menu(&r, cx, &mut self.export_path, "File (.txt or .csv)", |f| {
                     junk::export(&files, f)?;
-                    Ok(format!("Exported to {}", f.display()))
+                    Ok(crate::tf!("Exported to {}", f.display()))
                 });
                 if style::ghost(ui, "", "Select none").clicked() {
                     self.checked.iter_mut().for_each(|c| *c = false);
@@ -295,7 +297,7 @@ impl JunkView {
             .header(26.0, |mut h| {
                 for t in ["", "File", "Size", "Changed", "Pattern"] {
                     h.col(|ui| {
-                        ui.label(style::muted(ui, t).size(12.5));
+                        ui.label(style::muted(ui, tr(t)).size(12.5));
                     });
                 }
             })
@@ -334,9 +336,12 @@ impl JunkView {
             let mut close = false;
             egui::Modal::new(egui::Id::unique("junk-confirm")).show(ui.ctx(), |ui| {
                 ui.set_width(420.0);
-                ui.label(style::strong(format!("Delete {} junk file(s)?", sel.len())).size(18.0));
+                ui.label(style::strong(crate::tf!("Delete {} junk file(s)?", sel.len())).size(18.0));
                 ui.add_space(6.0);
-                ui.label(style::muted(ui, if cx.settings.junk_to_trash { "They go to the Trash, so you can still get them back." } else { "They are deleted permanently." }));
+                ui.label(style::muted(
+                    ui,
+                    if cx.settings.junk_to_trash { tr("They go to the Trash, so you can still get them back.") } else { tr("They are deleted permanently.") },
+                ));
                 ui.add_space(12.0);
                 ui.horizontal(|ui| {
                     if style::primary(ui, icon::TRASH, "Delete").clicked() {

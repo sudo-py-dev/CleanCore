@@ -5,6 +5,7 @@ use super::style::{self, icon, Palette};
 use super::{take, Cx, Pending};
 use crate::config::ListEntry;
 use crate::engine::{self, Selection};
+use crate::i18n::tr;
 use crate::model::{Issue, ScanMode, Scope};
 use eframe::egui::{self, collapsing_header::CollapsingState, RichText, Ui, Vec2};
 use std::collections::{BTreeSet, HashMap};
@@ -13,9 +14,9 @@ use std::sync::{Arc, Mutex};
 /// Icon, title, description and depth (1-3) of a scan mode.
 fn mode_meta(m: ScanMode) -> (&'static str, &'static str, &'static str, usize) {
     match m {
-        ScanMode::Safe => (icon::SHIELD_CHECK, "Safe Scan", "Only entries that are certainly safe to delete. The fastest scan.", 1),
-        ScanMode::Moderate => (icon::GAUGE, "Moderate Scan", "Looks deeper for invalid and orphaned entries.", 2),
-        ScanMode::Advanced => (icon::ROCKET, "Advanced Scan", "Exhaustive. Review the results before you clean.", 3),
+        ScanMode::Safe => (icon::SHIELD_CHECK, tr("Safe Scan"), tr("Only entries that are certainly safe to delete. The fastest scan."), 1),
+        ScanMode::Moderate => (icon::GAUGE, tr("Moderate Scan"), tr("Looks deeper for invalid and orphaned entries."), 2),
+        ScanMode::Advanced => (icon::ROCKET, tr("Advanced Scan"), tr("Exhaustive. Review the results before you clean."), 3),
     }
 }
 
@@ -113,7 +114,7 @@ impl CleanerView {
         let done = Arc::new(Mutex::new(Vec::new()));
         self.progress = Some(Progress { id: egui::Id::unique(("scan", ctx.input(|i| i.time).to_bits())), planned: engine::selected_ids(&sel), done: done.clone(), glyph });
         let repaint = ctx.clone();
-        self.scan = Some(Pending::spawn(ctx, format!("{label}…"), move || {
+        self.scan = Some(Pending::spawn(ctx, crate::tf!("{label}…"), move || {
             let tick = |id: &'static str| {
                 done.lock().unwrap().push(id);
                 repaint.request_repaint();
@@ -125,10 +126,10 @@ impl CleanerView {
 
     fn start_forced(&mut self, ctx: &egui::Context, cx: &Cx) {
         let (settings, root, text) = (cx.settings.clone(), self.forced_root.clone(), self.forced_text.clone());
-        self.scan_label = format!("Forced scan for \"{text}\"");
+        self.scan_label = crate::tf!("Forced scan for \"{text}\"");
         self.last_clean = None;
         self.progress = Some(Progress { id: egui::Id::unique(("scan", ctx.input(|i| i.time).to_bits())), planned: Vec::new(), done: Arc::default(), glyph: icon::SEARCH });
-        self.scan = Some(Pending::spawn(ctx, "Forced scan…", move || engine::run_forced_scan(&settings, &root, &text).map_err(|e| format!("{e:#}"))));
+        self.scan = Some(Pending::spawn(ctx, "Forced scan…", move || engine::run_forced_scan(&settings, &root, &text).map_err(|e| crate::tf!("{e:#}"))));
         self.screen = Screen::Results;
     }
 
@@ -138,7 +139,7 @@ impl CleanerView {
         settings.full_backup_before_clean = full_backup;
         let issues: Vec<Issue> = self.results.iter().zip(&self.checked).filter(|(_, c)| **c).map(|(i, _)| i.clone()).collect();
         let n = issues.len();
-        self.clean = Some(Pending::spawn(ctx, format!("Cleaning {n} item(s)…"), move || crate::cleaner::clean(&settings, &issues).map_err(|e| format!("{e:#}"))));
+        self.clean = Some(Pending::spawn(ctx, crate::tf!("Cleaning {n} item(s)…"), move || crate::cleaner::clean(&settings, &issues).map_err(|e| crate::tf!("{e:#}"))));
     }
 
     fn selected_count(&self) -> usize {
@@ -158,7 +159,7 @@ impl CleanerView {
         if let Some(r) = take(&mut self.scan) {
             match r {
                 Ok(issues) => {
-                    cx.info(format!("{}: found {} item(s)", self.scan_label, issues.len()));
+                    cx.info(crate::tf!("{}: found {} item(s)", self.scan_label, issues.len()));
                     self.checked = vec![true; issues.len()];
                     self.results = issues;
                     if self.quick {
@@ -171,7 +172,7 @@ impl CleanerView {
                 }
                 Err(e) => {
                     self.quick = false;
-                    cx.error(format!("Scan failed: {e}"));
+                    cx.error(crate::tf!("Scan failed: {e}"));
                     self.screen = Screen::Home;
                 }
             }
@@ -180,20 +181,20 @@ impl CleanerView {
             match r {
                 Ok(rep) => {
                     if let Some(Err(e)) = &rep.restore_point {
-                        cx.error(format!("Failed to create a restore point: {e}"));
+                        cx.error(crate::tf!("Failed to create a restore point: {e}"));
                     }
                     let failed: BTreeSet<&str> = rep.failed.iter().map(|(l, _)| l.as_str()).collect();
                     let keep: Vec<(Issue, bool)> = self.results.drain(..).zip(self.checked.drain(..)).filter(|(i, c)| !*c || failed.contains(i.location.as_str())).collect();
                     (self.results, self.checked) = keep.into_iter().unzip();
-                    let msg = format!("Deleted {} item(s). All deleted data has been backed up ({}).", rep.cleaned, rep.backup_id);
+                    let msg = crate::tf!("Deleted {} item(s). All deleted data has been backed up ({}).", rep.cleaned, rep.backup_id);
                     if rep.failed.is_empty() {
                         cx.info(msg.clone());
                     } else {
-                        cx.error(format!("{msg} {} could not be deleted: {}", rep.failed.len(), rep.failed[0].1));
+                        cx.error(crate::tf!("{msg} {} could not be deleted: {}", rep.failed.len(), rep.failed[0].1));
                     }
                     self.last_clean = Some(msg);
                 }
-                Err(e) => cx.error(format!("Cleaning failed: {e}")),
+                Err(e) => cx.error(crate::tf!("Cleaning failed: {e}")),
             }
         }
     }
@@ -220,12 +221,12 @@ impl CleanerView {
 
     fn home(&mut self, ui: &mut Ui, cx: &mut Cx) {
         let busy = self.busy();
-        let subtitle = if cfg!(windows) { "Find and remove invalid and leftover registry entries" } else { "Find and remove settings left behind by removed apps" };
+        let subtitle = if cfg!(windows) { tr("Find and remove invalid and leftover registry entries") } else { tr("Find and remove settings left behind by removed apps") };
         let (mut quick, mut auto) = (false, false);
         style::page_header(ui, "Cleaner", subtitle, |ui| {
             ui.add_enabled_ui(!busy, |ui| {
-                quick = style::primary(ui, icon::LIGHTNING, "Quick Clean").on_hover_text("Scan and clean with one click").clicked();
-                auto = style::secondary(ui, icon::CALENDAR, "Auto Clean").on_hover_text("Scheduled scans and cleans").clicked();
+                quick = style::primary(ui, icon::LIGHTNING, "Quick Clean").on_hover_text(tr("Scan and clean with one click")).clicked();
+                auto = style::secondary(ui, icon::CALENDAR, "Auto Clean").on_hover_text(tr("Scheduled scans and cleans")).clicked();
             });
         });
         if quick {
@@ -244,7 +245,7 @@ impl CleanerView {
         let checks = engine::all_checks();
         let count = |m: ScanMode| checks.iter().filter(|c| c.min_mode <= m && c.id != "include_list").count();
         let (glyph, title, _, _) = mode_meta(self.mode);
-        let scope = if self.all_users { "every account" } else { "your account" };
+        let scope = if self.all_users { tr("every account") } else { tr("your account") };
 
         // Hero: what will be scanned, where, and the button that starts it.
         let mut start = false;
@@ -255,15 +256,15 @@ impl CleanerView {
                 ui.vertical(|ui| {
                     ui.spacing_mut().item_spacing.y = 4.0;
                     ui.add_space(2.0);
-                    ui.label(style::strong("Ready to scan").size(21.0));
-                    ui.label(style::muted(ui, format!("{title} · {} categories · {scope}", count(self.mode))));
+                    ui.label(style::strong(tr("Ready to scan")).size(21.0));
+                    ui.label(style::muted(ui, crate::tf!("{title} · {} categories · {scope}", count(self.mode))));
                     ui.add_space(2.0);
                     ui.horizontal(|ui| {
                         ui.spacing_mut().item_spacing.x = 4.0;
-                        if style::segment(ui, !self.all_users, &format!("{}  Current account", icon::USER)).clicked() {
+                        if style::segment(ui, !self.all_users, &crate::tf!("{}  Current account", icon::USER)).clicked() {
                             self.all_users = false;
                         }
-                        if style::segment(ui, self.all_users, &format!("{}  All accounts", icon::USERS)).clicked() {
+                        if style::segment(ui, self.all_users, &crate::tf!("{}  All accounts", icon::USERS)).clicked() {
                             self.all_users = true;
                         }
                     });
@@ -321,8 +322,8 @@ impl CleanerView {
     }
 
     fn scanning_ui(&self, ui: &mut Ui, p: Palette) {
-        let scope = if self.all_users { "All accounts" } else { "Current account" };
-        style::page_header(ui, "Scanning", &format!("{} · {scope}", self.scan_label), |_| {});
+        let scope = if self.all_users { tr("All accounts") } else { tr("Current account") };
+        style::page_header(ui, "Scanning", &crate::tf!("{} · {scope}", self.scan_label), |_| {});
         let (id, planned, done, glyph) = match &self.progress {
             Some(pr) => (pr.id, pr.planned.clone(), pr.done.lock().unwrap().clone(), pr.glyph),
             None => (egui::Id::unique("scan"), Vec::new(), Vec::new(), icon::SEARCH),
@@ -337,12 +338,12 @@ impl CleanerView {
                 ui.vertical(|ui| {
                     ui.spacing_mut().item_spacing.y = 6.0;
                     ui.add_space(14.0);
-                    let pct = (n * 100).checked_div(total).map(|x| format!("{x}%")).unwrap_or_default();
+                    let pct = (n * 100).checked_div(total).map(|x| crate::tf!("{x}%")).unwrap_or_default();
                     ui.horizontal(|ui| {
-                        ui.label(style::strong("Looking for leftovers…").size(20.0));
+                        ui.label(style::strong(tr("Looking for leftovers…")).size(20.0));
                         ui.label(RichText::new(pct).size(20.0).family(style::semibold()).color(p.accent));
                     });
-                    let status = if total > 0 { format!("{n} of {total} categories checked · {secs:.0}s") } else { format!("Searching · {secs:.0}s") };
+                    let status = if total > 0 { crate::tf!("{n} of {total} categories checked · {secs:.0}s") } else { crate::tf!("Searching · {secs:.0}s") };
                     ui.label(style::muted(ui, status));
                     let w = ui.available_width().min(520.0);
                     if total > 0 {
@@ -378,7 +379,7 @@ impl CleanerView {
                             let t = 0.5 + 0.5 * (time * 3.0 + i as f32 * 0.9).sin();
                             ui.painter().circle_filled(left, 3.0 + 2.0 * t, p.accent.gamma_multiply(0.35 + 0.5 * t));
                         }
-                        let name = self.names.get(id).copied().unwrap_or(id);
+                        let name = tr(self.names.get(id).copied().unwrap_or(id));
                         let color = if finished { p.text } else { p.muted };
                         ui.painter().text(left + Vec2::new(18.0, 0.0), egui::Align2::LEFT_CENTER, style::category_icon(id), egui::FontId::proportional(15.0), color);
                         ui.painter().text(left + Vec2::new(40.0, 0.0), egui::Align2::LEFT_CENTER, name, egui::FontId::proportional(13.5), color);
@@ -393,7 +394,7 @@ impl CleanerView {
         let n = self.managed.len();
         let mut scan = false;
         let back = style::page_header_back(ui, "Custom Scan", "Pick the categories to look at", |ui| {
-            ui.add_enabled_ui(n > 0, |ui| scan = style::primary(ui, icon::SEARCH, &format!("Scan {n} categories")).clicked());
+            ui.add_enabled_ui(n > 0, |ui| scan = style::primary(ui, icon::SEARCH, &crate::tf!("Scan {n} categories")).clicked());
         });
         if back {
             self.screen = Screen::Home;
@@ -422,8 +423,8 @@ impl CleanerView {
                     ui.horizontal(|ui| {
                         style::icon_tile(ui, style::category_icon(c.id), p.accent, 32.0);
                         ui.vertical(|ui| {
-                            ui.label(style::strong(c.name));
-                            ui.label(style::muted(ui, c.description).size(12.5));
+                            ui.label(style::strong(tr(c.name)));
+                            ui.label(style::muted(ui, tr(c.description)).size(12.5));
                         });
                         ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
                             let mut on = self.managed.contains(c.id);
@@ -457,10 +458,10 @@ impl CleanerView {
         }
         style::card(ui, |ui| {
             egui::Grid::new("forced").num_columns(2).spacing([16.0, 12.0]).show(ui, |ui| {
-                ui.label(if cfg!(windows) { "Registry key" } else { "Folder" });
+                ui.label(if cfg!(windows) { tr("Registry key") } else { tr("Folder") });
                 style::key_or_path_input(ui, "forced-root", &mut self.forced_root, "", 520.0, style::Pick::Folder);
                 ui.end_row();
-                ui.label("Search for");
+                ui.label(tr("Search for"));
                 style::text_input(ui, &mut self.forced_text, "e.g. a program or vendor name", 520.0);
                 ui.end_row();
             });
@@ -480,16 +481,16 @@ impl CleanerView {
         let sel = self.selected_count();
         let busy = self.busy();
         let cats = self.order.iter().filter(|c| self.results.iter().any(|i| i.category == **c)).count();
-        let subtitle = if total == 0 { self.scan_label.clone() } else { format!("{total} item(s) in {cats} categor{} · {sel} selected", if cats == 1 { "y" } else { "ies" }) };
+        let subtitle = if total == 0 { self.scan_label.clone() } else { crate::tf!("{total} item(s) in {cats} category(ies) · {sel} selected") };
         let (mut clean, mut new_scan) = (false, false);
         style::page_header(ui, "Scan results", &subtitle, |ui| {
-            ui.add_enabled_ui(!busy && sel > 0, |ui| clean = style::primary(ui, icon::BROOM, &format!("Clean ({sel})")).clicked());
+            ui.add_enabled_ui(!busy && sel > 0, |ui| clean = style::primary(ui, icon::BROOM, &crate::tf!("Clean ({sel})")).clicked());
             ui.add_enabled_ui(total > 0, |ui| {
                 let r = style::secondary(ui, icon::EXPORT, "Export");
                 let results = &self.results;
                 super::export_menu(&r, cx, &mut self.export_path, "File (.txt .csv .html .xml .json)", |f| {
                     crate::export::export(results, f)?;
-                    Ok(format!("Exported to {}", f.display()))
+                    Ok(crate::tf!("Exported to {}", f.display()))
                 });
             });
             ui.add_enabled_ui(!busy, |ui| new_scan = style::secondary(ui, icon::UNDO, "New scan").clicked());
@@ -517,7 +518,7 @@ impl CleanerView {
 
         ui.horizontal(|ui| {
             let mut all = sel == total;
-            if ui.checkbox(&mut all, "Select all").changed() {
+            if ui.checkbox(&mut all, tr("Select all")).changed() {
                 self.checked.iter_mut().for_each(|c| *c = all);
             }
             ui.add_space(8.0);
@@ -528,7 +529,7 @@ impl CleanerView {
                 self.set_open = Some(false);
             }
             ui.add_space(8.0);
-            ui.checkbox(&mut self.show_details, "Show details");
+            ui.checkbox(&mut self.show_details, tr("Show details"));
         });
         ui.add_space(6.0);
 
@@ -543,7 +544,7 @@ impl CleanerView {
         let mut action: Option<ItemAction> = None;
         egui::ScrollArea::vertical().auto_shrink([false, false]).show(ui, |ui| {
             for (cat, idx) in &groups {
-                let name = self.names.get(cat).copied().unwrap_or(cat);
+                let name = tr(self.names.get(cat).copied().unwrap_or(cat));
                 style::card(ui, |ui| {
                     let id = ui.make_persistent_id(("cat", cat));
                     let mut state = CollapsingState::load_with_default_open(ui.ctx(), id, true);
@@ -571,7 +572,7 @@ impl CleanerView {
                                     ui.checkbox(&mut self.checked[i], "");
                                     ui.vertical(|ui| {
                                         let r = ui.add(egui::Label::new(RichText::new(&issue.location).monospace().size(12.5)).sense(egui::Sense::click()).truncate());
-                                        let r = r.on_hover_text(format!("{}\n{}", issue.location, issue.detail));
+                                        let r = r.on_hover_text(crate::tf!("{}\n{}", issue.location, issue.detail));
                                         r.context_menu(|ui| item_menu(ui, i, self.checked[i], &issue.location, &mut action));
                                         if self.show_details {
                                             ui.label(RichText::new(&issue.detail).size(12.0).color(p.muted));
@@ -597,10 +598,10 @@ impl CleanerView {
             ItemAction::Details => self.show_details = !self.show_details,
             ItemAction::Editor(i) => {
                 if let Err(e) = crate::platform::open_in_editor(&self.results[i].location) {
-                    cx.error(format!("Could not open: {e:#}"));
+                    cx.error(crate::tf!("Could not open: {e:#}"));
                 }
             }
-            ItemAction::Copy(i) => cx.info(format!("Copied {}", self.results[i].location)),
+            ItemAction::Copy(i) => cx.info(crate::tf!("Copied {}", self.results[i].location)),
             ItemAction::Exclude(i) => {
                 let path = self.results[i].location.split(" | ").next().unwrap_or_default().to_string();
                 cx.settings.exclude_list.retain(|e| !e.path.eq_ignore_ascii_case(&path));
@@ -609,7 +610,7 @@ impl CleanerView {
                 let settings = &*cx.settings;
                 let keep: Vec<(Issue, bool)> = self.results.drain(..).zip(self.checked.drain(..)).filter(|(i, _)| !settings.is_excluded(&i.location)).collect();
                 (self.results, self.checked) = keep.into_iter().unzip();
-                cx.info(format!("Added to exclude list: {path}"));
+                cx.info(crate::tf!("Added to exclude list: {path}"));
             }
         }
     }
@@ -623,11 +624,11 @@ impl CleanerView {
             let p = Palette::get(ui.ctx());
             style::icon_tile(ui, icon::BROOM, p.accent, 44.0);
             ui.add_space(8.0);
-            ui.label(style::strong(format!("Delete {n} item(s)?")).size(19.0));
-            ui.label(style::muted(ui, "Everything deleted is backed up first and can be restored from Backups."));
+            ui.label(style::strong(crate::tf!("Delete {n} item(s)?")).size(19.0));
+            ui.label(style::muted(ui, tr("Everything deleted is backed up first and can be restored from Backups.")));
             ui.add_space(10.0);
-            ui.checkbox(&mut c.restore_point, if cfg!(windows) { "Create a System Restore Point" } else { "Create a system snapshot (snapper / timeshift)" });
-            ui.checkbox(&mut c.full_backup, if cfg!(windows) { "Create a full registry backup" } else { "Create a full config backup" });
+            ui.checkbox(&mut c.restore_point, if cfg!(windows) { tr("Create a System Restore Point") } else { tr("Create a system snapshot (snapper / timeshift)") });
+            ui.checkbox(&mut c.full_backup, if cfg!(windows) { tr("Create a full registry backup") } else { tr("Create a full config backup") });
             ui.add_space(14.0);
             ui.horizontal(|ui| {
                 if style::primary(ui, icon::TRASH, "Delete").clicked() {
@@ -679,7 +680,7 @@ fn depth_card(ui: &mut Ui, size: Vec2, m: ScanMode, selected: bool, categories: 
     let tw = tg.size().x;
     painter.galley(egui::pos2(rect.left() + pad, ty), tg, p.text);
     if m == ScanMode::Safe {
-        let g = painter.layout_no_wrap("Recommended".into(), egui::FontId::new(11.0, style::semibold()), p.success);
+        let g = painter.layout_no_wrap(tr("Recommended").into(), egui::FontId::new(11.0, style::semibold()), p.success);
         let r = egui::Rect::from_min_size(egui::pos2(rect.left() + pad + tw + 8.0, ty + 1.0), g.size() + Vec2::new(14.0, 4.0));
         painter.rect_filled(r, 9.0, egui::Color32::from_rgba_unmultiplied(p.success.r(), p.success.g(), p.success.b(), 30));
         painter.galley(r.min + Vec2::new(7.0, 2.0), g, p.success);
@@ -693,14 +694,15 @@ fn depth_card(ui: &mut Ui, size: Vec2, m: ScanMode, selected: bool, categories: 
         painter.rect_filled(bar, 3.0, if i < level { p.accent } else { p.surface_alt.lerp_to_gamma(p.border, 0.6) });
     }
     if rect.width() >= 260.0 {
-        painter.text(egui::pos2(rect.left() + pad + 72.0, by), egui::Align2::LEFT_CENTER, "Depth", egui::FontId::proportional(12.0), p.faint);
+        painter.text(egui::pos2(rect.left() + pad + 72.0, by), egui::Align2::LEFT_CENTER, tr("Depth"), egui::FontId::proportional(12.0), p.faint);
     }
-    painter.text(egui::pos2(rect.right() - pad, by), egui::Align2::RIGHT_CENTER, format!("{categories} categories"), egui::FontId::proportional(12.0), p.muted);
+    painter.text(egui::pos2(rect.right() - pad, by), egui::Align2::RIGHT_CENTER, crate::tf!("{categories} categories"), egui::FontId::proportional(12.0), p.muted);
     resp
 }
 
 /// Clickable card with an icon tile, a title, a description and an optional tag.
 fn mode_card(ui: &mut Ui, size: Vec2, ic: &str, title: &str, desc: &str, tag: Option<&str>, p: Palette) -> egui::Response {
+    let (title, desc, tag) = (tr(title), tr(desc), tag.map(tr));
     let (rect, resp) = ui.allocate_exact_size(size, egui::Sense::click());
     resp.widget_info(|| egui::WidgetInfo::labeled(egui::Role::Button, ui.is_enabled(), title));
     if ui.is_rect_visible(rect) {
@@ -748,7 +750,7 @@ fn item_menu(ui: &mut Ui, i: usize, checked: bool, location: &str, action: &mut 
             ui.close();
         }
     };
-    pick(ui, if checked { icon::X } else { icon::CHECK }, if checked { "Unselect this" } else { "Select this" }, ItemAction::Toggle(i));
+    pick(ui, if checked { icon::X } else { icon::CHECK }, if checked { tr("Unselect this") } else { tr("Select this") }, ItemAction::Toggle(i));
     pick(ui, icon::LIST_CHECKS, "Select all", ItemAction::All(true));
     pick(ui, icon::X, "Select none", ItemAction::All(false));
     ui.separator();
@@ -756,7 +758,7 @@ fn item_menu(ui: &mut Ui, i: usize, checked: bool, location: &str, action: &mut 
     pick(ui, icon::X, "Collapse all", ItemAction::Open(false));
     pick(ui, icon::INFO, "Show details", ItemAction::Details);
     ui.separator();
-    pick(ui, icon::FOLDER_OPEN, if cfg!(windows) { "Open in Registry Editor" } else { "Open containing folder" }, ItemAction::Editor(i));
+    pick(ui, icon::FOLDER_OPEN, if cfg!(windows) { tr("Open in Registry Editor") } else { tr("Open containing folder") }, ItemAction::Editor(i));
     pick(ui, icon::SHIELD_CHECK, "Add to exclude list", ItemAction::Exclude(i));
     if style::ghost(ui, icon::COPY, "Copy").clicked() {
         ui.ctx().copy_text(location.to_string());

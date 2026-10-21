@@ -4,6 +4,7 @@
 use super::style::{self, icon, Palette};
 use super::traced::TracedAction;
 use super::{take, Cx, Pending};
+use crate::i18n::tr;
 use crate::tracer::{self, DbLog};
 use eframe::egui::{self, Ui};
 use egui_extras::{Column, TableBuilder};
@@ -46,7 +47,7 @@ impl LogsDbTab {
         }
         if let Some(r) = take(&mut self.updating) {
             match r {
-                Ok(n) => cx.info(format!("Logs database updated: {n} new log(s)")),
+                Ok(n) => cx.info(crate::tf!("Logs database updated: {n} new log(s)")),
                 Err(e) => cx.error(e),
             }
             self.loaded = false;
@@ -59,28 +60,28 @@ impl LogsDbTab {
             style::search_field(ui, &mut self.search, "Search logs", 220.0);
             ui.add_space(6.0);
             style::toggle(ui, &mut self.compatible_only, "Only logs for this system");
-            ui.label(style::muted(ui, format!("Only {} {}", std::env::consts::OS, std::env::consts::ARCH)));
+            ui.label(style::muted(ui, crate::tf!("Only {} {}", std::env::consts::OS, std::env::consts::ARCH)));
             ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
                 let has_url = cx.settings.logs_db_url.as_deref().is_some_and(|u| !u.trim().is_empty());
                 ui.add_enabled_ui(self.updating.is_none(), |ui| {
                     let r = style::secondary(ui, icon::DOWNLOAD, "Update").on_hover_text(if has_url {
-                        "Download new logs from the database URL"
+                        tr("Download new logs from the database URL")
                     } else {
-                        "Set a database URL in Settings › Uninstaller first"
+                        tr("Set a database URL in Settings › Uninstaller first")
                     });
                     if r.clicked() {
                         if has_url {
                             let s = cx.settings.clone();
-                            self.updating = Some(Pending::spawn(ui.ctx(), "Downloading logs", move || tracer::db_update(&s).map_err(|e| format!("{e:#}"))));
+                            self.updating = Some(Pending::spawn(ui.ctx(), "Downloading logs", move || tracer::db_update(&s).map_err(|e| crate::tf!("{e:#}"))));
                         } else {
-                            cx.error("No logs database URL is set. Add one in Settings › Uninstaller, or copy .cptrace files into the database folder.");
+                            cx.error(tr("No logs database URL is set. Add one in Settings › Uninstaller, or copy .cptrace files into the database folder."));
                         }
                     }
                 });
                 if style::icon_button(ui, icon::FOLDER_OPEN, "Open the database folder").clicked() {
                     let _ = crate::config::ensure_dir(&folder);
                     if let Err(e) = crate::platform::open_folder(&folder) {
-                        cx.error(format!("{e:#}"));
+                        cx.error(crate::tf!("{e:#}"));
                     }
                 }
                 if style::icon_button(ui, icon::REFRESH, "Refresh").clicked() {
@@ -98,7 +99,7 @@ impl LogsDbTab {
             (0..self.list.len()).filter(|&i| (!self.compatible_only || self.list[i].compatible()) && (q.is_empty() || self.list[i].log.name.to_lowercase().contains(&q))).collect();
         if rows.is_empty() {
             let text = if self.list.is_empty() {
-                format!("Put shared .cptrace logs in {} or download them with Update. Add your own from Traced programs.", folder.display())
+                crate::tf!("Put shared .cptrace logs in {} or download them with Update. Add your own from Traced programs.", folder.display())
             } else {
                 "No log matches. Turn off \"Only logs for this system\" to see the others.".to_string()
             };
@@ -116,7 +117,7 @@ impl LogsDbTab {
                         ui.label(
                             style::muted(
                                 ui,
-                                format!("{} {} · {} settings · {} files · {}", d.log.os, d.log.arch, d.log.count(true), d.log.count(false), d.log.created.format("%d %b %Y")),
+                                crate::tf!("{} {} · {} settings · {} files · {}", d.log.os, d.log.arch, d.log.count(true), d.log.count(false), d.log.created.format("%d %b %Y")),
                             )
                             .size(12.5),
                         );
@@ -126,11 +127,11 @@ impl LogsDbTab {
                             let import = |cx: &mut Cx| match tracer::db_import(d) {
                                 Ok(l) => Some(l),
                                 Err(e) => {
-                                    cx.error(format!("{e:#}"));
+                                    cx.error(crate::tf!("{e:#}"));
                                     None
                                 }
                             };
-                            if style::primary(ui, icon::TRASH, "Uninstall").on_hover_text("Imports the log into Traced programs and removes what it recorded").clicked() {
+                            if style::primary(ui, icon::TRASH, "Uninstall").on_hover_text(tr("Imports the log into Traced programs and removes what it recorded")).clicked() {
                                 action = import(cx).map(TracedAction::Uninstall);
                             }
                             if style::secondary(ui, icon::LIST_CHECKS, "Custom uninstall").clicked() {
@@ -143,7 +144,7 @@ impl LogsDbTab {
                     });
                 }
                 None => {
-                    ui.label(style::muted(ui, "Select a log. Uninstalling with it imports it into Traced programs first."));
+                    ui.label(style::muted(ui, tr("Select a log. Uninstalling with it imports it into Traced programs first.")));
                 }
             });
         });
@@ -163,7 +164,7 @@ impl LogsDbTab {
             .header(26.0, |mut h| {
                 for t in ["Name", "System", "Settings", "Files", "Recorded"] {
                     h.col(|ui| {
-                        ui.label(style::muted(ui, t).size(12.5));
+                        ui.label(style::muted(ui, tr(t)).size(12.5));
                     });
                 }
             })
@@ -179,7 +180,7 @@ impl LogsDbTab {
                         ui.add(egui::Label::new(style::strong(&d.log.name)).truncate());
                     });
                     row.col(|ui| {
-                        ui.label(soft(ui, format!("{} {}", d.log.os, d.log.arch)));
+                        ui.label(soft(ui, crate::tf!("{} {}", d.log.os, d.log.arch)));
                     });
                     row.col(|ui| {
                         ui.label(d.log.count(true).to_string());

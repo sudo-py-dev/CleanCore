@@ -1,0 +1,4529 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Language: de\n"
+
+msgid "Reading startup entries, including system ones"
+msgstr "Autostart-Einträge werden gelesen, einschließlich Systemeinträgen"
+
+msgid "Reading startup entries"
+msgstr "Autostart-Einträge werden gelesen"
+
+msgid "Reading startup entries…"
+msgstr "Autostart-Einträge werden gelesen…"
+
+msgid "{} entries · {enabled} start automatically"
+msgstr "{} Einträge · {enabled} starten automatisch"
+
+msgid "Autorun"
+msgstr "Autostart"
+
+msgid "Add"
+msgstr "Hinzufügen"
+
+msgid "More"
+msgstr "Mehr"
+
+msgid "Remove invalid entries ({n_invalid})"
+msgstr "Ungültige Einträge entfernen ({n_invalid})"
+
+msgid "Entries whose program no longer exists"
+msgstr "Einträge, deren Programm nicht mehr existiert"
+
+msgid "Remove disabled entries ({n_disabled})"
+msgstr "Deaktivierte Einträge entfernen ({n_disabled})"
+
+msgid "Export (.txt .html .csv .json)"
+msgstr "Exportieren (.txt .html .csv .json)"
+
+msgid "Exported {} entries to {}"
+msgstr "{} Einträge exportiert nach {}"
+
+msgid "Refresh"
+msgstr "Aktualisieren"
+
+msgid "Search name, command or publisher"
+msgstr "Nach Name, Befehl oder Herausgeber suchen"
+
+msgid "All"
+msgstr "Alle"
+
+msgid "Show system entries"
+msgstr "Systemeinträge anzeigen"
+
+msgid "Windows entries"
+msgstr "Windows-Einträge"
+
+msgid "System entries"
+msgstr "Systemeinträge"
+
+msgid "Nothing starts automatically"
+msgstr "Nichts startet automatisch"
+
+msgid "No startup entries were found."
+msgstr "Keine Autostart-Einträge gefunden."
+
+msgid "Nothing matches the filter."
+msgstr "Nichts entspricht dem Filter."
+
+msgid "On"
+msgstr "An"
+
+msgid "Program"
+msgstr "Programm"
+
+msgid "Type"
+msgstr "Typ"
+
+msgid "Publisher"
+msgstr "Herausgeber"
+
+msgid "Start {} automatically"
+msgstr "{} automatisch starten"
+
+msgid "Running"
+msgstr "Läuft"
+
+msgid "Program missing"
+msgstr "Programm fehlt"
+
+msgid "For all users"
+msgstr "Für alle Benutzer"
+
+msgid "Remove (backed up)"
+msgstr "Entfernen (gesichert)"
+
+msgid "Can't be deleted — disable it instead"
+msgstr "Kann nicht gelöscht werden – stattdessen deaktivieren"
+
+msgid "Run now"
+msgstr "Jetzt ausführen"
+
+msgid "Started {}"
+msgstr "{} gestartet"
+
+msgid "Stop it"
+msgstr "Beenden"
+
+msgid "Stopped {} ({n} process(es))"
+msgstr "{} beendet ({n} Prozess(e))"
+
+msgid "Open file location"
+msgstr "Dateispeicherort öffnen"
+
+msgid "will start automatically"
+msgstr "startet automatisch"
+
+msgid "won't start automatically"
+msgstr "startet nicht automatisch"
+
+msgid "Remove \"{}\"?"
+msgstr "\"{}\" entfernen?"
+
+msgid "Remove {} entries?"
+msgstr "{} Einträge entfernen?"
+
+msgid "and {} more"
+msgstr "und {} weitere"
+
+msgid "The programs themselves stay installed; they just won't start automatically. Removed entries are backed up."
+msgstr "Die Programme bleiben installiert; sie starten nur nicht mehr automatisch. Entfernte Einträge werden gesichert."
+
+msgid "Remove"
+msgstr "Entfernen"
+
+msgid "Removed {r}, disabled {d}"
+msgstr "{r} entfernt, {d} deaktiviert"
+
+msgid "Removed {r} entry(ies)"
+msgstr "{r} Eintrag/Einträge entfernt"
+
+msgid "Cancel"
+msgstr "Abbrechen"
+
+msgid "Add a startup entry"
+msgstr "Autostart-Eintrag hinzufügen"
+
+msgid "Name"
+msgstr "Name"
+
+msgid "My program"
+msgstr "Mein Programm"
+
+msgid "Command"
+msgstr "Befehl"
+
+msgid " --minimized"
+msgstr " --minimized"
+
+msgid "/usr/bin/app --minimized"
+msgstr "/usr/bin/app --minimized"
+
+msgid "Registry Run"
+msgstr "Registry Run"
+
+msgid "Run once"
+msgstr "Einmal ausführen"
+
+msgid "Startup folder"
+msgstr "Autostart-Ordner"
+
+msgid "For all users (needs administrator rights)"
+msgstr "Für alle Benutzer (Administratorrechte nötig)"
+
+msgid "Added to your autostart folder (~/.config/autostart)."
+msgstr "Zu Ihrem Autostart-Ordner hinzugefügt (~/.config/autostart)."
+
+msgid "Added \"{}\""
+msgstr "\"{}\" hinzugefügt"
+
+msgid "Delete by time range"
+msgstr "Nach Zeitraum löschen"
+
+msgid "Reading backups failed: {e:#}"
+msgstr "Sicherungen konnten nicht gelesen werden: {e:#}"
+
+msgid "Restoring…"
+msgstr "Wird wiederhergestellt…"
+
+msgid "{n} item(s) restored from {id}"
+msgstr "{n} Element(e) aus {id} wiederhergestellt"
+
+msgid "Auto Backup"
+msgstr "Automatische Sicherung"
+
+msgid "Create backups automatically on a schedule"
+msgstr "Sicherungen automatisch nach Zeitplan erstellen"
+
+msgid "{} backup(s) · {} · {}"
+msgstr "{} Sicherung(en) · {} · {}"
+
+msgid "Backups"
+msgstr "Sicherungen"
+
+msgid "Create backup"
+msgstr "Sicherung erstellen"
+
+msgid "Scheduled backups"
+msgstr "Geplante Sicherungen"
+
+msgid "Open backup folder"
+msgstr "Sicherungsordner öffnen"
+
+msgid "Delete backups made between"
+msgstr "Sicherungen löschen, erstellt zwischen"
+
+msgid "Dates like 2026-10-01, or 2026-10-01 14:30. An end date includes that whole day; leave it empty for \"now\"."
+msgstr "Datumsangaben wie 2026-10-01 oder 2026-10-01 14:30. Ein Enddatum schließt den ganzen Tag ein; leer lassen für „jetzt“."
+
+msgid "From"
+msgstr "Von"
+
+msgid "To (optional)"
+msgstr "Bis (optional)"
+
+msgid "Delete {n} backup(s)"
+msgstr "{n} Sicherung(en) löschen"
+
+msgid "Deleted {} backup(s)"
+msgstr "{} Sicherung(en) gelöscht"
+
+msgid "Manual backup"
+msgstr "Manuelle Sicherung"
+
+msgid "No backups yet"
+msgstr "Noch keine Sicherungen"
+
+msgid "A backup is made automatically before every clean, or create one now."
+msgstr "Vor jeder Bereinigung wird automatisch eine Sicherung erstellt, oder erstellen Sie jetzt eine."
+
+msgid "Select a backup to restore or delete it."
+msgstr "Wählen Sie eine Sicherung zum Wiederherstellen oder Löschen."
+
+msgid "Delete all backups"
+msgstr "Alle Sicherungen löschen"
+
+msgid "Delete"
+msgstr "Löschen"
+
+msgid "Custom restore"
+msgstr "Benutzerdefinierte Wiederherstellung"
+
+msgid "Restore"
+msgstr "Wiederherstellen"
+
+msgid "Date"
+msgstr "Datum"
+
+msgid "Entries"
+msgstr "Einträge"
+
+msgid "Size"
+msgstr "Größe"
+
+msgid "Note"
+msgstr "Notiz"
+
+msgid "Delete all"
+msgstr "Alle löschen"
+
+msgid "Restore everything in backup {id}?"
+msgstr "Alles aus Sicherung {id} wiederherstellen?"
+
+msgid "Are you sure you want to delete \"{id}\"?"
+msgstr "Möchten Sie \"{id}\" wirklich löschen?"
+
+msgid "Are you sure you want to delete all backups?"
+msgstr "Möchten Sie wirklich alle Sicherungen löschen?"
+
+msgid "Deleted backup {id}"
+msgstr "Sicherung {id} gelöscht"
+
+msgid "Deleted {n} backup(s)"
+msgstr "{n} Sicherung(en) gelöscht"
+
+msgid "Choose what to restore from {}"
+msgstr "Wählen Sie, was aus {} wiederhergestellt wird"
+
+msgid "Select all"
+msgstr "Alle auswählen"
+
+msgid "Select none"
+msgstr "Nichts auswählen"
+
+msgid "Restore {n} item(s)"
+msgstr "{n} Element(e) wiederherstellen"
+
+msgid "Optional"
+msgstr "Optional"
+
+msgid "Back up"
+msgstr "Sichern"
+
+msgid "Whole registry"
+msgstr "Gesamte Registrierung"
+
+msgid "Whole config store"
+msgstr "Gesamter Konfigurationsspeicher"
+
+msgid "One key / folder"
+msgstr "Ein Schlüssel / Ordner"
+
+msgid "or type a path"
+msgstr "oder Pfad eingeben"
+
+msgid "Create"
+msgstr "Erstellen"
+
+msgid "Please enter a name."
+msgstr "Bitte einen Namen eingeben."
+
+msgid "Please select a key to backup."
+msgstr "Bitte einen Schlüssel zum Sichern wählen."
+
+msgid "Creating backup…"
+msgstr "Sicherung wird erstellt…"
+
+msgid "Backup creation failed!"
+msgstr "Sicherung fehlgeschlagen!"
+
+msgid "Created backup {} ({} entries)"
+msgstr "Sicherung {} erstellt ({} Einträge)"
+
+msgid "Full"
+msgstr "Vollständig"
+
+msgid "Partial"
+msgstr "Teilweise"
+
+msgid "Auto Full"
+msgstr "Automatisch vollständig"
+
+msgid "Auto Partial"
+msgstr "Automatisch teilweise"
+
+msgid "Full before cleaning"
+msgstr "Vollständig vor Bereinigung"
+
+msgid "Deleted items"
+msgstr "Gelöschte Elemente"
+
+msgid "Safe Scan"
+msgstr "Sichere Prüfung"
+
+msgid "Only entries that are certainly safe to delete. The fastest scan."
+msgstr "Nur Einträge, die sicher gelöscht werden können. Die schnellste Prüfung."
+
+msgid "Moderate Scan"
+msgstr "Mittlere Prüfung"
+
+msgid "Looks deeper for invalid and orphaned entries."
+msgstr "Sucht gründlicher nach ungültigen und verwaisten Einträgen."
+
+msgid "Advanced Scan"
+msgstr "Erweiterte Prüfung"
+
+msgid "Exhaustive. Review the results before you clean."
+msgstr "Gründlich. Prüfen Sie die Ergebnisse vor der Bereinigung."
+
+msgid "Forced scan"
+msgstr "Erzwungene Prüfung"
+
+msgid "Forced scan for \"{text}\""
+msgstr "Erzwungene Prüfung nach \"{text}\""
+
+msgid "Forced scan…"
+msgstr "Erzwungene Prüfung…"
+
+msgid "Cleaning {n} item(s)…"
+msgstr "{n} Element(e) werden bereinigt…"
+
+msgid "{}: found {} item(s)"
+msgstr "{}: {} Element(e) gefunden"
+
+msgid "Scan failed: {e}"
+msgstr "Prüfung fehlgeschlagen: {e}"
+
+msgid "Failed to create a restore point: {e}"
+msgstr "Wiederherstellungspunkt konnte nicht erstellt werden: {e}"
+
+msgid "Deleted {} item(s). All deleted data has been backed up ({})."
+msgstr "{} Element(e) gelöscht. Alle gelöschten Daten wurden gesichert ({})."
+
+msgid "{msg} {} could not be deleted: {}"
+msgstr "{msg} {} konnten nicht gelöscht werden: {}"
+
+msgid "Cleaning failed: {e}"
+msgstr "Bereinigung fehlgeschlagen: {e}"
+
+msgid "Auto Clean"
+msgstr "Automatische Bereinigung"
+
+msgid "Scan and clean automatically on a schedule"
+msgstr "Automatisch nach Zeitplan prüfen und bereinigen"
+
+msgid "Find and remove invalid and leftover registry entries"
+msgstr "Ungültige und übrig gebliebene Registrierungseinträge finden und entfernen"
+
+msgid "Find and remove settings left behind by removed apps"
+msgstr "Einstellungen entfernter Apps finden und entfernen"
+
+msgid "Cleaner"
+msgstr "Bereinigung"
+
+msgid "Quick Clean"
+msgstr "Schnellbereinigung"
+
+msgid "Scan and clean with one click"
+msgstr "Mit einem Klick prüfen und bereinigen"
+
+msgid "Scheduled scans and cleans"
+msgstr "Geplante Prüfungen und Bereinigungen"
+
+msgid "every account"
+msgstr "alle Konten"
+
+msgid "your account"
+msgstr "Ihr Konto"
+
+msgid "Ready to scan"
+msgstr "Bereit zur Prüfung"
+
+msgid "{title} · {} categories · {scope}"
+msgstr "{title} · {} Kategorien · {scope}"
+
+msgid "{}  Current account"
+msgstr "{}  Aktuelles Konto"
+
+msgid "{}  All accounts"
+msgstr "{}  Alle Konten"
+
+msgid "Start scan"
+msgstr "Prüfung starten"
+
+msgid "Scan depth"
+msgstr "Prüftiefe"
+
+msgid "Other ways to scan"
+msgstr "Weitere Prüfarten"
+
+msgid "Custom Scan"
+msgstr "Benutzerdefinierte Prüfung"
+
+msgid "Choose exactly which categories to scan."
+msgstr "Wählen Sie genau, welche Kategorien geprüft werden."
+
+msgid "Forced Scan"
+msgstr "Erzwungene Prüfung"
+
+msgid "Find every entry that mentions a program or vendor."
+msgstr "Jeden Eintrag finden, der ein Programm oder einen Hersteller erwähnt."
+
+msgid "All accounts"
+msgstr "Alle Konten"
+
+msgid "Current account"
+msgstr "Aktuelles Konto"
+
+msgid "Scanning"
+msgstr "Prüfung läuft"
+
+msgid "Looking for leftovers…"
+msgstr "Suche nach Resten…"
+
+msgid "{n} of {total} categories checked · {secs:.0}s"
+msgstr "{n} von {total} Kategorien geprüft · {secs:.0} s"
+
+msgid "Searching · {secs:.0}s"
+msgstr "Suche · {secs:.0} s"
+
+msgid "Categories"
+msgstr "Kategorien"
+
+msgid "Pick the categories to look at"
+msgstr "Wählen Sie die zu prüfenden Kategorien"
+
+msgid "Scan {n} categories"
+msgstr "{n} Kategorien prüfen"
+
+msgid "Find every entry under a location that mentions a word"
+msgstr "Jeden Eintrag an einem Ort finden, der ein Wort erwähnt"
+
+msgid "Scan"
+msgstr "Prüfen"
+
+msgid "Registry key"
+msgstr "Registrierungsschlüssel"
+
+msgid "Folder"
+msgstr "Ordner"
+
+msgid "Search for"
+msgstr "Suchen nach"
+
+msgid "e.g. a program or vendor name"
+msgstr "z. B. ein Programm- oder Herstellername"
+
+msgid "{total} item(s) in {cats} category(ies) · {sel} selected"
+msgstr "{total} Element(e) in {cats} Kategorie(n) · {sel} ausgewählt"
+
+msgid "Scan results"
+msgstr "Prüfergebnisse"
+
+msgid "Clean ({sel})"
+msgstr "Bereinigen ({sel})"
+
+msgid "Export"
+msgstr "Exportieren"
+
+msgid "File (.txt .csv .html .xml .json)"
+msgstr "Datei (.txt .csv .html .xml .json)"
+
+msgid "Exported to {}"
+msgstr "Exportiert nach {}"
+
+msgid "New scan"
+msgstr "Neue Prüfung"
+
+msgid "All clean"
+msgstr "Alles sauber"
+
+msgid "No problems found"
+msgstr "Keine Probleme gefunden"
+
+msgid "Everything we checked looks fine."
+msgstr "Alles, was wir geprüft haben, ist in Ordnung."
+
+msgid "Expand all"
+msgstr "Alle aufklappen"
+
+msgid "Collapse all"
+msgstr "Alle zuklappen"
+
+msgid "Show details"
+msgstr "Details anzeigen"
+
+msgid "Could not open: {e:#}"
+msgstr "Konnte nicht geöffnet werden: {e:#}"
+
+msgid "Copied {}"
+msgstr "{} kopiert"
+
+msgid "Added to exclude list: {path}"
+msgstr "Zur Ausschlussliste hinzugefügt: {path}"
+
+msgid "Delete {n} item(s)?"
+msgstr "{n} Element(e) löschen?"
+
+msgid "Everything deleted is backed up first and can be restored from Backups."
+msgstr "Alles Gelöschte wird vorher gesichert und kann unter „Sicherungen“ wiederhergestellt werden."
+
+msgid "Create a System Restore Point"
+msgstr "Systemwiederherstellungspunkt erstellen"
+
+msgid "Create a system snapshot (snapper / timeshift)"
+msgstr "System-Snapshot erstellen (snapper / timeshift)"
+
+msgid "Create a full registry backup"
+msgstr "Vollständige Registrierungssicherung erstellen"
+
+msgid "Create a full config backup"
+msgstr "Vollständige Konfigurationssicherung erstellen"
+
+msgid "Recommended"
+msgstr "Empfohlen"
+
+msgid "Depth"
+msgstr "Tiefe"
+
+msgid "{categories} categories"
+msgstr "{categories} Kategorien"
+
+msgid "Unselect this"
+msgstr "Abwählen"
+
+msgid "Select this"
+msgstr "Auswählen"
+
+msgid "Open in Registry Editor"
+msgstr "Im Registrierungs-Editor öffnen"
+
+msgid "Open containing folder"
+msgstr "Übergeordneten Ordner öffnen"
+
+msgid "Add to exclude list"
+msgstr "Zur Ausschlussliste hinzufügen"
+
+msgid "Copy"
+msgstr "Kopieren"
+
+msgid "Reading browser extensions"
+msgstr "Browsererweiterungen werden gelesen"
+
+msgid "Removed {} item(s). Backup: {}"
+msgstr "{} Element(e) entfernt. Sicherung: {}"
+
+msgid "{} item(s) could not be removed: {}"
+msgstr "{} Element(e) konnten nicht entfernt werden: {}"
+
+msgid "Search extensions"
+msgstr "Erweiterungen suchen"
+
+msgid "All browsers"
+msgstr "Alle Browser"
+
+msgid "Remove ({})"
+msgstr "Entfernen ({})"
+
+msgid "Show built-in extensions"
+msgstr "Integrierte Erweiterungen anzeigen"
+
+msgid "Built-in"
+msgstr "Integriert"
+
+msgid "No extensions"
+msgstr "Keine Erweiterungen"
+
+msgid "No extensions were found in Chrome, Edge, Brave, Opera, Vivaldi, Chromium or Firefox."
+msgstr "In Chrome, Edge, Brave, Opera, Vivaldi, Chromium oder Firefox wurden keine Erweiterungen gefunden."
+
+msgid "Nothing matches the search."
+msgstr "Keine Treffer für die Suche."
+
+msgid "Running — close it before removing"
+msgstr "Läuft – vor dem Entfernen schließen"
+
+msgid "Theme"
+msgstr "Design"
+
+msgid "Extension"
+msgstr "Erweiterung"
+
+msgid "Disabled"
+msgstr "Deaktiviert"
+
+msgid "Open folder"
+msgstr "Ordner öffnen"
+
+msgid "Remove {} extension(s)?"
+msgstr "{} Erweiterung(en) entfernen?"
+
+msgid "Their files, stored data and browser settings entries are removed. Everything is backed up first."
+msgstr "Ihre Dateien, gespeicherten Daten und Browser-Einstellungen werden entfernt. Alles wird vorher gesichert."
+
+msgid "{}  Close {} first."
+msgstr "{}  Schließen Sie zuerst {}."
+
+msgid "Check again"
+msgstr "Erneut prüfen"
+
+msgid "Removing extensions"
+msgstr "Erweiterungen werden entfernt"
+
+msgid "Measuring history and caches"
+msgstr "Verlauf und Caches werden gemessen"
+
+msgid "Cleaned {} item(s), {}"
+msgstr "{} Element(e) bereinigt, {}"
+
+msgid ". Skipped {} item(s) of open browsers"
+msgstr ". {} Element(e) geöffneter Browser übersprungen"
+
+msgid "{msg}. Failed: {}"
+msgstr "{msg}. Fehlgeschlagen: {}"
+
+msgid "{} selected · {}"
+msgstr "{} ausgewählt · {}"
+
+msgid "Clean"
+msgstr "Bereinigen"
+
+msgid "Nothing to clean"
+msgstr "Nichts zu bereinigen"
+
+msgid "No browser profiles, recent-file lists or caches were found."
+msgstr "Keine Browserprofile, Listen zuletzt verwendeter Dateien oder Caches gefunden."
+
+msgid "Office"
+msgstr "Office"
+
+msgid "Open — close it to clean"
+msgstr "Geöffnet – zum Bereinigen schließen"
+
+msgid "None"
+msgstr "Keine"
+
+msgid "Clean {} item(s)?"
+msgstr "{} Element(e) bereinigen?"
+
+msgid "History, caches and recent lists are deleted for good; there is no backup of them."
+msgstr "Verlauf, Caches und Zuletzt-Listen werden endgültig gelöscht; davon gibt es keine Sicherung."
+
+msgid "{}  {} is open; its items will be skipped. Close it first to clean them."
+msgstr "{}  {} ist geöffnet; seine Elemente werden übersprungen. Zum Bereinigen zuerst schließen."
+
+msgid "Cleaning"
+msgstr "Bereinigung läuft"
+
+msgid "Pick in 3 s"
+msgstr "In 3 s auswählen"
+
+msgid "Identifying"
+msgstr "Wird ermittelt"
+
+msgid "Open CleanCore"
+msgstr "CleanCore öffnen"
+
+msgid "CleanCore Hunter"
+msgstr "CleanCore Hunter"
+
+msgid "Move"
+msgstr "Verschieben"
+
+msgid "Exit Hunter Mode"
+msgstr "Jagdmodus beenden"
+
+msgid "Floating hunter target"
+msgstr "Schwebendes Jagdziel"
+
+msgid "Drag me"
+msgstr "Zieh mich"
+
+msgid "Identifying the window under the pointer"
+msgstr "Fenster unter dem Mauszeiger wird ermittelt"
+
+msgid "No other program's window is under the pointer."
+msgstr "Unter dem Mauszeiger ist kein Fenster eines anderen Programms."
+
+msgid "Hunter Mode"
+msgstr "Jagdmodus"
+
+msgid "Point at any window to find out which program it belongs to"
+msgstr "Zeigen Sie auf ein Fenster, um zu sehen, zu welchem Programm es gehört"
+
+msgid "Floating target"
+msgstr "Schwebendes Ziel"
+
+msgid "Hide CleanCore and keep a small target on top of every window"
+msgstr "CleanCore ausblenden und ein kleines Ziel über allen Fenstern behalten"
+
+msgid "Refresh running programs"
+msgstr "Laufende Programme aktualisieren"
+
+msgid "Hunter target: drag onto a window"
+msgstr "Jagdziel: auf ein Fenster ziehen"
+
+msgid "Drag the target onto a window"
+msgstr "Ziehen Sie das Ziel auf ein Fenster"
+
+msgid "Hold the mouse button on the crosshair, move it over another program's window and let go."
+msgstr "Halten Sie die Maustaste auf dem Fadenkreuz gedrückt, ziehen Sie es über das Fenster eines anderen Programms und lassen Sie los."
+
+msgid "{}  Move the pointer over the window… {left:.0}"
+msgstr "{}  Mauszeiger über das Fenster bewegen… {left:.0}"
+
+msgid "Pick in 3 seconds"
+msgstr "In 3 Sekunden auswählen"
+
+msgid "For windows you can't drag onto"
+msgstr "Für Fenster, auf die man nicht ziehen kann"
+
+msgid "{}  Wayland doesn't allow reading other windows; pick from the list below."
+msgstr "{}  Wayland erlaubt kein Auslesen anderer Fenster; wählen Sie aus der Liste unten."
+
+msgid "Running programs"
+msgstr "Laufende Programme"
+
+msgid "Filter"
+msgstr "Filter"
+
+msgid "Show all processes"
+msgstr "Alle Prozesse anzeigen"
+
+msgid "All processes"
+msgstr "Alle Prozesse"
+
+msgid "No target yet"
+msgstr "Noch kein Ziel"
+
+msgid "Drag the crosshair onto a window or pick a running program."
+msgstr "Ziehen Sie das Fadenkreuz auf ein Fenster oder wählen Sie ein laufendes Programm."
+
+msgid "Close {} and delete its program file?"
+msgstr "{} schließen und die Programmdatei löschen?"
+
+msgid "Unsaved work in it is lost. The file is backed up and can be restored from Backups."
+msgstr "Ungespeicherte Arbeit geht verloren. Die Datei wird gesichert und kann unter „Sicherungen“ wiederhergestellt werden."
+
+msgid "Close and delete"
+msgstr "Schließen und löschen"
+
+msgid "Deleted {}. Backup: {id}"
+msgstr "{} gelöscht. Sicherung: {id}"
+
+msgid "{} · {n} process(es)"
+msgstr "{} · {n} Prozess(e)"
+
+msgid "Window"
+msgstr "Fenster"
+
+msgid "File"
+msgstr "Datei"
+
+msgid "Installed as"
+msgstr "Installiert als"
+
+msgid "Not in the list of installed programs"
+msgstr "Nicht in der Liste der installierten Programme"
+
+msgid "Doesn't start automatically"
+msgstr "Startet nicht automatisch"
+
+msgid " (disabled)"
+msgstr " (deaktiviert)"
+
+msgid "Actions"
+msgstr "Aktionen"
+
+msgid "Uninstall"
+msgstr "Deinstallieren"
+
+msgid "Uninstall the program and scan for leftovers"
+msgstr "Programm deinstallieren und nach Resten suchen"
+
+msgid "Stop autorun"
+msgstr "Autostart beenden"
+
+msgid "Don't start this program automatically"
+msgstr "Dieses Programm nicht automatisch starten"
+
+msgid "Disabled {n} startup entry(ies)"
+msgstr "{n} Autostart-Eintrag/Einträge deaktiviert"
+
+msgid "Kill process"
+msgstr "Prozess beenden"
+
+msgid "Force-close it; unsaved work is lost"
+msgstr "Zwangsweise schließen; ungespeicherte Arbeit geht verloren"
+
+msgid "Stopped {n} process(es)"
+msgstr "{n} Prozess(e) beendet"
+
+msgid "Kill and delete"
+msgstr "Beenden und löschen"
+
+msgid "Search online"
+msgstr "Online suchen"
+
+msgid "Look the program up on the web"
+msgstr "Programm im Web nachschlagen"
+
+msgid "add location"
+msgstr "Ort hinzufügen"
+
+msgid "Deleted {} junk file(s), {}"
+msgstr "{} Datenmüll-Datei(en) gelöscht, {}"
+
+msgid "Deleted {} file(s); {} could not be deleted (first: {})"
+msgstr "{} Datei(en) gelöscht; {} konnten nicht gelöscht werden (erste: {})"
+
+msgid "{} folders searched, {} junk files found"
+msgstr "{} Ordner durchsucht, {} Datenmüll-Dateien gefunden"
+
+msgid "Stop"
+msgstr "Stopp"
+
+msgid "Looking for junk files"
+msgstr "Suche nach Datenmüll"
+
+msgid "the default locations"
+msgstr "den Standardorten"
+
+msgid "{} location(s)"
+msgstr "{} Ort(e)"
+
+msgid "{n_pat} patterns in {where_}"
+msgstr "{n_pat} Muster in {where_}"
+
+msgid "Scan for junk files"
+msgstr "Nach Datenmüll suchen"
+
+msgid "Where to look"
+msgstr "Wo suchen"
+
+msgid "{} (default)"
+msgstr "{} (Standard)"
+
+msgid "Remove location"
+msgstr "Ort entfernen"
+
+msgid "/home/me/Downloads or /media/disk"
+msgstr "/home/me/Downloads oder /media/disk"
+
+msgid "Add location"
+msgstr "Ort hinzufügen"
+
+msgid "Add {path}"
+msgstr "{path} hinzufügen"
+
+msgid "Never look in"
+msgstr "Nie durchsuchen"
+
+msgid "A folder to skip"
+msgstr "Ein zu überspringender Ordner"
+
+msgid "The Windows component store, Installer folder, Recycle Bin and CleanCore's backups are always skipped."
+msgstr "Der Windows-Komponentenspeicher, der Installer-Ordner, der Papierkorb und die CleanCore-Sicherungen werden immer übersprungen."
+
+msgid "System folders (/usr, /proc, /var/lib, …), the Trash and CleanCore's backups are always skipped."
+msgstr "Systemordner (/usr, /proc, /var/lib, …), der Papierkorb und die CleanCore-Sicherungen werden immer übersprungen."
+
+msgid "What counts as junk"
+msgstr "Was als Datenmüll gilt"
+
+msgid "Reset to defaults"
+msgstr "Auf Standard zurücksetzen"
+
+msgid "File name patterns: * matches anything, ? one character. Click a pattern to switch it off."
+msgstr "Dateinamenmuster: * passt auf alles, ? auf ein Zeichen. Klicken Sie auf ein Muster, um es auszuschalten."
+
+msgid "Click to switch on/off · right-click to remove"
+msgstr "Klicken zum Ein-/Ausschalten · Rechtsklick zum Entfernen"
+
+msgid "Add pattern"
+msgstr "Muster hinzufügen"
+
+msgid "Skip files changed in the last 24 hours"
+msgstr "Dateien überspringen, die in den letzten 24 Stunden geändert wurden"
+
+msgid "They may still be in use."
+msgstr "Sie werden möglicherweise noch verwendet."
+
+msgid "Delete to the Recycle Bin"
+msgstr "In den Papierkorb löschen"
+
+msgid "Delete to the Trash"
+msgstr "In den Papierkorb verschieben"
+
+msgid "Otherwise files are deleted permanently."
+msgstr "Sonst werden Dateien endgültig gelöscht."
+
+msgid "Delete to the trash"
+msgstr "In den Papierkorb verschieben"
+
+msgid "{} junk files · {}"
+msgstr "{} Datenmüll-Dateien · {}"
+
+msgid "Delete ({}, {})"
+msgstr "Löschen ({}, {})"
+
+msgid "Export list"
+msgstr "Liste exportieren"
+
+msgid "File (.txt or .csv)"
+msgstr "Datei (.txt oder .csv)"
+
+msgid "No junk files"
+msgstr "Kein Datenmüll"
+
+msgid "Nothing matched the junk patterns in the chosen locations."
+msgstr "An den gewählten Orten passt nichts zu den Datenmüll-Mustern."
+
+msgid "Changed"
+msgstr "Geändert"
+
+msgid "Pattern"
+msgstr "Muster"
+
+msgid "Delete {} junk file(s)?"
+msgstr "{} Datenmüll-Datei(en) löschen?"
+
+msgid "They go to the Trash, so you can still get them back."
+msgstr "Sie landen im Papierkorb und lassen sich noch zurückholen."
+
+msgid "They are deleted permanently."
+msgstr "Sie werden endgültig gelöscht."
+
+msgid "Deleting junk files"
+msgstr "Datenmüll wird gelöscht"
+
+msgid "Logs database updated: {n} new log(s)"
+msgstr "Protokolldatenbank aktualisiert: {n} neue(s) Protokoll(e)"
+
+msgid "Search logs"
+msgstr "Protokolle durchsuchen"
+
+msgid "Only logs for this system"
+msgstr "Nur Protokolle für dieses System"
+
+msgid "Only {} {}"
+msgstr "Nur {} {}"
+
+msgid "Update"
+msgstr "Aktualisieren"
+
+msgid "Download new logs from the database URL"
+msgstr "Neue Protokolle von der Datenbank-URL herunterladen"
+
+msgid "Set a database URL in Settings › Uninstaller first"
+msgstr "Legen Sie zuerst unter Einstellungen › Deinstallation eine Datenbank-URL fest"
+
+msgid "Downloading logs"
+msgstr "Protokolle werden heruntergeladen"
+
+msgid "No logs database URL is set. Add one in Settings › Uninstaller, or copy .cptrace files into the database folder."
+msgstr "Keine Protokolldatenbank-URL festgelegt. Legen Sie eine unter Einstellungen › Deinstallation fest oder kopieren Sie .cptrace-Dateien in den Datenbankordner."
+
+msgid "Open the database folder"
+msgstr "Datenbankordner öffnen"
+
+msgid "Put shared .cptrace logs in {} or download them with Update. Add your own from Traced programs."
+msgstr "Legen Sie geteilte .cptrace-Protokolle in {} ab oder laden Sie sie mit Aktualisieren herunter. Eigene fügen Sie unter Aufgezeichnete Programme hinzu."
+
+msgid "No log matches. Turn off \"Only logs for this system\" to see the others."
+msgstr "Kein Protokoll passt. Schalten Sie „Nur Protokolle für dieses System“ aus, um die anderen zu sehen."
+
+msgid "The logs database is empty"
+msgstr "Die Protokolldatenbank ist leer"
+
+msgid "{} {} · {} settings · {} files · {}"
+msgstr "{} {} · {} Einstellungen · {} Dateien · {}"
+
+msgid "Imports the log into Traced programs and removes what it recorded"
+msgstr "Importiert das Protokoll in Aufgezeichnete Programme und entfernt, was es aufgezeichnet hat"
+
+msgid "Custom uninstall"
+msgstr "Benutzerdefinierte Deinstallation"
+
+msgid "Recorded on another system"
+msgstr "Auf einem anderen System aufgezeichnet"
+
+msgid "Select a log. Uninstalling with it imports it into Traced programs first."
+msgstr "Wählen Sie ein Protokoll. Beim Deinstallieren damit wird es zuerst in Aufgezeichnete Programme importiert."
+
+msgid "System"
+msgstr "System"
+
+msgid "Settings"
+msgstr "Einstellungen"
+
+msgid "Files"
+msgstr "Dateien"
+
+msgid "Recorded"
+msgstr "Aufgezeichnet"
+
+msgid "CleanCore"
+msgstr "CleanCore"
+
+msgid "Saving settings failed: {e:#}"
+msgstr "Einstellungen konnten nicht gespeichert werden: {e:#}"
+
+msgid "Export failed: {e:#}"
+msgstr "Export fehlgeschlagen: {e:#}"
+
+msgid "Programs"
+msgstr "Programme"
+
+msgid "Clean up"
+msgstr "Aufräumen"
+
+msgid "Monitor & restore"
+msgstr "Überwachen & Wiederherstellen"
+
+msgid "Uninstaller"
+msgstr "Deinstallation"
+
+msgid "Tuner"
+msgstr "Tuning"
+
+msgid "Watcher"
+msgstr "Überwachung"
+
+msgid "Tools"
+msgstr "Werkzeuge"
+
+msgid "Settings could not be read, using defaults: {e:#}"
+msgstr "Einstellungen konnten nicht gelesen werden, Standardwerte werden verwendet: {e:#}"
+
+msgid "Daily backup"
+msgstr "Tägliche Sicherung"
+
+msgid "Uninstaller & cleaner"
+msgstr "Deinstallation & Bereinigung"
+
+msgid "Recorder running"
+msgstr "Aufzeichnung läuft"
+
+msgid "Recorder stopped"
+msgstr "Aufzeichnung gestoppt"
+
+msgid "Switch to light"
+msgstr "Zum hellen Design wechseln"
+
+msgid "Switch to dark"
+msgstr "Zum dunklen Design wechseln"
+
+msgid "Notifications ({unread} new)"
+msgstr "Benachrichtigungen ({unread} neu)"
+
+msgid "Notifications"
+msgstr "Benachrichtigungen"
+
+msgid "Nothing yet."
+msgstr "Noch nichts."
+
+msgid "Clear all"
+msgstr "Alle löschen"
+
+msgid "Daily full backup created ({id})"
+msgstr "Tägliche vollständige Sicherung erstellt ({id})"
+
+msgid "Daily backup failed: {e:#}"
+msgstr "Tägliche Sicherung fehlgeschlagen: {e:#}"
+
+msgid "Welcome to CleanCore"
+msgstr "Willkommen bei CleanCore"
+
+msgid "Pick a look. You can change it any time in Settings."
+msgstr "Wählen Sie ein Aussehen. Sie können es jederzeit in den Einstellungen ändern."
+
+msgid "Light"
+msgstr "Hell"
+
+msgid "Dark"
+msgstr "Dunkel"
+
+msgid "Save changes"
+msgstr "Änderungen speichern"
+
+msgid "Appearance, safety options, lists and storage"
+msgstr "Darstellung, Sicherheitsoptionen, Listen und Speicher"
+
+msgid "Discard"
+msgstr "Verwerfen"
+
+msgid "Settings saved"
+msgstr "Einstellungen gespeichert"
+
+msgid "Exclude list"
+msgstr "Ausschlussliste"
+
+msgid "Never reported or deleted. Subkeys / subfolders can be included."
+msgstr "Wird nie gemeldet oder gelöscht. Unterschlüssel / Unterordner können einbezogen werden."
+
+msgid "Include list"
+msgstr "Einschlussliste"
+
+msgid "Contents are always deleted by a Custom Scan with the \"Include list\" category. Be careful."
+msgstr "Der Inhalt wird bei einer benutzerdefinierten Prüfung mit der Kategorie „Einschlussliste“ immer gelöscht. Vorsicht."
+
+msgid "Watcher and notifications"
+msgstr "Überwachung und Benachrichtigungen"
+
+msgid "Maximum log folder size"
+msgstr "Maximale Größe des Protokollordners"
+
+msgid "When the logs reach this size, all watches pause. 0 means no limit."
+msgstr "Erreichen die Protokolle diese Größe, werden alle Überwachungen pausiert. 0 bedeutet ohne Grenze."
+
+msgid " MB"
+msgstr " MB"
+
+msgid "Notify after Auto Clean"
+msgstr "Nach automatischer Bereinigung benachrichtigen"
+
+msgid "Failures always notify."
+msgstr "Fehler werden immer gemeldet."
+
+msgid "Notify after Auto Backup"
+msgstr "Nach automatischer Sicherung benachrichtigen"
+
+msgid "Skip confirmation dialogs"
+msgstr "Bestätigungsdialoge überspringen"
+
+msgid "Clean without asking. Backups are still made."
+msgstr "Ohne Nachfrage bereinigen. Sicherungen werden weiterhin erstellt."
+
+msgid "Data folder: {}"
+msgstr "Datenordner: {}"
+
+msgid "Appearance"
+msgstr "Darstellung"
+
+msgid "{}  System"
+msgstr "{}  System"
+
+msgid "{}  Dark"
+msgstr "{}  Dunkel"
+
+msgid "{}  Light"
+msgstr "{}  Hell"
+
+msgid "Language"
+msgstr "Sprache"
+
+msgid "English"
+msgstr "English"
+
+msgid "System ({n})"
+msgstr "System ({n})"
+
+msgid "Accent color"
+msgstr "Akzentfarbe"
+
+msgid "Add to Explorer's right-click menu"
+msgstr "Zum Kontextmenü des Explorers hinzufügen"
+
+msgid "Add to the file manager's right-click menu"
+msgstr "Zum Kontextmenü der Dateiverwaltung hinzufügen"
+
+msgid "\"Install with CleanCore\" on installers, \"Uninstall with CleanCore\" on programs, shortcuts and folders. Applies at once."
+msgstr "„Mit CleanCore installieren“ bei Installationsprogrammen, „Mit CleanCore deinstallieren“ bei Programmen, Verknüpfungen und Ordnern. Gilt sofort."
+
+msgid "File manager menu"
+msgstr "Menü der Dateiverwaltung"
+
+msgid "Added CleanCore to the right-click menu"
+msgstr "CleanCore zum Kontextmenü hinzugefügt"
+
+msgid "Removed CleanCore from the right-click menu"
+msgstr "CleanCore aus dem Kontextmenü entfernt"
+
+msgid "Leftover scan mode"
+msgstr "Modus der Restesuche"
+
+msgid "Used after a program's own uninstaller finishes."
+msgstr "Wird verwendet, nachdem das programmeigene Deinstallationsprogramm fertig ist."
+
+msgid "Advanced"
+msgstr "Erweitert"
+
+msgid "Moderate"
+msgstr "Mittel"
+
+msgid "Safe"
+msgstr "Sicher"
+
+msgid "Create a restore point before uninstalling"
+msgstr "Vor der Deinstallation einen Wiederherstellungspunkt erstellen"
+
+msgid "Create a system snapshot before uninstalling"
+msgstr "Vor der Deinstallation einen System-Snapshot erstellen"
+
+msgid "Create a full backup before uninstalling"
+msgstr "Vor der Deinstallation eine vollständige Sicherung erstellen"
+
+msgid "Delete leftover files to the Recycle Bin"
+msgstr "Restdateien in den Papierkorb löschen"
+
+msgid "Delete leftover files to the Trash"
+msgstr "Restdateien in den Papierkorb verschieben"
+
+msgid "Files are also backed up either way."
+msgstr "Die Dateien werden in jedem Fall gesichert."
+
+msgid "Delete leftover files to the trash"
+msgstr "Restdateien in den Papierkorb verschieben"
+
+msgid "Close the program before uninstalling"
+msgstr "Programm vor der Deinstallation schließen"
+
+msgid "Stops its running processes so the uninstaller can remove every file."
+msgstr "Beendet die laufenden Prozesse, damit das Deinstallationsprogramm jede Datei entfernen kann."
+
+msgid "Only run the built-in uninstaller"
+msgstr "Nur das eingebaute Deinstallationsprogramm ausführen"
+
+msgid "Skip the leftover scan afterwards."
+msgstr "Restesuche danach überspringen."
+
+msgid "Tick leftovers by default"
+msgstr "Reste standardmäßig auswählen"
+
+msgid "Otherwise you pick each item to delete."
+msgstr "Sonst wählen Sie jedes zu löschende Element selbst."
+
+msgid "Mark programs as new for"
+msgstr "Programme als neu markieren für"
+
+msgid " days"
+msgstr " Tage"
+
+msgid "Only record what the installer itself changes"
+msgstr "Nur aufzeichnen, was das Installationsprogramm selbst ändert"
+
+msgid "Follows the installer's processes with ETW (needs administrator rights), so other programs' changes during a trace are left out."
+msgstr "Verfolgt die Prozesse des Installationsprogramms mit ETW (Administratorrechte nötig), sodass Änderungen anderer Programme während der Aufzeichnung außen vor bleiben."
+
+msgid "Follows the installer's processes with strace, so other programs' changes during a trace are left out."
+msgstr "Verfolgt die Prozesse des Installationsprogramms mit strace, sodass Änderungen anderer Programme während der Aufzeichnung außen vor bleiben."
+
+msgid "Delete a trace log after uninstalling with it"
+msgstr "Ein Aufzeichnungsprotokoll nach der Deinstallation damit löschen"
+
+msgid "Show system entries in Autorun"
+msgstr "Systemeinträge im Autostart anzeigen"
+
+msgid "Microsoft services and tasks."
+msgstr "Microsoft-Dienste und -Aufgaben."
+
+msgid "Vendor services and desktop components."
+msgstr "Herstellerdienste und Desktop-Komponenten."
+
+msgid "Logs database folder (a shared or network folder works too)"
+msgstr "Ordner der Protokolldatenbank (auch ein freigegebener oder Netzwerkordner geht)"
+
+msgid "Logs database URL (serves index.json and the .cptrace files; optional)"
+msgstr "URL der Protokolldatenbank (liefert index.json und die .cptrace-Dateien; optional)"
+
+msgid "Skip paths on external drives"
+msgstr "Pfade auf externen Laufwerken überspringen"
+
+msgid "Items on drives that are not plugged in are never reported."
+msgstr "Elemente auf nicht angeschlossenen Laufwerken werden nie gemeldet."
+
+msgid "Skip Windows defaults"
+msgstr "Windows-Standardeinträge überspringen"
+
+msgid "Skip system defaults"
+msgstr "Systemstandardeinträge überspringen"
+
+msgid "Known entries the system recreates or keeps on purpose."
+msgstr "Bekannte Einträge, die das System neu anlegt oder absichtlich behält."
+
+msgid "Force delete registry keys"
+msgstr "Registrierungsschlüssel zwangsweise löschen"
+
+msgid "Take ownership when a key is protected."
+msgstr "Besitz übernehmen, wenn ein Schlüssel geschützt ist."
+
+msgid "Create a restore point before cleaning"
+msgstr "Vor der Bereinigung einen Wiederherstellungspunkt erstellen"
+
+msgid "Create a system snapshot before cleaning"
+msgstr "Vor der Bereinigung einen System-Snapshot erstellen"
+
+msgid "Uses Windows System Restore."
+msgstr "Verwendet die Windows-Systemwiederherstellung."
+
+msgid "Uses snapper or timeshift if installed."
+msgstr "Verwendet snapper oder timeshift, falls installiert."
+
+msgid "Create a full backup before cleaning"
+msgstr "Vor der Bereinigung eine vollständige Sicherung erstellen"
+
+msgid "In addition to the backup of deleted items."
+msgstr "Zusätzlich zur Sicherung der gelöschten Elemente."
+
+msgid "Quick Clean scan mode"
+msgstr "Prüfmodus der Schnellbereinigung"
+
+msgid "Backup folder"
+msgstr "Sicherungsordner"
+
+msgid "Delete backups older than"
+msgstr "Sicherungen löschen, älter als"
+
+msgid "Delete oldest when all backups exceed"
+msgstr "Älteste löschen, wenn alle Sicherungen größer sind als"
+
+msgid "Delete oldest when backups exceed"
+msgstr "Älteste löschen, wenn Sicherungen größer sind als"
+
+msgid "Daily full registry backup"
+msgstr "Tägliche vollständige Registrierungssicherung"
+
+msgid "Daily full settings backup"
+msgstr "Tägliche vollständige Einstellungssicherung"
+
+msgid "The first time CleanCore opens each day, it backs up everything automatically."
+msgstr "Beim ersten Öffnen von CleanCore an jedem Tag wird automatisch alles gesichert."
+
+msgid "Daily full backup"
+msgstr "Tägliche vollständige Sicherung"
+
+msgid "Only delete automatic backups"
+msgstr "Nur automatische Sicherungen löschen"
+
+msgid "Manual backups are always kept."
+msgstr "Manuelle Sicherungen bleiben immer erhalten."
+
+msgid "Empty"
+msgstr "Leer"
+
+msgid "Subkeys"
+msgstr "Unterschlüssel"
+
+msgid "Weekly clean"
+msgstr "Wöchentliche Bereinigung"
+
+msgid "Please select a key to back up."
+msgstr "Bitte einen Schlüssel zum Sichern wählen."
+
+msgid "Reading scheduled tasks failed: {e:#}"
+msgstr "Geplante Aufgaben konnten nicht gelesen werden: {e:#}"
+
+msgid "Scheduled cleans"
+msgstr "Geplante Bereinigungen"
+
+msgid "New task"
+msgstr "Neue Aufgabe"
+
+msgid "No tasks yet. Fill in the form and save."
+msgstr "Noch keine Aufgaben. Formular ausfüllen und speichern."
+
+msgid "Deleted task {id}"
+msgstr "Aufgabe {id} gelöscht"
+
+msgid "Deleting task failed: {e:#}"
+msgstr "Aufgabe konnte nicht gelöscht werden: {e:#}"
+
+msgid "Edit task"
+msgstr "Aufgabe bearbeiten"
+
+msgid "Repeat"
+msgstr "Wiederholen"
+
+msgid "Daily"
+msgstr "Täglich"
+
+msgid "Weekly"
+msgstr "Wöchentlich"
+
+msgid "Monthly"
+msgstr "Monatlich"
+
+msgid "Day"
+msgstr "Tag"
+
+msgid "Last day of the month"
+msgstr "Letzter Tag des Monats"
+
+msgid "At"
+msgstr "Um"
+
+msgid "Accounts"
+msgstr "Konten"
+
+msgid "Location"
+msgstr "Ort"
+
+msgid "Pick below or type a path"
+msgstr "Unten auswählen oder Pfad eingeben"
+
+msgid "Next run {}"
+msgstr "Nächste Ausführung {}"
+
+msgid "System scheduler: {}"
+msgstr "Systemplaner: {}"
+
+msgid "Last run {} — {}"
+msgstr "Letzte Ausführung {} – {}"
+
+msgid "Save"
+msgstr "Speichern"
+
+msgid "Running {id}"
+msgstr "{id} wird ausgeführt"
+
+msgid "Task ran: {s}"
+msgstr "Aufgabe ausgeführt: {s}"
+
+msgid "Task failed: {e}"
+msgstr "Aufgabe fehlgeschlagen: {e}"
+
+msgid "A task with the same parameters already exists!"
+msgstr "Eine Aufgabe mit denselben Parametern existiert bereits!"
+
+msgid "Saved task {id}"
+msgstr "Aufgabe {id} gespeichert"
+
+msgid "Saving task failed: {e:#}"
+msgstr "Aufgabe konnte nicht gespeichert werden: {e:#}"
+
+msgid "{} · last run failed"
+msgstr "{} · letzte Ausführung fehlgeschlagen"
+
+msgid "Overwrite passes"
+msgstr "Überschreibdurchgänge"
+
+msgid "Fast; enough for modern drives"
+msgstr "Schnell; genügt für moderne Laufwerke"
+
+msgid "Zeros, ones, random (default)"
+msgstr "Nullen, Einsen, Zufall (Standard)"
+
+msgid "Seven passes; slow"
+msgstr "Sieben Durchgänge; langsam"
+
+msgid "On SSDs, flash drives and copy-on-write filesystems (btrfs, ZFS) the drive may keep old copies of data in places software can't reach. Overwriting is most reliable on hard disks; full-disk encryption protects SSDs best."
+msgstr "Auf SSDs, USB-Sticks und Copy-on-Write-Dateisystemen (btrfs, ZFS) kann das Laufwerk alte Kopien an Stellen behalten, die Software nicht erreicht. Überschreiben ist auf Festplatten am zuverlässigsten; vollständige Verschlüsselung schützt SSDs am besten."
+
+msgid "{label} — paused"
+msgstr "{label} – pausiert"
+
+msgid "{label} — pass {pass}"
+msgstr "{label} – Durchgang {pass}"
+
+msgid "Resume"
+msgstr "Fortsetzen"
+
+msgid "Pause"
+msgstr "Pausieren"
+
+msgid "{} of {}"
+msgstr "{} von {}"
+
+msgid "{} doesn't exist"
+msgstr "{} existiert nicht"
+
+msgid "Shredded {} file(s) and {} folder(s), {}"
+msgstr "{} Datei(en) und {} Ordner vernichtet, {}"
+
+msgid "Shredded {} file(s); {} item(s) failed: {}"
+msgstr "{} Datei(en) vernichtet; {} Element(e) fehlgeschlagen: {}"
+
+msgid "Shredding"
+msgstr "Wird vernichtet"
+
+msgid "Destroy {} item(s)"
+msgstr "{} Element(e) vernichten"
+
+msgid "Files and folders to destroy"
+msgstr "Zu vernichtende Dateien und Ordner"
+
+msgid "Drop files or folders on this window, or type a path."
+msgstr "Dateien oder Ordner auf dieses Fenster ziehen oder einen Pfad eingeben."
+
+msgid "Nothing added yet"
+msgstr "Noch nichts hinzugefügt"
+
+msgid "Remove from the list"
+msgstr "Aus der Liste entfernen"
+
+msgid "Destroy {} item(s)?"
+msgstr "{} Element(e) vernichten?"
+
+msgid "They are overwritten {} time(s) and deleted. Nothing is backed up and they can't be recovered — not from the Trash, not by CleanCore."
+msgstr "Sie werden {}-mal überschrieben und gelöscht. Nichts wird gesichert, und sie lassen sich nicht wiederherstellen – weder aus dem Papierkorb noch mit CleanCore."
+
+msgid "Destroy"
+msgstr "Vernichten"
+
+msgid "Free space wiped: wrote {} of overwrite data"
+msgstr "Freier Speicher gelöscht: {} Überschreibdaten geschrieben"
+
+msgid "Wiping free space"
+msgstr "Freier Speicher wird gelöscht"
+
+msgid "Wipe free space"
+msgstr "Freien Speicher löschen"
+
+msgid "Pick a drive first"
+msgstr "Zuerst ein Laufwerk wählen"
+
+msgid "Deleted files stay on the drive until something overwrites them. This fills the drive's free space with random data, then deletes it again. Pick a drive:"
+msgstr "Gelöschte Dateien bleiben auf dem Laufwerk, bis sie überschrieben werden. Dies füllt den freien Speicher mit Zufallsdaten und löscht sie wieder. Laufwerk wählen:"
+
+msgid "{} free of {}"
+msgstr "{} frei von {}"
+
+msgid "Wipe the free space of {}?"
+msgstr "Freien Speicher von {} löschen?"
+
+msgid "{} of random data is written {passes} time(s). This can take a long time, and the drive is briefly full — programs saving files meanwhile may fail. Your files are not touched."
+msgstr "{} Zufallsdaten werden {passes}-mal geschrieben. Das kann lange dauern, und das Laufwerk ist kurz voll – Programme, die währenddessen speichern, können scheitern. Ihre Dateien bleiben unberührt."
+
+msgid "Wipe"
+msgstr "Löschen"
+
+msgid "Wiping"
+msgstr "Wird gelöscht"
+
+msgid "Windows only"
+msgstr "Nur Windows"
+
+msgid "The Microsoft slop cleaner removes Windows' preinstalled apps and turns off Copilot, ads and telemetry. There's nothing like it to clean on Linux."
+msgstr "Der Microsoft-Ballast-Entferner entfernt vorinstallierte Windows-Apps und schaltet Copilot, Werbung und Telemetrie ab. Unter Linux gibt es nichts Vergleichbares zu bereinigen."
+
+msgid "Looking for preinstalled apps"
+msgstr "Suche nach vorinstallierten Apps"
+
+msgid "Removed {} app(s)"
+msgstr "{} App(s) entfernt"
+
+msgid "Removed {}; {} failed: {}"
+msgstr "{} entfernt; {} fehlgeschlagen: {}"
+
+msgid "Preinstalled and promoted apps"
+msgstr "Vorinstallierte und beworbene Apps"
+
+msgid "Remove ({picked})"
+msgstr "Entfernen ({picked})"
+
+msgid "Scan again"
+msgstr "Erneut prüfen"
+
+msgid "Apps Windows installs or pushes on its own. Removed apps can be reinstalled from the Microsoft Store."
+msgstr "Apps, die Windows von selbst installiert oder bewirbt. Entfernte Apps lassen sich aus dem Microsoft Store neu installieren."
+
+msgid "{}  Run CleanCore as administrator to remove apps for every user and stop them from coming back."
+msgstr "{}  Starten Sie CleanCore als Administrator, um Apps für alle Benutzer zu entfernen und ihre Rückkehr zu verhindern."
+
+msgid "For every user account"
+msgstr "Für jedes Benutzerkonto"
+
+msgid "Also remove the preinstalled copy"
+msgstr "Auch die vorinstallierte Kopie entfernen"
+
+msgid "New accounts and feature updates won't bring the app back"
+msgstr "Neue Konten und Funktionsupdates bringen die App nicht zurück"
+
+msgid "{}  None of the known preinstalled apps are installed."
+msgstr "{}  Keine der bekannten vorinstallierten Apps ist installiert."
+
+msgid "Preinstalled for new users"
+msgstr "Für neue Benutzer vorinstalliert"
+
+msgid "Only the preinstalled copy"
+msgstr "Nur die vorinstallierte Kopie"
+
+msgid "AI, ads and suggestions"
+msgstr "KI, Werbung und Vorschläge"
+
+msgid "Turn all off ({})"
+msgstr "Alles ausschalten ({})"
+
+msgid "Each switch can be turned back on here or in the Tuner. Some need administrator rights."
+msgstr "Jeder Schalter lässt sich hier oder im Tuning wieder einschalten. Manche brauchen Administratorrechte."
+
+msgid "by CleanCore"
+msgstr "durch CleanCore"
+
+msgid "\"{}\" was set outside CleanCore, so there is nothing to restore. Change it in Windows Settings."
+msgstr "\"{}\" wurde außerhalb von CleanCore gesetzt, daher gibt es nichts wiederherzustellen. Ändern Sie es in den Windows-Einstellungen."
+
+msgid "Done"
+msgstr "Erledigt"
+
+msgid "Restored"
+msgstr "Wiederhergestellt"
+
+msgid "Remove {} app(s)?"
+msgstr "{} App(s) entfernen?"
+
+msgid "For every user, and they won't come back for new accounts."
+msgstr "Für jeden Benutzer, und sie kehren bei neuen Konten nicht zurück."
+
+msgid "For every user account."
+msgstr "Für jedes Benutzerkonto."
+
+msgid "For you, and they won't come back for new accounts."
+msgstr "Für Sie, und sie kehren bei neuen Konten nicht zurück."
+
+msgid "For you only."
+msgstr "Nur für Sie."
+
+msgid "{scope} They can be reinstalled from the Microsoft Store."
+msgstr "{scope} Sie lassen sich aus dem Microsoft Store neu installieren."
+
+msgid "Removing apps"
+msgstr "Apps werden entfernt"
+
+msgid "Default"
+msgstr "Standard"
+
+msgid "Icon {key}"
+msgstr "Symbol {key}"
+
+msgid "Default icon"
+msgstr "Standardsymbol"
+
+msgid "Blue"
+msgstr "Blau"
+
+msgid "Indigo"
+msgstr "Indigo"
+
+msgid "Violet"
+msgstr "Violett"
+
+msgid "Teal"
+msgstr "Petrol"
+
+msgid "Green"
+msgstr "Grün"
+
+msgid "Rose"
+msgstr "Rosé"
+
+msgid "Back"
+msgstr "Zurück"
+
+msgid "Clear"
+msgstr "Leeren"
+
+msgid "Choose a folder"
+msgstr "Ordner wählen"
+
+msgid "Choose a file"
+msgstr "Datei wählen"
+
+msgid "Choose where to save"
+msgstr "Speicherort wählen"
+
+msgid "Disks"
+msgstr "Datenträger"
+
+msgid "Network"
+msgstr "Netzwerk"
+
+msgid "Security"
+msgstr "Sicherheit"
+
+msgid "Software"
+msgstr "Software"
+
+msgid "My tools"
+msgstr "Meine Werkzeuge"
+
+msgid "Search tools"
+msgstr "Werkzeuge suchen"
+
+msgid " (asks for administrator rights)"
+msgstr " (fragt nach Administratorrechten)"
+
+msgid "Add your own tool"
+msgstr "Eigenes Werkzeug hinzufügen"
+
+msgid "Any program or command line. Right-click one of your tools to remove it."
+msgstr "Beliebiges Programm oder Befehlszeile. Rechtsklick auf eines Ihrer Werkzeuge entfernt es."
+
+msgid "/usr/bin/app --flag"
+msgstr "/usr/bin/app --flag"
+
+msgid "Removed \"{n}\""
+msgstr "\"{n}\" entfernt"
+
+msgid "Junk Files"
+msgstr "Datenmüll"
+
+msgid "Temporary files, editor backups and crash dumps left on your drives"
+msgstr "Temporäre Dateien, Editor-Sicherungen und Absturzabbilder auf Ihren Laufwerken"
+
+msgid "History Cleaner"
+msgstr "Verlaufsbereinigung"
+
+msgid "Browser history and caches, recent files and other traces"
+msgstr "Browserverlauf und Caches, zuletzt verwendete Dateien und andere Spuren"
+
+msgid "Unrecoverable Delete"
+msgstr "Unwiderrufliches Löschen"
+
+msgid "Overwrite files and folders so they can't be recovered"
+msgstr "Dateien und Ordner überschreiben, damit sie nicht wiederherstellbar sind"
+
+msgid "Evidence Remover"
+msgstr "Spurenbeseitigung"
+
+msgid "Overwrite free space so already-deleted files can't be recovered"
+msgstr "Freien Speicher überschreiben, damit bereits gelöschte Dateien nicht wiederherstellbar sind"
+
+msgid "Windows Tools"
+msgstr "Windows-Werkzeuge"
+
+msgid "System Tools"
+msgstr "Systemwerkzeuge"
+
+msgid "The operating system's own utilities in one place"
+msgstr "Die Werkzeuge des Betriebssystems an einem Ort"
+
+msgid "Microsoft Slop Cleaner"
+msgstr "Microsoft-Ballast entfernen"
+
+msgid "Remove preinstalled apps and turn off Copilot, ads and telemetry"
+msgstr "Vorinstallierte Apps entfernen und Copilot, Werbung und Telemetrie abschalten"
+
+msgid "Junk files"
+msgstr "Datenmüll"
+
+msgid "History"
+msgstr "Verlauf"
+
+msgid "Unrecoverable delete"
+msgstr "Unwiderrufliches Löschen"
+
+msgid "Evidence remover"
+msgstr "Spurenbeseitigung"
+
+msgid "Windows tools"
+msgstr "Windows-Werkzeuge"
+
+msgid "System tools"
+msgstr "Systemwerkzeuge"
+
+msgid "Microsoft slop"
+msgstr "Microsoft-Ballast"
+
+msgid "Install & trace"
+msgstr "Installieren & aufzeichnen"
+
+msgid "Recording the current state"
+msgstr "Aktueller Zustand wird erfasst"
+
+msgid "Install with CleanCore"
+msgstr "Mit CleanCore installieren"
+
+msgid "Every change the installation makes is recorded, so it can be undone exactly"
+msgstr "Jede Änderung der Installation wird aufgezeichnet und lässt sich exakt rückgängig machen"
+
+msgid "Snapshot"
+msgstr "Snapshot"
+
+msgid "Install"
+msgstr "Installieren"
+
+msgid "Analyze"
+msgstr "Analysieren"
+
+msgid "Recording the current state…"
+msgstr "Aktueller Zustand wird erfasst…"
+
+msgid "Comparing with the snapshot…"
+msgstr "Vergleich mit dem Snapshot…"
+
+msgid "Finding everything the installation created"
+msgstr "Alles wird gesucht, was die Installation angelegt hat"
+
+msgid "The installer finished ({st}). Run and configure the program if you like, close it, then stop the trace."
+msgstr "Das Installationsprogramm ist fertig ({st}). Starten und konfigurieren Sie das Programm nach Wunsch, schließen Sie es und beenden Sie dann die Aufzeichnung."
+
+msgid "Tracing  {:02}:{:02}"
+msgstr "Aufzeichnung  {:02}:{:02}"
+
+msgid "Install the program now: run its installer below, or start it any way you like. Install one program at a time and close other programs."
+msgstr "Installieren Sie das Programm jetzt: Starten Sie unten sein Installationsprogramm oder auf beliebige Weise. Immer nur ein Programm installieren und andere schließen."
+
+msgid "/home/you/Downloads/install.sh or a .deb"
+msgstr "/home/you/Downloads/install.sh oder ein .deb"
+
+msgid "Run installer"
+msgstr "Installationsprogramm starten"
+
+msgid "The installer is running…"
+msgstr "Das Installationsprogramm läuft…"
+
+msgid "Could not start the installer: {e:#}"
+msgstr "Installationsprogramm konnte nicht gestartet werden: {e:#}"
+
+msgid "Stop & analyze"
+msgstr "Beenden & analysieren"
+
+msgid "Analyzing"
+msgstr "Wird analysiert"
+
+msgid "Nothing was installed"
+msgstr "Nichts wurde installiert"
+
+msgid "No new files, settings or packages appeared during the trace."
+msgstr "Während der Aufzeichnung sind keine neuen Dateien, Einstellungen oder Pakete erschienen."
+
+msgid "{} change(s) made by other programs during the trace were left out (only the installer's own processes count)."
+msgstr "{} Änderung(en) anderer Programme während der Aufzeichnung wurden ausgelassen (nur die Prozesse des Installationsprogramms zählen)."
+
+msgid "Comment"
+msgstr "Kommentar"
+
+msgid "{created} item(s) created, removable with this log · {modified} existing item(s) changed (kept on uninstall)"
+msgstr "{created} Element(e) angelegt, mit diesem Protokoll entfernbar · {modified} vorhandene(s) Element(e) geändert (bleiben beim Deinstallieren)"
+
+msgid "Save log"
+msgstr "Protokoll speichern"
+
+msgid "Saved trace log \"{}\""
+msgstr "Aufzeichnungsprotokoll \"{}\" gespeichert"
+
+msgid "Registry"
+msgstr "Registrierung"
+
+msgid "Settings (dconf)"
+msgstr "Einstellungen (dconf)"
+
+msgid "Packages"
+msgstr "Pakete"
+
+msgid "Files and folders"
+msgstr "Dateien und Ordner"
+
+msgid "Created: removed on uninstall"
+msgstr "Angelegt: wird beim Deinstallieren entfernt"
+
+msgid "Existed before: kept on uninstall"
+msgstr "Vorher vorhanden: bleibt beim Deinstallieren"
+
+msgid "Remove from log"
+msgstr "Aus dem Protokoll entfernen"
+
+msgid "… and {} more (export the log to see all)"
+msgstr "… und {} weitere (Protokoll exportieren, um alle zu sehen)"
+
+msgid "Import a .cptrace log"
+msgstr "Ein .cptrace-Protokoll importieren"
+
+msgid "Import"
+msgstr "Importieren"
+
+msgid "Imported \"{}\""
+msgstr "\"{}\" importiert"
+
+msgid "Back up or restore every log (one file)"
+msgstr "Alle Protokolle sichern oder wiederherstellen (eine Datei)"
+
+msgid "Back up all"
+msgstr "Alle sichern"
+
+msgid "Saved {n} log(s) to {}"
+msgstr "{n} Protokoll(e) in {} gespeichert"
+
+msgid "Restored {n} log(s)"
+msgstr "{n} Protokoll(e) wiederhergestellt"
+
+msgid "{n} logs selected"
+msgstr "{n} Protokolle ausgewählt"
+
+msgid "Merge"
+msgstr "Zusammenführen"
+
+msgid "Merged into \"{}\""
+msgstr "In \"{}\" zusammengeführt"
+
+msgid "Name of the merged log"
+msgstr "Name des zusammengeführten Protokolls"
+
+msgid "{} · {} settings · {} files · {}"
+msgstr "{} · {} Einstellungen · {} Dateien · {}"
+
+msgid "Rename"
+msgstr "Umbenennen"
+
+msgid "{}  Group"
+msgstr "{}  Gruppe"
+
+msgid "New group"
+msgstr "Neue Gruppe"
+
+msgid "Remove from group"
+msgstr "Aus der Gruppe entfernen"
+
+msgid "{}  Change icon"
+msgstr "{}  Symbol ändern"
+
+msgid "Delete log"
+msgstr "Protokoll löschen"
+
+msgid "Add to logs database"
+msgstr "Zur Protokolldatenbank hinzufügen"
+
+msgid "Share this log through the logs database folder"
+msgstr "Dieses Protokoll über den Ordner der Protokolldatenbank teilen"
+
+msgid "Added to the logs database: {}"
+msgstr "Zur Protokolldatenbank hinzugefügt: {}"
+
+msgid "Export (.cptrace to share, .html / .txt to read)"
+msgstr "Exportieren (.cptrace zum Teilen, .html / .txt zum Lesen)"
+
+msgid "Edit"
+msgstr "Bearbeiten"
+
+msgid "No traced programs"
+msgstr "Keine aufgezeichneten Programme"
+
+msgid "Use Install & trace to record an installation; it can then be undone exactly."
+msgstr "Verwenden Sie „Installieren & aufzeichnen“, um eine Installation aufzuzeichnen; sie lässt sich dann exakt rückgängig machen."
+
+msgid "Created"
+msgstr "Angelegt"
+
+msgid "Imported"
+msgstr "Importiert"
+
+msgid "Rename log"
+msgstr "Protokoll umbenennen"
+
+msgid "Log renamed"
+msgstr "Protokoll umbenannt"
+
+msgid "Delete this log?"
+msgstr "Dieses Protokoll löschen?"
+
+msgid "The program stays installed; only the record of its installation is deleted."
+msgstr "Das Programm bleibt installiert; nur die Aufzeichnung seiner Installation wird gelöscht."
+
+msgid "Log deleted"
+msgstr "Protokoll gelöscht"
+
+msgid "Edit log"
+msgstr "Protokoll bearbeiten"
+
+msgid "Author"
+msgstr "Autor"
+
+msgid "Add item"
+msgstr "Element hinzufügen"
+
+msgid "dconf folder"
+msgstr "dconf-Ordner"
+
+msgid "Registry value"
+msgstr "Registrierungswert"
+
+msgid "dconf key"
+msgstr "dconf-Schlüssel"
+
+msgid "Path / key"
+msgstr "Pfad / Schlüssel"
+
+msgid "Value name"
+msgstr "Wertname"
+
+msgid "Log saved"
+msgstr "Protokoll gespeichert"
+
+msgid "CleanCore Hunter Mode"
+msgstr "CleanCore-Jagdmodus"
+
+msgid "Drag the target onto a program's window"
+msgstr "Ziehen Sie das Ziel auf das Fenster eines Programms"
+
+msgid "Show the target"
+msgstr "Ziel anzeigen"
+
+msgid "\"{name}\" was changed outside CleanCore, so there is no original value to restore. Change it in system settings instead."
+msgstr "\"{name}\" wurde außerhalb von CleanCore geändert, daher gibt es keinen Originalwert. Ändern Sie es in den Systemeinstellungen."
+
+msgid "Applied: {}"
+msgstr "Angewendet: {}"
+
+msgid "Restored the original setting: {}"
+msgstr "Ursprüngliche Einstellung wiederhergestellt: {}"
+
+msgid "Hidden Windows settings, switched on and off safely"
+msgstr "Versteckte Windows-Einstellungen, sicher ein- und ausgeschaltet"
+
+msgid "Desktop settings, switched on and off safely"
+msgstr "Desktop-Einstellungen, sicher ein- und ausgeschaltet"
+
+msgid "Reset all ({ours})"
+msgstr "Alles zurücksetzen ({ours})"
+
+msgid "Restore every setting changed by CleanCore"
+msgstr "Jede von CleanCore geänderte Einstellung wiederherstellen"
+
+msgid "Search tweaks"
+msgstr "Optimierungen suchen"
+
+msgid "Some changes need one more step: {}."
+msgstr "Manche Änderungen brauchen noch einen Schritt: {}."
+
+msgid "Restart Explorer"
+msgstr "Explorer neu starten"
+
+msgid "File Explorer restarted"
+msgstr "Datei-Explorer neu gestartet"
+
+msgid "No tweaks match"
+msgstr "Keine passenden Optimierungen"
+
+msgid "Try another word."
+msgstr "Versuchen Sie ein anderes Wort."
+
+msgid "Log out"
+msgstr "Abmelden"
+
+msgid "Restart PC"
+msgstr "PC neu starten"
+
+msgid "Caution"
+msgstr "Vorsicht"
+
+msgid "Not available: {why}"
+msgstr "Nicht verfügbar: {why}"
+
+msgid "Restore original"
+msgstr "Original wiederherstellen"
+
+msgid "Are you sure?"
+msgstr "Sind Sie sicher?"
+
+msgid "Apply anyway"
+msgstr "Trotzdem anwenden"
+
+msgid "Uninstall with CleanCore"
+msgstr "Mit CleanCore deinstallieren"
+
+msgid "Reading installed programs"
+msgstr "Installierte Programme werden gelesen"
+
+msgid "New"
+msgstr "Neu"
+
+msgid "Uninstalling {}"
+msgstr "{} wird deinstalliert"
+
+msgid "Removing"
+msgstr "Wird entfernt"
+
+msgid "{} program(s)"
+msgstr "{} Programm(e)"
+
+msgid "Creating restore point and backup"
+msgstr "Wiederherstellungspunkt und Sicherung werden erstellt"
+
+msgid "Finding the program"
+msgstr "Programm wird gesucht"
+
+msgid "\"{name}\" isn't in the list of installed programs: Forced Uninstall finds what it left."
+msgstr "\"{name}\" steht nicht in der Liste installierter Programme: Die erzwungene Deinstallation findet, was es hinterlassen hat."
+
+msgid "Reading installed programs…"
+msgstr "Installierte Programme werden gelesen…"
+
+msgid "{} programs · {}"
+msgstr "{} Programme · {}"
+
+msgid "Forced Uninstall"
+msgstr "Erzwungene Deinstallation"
+
+msgid "Remove a program that isn't listed or was partly removed"
+msgstr "Ein nicht aufgeführtes oder teilweise entferntes Programm entfernen"
+
+msgid "Record an installation so it can be undone exactly"
+msgstr "Eine Installation aufzeichnen, um sie exakt rückgängig machen zu können"
+
+msgid "File (.txt .html .csv .json)"
+msgstr "Datei (.txt .html .csv .json)"
+
+msgid "Exported {} programs to {}"
+msgstr "{} Programme exportiert nach {}"
+
+msgid "Finish uninstalling {}"
+msgstr "Deinstallation von {} abschließen"
+
+msgid "Its uninstaller asked for a restart"
+msgstr "Das Deinstallationsprogramm hat einen Neustart verlangt"
+
+msgid "The uninstall was interrupted"
+msgstr "Die Deinstallation wurde unterbrochen"
+
+msgid "{why} ({}). Scan for the leftovers it left behind."
+msgstr "{why} ({}). Suchen Sie nach den hinterlassenen Resten."
+
+msgid "Dismiss"
+msgstr "Verwerfen"
+
+msgid "Scan for leftovers"
+msgstr "Nach Resten suchen"
+
+msgid "Continuing the uninstall started {}."
+msgstr "Die am {} begonnene Deinstallation wird fortgesetzt."
+
+msgid "Windows Apps"
+msgstr "Windows-Apps"
+
+msgid "Flatpak & Snap"
+msgstr "Flatpak & Snap"
+
+msgid "All programs"
+msgstr "Alle Programme"
+
+msgid "Traced programs"
+msgstr "Aufgezeichnete Programme"
+
+msgid "Browser extensions"
+msgstr "Browsererweiterungen"
+
+msgid "Logs database"
+msgstr "Protokolldatenbank"
+
+msgid "Search programs"
+msgstr "Programme suchen"
+
+msgid "Search name, publisher or comment"
+msgstr "Nach Name, Herausgeber oder Kommentar suchen"
+
+msgid "All groups"
+msgstr "Alle Gruppen"
+
+msgid "New ({new_n})"
+msgstr "Neu ({new_n})"
+
+msgid "{}  Manage groups…"
+msgstr "{}  Gruppen verwalten…"
+
+msgid "Filters"
+msgstr "Filter"
+
+msgid "Show system components"
+msgstr "Systemkomponenten anzeigen"
+
+msgid "Updates, runtimes and Windows parts."
+msgstr "Updates, Laufzeitumgebungen und Windows-Bestandteile."
+
+msgid "Libraries and packages without an app."
+msgstr "Bibliotheken und Pakete ohne App."
+
+msgid "Quick uninstall ({n_checked})"
+msgstr "Schnelle Deinstallation ({n_checked})"
+
+msgid "Clear selection"
+msgstr "Auswahl aufheben"
+
+msgid "Run its uninstaller, then scan for leftovers"
+msgstr "Deinstallationsprogramm ausführen und dann nach Resten suchen"
+
+msgid "Quick uninstall"
+msgstr "Schnelle Deinstallation"
+
+msgid "Quick uninstall: silent uninstall and automatic leftover removal"
+msgstr "Schnelle Deinstallation: stille Deinstallation und automatisches Entfernen der Reste"
+
+msgid "No programs match"
+msgstr "Keine passenden Programme"
+
+msgid "Try another search or group."
+msgstr "Versuchen Sie eine andere Suche oder Gruppe."
+
+msgid "Version"
+msgstr "Version"
+
+msgid "Installed"
+msgstr "Installiert"
+
+msgid "Change/Repair is a Windows feature ({cmd})"
+msgstr "Ändern/Reparieren ist eine Windows-Funktion ({cmd})"
+
+msgid "Added to group {g}"
+msgstr "Zur Gruppe {g} hinzugefügt"
+
+msgid "{} wasn't running"
+msgstr "{} lief nicht"
+
+msgid "Stopped {}"
+msgstr "{} beendet"
+
+msgid "Resetting the Microsoft Store…"
+msgstr "Microsoft Store wird zurückgesetzt…"
+
+msgid "{} removed for all users"
+msgstr "{} für alle Benutzer entfernt"
+
+msgid "{} was reset"
+msgstr "{} zurückgesetzt"
+
+msgid "Shown under the program name"
+msgstr "Wird unter dem Programmnamen angezeigt"
+
+msgid "Comment saved"
+msgstr "Kommentar gespeichert"
+
+msgid "Nothing uninstalled yet"
+msgstr "Noch nichts deinstalliert"
+
+msgid "Programs you remove with CleanCore are listed here."
+msgstr "Hier stehen die Programme, die Sie mit CleanCore entfernen."
+
+msgid "{}  {}   ·  {}  ·  {} removed"
+msgstr "{}  {}   ·  {}  ·  {} entfernt"
+
+msgid "Backup {b} (restore it from Backups)"
+msgstr "Sicherung {b} (unter „Sicherungen“ wiederherstellen)"
+
+msgid "Copy as text"
+msgstr "Als Text kopieren"
+
+msgid "Select an entry to see what was removed."
+msgstr "Wählen Sie einen Eintrag, um zu sehen, was entfernt wurde."
+
+msgid "The uninstaller finished successfully ({})"
+msgstr "Das Deinstallationsprogramm wurde erfolgreich beendet ({})"
+
+msgid "The uninstaller ended with exit code {c} ({})"
+msgstr "Das Deinstallationsprogramm endete mit Exitcode {c} ({})"
+
+msgid "The uninstaller ended without an exit code ({})"
+msgstr "Das Deinstallationsprogramm endete ohne Exitcode ({})"
+
+msgid "No built-in uninstaller: CleanCore removes the program's files and leftovers itself."
+msgstr "Kein eingebautes Deinstallationsprogramm: CleanCore entfernt die Programmdateien und Reste selbst."
+
+msgid "The built-in uninstaller could not run: {e}"
+msgstr "Das eingebaute Deinstallationsprogramm konnte nicht laufen: {e}"
+
+msgid "Finishing"
+msgstr "Wird abgeschlossen"
+
+msgid "{}: removed {} leftover(s)"
+msgstr "{}: {} Rest(e) entfernt"
+
+msgid "Removing leftovers failed: {e}"
+msgstr "Entfernen der Reste fehlgeschlagen: {e}"
+
+msgid "Undo exactly what the installation changed"
+msgstr "Genau rückgängig machen, was die Installation geändert hat"
+
+msgid "Run the program's uninstaller, then remove what it leaves behind"
+msgstr "Deinstallationsprogramm ausführen und danach entfernen, was übrig bleibt"
+
+msgid "Running the program's uninstaller"
+msgstr "Deinstallationsprogramm des Programms läuft"
+
+msgid "Follow its window. When it closes, CleanCore looks for what it left behind."
+msgstr "Folgen Sie seinem Fenster. Wenn es sich schließt, sucht CleanCore nach Resten."
+
+msgid "It's done, continue"
+msgstr "Fertig, weiter"
+
+msgid "Continued before the uninstaller reported back."
+msgstr "Fortgesetzt, bevor das Deinstallationsprogramm fertig gemeldet hat."
+
+msgid "Use this if the uninstaller's window is gone but this screen is still waiting."
+msgstr "Verwenden Sie dies, wenn das Fenster des Deinstallationsprogramms weg ist, dieser Bildschirm aber noch wartet."
+
+msgid "What happened so far"
+msgstr "Bisheriger Verlauf"
+
+msgid "How deep to look for leftovers"
+msgstr "Wie gründlich nach Resten gesucht wird"
+
+msgid "The usual places in settings and on disk. Fastest."
+msgstr "Die üblichen Orte in Einstellungen und auf dem Datenträger. Am schnellsten."
+
+msgid "Safe, plus everything that points to the program. Recommended."
+msgstr "Sicher, plus alles, was auf das Programm verweist. Empfohlen."
+
+msgid "Moderate, plus a deep name search. Review the results."
+msgstr "Mittel, plus eine gründliche Namenssuche. Prüfen Sie die Ergebnisse."
+
+msgid "Scan all user accounts"
+msgstr "Alle Benutzerkonten prüfen"
+
+msgid "Also look in other user accounts"
+msgstr "Auch in anderen Benutzerkonten suchen"
+
+msgid "Scanning for leftovers"
+msgstr "Suche nach Resten"
+
+msgid "{mode} scan · {secs:.0}s"
+msgstr "Prüfung {mode} · {secs:.0} s"
+
+msgid "Backing up and removing {n} item(s)…"
+msgstr "{n} Element(e) werden gesichert und entfernt…"
+
+msgid "Everything is backed up first · {secs:.0}s"
+msgstr "Alles wird zuerst gesichert · {secs:.0} s"
+
+msgid "{} is uninstalled"
+msgstr "{} ist deinstalliert"
+
+msgid "Nothing was left behind."
+msgstr "Nichts ist übrig geblieben."
+
+msgid "Most of it is gone; a few items could not be removed."
+msgstr "Das meiste ist weg; einige Elemente konnten nicht entfernt werden."
+
+msgid "Back to programs"
+msgstr "Zurück zu den Programmen"
+
+msgid "Leftovers removed"
+msgstr "Entfernte Reste"
+
+msgid "Could not be removed"
+msgstr "Nicht entfernbar"
+
+msgid "Backup (restore it in Backups)"
+msgstr "Sicherung (unter „Sicherungen“ wiederherstellen)"
+
+msgid "{} item(s) could not be removed"
+msgstr "{} Element(e) konnten nicht entfernt werden"
+
+msgid "…and {} more"
+msgstr "…und {} weitere"
+
+msgid "Advanced uninstall"
+msgstr "Erweiterte Deinstallation"
+
+msgid "Look for related data the log didn't capture, such as settings the program created later."
+msgstr "Nach verwandten Daten suchen, die das Protokoll nicht erfasst hat, etwa später angelegte Einstellungen."
+
+msgid "Scan for related leftovers"
+msgstr "Nach zugehörigen Resten suchen"
+
+msgid "Saving"
+msgstr "Wird gespeichert"
+
+msgid "Removing leftovers"
+msgstr "Reste werden entfernt"
+
+msgid "No leftovers found"
+msgstr "Keine Reste gefunden"
+
+msgid "The program removed itself cleanly."
+msgstr "Das Programm hat sich sauber entfernt."
+
+msgid "Finish"
+msgstr "Fertigstellen"
+
+msgid "Leftovers found"
+msgstr "Gefundene Reste"
+
+msgid "Selected to delete"
+msgstr "Zum Löschen ausgewählt"
+
+msgid "Registry entries"
+msgstr "Registrierungseinträge"
+
+msgid "Settings entries"
+msgstr "Einstellungseinträge"
+
+msgid "Filter leftovers"
+msgstr "Reste filtern"
+
+msgid "Delete {n_sel} item(s)"
+msgstr "{n_sel} Element(e) löschen"
+
+msgid "Backed up before deleting"
+msgstr "Vor dem Löschen gesichert"
+
+msgid "Select the whole group"
+msgstr "Ganze Gruppe auswählen"
+
+msgid "Quick uninstall finished: {} program(s)"
+msgstr "Schnelle Deinstallation abgeschlossen: {} Programm(e)"
+
+msgid "Quick uninstall finished: {failed} of {} program(s) failed"
+msgstr "Schnelle Deinstallation abgeschlossen: {failed} von {} Programm(en) fehlgeschlagen"
+
+msgid "Quick Uninstall"
+msgstr "Schnelle Deinstallation"
+
+msgid "{total} program(s) · silent uninstallers, then a {mode} leftover scan · leftovers removed automatically"
+msgstr "{total} Programm(e) · stille Deinstallation, dann Restesuche ({mode}) · Reste werden automatisch entfernt"
+
+msgid "Preparing: restore point and backup…"
+msgstr "Vorbereitung: Wiederherstellungspunkt und Sicherung…"
+
+msgid "All {total} program(s) uninstalled"
+msgstr "Alle {total} Programm(e) deinstalliert"
+
+msgid "Finished with {failed} problem(s)"
+msgstr "Mit {failed} Problem(en) abgeschlossen"
+
+msgid "Uninstalling {} of {total}: {current}"
+msgstr "Deinstallation {} von {total}: {current}"
+
+msgid "{ok} done"
+msgstr "{ok} erledigt"
+
+msgid "{failed} failed"
+msgstr "{failed} fehlgeschlagen"
+
+msgid "{waiting} waiting"
+msgstr "{waiting} wartend"
+
+msgid "{removed} leftovers removed"
+msgstr "{removed} Reste entfernt"
+
+msgid "Before starting"
+msgstr "Vor dem Start"
+
+msgid "Waiting its turn"
+msgstr "Wartet, bis es dran ist"
+
+msgid "Running the silent uninstaller, then scanning · {secs:.0}s"
+msgstr "Stille Deinstallation läuft, danach Prüfung · {secs:.0} s"
+
+msgid "{} leftover(s) removed"
+msgstr "{} Rest(e) entfernt"
+
+msgid "Leftover scan off in settings"
+msgstr "Restesuche in den Einstellungen ausgeschaltet"
+
+msgid "{} could not be removed"
+msgstr "{} konnten nicht entfernt werden"
+
+msgid "uninstaller exit code {c}"
+msgstr "Exitcode des Deinstallationsprogramms {c}"
+
+msgid "{}  Still appears to be installed: try a normal Uninstall"
+msgstr "{}  Scheint noch installiert zu sein: normale Deinstallation versuchen"
+
+msgid "Waiting"
+msgstr "Wartet"
+
+msgid "Uninstalling"
+msgstr "Wird deinstalliert"
+
+msgid "Check"
+msgstr "Prüfen"
+
+msgid "Removed"
+msgstr "Entfernt"
+
+msgid "Failed"
+msgstr "Fehlgeschlagen"
+
+msgid "For programs that aren't listed, were partly removed or have a broken uninstaller"
+msgstr "Für nicht aufgeführte, teilweise entfernte Programme oder solche mit defektem Deinstallationsprogramm"
+
+msgid "Program name"
+msgstr "Programmname"
+
+msgid "Exact name; several separated by ;"
+msgstr "Genauer Name; mehrere durch ; getrennt"
+
+msgid "Folder or main file"
+msgstr "Ordner oder Hauptdatei"
+
+msgid "Pick below or type; several separated by ;"
+msgstr "Unten auswählen oder eingeben; mehrere durch ; getrennt"
+
+msgid "Next"
+msgstr "Weiter"
+
+msgid "Find uninstallers"
+msgstr "Deinstallationsprogramme suchen"
+
+msgid "Preparing"
+msgstr "Vorbereitung"
+
+msgid "Found {} program(s) with an uninstaller"
+msgstr "{} Programm(e) mit Deinstallationsprogramm gefunden"
+
+msgid "None: Next scans for leftovers by name and path."
+msgstr "Keins: „Weiter“ sucht Reste nach Name und Pfad."
+
+msgid "Don't run an uninstaller, only remove leftovers"
+msgstr "Kein Deinstallationsprogramm ausführen, nur Reste entfernen"
+
+msgid "Run the uninstaller of {} {}"
+msgstr "Deinstallationsprogramm von {} {} ausführen"
+
+msgid "Found {} trace log(s)"
+msgstr "{} Aufzeichnungsprotokoll(e) gefunden"
+
+msgid " from the logs database"
+msgstr " aus der Protokolldatenbank"
+
+msgid "Use the log \"{}\"{from} ({})"
+msgstr "Protokoll \"{}\"{from} verwenden ({})"
+
+msgid "Groups"
+msgstr "Gruppen"
+
+msgid "Programs are added to a group from their right-click menu."
+msgstr "Programme werden über ihr Kontextmenü einer Gruppe hinzugefügt."
+
+msgid "Delete group {g}"
+msgstr "Gruppe {g} löschen"
+
+msgid "Rename group {g}"
+msgstr "Gruppe {g} umbenennen"
+
+msgid "Move down"
+msgstr "Nach unten"
+
+msgid "Move up"
+msgstr "Nach oben"
+
+msgid "Forced MSI Uninstall"
+msgstr "Erzwungene MSI-Deinstallation"
+
+msgid "Uninstall for all users"
+msgstr "Für alle Benutzer deinstallieren"
+
+msgid "Reset the app"
+msgstr "App zurücksetzen"
+
+msgid "Run"
+msgstr "Starten"
+
+msgid "Terminate"
+msgstr "Beenden"
+
+msgid "Reset Microsoft Store"
+msgstr "Microsoft Store zurücksetzen"
+
+msgid "Change / Repair"
+msgstr "Ändern / Reparieren"
+
+msgid "Install location"
+msgstr "Installationsort"
+
+msgid "Open registry key"
+msgstr "Registrierungsschlüssel öffnen"
+
+msgid "About link"
+msgstr "Info-Link"
+
+msgid "Help link"
+msgstr "Hilfe-Link"
+
+msgid "Update link"
+msgstr "Update-Link"
+
+msgid "Add / edit comment"
+msgstr "Kommentar hinzufügen / bearbeiten"
+
+msgid "{}  Add to group"
+msgstr "{}  Zu Gruppe hinzufügen"
+
+msgid "Leftovers"
+msgstr "Reste"
+
+msgid "Summary"
+msgstr "Zusammenfassung"
+
+msgid "Traced installation · {items} recorded change(s)"
+msgstr "Aufgezeichnete Installation · {items} erfasste Änderung(en)"
+
+msgid "Version {}"
+msgstr "Version {}"
+
+msgid "Installed {}"
+msgstr "Installiert am {}"
+
+msgid "Key"
+msgstr "Schlüssel"
+
+msgid "Value"
+msgstr "Wert"
+
+msgid "Setting"
+msgstr "Einstellung"
+
+msgid "Entry"
+msgstr "Eintrag"
+
+msgid "Package"
+msgstr "Paket"
+
+msgid "up to date"
+msgstr "aktuell"
+
+msgid "Checking for updates"
+msgstr "Suche nach Updates"
+
+msgid "CleanCore {} is available. Install it from Settings › Updates."
+msgstr "CleanCore {} ist verfügbar. Installieren Sie es unter Einstellungen › Updates."
+
+msgid "Checking for updates failed: {e}"
+msgstr "Updateprüfung fehlgeschlagen: {e}"
+
+msgid "The update was not installed: {e}"
+msgstr "Das Update wurde nicht installiert: {e}"
+
+msgid "Updates"
+msgstr "Updates"
+
+msgid "CleanCore {}"
+msgstr "CleanCore {}"
+
+msgid "Update installed. Restart CleanCore to use it."
+msgstr "Update installiert. Starten Sie CleanCore neu, um es zu verwenden."
+
+msgid "Version {} is available."
+msgstr "Version {} ist verfügbar."
+
+msgid "You have the latest version."
+msgstr "Sie haben die neueste Version."
+
+msgid "Updates come from the project's GitHub releases."
+msgstr "Updates kommen aus den GitHub-Releases des Projekts."
+
+msgid "Install {}"
+msgstr "{} installieren"
+
+msgid "Downloading and verifying the update"
+msgstr "Update wird heruntergeladen und geprüft"
+
+msgid "What's new"
+msgstr "Was ist neu"
+
+msgid "Check for updates"
+msgstr "Nach Updates suchen"
+
+msgid "Check for updates automatically"
+msgstr "Automatisch nach Updates suchen"
+
+msgid "Once a day, when CleanCore starts. Updates are installed only when you choose to."
+msgstr "Einmal täglich beim Start von CleanCore. Updates werden nur installiert, wenn Sie es wählen."
+
+msgid "{}  Every update is checked against the CleanCore release signature and its checksum before it is installed."
+msgstr "{}  Jedes Update wird vor der Installation mit der CleanCore-Release-Signatur und seiner Prüfsumme abgeglichen."
+
+msgid "Pick or type a key/path to watch."
+msgstr "Schlüssel/Pfad zum Überwachen auswählen oder eingeben."
+
+msgid "Resumed watching {path}"
+msgstr "Überwachung von {path} fortgesetzt"
+
+msgid "Watching {path}"
+msgstr "{path} wird überwacht"
+
+msgid "Find out exactly what a program changes in the registry"
+msgstr "Genau herausfinden, was ein Programm in der Registrierung ändert"
+
+msgid "Find out exactly what a program changes in your settings and config files"
+msgstr "Genau herausfinden, was ein Programm an Ihren Einstellungen und Konfigurationsdateien ändert"
+
+msgid "{}  Recording"
+msgstr "{}  Aufzeichnung"
+
+msgid "Start recording"
+msgstr "Aufzeichnung starten"
+
+msgid "Record changes while CleanCore is open"
+msgstr "Änderungen aufzeichnen, solange CleanCore geöffnet ist"
+
+msgid "Start recorder at login"
+msgstr "Aufzeichnung bei Anmeldung starten"
+
+msgid "Keep recording in the background, even when CleanCore is closed"
+msgstr "Im Hintergrund weiter aufzeichnen, auch wenn CleanCore geschlossen ist"
+
+msgid "Record in the background"
+msgstr "Im Hintergrund aufzeichnen"
+
+msgid "Recorder started"
+msgstr "Aufzeichnung gestartet"
+
+msgid "The recorder now runs in the background from login"
+msgstr "Die Aufzeichnung läuft jetzt ab der Anmeldung im Hintergrund"
+
+msgid "The recorder no longer runs in the background"
+msgstr "Die Aufzeichnung läuft nicht mehr im Hintergrund"
+
+msgid "Choose what to watch"
+msgstr "Auswählen, was überwacht wird"
+
+msgid "Use a quick pick on the left"
+msgstr "Eine Schnellauswahl links verwenden"
+
+msgid "The button at the top right"
+msgstr "Die Schaltfläche oben rechts"
+
+msgid "Use your program"
+msgstr "Ihr Programm verwenden"
+
+msgid "Its changes appear below"
+msgstr "Seine Änderungen erscheinen unten"
+
+msgid "not found"
+msgstr "nicht gefunden"
+
+msgid "Resumed"
+msgstr "Fortgesetzt"
+
+msgid "Paused"
+msgstr "Pausiert"
+
+msgid "Changes cleared"
+msgstr "Änderungen gelöscht"
+
+msgid "Stopped watching {}"
+msgstr "Überwachung von {} beendet"
+
+msgid "What to watch"
+msgstr "Was überwacht wird"
+
+msgid "Pick a place a program is likely to change, or choose your own."
+msgstr "Wählen Sie einen Ort, den ein Programm wahrscheinlich ändert, oder einen eigenen."
+
+msgid "A registry key"
+msgstr "Ein Registrierungsschlüssel"
+
+msgid "A folder, file or dconf: path"
+msgstr "Ein Ordner, eine Datei oder ein dconf:-Pfad"
+
+msgid "Watch"
+msgstr "Überwachen"
+
+msgid "Also record reads (very noisy)"
+msgstr "Auch Lesezugriffe aufzeichnen (sehr viele)"
+
+msgid "Hide all locations"
+msgstr "Alle Orte ausblenden"
+
+msgid "Browse all locations"
+msgstr "Alle Orte durchsuchen"
+
+msgid "Reload"
+msgstr "Neu laden"
+
+msgid "Watching"
+msgstr "Überwacht"
+
+msgid "Export all"
+msgstr "Alle exportieren"
+
+msgid "Folder (one CSV per watched place)"
+msgstr "Ordner (eine CSV-Datei pro überwachtem Ort)"
+
+msgid "Exported {n} log(s) to {}"
+msgstr "{n} Protokoll(e) exportiert nach {}"
+
+msgid "Nothing yet. Use a quick pick above to start."
+msgstr "Noch nichts. Starten Sie mit einer Schnellauswahl oben."
+
+msgid "Stop watching"
+msgstr "Überwachung beenden"
+
+msgid "Clear its changes"
+msgstr "Seine Änderungen löschen"
+
+msgid "Export its changes"
+msgstr "Seine Änderungen exportieren"
+
+msgid "File (.txt .csv .json)"
+msgstr "Datei (.txt .csv .json)"
+
+msgid "Pause watching"
+msgstr "Überwachung pausieren"
+
+msgid "Resume watching"
+msgstr "Überwachung fortsetzen"
+
+msgid "Changes"
+msgstr "Änderungen"
+
+msgid "in {}"
+msgstr "in {}"
+
+msgid "Details"
+msgstr "Details"
+
+msgid "Every field, as a table"
+msgstr "Alle Felder als Tabelle"
+
+msgid "Simple"
+msgstr "Einfach"
+
+msgid "Filter changes"
+msgstr "Änderungen filtern"
+
+msgid "Nothing to show yet"
+msgstr "Noch nichts anzuzeigen"
+
+msgid "Choose what to watch on the left, then start recording."
+msgstr "Links auswählen, was überwacht wird, dann Aufzeichnung starten."
+
+msgid "Not recording"
+msgstr "Keine Aufzeichnung"
+
+msgid "Press Start recording at the top right, then use your program."
+msgstr "Klicken Sie oben rechts auf „Aufzeichnung starten“ und verwenden Sie dann Ihr Programm."
+
+msgid "Waiting for changes"
+msgstr "Warten auf Änderungen"
+
+msgid "Use your program now: install it, change a setting, close it. Changes appear here."
+msgstr "Verwenden Sie jetzt Ihr Programm: installieren, eine Einstellung ändern, schließen. Änderungen erscheinen hier."
+
+msgid "Highlight rows"
+msgstr "Zeilen hervorheben"
+
+msgid "Time"
+msgstr "Zeit"
+
+msgid "Process"
+msgstr "Prozess"
+
+msgid "Operation"
+msgstr "Vorgang"
+
+msgid "New data"
+msgstr "Neue Daten"
+
+msgid "Old data"
+msgstr "Alte Daten"
+
+msgid "Clear log"
+msgstr "Protokoll leeren"
+
+msgid "how it works"
+msgstr "So funktioniert es"
+
+msgid "Your programs"
+msgstr "Ihre Programme"
+
+msgid "Startup"
+msgstr "Autostart"
+
+msgid "App settings"
+msgstr "App-Einstellungen"
+
+msgid "App data"
+msgstr "App-Daten"
+
+msgid "Desktop settings"
+msgstr "Desktop-Einstellungen"
+
+msgid "Desktop settings (dconf)"
+msgstr "Desktop-Einstellungen (dconf)"
+
+msgid "Desktop setting {rest}"
+msgstr "Desktop-Einstellung {rest}"
+
+msgid "was created"
+msgstr "wurde angelegt"
+
+msgid "was deleted"
+msgstr "wurde gelöscht"
+
+msgid "was renamed"
+msgstr "wurde umbenannt"
+
+msgid "was added"
+msgstr "wurde hinzugefügt"
+
+msgid "was changed"
+msgstr "wurde geändert"
+
+msgid "was removed"
+msgstr "wurde entfernt"
+
+msgid "was updated"
+msgstr "wurde aktualisiert"
+
+msgid "was read"
+msgstr "wurde gelesen"
+
+msgid "Open"
+msgstr "Öffnen"
+
+msgid "Broken application launchers"
+msgstr "Defekte Anwendungsstarter"
+
+msgid "Desktop entries whose program no longer exists."
+msgstr "Desktop-Einträge, deren Programm nicht mehr existiert."
+
+msgid "Missing start-up items"
+msgstr "Fehlende Autostart-Elemente"
+
+msgid "Autostart entries and systemd user services whose program no longer exists."
+msgstr "Autostart-Einträge und systemd-Benutzerdienste, deren Programm nicht mehr existiert."
+
+msgid "Invalid file associations"
+msgstr "Ungültige Dateizuordnungen"
+
+msgid "mimeapps.list entries that point to applications that are not installed."
+msgstr "mimeapps.list-Einträge, die auf nicht installierte Anwendungen verweisen."
+
+msgid "Recently used and history lists"
+msgstr "Zuletzt verwendet und Verlaufslisten"
+
+msgid "Recent-file entries that point to files which no longer exist."
+msgstr "Einträge zuletzt verwendeter Dateien, die auf nicht mehr vorhandene Dateien zeigen."
+
+msgid "Broken symbolic links"
+msgstr "Defekte symbolische Links"
+
+msgid "Symbolic links in your configuration and local folders whose target is gone."
+msgstr "Symbolische Links in Ihren Konfigurations- und lokalen Ordnern, deren Ziel fehlt."
+
+msgid "Empty folders"
+msgstr "Leere Ordner"
+
+msgid "Empty folders left in configuration and data directories."
+msgstr "Leere Ordner in Konfigurations- und Datenverzeichnissen."
+
+msgid "Leftover application data"
+msgstr "Übrig gebliebene Anwendungsdaten"
+
+msgid "Configuration and data folders of applications that are no longer installed."
+msgstr "Konfigurations- und Datenordner nicht mehr installierter Anwendungen."
+
+msgid "Contents of folders added to the include list."
+msgstr "Inhalt der zur Einschlussliste hinzugefügten Ordner."
+
+msgid "Missing Shared DLLs"
+msgstr "Fehlende gemeinsame DLLs"
+
+msgid "Shared dynamic-link libraries that do not exist."
+msgstr "Gemeinsame DLLs, die nicht existieren."
+
+msgid "Unused Shared DLLs"
+msgstr "Unbenutzte gemeinsame DLLs"
+
+msgid "Shared DLLs whose usage counter is 0."
+msgstr "Gemeinsame DLLs mit Nutzungszähler 0."
+
+msgid "Missing Windows start-up items"
+msgstr "Fehlende Windows-Autostart-Elemente"
+
+msgid "Programs set to start with Windows that no longer exist."
+msgstr "Programme, die mit Windows starten sollen, aber nicht mehr existieren."
+
+msgid "Wrong applications/paths"
+msgstr "Falsche Anwendungen/Pfade"
+
+msgid "App Paths and Applications entries whose program is missing."
+msgstr "App-Paths- und Applications-Einträge mit fehlendem Programm."
+
+msgid "Incorrect uninstaller data"
+msgstr "Falsche Deinstallationsdaten"
+
+msgid "Uninstall entries for programs that are gone, or empty entries."
+msgstr "Deinstallationseinträge verschwundener Programme oder leere Einträge."
+
+msgid "Invalid firewall rules"
+msgstr "Ungültige Firewall-Regeln"
+
+msgid "Firewall rules for programs that no longer exist."
+msgstr "Firewall-Regeln für nicht mehr vorhandene Programme."
+
+msgid "Invalid cache entries"
+msgstr "Ungültige Cache-Einträge"
+
+msgid "MUI cache and compatibility-assistant entries for missing files."
+msgstr "MUI-Cache- und Kompatibilitätsassistent-Einträge für fehlende Dateien."
+
+msgid "Unavailable Windows services"
+msgstr "Nicht verfügbare Windows-Dienste"
+
+msgid "Services whose executable or driver file is missing."
+msgstr "Dienste, deren ausführbare Datei oder Treiberdatei fehlt."
+
+msgid "Most recently used and history lists"
+msgstr "Listen zuletzt verwendeter Elemente und Verlauf"
+
+msgid "Recent files, typed paths, run history and dialog history."
+msgstr "Zuletzt verwendete Dateien, eingegebene Pfade, Ausführen- und Dialogverlauf."
+
+msgid "Unused file extensions"
+msgstr "Unbenutzte Dateierweiterungen"
+
+msgid "Extensions not associated with any program."
+msgstr "Erweiterungen ohne zugeordnetes Programm."
+
+msgid "Corrupted context menu commands"
+msgstr "Beschädigte Kontextmenübefehle"
+
+msgid "Context menu commands and handlers that point to missing files or classes."
+msgstr "Kontextmenübefehle und -handler, die auf fehlende Dateien oder Klassen verweisen."
+
+msgid "COM and ActiveX missing components"
+msgstr "Fehlende COM- und ActiveX-Komponenten"
+
+msgid "COM class and type-library registrations whose files are missing."
+msgstr "COM-Klassen- und Typbibliothek-Registrierungen mit fehlenden Dateien."
+
+msgid "Invalid MSI paths"
+msgstr "Ungültige MSI-Pfade"
+
+msgid "Windows Installer folder references to folders that no longer exist."
+msgstr "Windows-Installer-Verweise auf nicht mehr vorhandene Ordner."
+
+msgid "Invalid system settings items"
+msgstr "Ungültige Systemeinstellungen"
+
+msgid "Fonts, sound events and shell icons that point to missing files."
+msgstr "Schriften, Systemklänge und Shell-Symbole, die auf fehlende Dateien verweisen."
+
+msgid "Invalid Class keys items"
+msgstr "Ungültige Class-Schlüssel"
+
+msgid "File-type icons and class data that reference missing files."
+msgstr "Dateityp-Symbole und Klassendaten, die auf fehlende Dateien verweisen."
+
+msgid "Empty keys"
+msgstr "Leere Schlüssel"
+
+msgid "Software-related keys that do not contain any data."
+msgstr "Softwarebezogene Schlüssel ohne Daten."
+
+msgid "Contents of keys added to the include list."
+msgstr "Inhalt der zur Einschlussliste hinzugefügten Schlüssel."
+
+msgid "Win32"
+msgstr "Win32"
+
+msgid "Windows App"
+msgstr "Windows-App"
+
+msgid "Flatpak"
+msgstr "Flatpak"
+
+msgid "Snap"
+msgstr "Snap"
+
+msgid "AppImage"
+msgstr "AppImage"
+
+msgid "Manual"
+msgstr "Manuell"
+
+msgid "Leftovers removal"
+msgstr "Restentfernung"
+
+msgid "Traced Uninstall"
+msgstr "Aufgezeichnete Deinstallation"
+
+msgid "Registry RunOnce"
+msgstr "Registry RunOnce"
+
+msgid "Autostart"
+msgstr "Autostart"
+
+msgid "Service"
+msgstr "Dienst"
+
+msgid "Scheduled task"
+msgstr "Geplante Aufgabe"
+
+msgid "User service"
+msgstr "Benutzerdienst"
+
+msgid "Cron @reboot"
+msgstr "Cron @reboot"
+
+msgid "Login script"
+msgstr "Anmeldeskript"
+
+msgid "Recently used files"
+msgstr "Zuletzt verwendete Dateien"
+
+msgid "Thumbnail cache"
+msgstr "Miniaturansichten-Cache"
+
+msgid "Small previews of pictures and videos"
+msgstr "Kleine Vorschauen von Bildern und Videos"
+
+msgid "Trash"
+msgstr "Papierkorb"
+
+msgid "Files you deleted"
+msgstr "Von Ihnen gelöschte Dateien"
+
+msgid "Clipboard"
+msgstr "Zwischenablage"
+
+msgid "What was last copied"
+msgstr "Das zuletzt Kopierte"
+
+msgid "Command history"
+msgstr "Befehlsverlauf"
+
+msgid "Commands typed in terminals (bash, zsh, fish, Python, less)"
+msgstr "In Terminals eingegebene Befehle (bash, zsh, fish, Python, less)"
+
+msgid "Application caches"
+msgstr "Anwendungs-Caches"
+
+msgid "Crash reports"
+msgstr "Absturzberichte"
+
+msgid "Reports left by programs that crashed"
+msgstr "Berichte abgestürzter Programme"
+
+msgid "LibreOffice recent documents"
+msgstr "Zuletzt verwendete LibreOffice-Dokumente"
+
+msgid "The Start Center and File › Recent lists"
+msgstr "Startcenter und die Listen Datei › Zuletzt verwendet"
+
+msgid "HistoryInfo['PickList']"
+msgstr "HistoryInfo['PickList']"
+
+msgid "System Monitor"
+msgstr "Systemüberwachung"
+
+msgid "Running processes and resource use"
+msgstr "Laufende Prozesse und Ressourcennutzung"
+
+msgid "Processes in a terminal"
+msgstr "Prozesse im Terminal"
+
+msgid "System settings"
+msgstr "Systemeinstellungen"
+
+msgid "System Settings"
+msgstr "Systemeinstellungen"
+
+msgid "dconf Editor"
+msgstr "dconf-Editor"
+
+msgid "Low-level desktop settings"
+msgstr "Desktop-Einstellungen auf niedriger Ebene"
+
+msgid "Logs"
+msgstr "Protokolle"
+
+msgid "System journal"
+msgstr "Systemjournal"
+
+msgid "Journal (errors)"
+msgstr "Journal (Fehler)"
+
+msgid "Errors since the last start"
+msgstr "Fehler seit dem letzten Start"
+
+msgid "journalctl -b -p err --no-pager"
+msgstr "journalctl -b -p err --no-pager"
+
+msgid "Services"
+msgstr "Dienste"
+
+msgid "Running system services"
+msgstr "Laufende Systemdienste"
+
+msgid "systemctl list-units --type=service --no-pager"
+msgstr "systemctl list-units --type=service --no-pager"
+
+msgid "System Information"
+msgstr "Systeminformationen"
+
+msgid "Hardware and benchmarks"
+msgstr "Hardware und Benchmarks"
+
+msgid "Hardware summary"
+msgstr "Hardware-Übersicht"
+
+msgid "CPU, memory, disks"
+msgstr "CPU, Speicher, Datenträger"
+
+msgid "inxi -Fxz"
+msgstr "inxi -Fxz"
+
+msgid "Partitions, SMART data, formatting"
+msgstr "Partitionen, SMART-Daten, Formatierung"
+
+msgid "Disk Usage Analyzer"
+msgstr "Festplattenbelegung analysieren"
+
+msgid "What fills the disk"
+msgstr "Was die Festplatte füllt"
+
+msgid "Filelight"
+msgstr "Filelight"
+
+msgid "Partition editor"
+msgstr "Partitionseditor"
+
+msgid "Free space"
+msgstr "Freier Speicher"
+
+msgid "Free space on every drive"
+msgstr "Freier Speicher auf jedem Laufwerk"
+
+msgid "df -h"
+msgstr "df -h"
+
+msgid "Network Connections"
+msgstr "Netzwerkverbindungen"
+
+msgid "Edit network connections"
+msgstr "Netzwerkverbindungen bearbeiten"
+
+msgid "Network information"
+msgstr "Netzwerkinformationen"
+
+msgid "Addresses and routes"
+msgstr "Adressen und Routen"
+
+msgid "ip -c a"
+msgstr "ip -c a"
+
+msgid "Ping"
+msgstr "Ping"
+
+msgid "Check the internet connection"
+msgstr "Internetverbindung prüfen"
+
+msgid "ping -c 4 1.1.1.1"
+msgstr "ping -c 4 1.1.1.1"
+
+msgid "Trace route"
+msgstr "Route verfolgen"
+
+msgid "The path to a server"
+msgstr "Der Weg zu einem Server"
+
+msgid "tracepath -n 1.1.1.1"
+msgstr "tracepath -n 1.1.1.1"
+
+msgid "Firewall"
+msgstr "Firewall"
+
+msgid "Firewall rules"
+msgstr "Firewall-Regeln"
+
+msgid "Passwords and Keys"
+msgstr "Passwörter und Schlüssel"
+
+msgid "Stored passwords and keys"
+msgstr "Gespeicherte Passwörter und Schlüssel"
+
+msgid "Software Updater"
+msgstr "Aktualisierungsverwaltung"
+
+msgid "Install updates"
+msgstr "Updates installieren"
+
+msgid "Software & Updates"
+msgstr "Software & Aktualisierungen"
+
+msgid "Repositories and drivers"
+msgstr "Paketquellen und Treiber"
+
+msgid "Install and remove apps"
+msgstr "Apps installieren und entfernen"
+
+msgid "Discover"
+msgstr "Discover"
+
+msgid "Terminal"
+msgstr "Terminal"
+
+msgid "A command line"
+msgstr "Eine Befehlszeile"
+
+msgid "no terminal emulator found"
+msgstr "kein Terminal-Emulator gefunden"
+
+msgid "all drives, no UI"
+msgstr "alle Laufwerke, ohne Oberfläche"
+
+msgid "the clipboard is in use by another program"
+msgstr "die Zwischenablage wird von einem anderen Programm verwendet"
+
+msgid "the clipboard could not be cleared"
+msgstr "die Zwischenablage konnte nicht geleert werden"
+
+msgid "Windows"
+msgstr "Windows"
+
+msgid "SystemRoot"
+msgstr "SystemRoot"
+
+msgid "ProgramData"
+msgstr "ProgramData"
+
+msgid "Recent documents"
+msgstr "Zuletzt verwendete Dokumente"
+
+msgid "Recent files and jump lists"
+msgstr "Zuletzt verwendete Dateien und Sprunglisten"
+
+msgid "RecentDocs"
+msgstr "RecentDocs"
+
+msgid "Run history"
+msgstr "Ausführen-Verlauf"
+
+msgid "Commands typed in Win+R"
+msgstr "In Win+R eingegebene Befehle"
+
+msgid "RunMRU"
+msgstr "RunMRU"
+
+msgid "Typed paths"
+msgstr "Eingegebene Pfade"
+
+msgid "Addresses typed in File Explorer"
+msgstr "Im Datei-Explorer eingegebene Adressen"
+
+msgid "TypedPaths"
+msgstr "TypedPaths"
+
+msgid "File Explorer search history"
+msgstr "Suchverlauf des Datei-Explorers"
+
+msgid "Searches typed in File Explorer"
+msgstr "Im Datei-Explorer eingegebene Suchen"
+
+msgid "WordWheelQuery"
+msgstr "WordWheelQuery"
+
+msgid "Recent files and folders in Open and Save dialogs"
+msgstr "Zuletzt verwendete Dateien und Ordner in Öffnen- und Speichern-Dialogen"
+
+msgid "Temporary files"
+msgstr "Temporäre Dateien"
+
+msgid "Your temp folder and the Windows temp folder (files in use are skipped)"
+msgstr "Ihr Temp-Ordner und der von Windows (verwendete Dateien werden übersprungen)"
+
+msgid "Crash dumps and error reports"
+msgstr "Absturzabbilder und Fehlerberichte"
+
+msgid "Memory dumps and Windows Error Reporting files"
+msgstr "Speicherabbilder und Dateien der Windows-Fehlerberichterstattung"
+
+msgid "Recycle Bin"
+msgstr "Papierkorb"
+
+msgid "File MRU"
+msgstr "File MRU"
+
+msgid "Place MRU"
+msgstr "Place MRU"
+
+msgid "User MRU"
+msgstr "User MRU"
+
+msgid "Microsoft Office recent documents"
+msgstr "Zuletzt verwendete Microsoft-Office-Dokumente"
+
+msgid "Recent files and places in Word, Excel, PowerPoint and the others"
+msgstr "Zuletzt verwendete Dateien und Orte in Word, Excel, PowerPoint und den anderen"
+
+msgid "Hardware, drivers and software summary"
+msgstr "Übersicht über Hardware, Treiber und Software"
+
+msgid "Task Manager"
+msgstr "Task-Manager"
+
+msgid "Running programs and performance"
+msgstr "Laufende Programme und Leistung"
+
+msgid "Resource Monitor"
+msgstr "Ressourcenmonitor"
+
+msgid "CPU, memory, disk and network use per process"
+msgstr "CPU-, Speicher-, Datenträger- und Netzwerknutzung je Prozess"
+
+msgid "Performance Monitor"
+msgstr "Leistungsüberwachung"
+
+msgid "Performance counters and reports"
+msgstr "Leistungsindikatoren und Berichte"
+
+msgid "Event Viewer"
+msgstr "Ereignisanzeige"
+
+msgid "System and application logs"
+msgstr "System- und Anwendungsprotokolle"
+
+msgid "Start, stop and configure services"
+msgstr "Dienste starten, beenden und konfigurieren"
+
+msgid "Device Manager"
+msgstr "Geräte-Manager"
+
+msgid "Hardware and drivers"
+msgstr "Hardware und Treiber"
+
+msgid "Computer Management"
+msgstr "Computerverwaltung"
+
+msgid "Users, shares, disks, services"
+msgstr "Benutzer, Freigaben, Datenträger, Dienste"
+
+msgid "System Configuration"
+msgstr "Systemkonfiguration"
+
+msgid "Boot options and startup"
+msgstr "Start- und Autostartoptionen"
+
+msgid "Registry Editor"
+msgstr "Registrierungs-Editor"
+
+msgid "Edit the registry"
+msgstr "Registrierung bearbeiten"
+
+msgid "Group Policy Editor"
+msgstr "Gruppenrichtlinien-Editor"
+
+msgid "Local policies (Pro editions)"
+msgstr "Lokale Richtlinien (Pro-Editionen)"
+
+msgid "DirectX Diagnostic Tool"
+msgstr "DirectX-Diagnoseprogramm"
+
+msgid "Graphics and sound details"
+msgstr "Grafik- und Sounddetails"
+
+msgid "System Restore"
+msgstr "Systemwiederherstellung"
+
+msgid "Go back to a restore point"
+msgstr "Zu einem Wiederherstellungspunkt zurückkehren"
+
+msgid "Memory Diagnostic"
+msgstr "Speicherdiagnose"
+
+msgid "Test the RAM at the next restart"
+msgstr "RAM beim nächsten Neustart testen"
+
+msgid "System File Checker"
+msgstr "Systemdateiprüfung"
+
+msgid "Find and repair damaged Windows files"
+msgstr "Beschädigte Windows-Dateien finden und reparieren"
+
+msgid "Disk Cleanup"
+msgstr "Datenträgerbereinigung"
+
+msgid "Windows' own cleanup of system files"
+msgstr "Die Windows-eigene Bereinigung von Systemdateien"
+
+msgid "Optimize Drives"
+msgstr "Laufwerke optimieren"
+
+msgid "Disk Management"
+msgstr "Datenträgerverwaltung"
+
+msgid "Partitions and volumes"
+msgstr "Partitionen und Volumes"
+
+msgid "Check Disk"
+msgstr "Datenträgerprüfung"
+
+msgid "Check the system drive for errors (read-only)"
+msgstr "Systemlaufwerk auf Fehler prüfen (nur lesen)"
+
+msgid "Network adapters"
+msgstr "Netzwerkadapter"
+
+msgid "IP addresses, DNS and gateways"
+msgstr "IP-Adressen, DNS und Gateways"
+
+msgid "ping 1.1.1.1"
+msgstr "ping 1.1.1.1"
+
+msgid "tracert 1.1.1.1"
+msgstr "tracert 1.1.1.1"
+
+msgid "Windows Firewall"
+msgstr "Windows-Firewall"
+
+msgid "Windows Security"
+msgstr "Windows-Sicherheit"
+
+msgid "Antivirus and protection"
+msgstr "Virenschutz und Schutz"
+
+msgid "Programs and Features"
+msgstr "Programme und Features"
+
+msgid "Windows' own uninstaller list"
+msgstr "Die Windows-eigene Deinstallationsliste"
+
+msgid "Windows Features"
+msgstr "Windows-Features"
+
+msgid "Turn Windows features on or off"
+msgstr "Windows-Features aktivieren oder deaktivieren"
+
+msgid "Windows Update"
+msgstr "Windows Update"
+
+msgid "Power Options"
+msgstr "Energieoptionen"
+
+msgid "Power plans"
+msgstr "Energiesparpläne"
+
+msgid "Remote Desktop"
+msgstr "Remotedesktop"
+
+msgid "Connect to another PC"
+msgstr "Mit einem anderen PC verbinden"
+
+msgid "Command Prompt"
+msgstr "Eingabeaufforderung"
+
+msgid "Games and promoted apps"
+msgstr "Spiele und beworbene Apps"
+
+msgid "Microsoft extras"
+msgstr "Microsoft-Extras"
+
+msgid "AI and Copilot"
+msgstr "KI und Copilot"
+
+msgid "Xbox"
+msgstr "Xbox"
+
+msgid "Communication"
+msgstr "Kommunikation"
+
+msgid "Candy Crush and other King games"
+msgstr "Candy Crush und andere King-Spiele"
+
+msgid "Pushed by Windows"
+msgstr "Von Windows aufgedrängt"
+
+msgid "Microsoft.MicrosoftSolitaireCollection"
+msgstr "Microsoft.MicrosoftSolitaireCollection"
+
+msgid "Solitaire Collection"
+msgstr "Solitaire Collection"
+
+msgid "Ads unless you pay"
+msgstr "Werbung, außer Sie zahlen"
+
+msgid "SpotifyAB.SpotifyMusic"
+msgstr "SpotifyAB.SpotifyMusic"
+
+msgid "Spotify"
+msgstr "Spotify"
+
+msgid "Disney+"
+msgstr "Disney+"
+
+msgid "Facebook.*"
+msgstr "Facebook.*"
+
+msgid "BytedancePte.Ltd.TikTok"
+msgstr "BytedancePte.Ltd.TikTok"
+
+msgid "TikTok"
+msgstr "TikTok"
+
+msgid "AmazonVideo.PrimeVideo"
+msgstr "AmazonVideo.PrimeVideo"
+
+msgid "Prime Video"
+msgstr "Prime Video"
+
+msgid "LinkedIn"
+msgstr "LinkedIn"
+
+msgid "Clipchamp.Clipchamp"
+msgstr "Clipchamp.Clipchamp"
+
+msgid "Clipchamp"
+msgstr "Clipchamp"
+
+msgid "Video editor, online account needed"
+msgstr "Videoeditor, Onlinekonto nötig"
+
+msgid "Microsoft.BingNews"
+msgstr "Microsoft.BingNews"
+
+msgid "News"
+msgstr "Nachrichten"
+
+msgid "Microsoft.BingWeather"
+msgstr "Microsoft.BingWeather"
+
+msgid "Weather"
+msgstr "Wetter"
+
+msgid "Microsoft.BingSearch"
+msgstr "Microsoft.BingSearch"
+
+msgid "Bing Search"
+msgstr "Bing-Suche"
+
+msgid "Microsoft.BingFinance"
+msgstr "Microsoft.BingFinance"
+
+msgid "Money"
+msgstr "Finanzen"
+
+msgid "Microsoft.BingSports"
+msgstr "Microsoft.BingSports"
+
+msgid "Sports"
+msgstr "Sport"
+
+msgid "Microsoft.GetHelp"
+msgstr "Microsoft.GetHelp"
+
+msgid "Get Help"
+msgstr "Hilfe anfordern"
+
+msgid "Microsoft.Getstarted"
+msgstr "Microsoft.Getstarted"
+
+msgid "Tips"
+msgstr "Tipps"
+
+msgid "Microsoft.MicrosoftOfficeHub"
+msgstr "Microsoft.MicrosoftOfficeHub"
+
+msgid "Microsoft 365 (Office) hub"
+msgstr "Microsoft 365 (Office)-Hub"
+
+msgid "An ad for Microsoft 365, not Office itself"
+msgstr "Werbung für Microsoft 365, nicht Office selbst"
+
+msgid "Microsoft.WindowsFeedbackHub"
+msgstr "Microsoft.WindowsFeedbackHub"
+
+msgid "Feedback Hub"
+msgstr "Feedback-Hub"
+
+msgid "Microsoft.WindowsMaps"
+msgstr "Microsoft.WindowsMaps"
+
+msgid "Maps"
+msgstr "Karten"
+
+msgid "Microsoft.People"
+msgstr "Microsoft.People"
+
+msgid "People"
+msgstr "Kontakte"
+
+msgid "Microsoft.MixedReality.Portal"
+msgstr "Microsoft.MixedReality.Portal"
+
+msgid "Mixed Reality Portal"
+msgstr "Mixed Reality-Portal"
+
+msgid "Microsoft.Microsoft3DViewer"
+msgstr "Microsoft.Microsoft3DViewer"
+
+msgid "3D Viewer"
+msgstr "3D-Viewer"
+
+msgid "Microsoft.Print3D"
+msgstr "Microsoft.Print3D"
+
+msgid "Print 3D"
+msgstr "3D-Druck"
+
+msgid "Microsoft.PowerAutomateDesktop"
+msgstr "Microsoft.PowerAutomateDesktop"
+
+msgid "Power Automate"
+msgstr "Power Automate"
+
+msgid "Microsoft.Todos"
+msgstr "Microsoft.Todos"
+
+msgid "Microsoft To Do"
+msgstr "Microsoft To Do"
+
+msgid "Microsoft.MicrosoftStickyNotes"
+msgstr "Microsoft.MicrosoftStickyNotes"
+
+msgid "Sticky Notes"
+msgstr "Kurznotizen"
+
+msgid "Useful for many"
+msgstr "Für viele nützlich"
+
+msgid "Microsoft.Windows.DevHome"
+msgstr "Microsoft.Windows.DevHome"
+
+msgid "Dev Home"
+msgstr "Dev Home"
+
+msgid "Retired by Microsoft"
+msgstr "Von Microsoft eingestellt"
+
+msgid "Microsoft.Wallet"
+msgstr "Microsoft.Wallet"
+
+msgid "Wallet"
+msgstr "Wallet"
+
+msgid "Microsoft.ZuneVideo"
+msgstr "Microsoft.ZuneVideo"
+
+msgid "Movies & TV"
+msgstr "Filme & TV"
+
+msgid "Microsoft.Office.Sway"
+msgstr "Microsoft.Office.Sway"
+
+msgid "Sway"
+msgstr "Sway"
+
+msgid "Microsoft.OneConnect"
+msgstr "Microsoft.OneConnect"
+
+msgid "Mobile Plans"
+msgstr "Mobilfunktarife"
+
+msgid "Microsoft.Copilot"
+msgstr "Microsoft.Copilot"
+
+msgid "Copilot"
+msgstr "Copilot"
+
+msgid "Microsoft.Windows.Ai.Copilot.Provider"
+msgstr "Microsoft.Windows.Ai.Copilot.Provider"
+
+msgid "Copilot provider"
+msgstr "Copilot-Anbieter"
+
+msgid "Microsoft.549981C3F5F10"
+msgstr "Microsoft.549981C3F5F10"
+
+msgid "Cortana"
+msgstr "Cortana"
+
+msgid "Microsoft.MicrosoftJournal"
+msgstr "Microsoft.MicrosoftJournal"
+
+msgid "Journal"
+msgstr "Journal"
+
+msgid "Microsoft.XboxApp"
+msgstr "Microsoft.XboxApp"
+
+msgid "Xbox Console Companion"
+msgstr "Xbox Console Companion"
+
+msgid "Old Xbox app"
+msgstr "Alte Xbox-App"
+
+msgid "Microsoft.GamingApp"
+msgstr "Microsoft.GamingApp"
+
+msgid "Needed for Game Pass"
+msgstr "Für Game Pass nötig"
+
+msgid "Microsoft.XboxGamingOverlay"
+msgstr "Microsoft.XboxGamingOverlay"
+
+msgid "Xbox Game Bar"
+msgstr "Xbox Game Bar"
+
+msgid "Win+G overlay, screen recording"
+msgstr "Win+G-Overlay, Bildschirmaufnahme"
+
+msgid "Microsoft.XboxGameOverlay"
+msgstr "Microsoft.XboxGameOverlay"
+
+msgid "Xbox Game Overlay"
+msgstr "Xbox Game Overlay"
+
+msgid "Microsoft.XboxSpeechToTextOverlay"
+msgstr "Microsoft.XboxSpeechToTextOverlay"
+
+msgid "Xbox speech-to-text"
+msgstr "Xbox Sprache-zu-Text"
+
+msgid "Microsoft.Xbox.TCUI"
+msgstr "Microsoft.Xbox.TCUI"
+
+msgid "Xbox TCUI"
+msgstr "Xbox TCUI"
+
+msgid "Some games need it to sign in"
+msgstr "Manche Spiele brauchen es zur Anmeldung"
+
+msgid "MicrosoftTeams"
+msgstr "MicrosoftTeams"
+
+msgid "Teams (personal)"
+msgstr "Teams (privat)"
+
+msgid "Not Teams for work or school"
+msgstr "Nicht Teams für Arbeit oder Schule"
+
+msgid "Teams"
+msgstr "Teams"
+
+msgid "Needed for work or school accounts"
+msgstr "Für Arbeits- oder Schulkonten nötig"
+
+msgid "Microsoft.SkypeApp"
+msgstr "Microsoft.SkypeApp"
+
+msgid "Skype"
+msgstr "Skype"
+
+msgid "Microsoft.YourPhone"
+msgstr "Microsoft.YourPhone"
+
+msgid "Phone Link"
+msgstr "Smartphone-Link"
+
+msgid "Connects an Android phone or iPhone"
+msgstr "Verbindet ein Android-Telefon oder iPhone"
+
+msgid "Microsoft.OutlookForWindows"
+msgstr "Microsoft.OutlookForWindows"
+
+msgid "Outlook (new)"
+msgstr "Outlook (neu)"
+
+msgid "Microsoft.windowscommunicationsapps"
+msgstr "Microsoft.windowscommunicationsapps"
+
+msgid "Mail and Calendar"
+msgstr "Mail und Kalender"
+
+msgid "Retired; replaced by the new Outlook"
+msgstr "Eingestellt; ersetzt durch das neue Outlook"
+
+msgid "Microsoft.Messaging"
+msgstr "Microsoft.Messaging"
+
+msgid "Messaging"
+msgstr "Nachrichten"
+
+msgid "DisplayName"
+msgstr "DisplayName"
+
+msgid "PackageName"
+msgstr "PackageName"
+
+msgid "the Microsoft slop cleaner is for Windows"
+msgstr "der Microsoft-Ballast-Entferner ist für Windows"
+
+msgid " -AllUsers"
+msgstr " -AllUsers"
+
+msgid "Google Chrome › Work"
+msgstr "Google Chrome › Work"
+
+msgid "Cache"
+msgstr "Cache"
+
+msgid "Downloaded copies of web pages and images"
+msgstr "Heruntergeladene Kopien von Webseiten und Bildern"
+
+msgid "Browsing and download history"
+msgstr "Browser- und Downloadverlauf"
+
+msgid "Visited pages and downloads; bookmarks are kept"
+msgstr "Besuchte Seiten und Downloads; Lesezeichen bleiben"
+
+msgid "DELETE FROM moz_historyvisits"
+msgstr "DELETE FROM moz_historyvisits"
+
+msgid "DELETE FROM moz_inputhistory"
+msgstr "DELETE FROM moz_inputhistory"
+
+msgid "DELETE FROM moz_annos"
+msgstr "DELETE FROM moz_annos"
+
+msgid "DELETE FROM moz_places WHERE id NOT IN (SELECT fk FROM moz_bookmarks WHERE fk IS NOT NULL)"
+msgstr "DELETE FROM moz_places WHERE id NOT IN (SELECT fk FROM moz_bookmarks WHERE fk IS NOT NULL)"
+
+msgid "UPDATE moz_places SET visit_count = 0, last_visit_date = NULL, frecency = 0"
+msgstr "UPDATE moz_places SET visit_count = 0, last_visit_date = NULL, frecency = 0"
+
+msgid "Form and search history"
+msgstr "Formular- und Suchverlauf"
+
+msgid "Text typed into forms and the search bar"
+msgstr "In Formulare und die Suchleiste eingegebener Text"
+
+msgid "Cookies"
+msgstr "Cookies"
+
+msgid "Signs you out of websites"
+msgstr "Meldet Sie von Websites ab"
+
+msgid "Session"
+msgstr "Sitzung"
+
+msgid "Open tabs restored at the next start"
+msgstr "Offene Tabs, die beim nächsten Start wiederhergestellt werden"
+
+msgid "Visited pages, downloads, top sites and typed addresses"
+msgstr "Besuchte Seiten, Downloads, meistbesuchte Seiten und eingegebene Adressen"
+
+msgid "History-journal"
+msgstr "History-journal"
+
+msgid "Visited Links"
+msgstr "Visited Links"
+
+msgid "Top Sites"
+msgstr "Top Sites"
+
+msgid "Top Sites-journal"
+msgstr "Top Sites-journal"
+
+msgid "Shortcuts"
+msgstr "Shortcuts"
+
+msgid "Shortcuts-journal"
+msgstr "Shortcuts-journal"
+
+msgid "Network Action Predictor"
+msgstr "Network Action Predictor"
+
+msgid "Network Action Predictor-journal"
+msgstr "Network Action Predictor-journal"
+
+msgid "Form data"
+msgstr "Formulardaten"
+
+msgid "Text typed into forms (autofill)"
+msgstr "In Formulare eingegebener Text (Autofill)"
+
+msgid "Color scheme"
+msgstr "Farbschema"
+
+msgid "Light or dark style for apps that follow the system preference."
+msgstr "Heller oder dunkler Stil für Apps, die der Systemeinstellung folgen."
+
+msgid "Prefer dark"
+msgstr "Dunkel bevorzugen"
+
+msgid "Prefer light"
+msgstr "Hell bevorzugen"
+
+msgid "Disable animations"
+msgstr "Animationen ausschalten"
+
+msgid "Windows, menus and the overview open instantly."
+msgstr "Fenster, Menüs und die Übersicht öffnen sich sofort."
+
+msgid "Show battery percentage"
+msgstr "Akkuprozentsatz anzeigen"
+
+msgid "Title bar buttons"
+msgstr "Titelleisten-Schaltflächen"
+
+msgid "Which window buttons are shown and on which side."
+msgstr "Welche Fensterschaltflächen angezeigt werden und auf welcher Seite."
+
+msgid "Minimize, maximize, close on the right"
+msgstr "Minimieren, maximieren, schließen rechts"
+
+msgid "Close, minimize, maximize on the left"
+msgstr "Schließen, minimieren, maximieren links"
+
+msgid "Open folders in list view"
+msgstr "Ordner in der Listenansicht öffnen"
+
+msgid "The Files app shows details (size, type, date) by default."
+msgstr "Die Dateien-App zeigt standardmäßig Details (Größe, Typ, Datum)."
+
+msgid "Add \"Delete Permanently\" to the Files menu"
+msgstr "„Endgültig löschen“ zum Dateien-Menü hinzufügen"
+
+msgid "Add \"Create Link\" to the Files menu"
+msgstr "„Verknüpfung erstellen“ zum Dateien-Menü hinzufügen"
+
+msgid "Open items with a single click"
+msgstr "Elemente mit einem Klick öffnen"
+
+msgid "Search inside subfolders"
+msgstr "In Unterordnern suchen"
+
+msgid "Where the Files app searches subfolders."
+msgstr "Wo die Dateien-App in Unterordnern sucht."
+
+msgid "Everywhere, including network locations"
+msgstr "Überall, auch an Netzwerkorten"
+
+msgid "Never (faster)"
+msgstr "Nie (schneller)"
+
+msgid "Show hidden files in file dialogs"
+msgstr "Versteckte Dateien in Dateidialogen anzeigen"
+
+msgid "Show seconds in the top-bar clock"
+msgstr "Sekunden in der Uhr der oberen Leiste anzeigen"
+
+msgid "Show the weekday in the top-bar clock"
+msgstr "Wochentag in der Uhr der oberen Leiste anzeigen"
+
+msgid "Disable the hot corner"
+msgstr "Aktive Ecke ausschalten"
+
+msgid "Moving the pointer to the top-left corner no longer opens the overview."
+msgstr "Der Mauszeiger in der oberen linken Ecke öffnet nicht mehr die Übersicht."
+
+msgid "Open new windows in the center"
+msgstr "Neue Fenster mittig öffnen"
+
+msgid "Snap windows to screen edges"
+msgstr "Fenster an Bildschirmrändern einrasten"
+
+msgid "Dock position"
+msgstr "Dock-Position"
+
+msgid "Ubuntu Dock / Dash to Dock placement."
+msgstr "Position von Ubuntu Dock / Dash to Dock."
+
+msgid "Left"
+msgstr "Links"
+
+msgid "Bottom"
+msgstr "Unten"
+
+msgid "Right"
+msgstr "Rechts"
+
+msgid "Locate the pointer with Ctrl"
+msgstr "Mauszeiger mit Strg finden"
+
+msgid "Pressing Ctrl highlights where the mouse pointer is."
+msgstr "Strg drücken zeigt, wo sich der Mauszeiger befindet."
+
+msgid "Never autorun software on inserted media"
+msgstr "Software von eingelegten Medien nie automatisch starten"
+
+msgid "Reduces the risk of malware starting from USB drives and discs."
+msgstr "Verringert das Risiko, dass Schadsoftware von USB-Laufwerken und Discs startet."
+
+msgid "Hide notifications on the lock screen"
+msgstr "Benachrichtigungen auf dem Sperrbildschirm ausblenden"
+
+msgid "Don't remember recently used files"
+msgstr "Zuletzt verwendete Dateien nicht merken"
+
+msgid "Empty trash and temp files older than 30 days"
+msgstr "Papierkorb und temporäre Dateien älter als 30 Tage leeren"
+
+msgid "Don't send problem reports or usage statistics"
+msgstr "Keine Problemberichte oder Nutzungsstatistiken senden"
+
+msgid "Block camera access"
+msgstr "Kamerazugriff sperren"
+
+msgid "Apps using the GNOME camera portal can't use the camera."
+msgstr "Apps, die das GNOME-Kameraportal nutzen, können die Kamera nicht verwenden."
+
+msgid "Tap to click on the touchpad"
+msgstr "Tippen zum Klicken auf dem Touchpad"
+
+msgid "Natural scrolling for the mouse"
+msgstr "Natürliches Scrollen mit der Maus"
+
+msgid "Turn Num Lock on at login"
+msgstr "Num-Taste bei Anmeldung einschalten"
+
+msgid "Disable event sounds"
+msgstr "Ereignisklänge ausschalten"
+
+msgid "Enable Night Light"
+msgstr "Nachtlicht aktivieren"
+
+msgid "Never suspend automatically when plugged in"
+msgstr "Am Netzteil nie automatisch in Bereitschaft gehen"
+
+msgid "Power button action"
+msgstr "Aktion des Ein/Aus-Schalters"
+
+msgid "Suspend"
+msgstr "Bereitschaft"
+
+msgid "Show the power-off dialog"
+msgstr "Ausschaltdialog anzeigen"
+
+msgid "Do nothing"
+msgstr "Nichts tun"
+
+msgid "Don't download software updates automatically"
+msgstr "Softwareupdates nicht automatisch herunterladen"
+
+msgid "GNOME Software stops downloading updates in the background."
+msgstr "GNOME Software lädt keine Updates mehr im Hintergrund herunter."
+
+msgid "Disable external search providers"
+msgstr "Externe Suchanbieter ausschalten"
+
+msgid "Overview search only shows local results."
+msgstr "Die Suche in der Übersicht zeigt nur lokale Ergebnisse."
+
+msgid "Use a fixed number of workspaces"
+msgstr "Feste Anzahl an Arbeitsflächen verwenden"
+
+msgid "Show taskbar thumbnails faster"
+msgstr "Taskleisten-Miniaturen schneller anzeigen"
+
+msgid "Hovering over a taskbar button shows window thumbnails with almost no delay."
+msgstr "Beim Überfahren einer Taskleistenschaltfläche erscheinen Fenstervorschauen fast ohne Verzögerung."
+
+msgid "Show Peek at desktop faster"
+msgstr "Desktopvorschau schneller anzeigen"
+
+msgid "Shorter delay before the desktop preview appears when hovering the corner of the taskbar."
+msgstr "Kürzere Verzögerung, bevor die Desktopvorschau beim Überfahren der Taskleistenecke erscheint."
+
+msgid "Speed up Windows menus"
+msgstr "Windows-Menüs beschleunigen"
+
+msgid "Minimizes the delay before a submenu opens (default 400 ms)."
+msgstr "Verkürzt die Verzögerung vor dem Öffnen eines Untermenüs (Standard 400 ms)."
+
+msgid "Use the Windows 10 context menu"
+msgstr "Windows-10-Kontextmenü verwenden"
+
+msgid "Opens the full classic right-click menu directly instead of the Windows 11 compact menu."
+msgstr "Öffnet direkt das vollständige klassische Kontextmenü statt des kompakten Windows-11-Menüs."
+
+msgid "Disable ads and suggested apps"
+msgstr "Werbung und vorgeschlagene Apps ausschalten"
+
+msgid "Stops Start suggestions, silently installed promoted apps, tips and sync-provider ads in File Explorer."
+msgstr "Stoppt Start-Vorschläge, still installierte beworbene Apps, Tipps und Werbung von Synchronisierungsanbietern im Explorer."
+
+msgid "Disable blur on the sign-in screen"
+msgstr "Unschärfe auf dem Anmeldebildschirm ausschalten"
+
+msgid "Shows the sign-in background image sharp instead of blurred."
+msgstr "Zeigt das Anmeldehintergrundbild scharf statt unscharf."
+
+msgid "Use the classic battery indicator"
+msgstr "Klassische Akkuanzeige verwenden"
+
+msgid "Replaces the modern battery flyout with the Windows 7 style one."
+msgstr "Ersetzt das moderne Akku-Flyout durch das im Windows-7-Stil."
+
+msgid "Show estimated battery time remaining"
+msgstr "Geschätzte Restlaufzeit des Akkus anzeigen"
+
+msgid "Shows remaining battery time in the battery tooltip and flyout."
+msgstr "Zeigt die Restlaufzeit in Tooltip und Flyout des Akkus."
+
+msgid "Disable Widgets"
+msgstr "Widgets ausschalten"
+
+msgid "Removes the Widgets board and its taskbar button."
+msgstr "Entfernt das Widgets-Board und seine Taskleistenschaltfläche."
+
+msgid "Remove the shortcut arrow overlay"
+msgstr "Verknüpfungspfeil entfernen"
+
+msgid "Hides the small arrow drawn on shortcut icons."
+msgstr "Blendet den kleinen Pfeil auf Verknüpfungssymbolen aus."
+
+msgid "Disable Peek at desktop"
+msgstr "Desktopvorschau ausschalten"
+
+msgid "Turns off the desktop preview when hovering the end of the taskbar."
+msgstr "Schaltet die Desktopvorschau am Ende der Taskleiste aus."
+
+msgid "Use the classic volume control"
+msgstr "Klassische Lautstärkeregelung verwenden"
+
+msgid "Shows the Windows 7 style volume slider from the tray icon."
+msgstr "Zeigt den Lautstärkeregler im Windows-7-Stil vom Infobereichssymbol."
+
+msgid "Disable \"You have new apps that can open this type of file\""
+msgstr "„Sie haben neue Apps, die diesen Dateityp öffnen können“ ausschalten"
+
+msgid "Stops the prompt that appears after installing an app that handles a file type."
+msgstr "Stoppt die Meldung nach der Installation einer App, die einen Dateityp verarbeitet."
+
+msgid "Add \"Command Prompt as Administrator\" to the folder context menu"
+msgstr "„Eingabeaufforderung als Administrator“ zum Ordner-Kontextmenü hinzufügen"
+
+msgid "Right-click the background of a folder to open an elevated command prompt there."
+msgstr "Rechtsklick auf den Ordnerhintergrund öffnet dort eine Eingabeaufforderung mit Administratorrechten."
+
+msgid "Check \"Do this for all current items\" by default"
+msgstr "„Für alle aktuellen Elemente wiederholen“ standardmäßig aktivieren"
+
+msgid "Pre-checks the box in the file conflict dialog."
+msgstr "Aktiviert das Kästchen im Dateikonflikt-Dialog vorab."
+
+msgid "Enable inline AutoComplete"
+msgstr "Inline-AutoVervollständigen aktivieren"
+
+msgid "Completes typed text in the address bar, Run dialog and Open/Save dialogs."
+msgstr "Vervollständigt Text in Adressleiste, Ausführen-Dialog und Öffnen/Speichern-Dialogen."
+
+msgid "Open File Explorer to"
+msgstr "Datei-Explorer öffnen in"
+
+msgid "Choose the folder a new File Explorer window starts in."
+msgstr "Ordner wählen, in dem ein neues Explorer-Fenster startet."
+
+msgid "This PC"
+msgstr "Dieser PC"
+
+msgid "Quick access / Home"
+msgstr "Schnellzugriff / Start"
+
+msgid "Downloads"
+msgstr "Downloads"
+
+msgid "Disable pop-up descriptions"
+msgstr "Popup-Beschreibungen ausschalten"
+
+msgid "Hides the tooltip shown when hovering over files and folders."
+msgstr "Blendet den Tooltip beim Überfahren von Dateien und Ordnern aus."
+
+msgid "Show drive letters first"
+msgstr "Laufwerksbuchstaben zuerst anzeigen"
+
+msgid "Shows \"(C:) Local Disk\" instead of \"Local Disk (C:)\"."
+msgstr "Zeigt „(C:) Lokaler Datenträger“ statt „Lokaler Datenträger (C:)“."
+
+msgid "Show full details in file operation dialogs"
+msgstr "Vollständige Details in Dateivorgangsdialogen anzeigen"
+
+msgid "Copy, move and delete dialogs open with \"More details\" expanded."
+msgstr "Kopieren-, Verschieben- und Löschen-Dialoge öffnen sich mit aufgeklappten „Weiteren Details“."
+
+msgid "Add Rotate left/right to the image context menu"
+msgstr "Links/Rechts drehen zum Bild-Kontextmenü hinzufügen"
+
+msgid "Adds rotate commands for JPEG, PNG and BMP files."
+msgstr "Fügt Drehbefehle für JPEG-, PNG- und BMP-Dateien hinzu."
+
+msgid "Use the classic File Explorer ribbon"
+msgstr "Klassisches Explorer-Menüband verwenden"
+
+msgid "Restores the Windows 10 tabbed ribbon. Works on early Windows 11 releases only."
+msgstr "Stellt das Registerkarten-Menüband von Windows 10 wieder her. Nur bei frühen Windows-11-Versionen."
+
+msgid "Don't add \"- Shortcut\" to new shortcuts"
+msgstr "Kein „- Verknüpfung“ an neue Verknüpfungen anhängen"
+
+msgid "New shortcuts keep the original name."
+msgstr "Neue Verknüpfungen behalten den ursprünglichen Namen."
+
+msgid "Speed up mouse hover"
+msgstr "Mauszeiger-Hover beschleunigen"
+
+msgid "Tooltips and hover previews appear faster (default 400 ms)."
+msgstr "Tooltips und Hover-Vorschauen erscheinen schneller (Standard 400 ms)."
+
+msgid "Increase the icon cache"
+msgstr "Symbolcache vergrößern"
+
+msgid "Lets Windows keep more icons in memory, so folders and the desktop load faster."
+msgstr "Windows behält mehr Symbole im Speicher, sodass Ordner und Desktop schneller laden."
+
+msgid "Disable Bing in taskbar search"
+msgstr "Bing in der Taskleistensuche ausschalten"
+
+msgid "Search on the taskbar only looks at your PC, not the web."
+msgstr "Die Taskleistensuche durchsucht nur Ihren PC, nicht das Web."
+
+msgid "Add \"End task\" to the taskbar menu"
+msgstr "„Task beenden“ zum Taskleistenmenü hinzufügen"
+
+msgid "Right-click a taskbar button to force-close the app."
+msgstr "Rechtsklick auf eine Taskleistenschaltfläche schließt die App zwangsweise."
+
+msgid "Align taskbar buttons to the left"
+msgstr "Taskleistenschaltflächen links ausrichten"
+
+msgid "Moves the centered Windows 11 taskbar icons to the left."
+msgstr "Verschiebt die zentrierten Taskleistensymbole von Windows 11 nach links."
+
+msgid "Show seconds in the taskbar clock"
+msgstr "Sekunden in der Taskleistenuhr anzeigen"
+
+msgid "Show the Windows version on the desktop"
+msgstr "Windows-Version auf dem Desktop anzeigen"
+
+msgid "Draws the Windows edition and build in the lower-right corner."
+msgstr "Zeigt Windows-Edition und Build unten rechts an."
+
+msgid "Disable AutoPlay on all drives"
+msgstr "Automatische Wiedergabe auf allen Laufwerken ausschalten"
+
+msgid "Close unresponsive apps automatically"
+msgstr "Nicht reagierende Apps automatisch schließen"
+
+msgid "Ends hung apps faster and skips the \"This app is preventing shutdown\" screen."
+msgstr "Beendet hängende Apps schneller und überspringt den Bildschirm „Diese App verhindert das Herunterfahren“."
+
+msgid "Never end apps automatically at shutdown"
+msgstr "Apps beim Herunterfahren nie automatisch beenden"
+
+msgid "Windows waits for you instead of closing apps with unsaved work."
+msgstr "Windows wartet auf Sie, statt Apps mit ungespeicherter Arbeit zu schließen."
+
+msgid "Disable the security warning on downloaded files"
+msgstr "Sicherheitswarnung bei heruntergeladenen Dateien ausschalten"
+
+msgid "Downloaded files are no longer marked as coming from the internet."
+msgstr "Heruntergeladene Dateien werden nicht mehr als aus dem Internet stammend markiert."
+
+msgid "Add \"Take Ownership\" to the context menu"
+msgstr "„Besitz übernehmen“ zum Kontextmenü hinzufügen"
+
+msgid "Right-click a file or folder to give Administrators full access to it."
+msgstr "Rechtsklick auf Datei oder Ordner gibt Administratoren Vollzugriff."
+
+msgid "Disable SmartScreen"
+msgstr "SmartScreen ausschalten"
+
+msgid "Turns off SmartScreen checks for apps and files."
+msgstr "Schaltet SmartScreen-Prüfungen für Apps und Dateien aus."
+
+msgid "Show details on blue screens"
+msgstr "Details auf Bluescreens anzeigen"
+
+msgid "Shows the classic stop-error details instead of the sad face."
+msgstr "Zeigt die klassischen Stoppfehler-Details statt des traurigen Gesichts."
+
+msgid "Let elevated apps see mapped network drives"
+msgstr "Apps mit erhöhten Rechten verbundene Netzlaufwerke sehen lassen"
+
+msgid "Apps run as administrator can access drives mapped by your normal session."
+msgstr "Als Administrator ausgeführte Apps können auf Laufwerke Ihrer normalen Sitzung zugreifen."
+
+msgid "Disable User Account Control (UAC)"
+msgstr "Benutzerkontensteuerung (UAC) ausschalten"
+
+msgid "Every app runs with full administrator rights and no prompt."
+msgstr "Jede App läuft mit vollen Administratorrechten ohne Nachfrage."
+
+msgid "Block potentially unwanted apps (adware) in Defender"
+msgstr "Potenziell unerwünschte Apps (Adware) in Defender blockieren"
+
+msgid "Make USB storage read-only"
+msgstr "USB-Speicher schreibgeschützt machen"
+
+msgid "Nothing can be written to USB mass storage devices."
+msgstr "Auf USB-Massenspeicher kann nichts geschrieben werden."
+
+msgid "Notify when the camera turns on or off"
+msgstr "Benachrichtigen, wenn die Kamera ein- oder ausgeschaltet wird"
+
+msgid "Save a crash dump when a program crashes"
+msgstr "Absturzabbild speichern, wenn ein Programm abstürzt"
+
+msgid "Writes full dumps to %LOCALAPPDATA%\\CrashDumps (keeps the last 10)."
+msgstr "Schreibt vollständige Abbilder nach %LOCALAPPDATA%\\CrashDumps (behält die letzten 10)."
+
+msgid "Allow Windows 11 upgrade on unsupported hardware"
+msgstr "Upgrade auf Windows 11 auf nicht unterstützter Hardware erlauben"
+
+msgid "Lets the Windows 11 installer skip the TPM 2.0 and CPU checks."
+msgstr "Lässt das Windows-11-Setup die TPM-2.0- und CPU-Prüfungen überspringen."
+
+msgid "Enable Windows Photo Viewer"
+msgstr "Windows-Fotoanzeige aktivieren"
+
+msgid "Makes the classic Photo Viewer available in \"Open with\" for common image types."
+msgstr "Macht die klassische Fotoanzeige unter „Öffnen mit“ für gängige Bildtypen verfügbar."
+
+msgid "Disable background apps"
+msgstr "Hintergrund-Apps ausschalten"
+
+msgid "Store apps can't run in the background, which saves power."
+msgstr "Store-Apps können nicht im Hintergrund laufen, das spart Strom."
+
+msgid "Add classic User Accounts to Control Panel"
+msgstr "Klassische Benutzerkonten zur Systemsteuerung hinzufügen"
+
+msgid "Adds an entry that opens the advanced user accounts dialog (netplwiz)."
+msgstr "Fügt einen Eintrag hinzu, der den erweiterten Benutzerkonten-Dialog (netplwiz) öffnet."
+
+msgid "Use classic Alt+Tab"
+msgstr "Klassisches Alt+Tab verwenden"
+
+msgid "Small icons instead of large window previews."
+msgstr "Kleine Symbole statt großer Fenstervorschauen."
+
+msgid "Disable driver updates via Windows Update"
+msgstr "Treiberupdates über Windows Update ausschalten"
+
+msgid "Disable automatic Store app updates"
+msgstr "Automatische Store-App-Updates ausschalten"
+
+msgid "Disable power throttling"
+msgstr "Energiedrosselung ausschalten"
+
+msgid "Background apps keep full CPU speed. Uses more battery."
+msgstr "Hintergrund-Apps behalten volle CPU-Geschwindigkeit. Verbraucht mehr Akku."
+
+msgid "Minimize telemetry and data collection"
+msgstr "Telemetrie und Datenerfassung minimieren"
+
+msgid "Sets diagnostic data to the lowest level the edition allows."
+msgstr "Setzt Diagnosedaten auf die niedrigste Stufe, die die Edition erlaubt."
+
+msgid "Stop Microsoft Edge running in the background"
+msgstr "Microsoft Edge nicht im Hintergrund laufen lassen"
+
+msgid "Clear the page file at shutdown"
+msgstr "Auslagerungsdatei beim Herunterfahren leeren"
+
+msgid "Wipes virtual memory on shutdown for privacy. Shutdown takes longer."
+msgstr "Löscht beim Herunterfahren den virtuellen Speicher für den Datenschutz. Das Herunterfahren dauert länger."
+
+msgid "Turn off Copilot"
+msgstr "Copilot ausschalten"
+
+msgid "Turns off Windows Copilot and hides its taskbar button (policy for this user and the PC)."
+msgstr "Schaltet Windows Copilot aus und blendet seine Taskleistenschaltfläche aus (Richtlinie für diesen Benutzer und den PC)."
+
+msgid "Turn off Recall snapshots"
+msgstr "Recall-Momentaufnahmen ausschalten"
+
+msgid "Stops Recall from saving screenshots of your activity (Copilot+ PCs)."
+msgstr "Verhindert, dass Recall Screenshots Ihrer Aktivität speichert (Copilot+-PCs)."
+
+msgid "Turn off Click to Do"
+msgstr "Click to Do ausschalten"
+
+msgid "Disables the AI actions overlay (Win + click) on Copilot+ PCs."
+msgstr "Schaltet das KI-Aktionen-Overlay (Win + Klick) auf Copilot+-PCs aus."
+
+msgid "Turn off AI features in Paint and Notepad"
+msgstr "KI-Funktionen in Paint und Editor ausschalten"
+
+msgid "Hides Cocreator, Image Creator and generative erase in Paint, and Copilot rewrite in Notepad."
+msgstr "Blendet Cocreator, Image Creator und generatives Löschen in Paint sowie Copilot-Umschreiben im Editor aus."
+
+msgid "Turn off the advertising ID"
+msgstr "Werbe-ID ausschalten"
+
+msgid "Apps can no longer use your advertising ID to show personalized ads."
+msgstr "Apps können Ihre Werbe-ID nicht mehr für personalisierte Werbung nutzen."
+
+msgid "Turn off tips and ads on the lock screen"
+msgstr "Tipps und Werbung auf dem Sperrbildschirm ausschalten"
+
+msgid "Removes \"fun facts, tips, tricks and more\" and promoted content from the lock screen."
+msgstr "Entfernt „Wissenswertes, Tipps, Tricks und mehr“ und beworbene Inhalte vom Sperrbildschirm."
+
+msgid "Turn off Start menu recommendations"
+msgstr "Empfehlungen im Startmenü ausschalten"
+
+msgid "Stops promoted apps and \"recommended\" tips in the Start menu."
+msgstr "Stoppt beworbene Apps und „empfohlene“ Tipps im Startmenü."
+
+msgid "Turn off Copilot and shopping in Microsoft Edge"
+msgstr "Copilot und Shopping in Microsoft Edge ausschalten"
+
+msgid "Hides Edge's sidebar (Copilot), shopping assistant and Microsoft Rewards."
+msgstr "Blendet die Edge-Seitenleiste (Copilot), den Shopping-Assistenten und Microsoft Rewards aus."
+

@@ -4,6 +4,7 @@
 
 use super::style::{self, icon, Palette};
 use super::{Cx, Pending};
+use crate::i18n::tr;
 use crate::shred::{self, Control};
 use eframe::egui::{self, RichText, Ui};
 use std::path::PathBuf;
@@ -18,7 +19,7 @@ struct Job<T> {
 
 fn passes_picker(ui: &mut Ui, cx: &mut Cx) {
     ui.horizontal(|ui| {
-        ui.label("Overwrite passes");
+        ui.label(tr("Overwrite passes"));
         for (n, tip) in [(1, "Fast; enough for modern drives"), (3, "Zeros, ones, random (default)"), (7, "Seven passes; slow")] {
             if style::segment(ui, cx.settings.shred_passes == n, &n.to_string()).on_hover_text(tip).clicked() {
                 cx.settings.shred_passes = n;
@@ -34,7 +35,7 @@ fn ssd_note(ui: &mut Ui, p: Palette) {
         ui.horizontal_top(|ui| {
             ui.label(RichText::new(icon::INFO).size(17.0).color(p.warning));
             ui.add(
-                egui::Label::new(RichText::new("On SSDs, flash drives and copy-on-write filesystems (btrfs, ZFS) the drive may keep old copies of data in places software can't reach. Overwriting is most reliable on hard disks; full-disk encryption protects SSDs best.").size(12.5).color(p.text))
+                egui::Label::new(RichText::new(tr("On SSDs, flash drives and copy-on-write filesystems (btrfs, ZFS) the drive may keep old copies of data in places software can't reach. Overwriting is most reliable on hard disks; full-disk encryption protects SSDs best.")).size(12.5).color(p.text))
                     .wrap(),
             );
         });
@@ -51,9 +52,9 @@ fn job_progress(ui: &mut Ui, ctl: &Control, label: &str, p: Palette) {
             }
             let pass = ctl.pass.load(Ordering::Relaxed);
             ui.label(style::strong(if paused {
-                format!("{label} — paused")
+                crate::tf!("{label} — paused")
             } else if pass > 0 {
-                format!("{label} — pass {pass}")
+                crate::tf!("{label} — pass {pass}")
             } else {
                 label.to_string()
             }));
@@ -74,7 +75,7 @@ fn job_progress(ui: &mut Ui, ctl: &Control, label: &str, p: Palette) {
         ui.add(egui::ProgressBar::new(ctl.fraction()).fill(p.accent).desired_height(10.0));
         ui.add_space(4.0);
         let cur = ctl.current.lock().map(|c| c.clone()).unwrap_or_default();
-        ui.label(style::muted(ui, format!("{} of {}", super::human(ctl.done.load(Ordering::Relaxed)), super::human(ctl.total.load(Ordering::Relaxed)))).size(12.5));
+        ui.label(style::muted(ui, crate::tf!("{} of {}", super::human(ctl.done.load(Ordering::Relaxed)), super::human(ctl.total.load(Ordering::Relaxed)))).size(12.5));
         ui.add(egui::Label::new(RichText::new(cur).size(11.5).color(p.faint)).truncate());
     });
     ui.ctx().request_repaint_after(std::time::Duration::from_millis(200));
@@ -103,7 +104,7 @@ impl ShredView {
 
     fn add(&mut self, p: PathBuf, cx: &mut Cx) {
         match std::fs::symlink_metadata(&p) {
-            Err(_) => cx.error(format!("{} doesn't exist", p.display())),
+            Err(_) => cx.error(crate::tf!("{} doesn't exist", p.display())),
             Ok(_) if self.items.iter().any(|i| i.path == p) => {}
             Ok(m) => self.items.push(Item { dir: m.is_dir(), size: crate::backup::dir_size(&p), path: p }),
         }
@@ -114,8 +115,8 @@ impl ShredView {
         if let Some(job) = &self.job {
             if let Some(r) = job.pending.poll() {
                 match r {
-                    Ok(r) if r.failed.is_empty() => cx.info(format!("Shredded {} file(s) and {} folder(s), {}", r.files, r.folders, super::human(r.bytes))),
-                    Ok(r) => cx.error(format!("Shredded {} file(s); {} item(s) failed: {}", r.files, r.failed.len(), r.failed[0].1)),
+                    Ok(r) if r.failed.is_empty() => cx.info(crate::tf!("Shredded {} file(s) and {} folder(s), {}", r.files, r.folders, super::human(r.bytes))),
+                    Ok(r) => cx.error(crate::tf!("Shredded {} file(s); {} item(s) failed: {}", r.files, r.failed.len(), r.failed[0].1)),
                     Err(e) => cx.error(e),
                 }
                 self.job = None;
@@ -137,7 +138,7 @@ impl ShredView {
             passes_picker(ui, cx);
             ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
                 ui.add_enabled_ui(!self.items.is_empty(), |ui| {
-                    if style::danger(ui, icon::TRASH, &format!("Destroy {} item(s)", self.items.len())).clicked() {
+                    if style::danger(ui, icon::TRASH, &crate::tf!("Destroy {} item(s)", self.items.len())).clicked() {
                         self.confirm = true;
                     }
                 });
@@ -146,11 +147,11 @@ impl ShredView {
         ui.add_space(10.0);
         style::card(ui, |ui| {
             style::section_title(ui, "Files and folders to destroy");
-            ui.label(style::muted(ui, "Drop files or folders on this window, or type a path.").size(12.5));
+            ui.label(style::muted(ui, tr("Drop files or folders on this window, or type a path.")).size(12.5));
             ui.add_space(6.0);
             let mut remove = None;
             if self.items.is_empty() {
-                ui.label(RichText::new("Nothing added yet").color(p.faint));
+                ui.label(RichText::new(tr("Nothing added yet")).color(p.faint));
             }
             for (i, item) in self.items.iter().enumerate() {
                 ui.horizontal(|ui| {
@@ -189,11 +190,11 @@ impl ShredView {
             let mut close = false;
             egui::Modal::new(egui::Id::unique("shred-confirm")).show(ui.ctx(), |ui| {
                 ui.set_width(440.0);
-                ui.label(style::strong(format!("Destroy {} item(s)?", self.items.len())).size(18.0));
+                ui.label(style::strong(crate::tf!("Destroy {} item(s)?", self.items.len())).size(18.0));
                 ui.add_space(6.0);
                 ui.label(style::muted(
                     ui,
-                    format!(
+                    crate::tf!(
                         "They are overwritten {} time(s) and deleted. Nothing is backed up and they can't be recovered — not from the Trash, not by CleanCore.",
                         cx.settings.shred_passes
                     ),
@@ -203,7 +204,7 @@ impl ShredView {
                     if style::danger(ui, icon::TRASH, "Destroy").clicked() {
                         let ctl = Arc::new(Control::default());
                         let (c, items, passes) = (ctl.clone(), self.items.iter().map(|i| i.path.clone()).collect::<Vec<_>>(), cx.settings.shred_passes);
-                        self.job = Some(Job { pending: Pending::spawn(ui.ctx(), "Shredding", move || shred::shred(&items, passes, &c).map_err(|e| format!("{e:#}"))), ctl });
+                        self.job = Some(Job { pending: Pending::spawn(ui.ctx(), "Shredding", move || shred::shred(&items, passes, &c).map_err(|e| crate::tf!("{e:#}"))), ctl });
                         close = true;
                     }
                     if style::secondary(ui, "", "Cancel").clicked() {
@@ -248,7 +249,7 @@ impl EvidenceView {
         if let Some(job) = &self.job {
             if let Some(r) = job.pending.poll() {
                 match r {
-                    Ok(n) => cx.info(format!("Free space wiped: wrote {} of overwrite data", super::human(n))),
+                    Ok(n) => cx.info(crate::tf!("Free space wiped: wrote {} of overwrite data", super::human(n))),
                     Err(e) => cx.error(e),
                 }
                 self.job = None;
@@ -264,7 +265,7 @@ impl EvidenceView {
             passes_picker(ui, cx);
             ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
                 ui.add_enabled_ui(drive.is_some(), |ui| {
-                    if style::primary(ui, icon::DRIVES, "Wipe free space").on_hover_text("Pick a drive first").clicked() {
+                    if style::primary(ui, icon::DRIVES, "Wipe free space").on_hover_text(tr("Pick a drive first")).clicked() {
                         self.confirm = true;
                     }
                 });
@@ -273,7 +274,7 @@ impl EvidenceView {
         ui.add_space(6.0);
         ui.label(style::muted(
             ui,
-            "Deleted files stay on the drive until something overwrites them. This fills the drive's free space with random data, then deletes it again. Pick a drive:",
+            tr("Deleted files stay on the drive until something overwrites them. This fills the drive's free space with random data, then deletes it again. Pick a drive:"),
         ));
         ui.add_space(10.0);
         ui.horizontal_wrapped(|ui| {
@@ -286,7 +287,7 @@ impl EvidenceView {
                 let left = rect.left_top() + egui::vec2(16.0, 16.0);
                 painter.text(left, egui::Align2::LEFT_TOP, icon::DRIVES, egui::FontId::proportional(22.0), if sel { p.accent } else { p.muted });
                 painter.text(left + egui::vec2(34.0, 0.0), egui::Align2::LEFT_TOP, &d.label, egui::FontId::new(14.5, style::semibold()), p.text);
-                painter.text(left + egui::vec2(34.0, 20.0), egui::Align2::LEFT_TOP, format!("{} · {}", d.path.display(), d.fs), egui::FontId::proportional(12.0), p.muted);
+                painter.text(left + egui::vec2(34.0, 20.0), egui::Align2::LEFT_TOP, crate::tf!("{} · {}", d.path.display(), d.fs), egui::FontId::proportional(12.0), p.muted);
                 let bar = egui::Rect::from_min_size(rect.left_bottom() + egui::vec2(16.0, -26.0), egui::vec2(rect.width() - 32.0, 6.0));
                 painter.rect_filled(bar, 3.0, p.surface_alt);
                 let used = if d.total > 0 { 1.0 - d.free as f32 / d.total as f32 } else { 0.0 };
@@ -294,7 +295,7 @@ impl EvidenceView {
                 painter.text(
                     bar.left_bottom() + egui::vec2(0.0, 4.0),
                     egui::Align2::LEFT_TOP,
-                    format!("{} free of {}", super::human(d.free), super::human(d.total)),
+                    crate::tf!("{} free of {}", super::human(d.free), super::human(d.total)),
                     egui::FontId::proportional(11.5),
                     p.muted,
                 );
@@ -312,16 +313,16 @@ impl EvidenceView {
             if let Some(d) = &drive {
                 egui::Modal::new(egui::Id::unique("wipe-confirm")).show(ui.ctx(), |ui| {
                     ui.set_width(460.0);
-                    ui.label(style::strong(format!("Wipe the free space of {}?", d.label)).size(18.0));
+                    ui.label(style::strong(crate::tf!("Wipe the free space of {}?", d.label)).size(18.0));
                     ui.add_space(6.0);
                     let passes = cx.settings.shred_passes.min(7);
-                    ui.label(style::muted(ui, format!("{} of random data is written {passes} time(s). This can take a long time, and the drive is briefly full — programs saving files meanwhile may fail. Your files are not touched.", super::human(d.free))));
+                    ui.label(style::muted(ui, crate::tf!("{} of random data is written {passes} time(s). This can take a long time, and the drive is briefly full — programs saving files meanwhile may fail. Your files are not touched.", super::human(d.free))));
                     ui.add_space(12.0);
                     ui.horizontal(|ui| {
                         if style::primary(ui, icon::DRIVES, "Wipe").clicked() {
                             let ctl = Arc::new(Control::default());
                             let (c, dir) = (ctl.clone(), d.path.clone());
-                            self.job = Some(Job { pending: Pending::spawn(ui.ctx(), "Wiping", move || shred::wipe_free_space(&dir, passes, None, &c).map_err(|e| format!("{e:#}"))), ctl });
+                            self.job = Some(Job { pending: Pending::spawn(ui.ctx(), "Wiping", move || shred::wipe_free_space(&dir, passes, None, &c).map_err(|e| crate::tf!("{e:#}"))), ctl });
                             close = true;
                         }
                         if style::secondary(ui, "", "Cancel").clicked() {

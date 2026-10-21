@@ -3,6 +3,7 @@
 
 use super::style::{self, icon, Palette};
 use super::Cx;
+use crate::i18n::tr;
 use crate::systools::{self, Tool};
 use eframe::egui::{self, RichText, Ui};
 
@@ -52,7 +53,7 @@ impl SystemToolsView {
             for g in groups {
                 ui.horizontal(|ui| {
                     ui.label(RichText::new(group_icon(g)).color(p.accent));
-                    ui.label(style::strong(g));
+                    ui.label(style::strong(tr(g)));
                 });
                 ui.add_space(4.0);
                 ui.horizontal_wrapped(|ui| {
@@ -68,15 +69,15 @@ impl SystemToolsView {
                             egui::FontId::proportional(18.0),
                             p.accent,
                         );
-                        let mut name = t.name.clone();
+                        let mut name = tr(&t.name).to_string();
                         if t.admin {
                             name += "  \u{E2FA}"; // lock: needs administrator rights
                         }
                         ui.painter().text(left + egui::vec2(28.0, 0.0), egui::Align2::LEFT_TOP, name, egui::FontId::new(14.0, style::semibold()), p.text);
-                        let desc: String = if t.description.is_empty() { t.command.clone() } else { t.description.clone() };
+                        let desc: String = if t.description.is_empty() { t.command.clone() } else { tr(&t.description).to_string() };
                         let desc = if desc.chars().count() > 38 { desc.chars().take(37).collect::<String>() + "…" } else { desc };
                         ui.painter().text(left + egui::vec2(28.0, 20.0), egui::Align2::LEFT_TOP, desc, egui::FontId::proportional(12.0), p.muted);
-                        let r = r.on_hover_text(format!("{}{}", t.command, if t.admin { " (asks for administrator rights)" } else { "" }));
+                        let r = r.on_hover_text(crate::tf!("{}{}", t.command, if t.admin { tr(" (asks for administrator rights)") } else { "" }));
                         if r.clicked() {
                             run = Some((*t).clone());
                         }
@@ -94,11 +95,11 @@ impl SystemToolsView {
             }
             style::card(ui, |ui| {
                 style::section_title(ui, "Add your own tool");
-                ui.label(style::muted(ui, "Any program or command line. Right-click one of your tools to remove it.").size(12.5));
+                ui.label(style::muted(ui, tr("Any program or command line. Right-click one of your tools to remove it.")).size(12.5));
                 ui.add_space(4.0);
                 ui.horizontal(|ui| {
                     style::text_input(ui, &mut self.new_name, "Name", 180.0);
-                    style::text_input(ui, &mut self.new_command, if cfg!(windows) { r"C:\Tools\app.exe --flag" } else { "/usr/bin/app --flag" }, 340.0);
+                    style::text_input(ui, &mut self.new_command, if cfg!(windows) { r"C:\Tools\app.exe --flag" } else { tr("/usr/bin/app --flag") }, 340.0);
                     if let Some(p) = style::browse_button(ui, "systool-command", style::Pick::File, &self.new_command) {
                         if self.new_name.trim().is_empty() {
                             self.new_name = std::path::Path::new(&p).file_stem().map(|s| s.to_string_lossy().into_owned()).unwrap_or_default();
@@ -108,11 +109,11 @@ impl SystemToolsView {
                     if style::secondary(ui, icon::PLUS, "Add").clicked() {
                         match systools::add(cx.settings, &self.new_name, &self.new_command) {
                             Ok(()) => {
-                                cx.info(format!("Added \"{}\"", self.new_name.trim()));
+                                cx.info(crate::tf!("Added \"{}\"", self.new_name.trim()));
                                 self.new_name.clear();
                                 self.new_command.clear();
                             }
-                            Err(e) => cx.error(format!("{e:#}")),
+                            Err(e) => cx.error(crate::tf!("{e:#}")),
                         }
                     }
                 });
@@ -120,14 +121,14 @@ impl SystemToolsView {
         });
         if let Some(t) = run {
             match systools::run(&t) {
-                Ok(()) => cx.info(format!("Started {}", t.name)),
-                Err(e) => cx.error(format!("{e:#}")),
+                Ok(()) => cx.info(crate::tf!("Started {}", t.name)),
+                Err(e) => cx.error(crate::tf!("{e:#}")),
             }
         }
         if let Some(n) = remove {
             match systools::remove(cx.settings, &n) {
-                Ok(()) => cx.info(format!("Removed \"{n}\"")),
-                Err(e) => cx.error(format!("{e:#}")),
+                Ok(()) => cx.info(crate::tf!("Removed \"{n}\"")),
+                Err(e) => cx.error(crate::tf!("{e:#}")),
             }
         }
     }

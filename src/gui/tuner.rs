@@ -2,6 +2,7 @@
 
 use super::style::{self, icon, Palette};
 use super::Cx;
+use crate::i18n::tr;
 use crate::tuner::{self, Requires, State, Status, Tweak, CATEGORIES};
 use eframe::egui::{self, RichText, Ui};
 use std::collections::{BTreeSet, HashMap};
@@ -46,7 +47,7 @@ impl TunerView {
     fn load(&mut self, cx: &mut Cx) {
         match State::load() {
             Ok(s) => self.state = s,
-            Err(e) => cx.error(format!("{e:#}")),
+            Err(e) => cx.error(crate::tf!("{e:#}")),
         }
         self.status = tuner::status_all(&self.tweaks, &self.state).into_iter().map(|s| (s.id.clone(), s)).collect();
         self.loaded = true;
@@ -56,15 +57,15 @@ impl TunerView {
         let id = match &c {
             Change::Apply(id, _) | Change::Revert(id) => id.clone(),
             Change::NotOurs(name) => {
-                return cx.error(format!("\"{name}\" was changed outside CleanCore, so there is no original value to restore. Change it in system settings instead."));
+                return cx.error(crate::tf!("\"{name}\" was changed outside CleanCore, so there is no original value to restore. Change it in system settings instead."));
             }
         };
         let Some(t) = self.tweaks.iter().find(|t| t.id == id).cloned() else {
             return;
         };
         let r = match c {
-            Change::Apply(_, opt) => tuner::apply(&t, &opt, &mut self.state).map(|r| (r, format!("Applied: {}", t.name))),
-            Change::Revert(_) => tuner::revert(&t, &mut self.state).map(|r| (r, format!("Restored the original setting: {}", t.name))),
+            Change::Apply(_, opt) => tuner::apply(&t, &opt, &mut self.state).map(|r| (r, crate::tf!("Applied: {}", tr(&t.name)))),
+            Change::Revert(_) => tuner::revert(&t, &mut self.state).map(|r| (r, crate::tf!("Restored the original setting: {}", tr(&t.name)))),
             Change::NotOurs(_) => unreachable!(),
         };
         match r {
@@ -74,7 +75,7 @@ impl TunerView {
                 }
                 cx.info(msg);
             }
-            Err(e) => cx.error(format!("{e:#}")),
+            Err(e) => cx.error(crate::tf!("{e:#}")),
         }
         if let Some(s) = tuner::status_all(std::slice::from_ref(&t), &self.state).pop() {
             self.status.insert(id, s);
@@ -88,10 +89,10 @@ impl TunerView {
         let p = Palette::get(ui.ctx());
         let ours = self.state.applied.len();
         let mut reset = false;
-        let subtitle = if cfg!(windows) { "Hidden Windows settings, switched on and off safely" } else { "Desktop settings, switched on and off safely" };
+        let subtitle = if cfg!(windows) { tr("Hidden Windows settings, switched on and off safely") } else { tr("Desktop settings, switched on and off safely") };
         style::page_header(ui, "Tuner", subtitle, |ui| {
             ui.add_enabled_ui(ours > 0, |ui| {
-                reset = style::secondary(ui, icon::UNDO, &format!("Reset all ({ours})")).on_hover_text("Restore every setting changed by CleanCore").clicked()
+                reset = style::secondary(ui, icon::UNDO, &crate::tf!("Reset all ({ours})")).on_hover_text(tr("Restore every setting changed by CleanCore")).clicked()
             });
             style::search_field(ui, &mut self.search, "Search tweaks", 200.0);
         });
@@ -128,7 +129,7 @@ impl TunerView {
                     ui.horizontal(|ui| {
                         ui.label(RichText::new(icon::WARNING).size(18.0).color(p.warning));
                         let msgs: Vec<&str> = self.pending.iter().filter_map(|r| r.message()).map(|m| m.split(" (").next().unwrap_or(m)).collect();
-                        ui.label(RichText::new(format!("Some changes need one more step: {}.", msgs.join(", "))).color(p.text));
+                        ui.label(RichText::new(crate::tf!("Some changes need one more step: {}.", msgs.join(", "))).color(p.text));
                         if cfg!(windows) && self.pending.contains(&Requires::Explorer) {
                             ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| restart = style::secondary(ui, icon::REFRESH, "Restart Explorer").clicked());
                         }
@@ -138,9 +139,9 @@ impl TunerView {
                 match crate::platform::restart_shell() {
                     Ok(()) => {
                         self.pending.remove(&Requires::Explorer);
-                        cx.info("File Explorer restarted");
+                        cx.info(tr("File Explorer restarted"));
                     }
-                    Err(e) => cx.error(format!("{e:#}")),
+                    Err(e) => cx.error(crate::tf!("{e:#}")),
                 }
             }
             ui.add_space(10.0);
@@ -150,7 +151,7 @@ impl TunerView {
         let shown: Vec<Tweak> = self
             .tweaks
             .iter()
-            .filter(|t| if needle.is_empty() { t.category == self.category } else { format!("{} {} {}", t.id, t.name, t.description).to_lowercase().contains(&needle) })
+            .filter(|t| if needle.is_empty() { t.category == self.category } else { crate::tf!("{} {} {}", t.id, t.name, t.description).to_lowercase().contains(&needle) })
             .cloned()
             .collect();
         let mut change = None;
@@ -189,9 +190,9 @@ impl TunerView {
         ui.horizontal(|ui| {
             ui.vertical(|ui| {
                 ui.set_width((ui.available_width() - 240.0).max(240.0));
-                ui.label(RichText::new(&t.name).color(if available { p.text } else { p.faint }));
+                ui.label(RichText::new(tr(&t.name)).color(if available { p.text } else { p.faint }));
                 if !t.description.is_empty() {
-                    ui.label(RichText::new(&t.description).size(12.5).color(p.muted));
+                    ui.label(RichText::new(tr(&t.description)).size(12.5).color(p.muted));
                 }
                 ui.horizontal_wrapped(|ui| {
                     if ours.is_some() {
@@ -210,7 +211,7 @@ impl TunerView {
                         style::badge(ui, "Caution", p.warning);
                     }
                     if let Some(Err(why)) = st.map(|s| &s.available) {
-                        ui.label(RichText::new(format!("Not available: {why}")).size(12.0).color(p.faint));
+                        ui.label(RichText::new(crate::tf!("Not available: {why}")).size(12.0).color(p.faint));
                     }
                 });
             });
@@ -222,16 +223,16 @@ impl TunerView {
                             out = Some(if on { Change::Apply(t.id.clone(), t.options[0].id.clone()) } else { Change::Revert(t.id.clone()) });
                         }
                     } else {
-                        let label = |id: &str| t.option(id).map(|o| if o.label.is_empty() { o.id.clone() } else { o.label.clone() }).unwrap_or_default();
+                        let label = |id: &str| t.option(id).map(|o| if o.label.is_empty() { o.id.clone() } else { tr(&o.label).to_string() }).unwrap_or_default();
                         let text = current.as_deref().map(label).unwrap_or_else(|| "Default".into());
                         egui::ComboBox::from_id_salt(("tweak", &t.id)).width(210.0).selected_text(text).show_ui(ui, |ui| {
                             for o in &t.options {
-                                let l = if o.label.is_empty() { o.id.clone() } else { o.label.clone() };
+                                let l = if o.label.is_empty() { o.id.clone() } else { tr(&o.label).to_string() };
                                 if ui.selectable_label(current.as_deref() == Some(o.id.as_str()), l).clicked() {
                                     out = Some(Change::Apply(t.id.clone(), o.id.clone()));
                                 }
                             }
-                            if ours.is_some() && ui.selectable_label(false, "Restore original").clicked() {
+                            if ours.is_some() && ui.selectable_label(false, tr("Restore original")).clicked() {
                                 out = Some(Change::Revert(t.id.clone()));
                             }
                         });
@@ -258,7 +259,7 @@ impl TunerView {
             let p = Palette::get(ui.ctx());
             style::icon_tile(ui, icon::WARNING, p.warning, 44.0);
             ui.add_space(8.0);
-            ui.label(style::strong("Are you sure?").size(19.0));
+            ui.label(style::strong(tr("Are you sure?")).size(19.0));
             ui.label(style::muted(ui, warning));
             ui.add_space(14.0);
             ui.horizontal(|ui| {

@@ -1,0 +1,4529 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Language: he\n"
+
+msgid "Reading startup entries, including system ones"
+msgstr "קורא רשומות הפעלה, כולל רשומות מערכת"
+
+msgid "Reading startup entries"
+msgstr "קורא רשומות הפעלה"
+
+msgid "Reading startup entries…"
+msgstr "קורא רשומות הפעלה…"
+
+msgid "{} entries · {enabled} start automatically"
+msgstr "{} רשומות · {enabled} מופעלות אוטומטית"
+
+msgid "Autorun"
+msgstr "הפעלה אוטומטית"
+
+msgid "Add"
+msgstr "הוסף"
+
+msgid "More"
+msgstr "עוד"
+
+msgid "Remove invalid entries ({n_invalid})"
+msgstr "הסר רשומות לא תקינות ({n_invalid})"
+
+msgid "Entries whose program no longer exists"
+msgstr "רשומות שהתוכנה שלהן כבר לא קיימת"
+
+msgid "Remove disabled entries ({n_disabled})"
+msgstr "הסר רשומות מושבתות ({n_disabled})"
+
+msgid "Export (.txt .html .csv .json)"
+msgstr "ייצוא (‎.txt .html .csv .json)"
+
+msgid "Exported {} entries to {}"
+msgstr "יוצאו {} רשומות אל {}"
+
+msgid "Refresh"
+msgstr "רענון"
+
+msgid "Search name, command or publisher"
+msgstr "חיפוש לפי שם, פקודה או מפרסם"
+
+msgid "All"
+msgstr "הכול"
+
+msgid "Show system entries"
+msgstr "הצג רשומות מערכת"
+
+msgid "Windows entries"
+msgstr "רשומות Windows"
+
+msgid "System entries"
+msgstr "רשומות מערכת"
+
+msgid "Nothing starts automatically"
+msgstr "שום דבר לא מופעל אוטומטית"
+
+msgid "No startup entries were found."
+msgstr "לא נמצאו רשומות הפעלה."
+
+msgid "Nothing matches the filter."
+msgstr "אין התאמות למסנן."
+
+msgid "On"
+msgstr "פעיל"
+
+msgid "Program"
+msgstr "תוכנה"
+
+msgid "Type"
+msgstr "סוג"
+
+msgid "Publisher"
+msgstr "מפרסם"
+
+msgid "Start {} automatically"
+msgstr "הפעל את {} אוטומטית"
+
+msgid "Running"
+msgstr "פועל"
+
+msgid "Program missing"
+msgstr "התוכנה חסרה"
+
+msgid "For all users"
+msgstr "לכל המשתמשים"
+
+msgid "Remove (backed up)"
+msgstr "הסר (עם גיבוי)"
+
+msgid "Can't be deleted — disable it instead"
+msgstr "לא ניתן למחוק — השבת במקום זאת"
+
+msgid "Run now"
+msgstr "הפעל עכשיו"
+
+msgid "Started {}"
+msgstr "{} הופעל"
+
+msgid "Stop it"
+msgstr "עצור"
+
+msgid "Stopped {} ({n} process(es))"
+msgstr "{} נעצר ({n} תהליכים)"
+
+msgid "Open file location"
+msgstr "פתח את מיקום הקובץ"
+
+msgid "will start automatically"
+msgstr "יופעל אוטומטית"
+
+msgid "won't start automatically"
+msgstr "לא יופעל אוטומטית"
+
+msgid "Remove \"{}\"?"
+msgstr "להסיר את \"{}\"?"
+
+msgid "Remove {} entries?"
+msgstr "להסיר {} רשומות?"
+
+msgid "and {} more"
+msgstr "ועוד {}"
+
+msgid "The programs themselves stay installed; they just won't start automatically. Removed entries are backed up."
+msgstr "התוכנות עצמן נשארות מותקנות; הן פשוט לא יופעלו אוטומטית. הרשומות שהוסרו מגובות."
+
+msgid "Remove"
+msgstr "הסר"
+
+msgid "Removed {r}, disabled {d}"
+msgstr "הוסרו {r}, הושבתו {d}"
+
+msgid "Removed {r} entry(ies)"
+msgstr "הוסרו {r} רשומות"
+
+msgid "Cancel"
+msgstr "ביטול"
+
+msgid "Add a startup entry"
+msgstr "הוספת רשומת הפעלה"
+
+msgid "Name"
+msgstr "שם"
+
+msgid "My program"
+msgstr "התוכנה שלי"
+
+msgid "Command"
+msgstr "פקודה"
+
+msgid " --minimized"
+msgstr " --minimized"
+
+msgid "/usr/bin/app --minimized"
+msgstr "/usr/bin/app --minimized"
+
+msgid "Registry Run"
+msgstr "Registry Run"
+
+msgid "Run once"
+msgstr "הפעלה חד־פעמית"
+
+msgid "Startup folder"
+msgstr "תיקיית ההפעלה"
+
+msgid "For all users (needs administrator rights)"
+msgstr "לכל המשתמשים (נדרשות הרשאות מנהל)"
+
+msgid "Added to your autostart folder (~/.config/autostart)."
+msgstr "נוסף לתיקיית ההפעלה האוטומטית שלך (‎~/.config/autostart)."
+
+msgid "Added \"{}\""
+msgstr "נוסף \"{}\""
+
+msgid "Delete by time range"
+msgstr "מחיקה לפי טווח זמנים"
+
+msgid "Reading backups failed: {e:#}"
+msgstr "קריאת הגיבויים נכשלה: {e:#}"
+
+msgid "Restoring…"
+msgstr "משחזר…"
+
+msgid "{n} item(s) restored from {id}"
+msgstr "שוחזרו {n} פריטים מ־{id}"
+
+msgid "Auto Backup"
+msgstr "גיבוי אוטומטי"
+
+msgid "Create backups automatically on a schedule"
+msgstr "יצירת גיבויים אוטומטית לפי לוח זמנים"
+
+msgid "{} backup(s) · {} · {}"
+msgstr "{} גיבויים · {} · {}"
+
+msgid "Backups"
+msgstr "גיבויים"
+
+msgid "Create backup"
+msgstr "צור גיבוי"
+
+msgid "Scheduled backups"
+msgstr "גיבויים מתוזמנים"
+
+msgid "Open backup folder"
+msgstr "פתח את תיקיית הגיבויים"
+
+msgid "Delete backups made between"
+msgstr "מחק גיבויים שנוצרו בין"
+
+msgid "Dates like 2026-10-01, or 2026-10-01 14:30. An end date includes that whole day; leave it empty for \"now\"."
+msgstr "תאריכים כמו 2026-10-01, או 2026-10-01 14:30. תאריך סיום כולל את כל אותו היום; השאר ריק עבור \"עכשיו\"."
+
+msgid "From"
+msgstr "מ־"
+
+msgid "To (optional)"
+msgstr "עד (אופציונלי)"
+
+msgid "Delete {n} backup(s)"
+msgstr "מחק {n} גיבויים"
+
+msgid "Deleted {} backup(s)"
+msgstr "נמחקו {} גיבויים"
+
+msgid "Manual backup"
+msgstr "גיבוי ידני"
+
+msgid "No backups yet"
+msgstr "אין עדיין גיבויים"
+
+msgid "A backup is made automatically before every clean, or create one now."
+msgstr "גיבוי נוצר אוטומטית לפני כל ניקוי, או צור אחד עכשיו."
+
+msgid "Select a backup to restore or delete it."
+msgstr "בחר גיבוי כדי לשחזר או למחוק אותו."
+
+msgid "Delete all backups"
+msgstr "מחק את כל הגיבויים"
+
+msgid "Delete"
+msgstr "מחק"
+
+msgid "Custom restore"
+msgstr "שחזור מותאם"
+
+msgid "Restore"
+msgstr "שחזר"
+
+msgid "Date"
+msgstr "תאריך"
+
+msgid "Entries"
+msgstr "רשומות"
+
+msgid "Size"
+msgstr "גודל"
+
+msgid "Note"
+msgstr "הערה"
+
+msgid "Delete all"
+msgstr "מחק הכול"
+
+msgid "Restore everything in backup {id}?"
+msgstr "לשחזר את כל מה שבגיבוי {id}?"
+
+msgid "Are you sure you want to delete \"{id}\"?"
+msgstr "למחוק את \"{id}\"?"
+
+msgid "Are you sure you want to delete all backups?"
+msgstr "למחוק את כל הגיבויים?"
+
+msgid "Deleted backup {id}"
+msgstr "הגיבוי {id} נמחק"
+
+msgid "Deleted {n} backup(s)"
+msgstr "נמחקו {n} גיבויים"
+
+msgid "Choose what to restore from {}"
+msgstr "בחר מה לשחזר מ־{}"
+
+msgid "Select all"
+msgstr "בחר הכול"
+
+msgid "Select none"
+msgstr "בטל בחירה"
+
+msgid "Restore {n} item(s)"
+msgstr "שחזר {n} פריטים"
+
+msgid "Optional"
+msgstr "אופציונלי"
+
+msgid "Back up"
+msgstr "מה לגבות"
+
+msgid "Whole registry"
+msgstr "כל הרישום"
+
+msgid "Whole config store"
+msgstr "כל מאגר ההגדרות"
+
+msgid "One key / folder"
+msgstr "מפתח / תיקייה אחת"
+
+msgid "or type a path"
+msgstr "או הקלד נתיב"
+
+msgid "Create"
+msgstr "צור"
+
+msgid "Please enter a name."
+msgstr "נא להזין שם."
+
+msgid "Please select a key to backup."
+msgstr "נא לבחור מפתח לגיבוי."
+
+msgid "Creating backup…"
+msgstr "יוצר גיבוי…"
+
+msgid "Backup creation failed!"
+msgstr "יצירת הגיבוי נכשלה!"
+
+msgid "Created backup {} ({} entries)"
+msgstr "נוצר גיבוי {} ({} רשומות)"
+
+msgid "Full"
+msgstr "מלא"
+
+msgid "Partial"
+msgstr "חלקי"
+
+msgid "Auto Full"
+msgstr "מלא אוטומטי"
+
+msgid "Auto Partial"
+msgstr "חלקי אוטומטי"
+
+msgid "Full before cleaning"
+msgstr "מלא לפני ניקוי"
+
+msgid "Deleted items"
+msgstr "פריטים שנמחקו"
+
+msgid "Safe Scan"
+msgstr "סריקה בטוחה"
+
+msgid "Only entries that are certainly safe to delete. The fastest scan."
+msgstr "רק רשומות שבטוח לגמרי למחוק. הסריקה המהירה ביותר."
+
+msgid "Moderate Scan"
+msgstr "סריקה מעמיקה"
+
+msgid "Looks deeper for invalid and orphaned entries."
+msgstr "מחפשת לעומק רשומות לא תקינות ויתומות."
+
+msgid "Advanced Scan"
+msgstr "סריקה מתקדמת"
+
+msgid "Exhaustive. Review the results before you clean."
+msgstr "יסודית. בדוק את התוצאות לפני הניקוי."
+
+msgid "Forced scan"
+msgstr "סריקה מאולצת"
+
+msgid "Forced scan for \"{text}\""
+msgstr "סריקה מאולצת עבור \"{text}\""
+
+msgid "Forced scan…"
+msgstr "סריקה מאולצת…"
+
+msgid "Cleaning {n} item(s)…"
+msgstr "מנקה {n} פריטים…"
+
+msgid "{}: found {} item(s)"
+msgstr "{}: נמצאו {} פריטים"
+
+msgid "Scan failed: {e}"
+msgstr "הסריקה נכשלה: {e}"
+
+msgid "Failed to create a restore point: {e}"
+msgstr "יצירת נקודת שחזור נכשלה: {e}"
+
+msgid "Deleted {} item(s). All deleted data has been backed up ({})."
+msgstr "נמחקו {} פריטים. כל המידע שנמחק גובה ({})."
+
+msgid "{msg} {} could not be deleted: {}"
+msgstr "{msg} לא ניתן היה למחוק {}: {}"
+
+msgid "Cleaning failed: {e}"
+msgstr "הניקוי נכשל: {e}"
+
+msgid "Auto Clean"
+msgstr "ניקוי אוטומטי"
+
+msgid "Scan and clean automatically on a schedule"
+msgstr "סריקה וניקוי אוטומטיים לפי לוח זמנים"
+
+msgid "Find and remove invalid and leftover registry entries"
+msgstr "מציאה והסרה של רשומות רישום לא תקינות ושאריות"
+
+msgid "Find and remove settings left behind by removed apps"
+msgstr "מציאה והסרה של הגדרות שנשארו מאפליקציות שהוסרו"
+
+msgid "Cleaner"
+msgstr "ניקוי"
+
+msgid "Quick Clean"
+msgstr "ניקוי מהיר"
+
+msgid "Scan and clean with one click"
+msgstr "סריקה וניקוי בלחיצה אחת"
+
+msgid "Scheduled scans and cleans"
+msgstr "סריקות וניקויים מתוזמנים"
+
+msgid "every account"
+msgstr "כל החשבונות"
+
+msgid "your account"
+msgstr "החשבון שלך"
+
+msgid "Ready to scan"
+msgstr "מוכן לסריקה"
+
+msgid "{title} · {} categories · {scope}"
+msgstr "{title} · {} קטגוריות · {scope}"
+
+msgid "{}  Current account"
+msgstr "{}  החשבון הנוכחי"
+
+msgid "{}  All accounts"
+msgstr "{}  כל החשבונות"
+
+msgid "Start scan"
+msgstr "התחל סריקה"
+
+msgid "Scan depth"
+msgstr "עומק הסריקה"
+
+msgid "Other ways to scan"
+msgstr "דרכים נוספות לסרוק"
+
+msgid "Custom Scan"
+msgstr "סריקה מותאמת"
+
+msgid "Choose exactly which categories to scan."
+msgstr "בחר בדיוק אילו קטגוריות לסרוק."
+
+msgid "Forced Scan"
+msgstr "סריקה מאולצת"
+
+msgid "Find every entry that mentions a program or vendor."
+msgstr "מצא כל רשומה שמזכירה תוכנה או יצרן."
+
+msgid "All accounts"
+msgstr "כל החשבונות"
+
+msgid "Current account"
+msgstr "החשבון הנוכחי"
+
+msgid "Scanning"
+msgstr "סורק"
+
+msgid "Looking for leftovers…"
+msgstr "מחפש שאריות…"
+
+msgid "{n} of {total} categories checked · {secs:.0}s"
+msgstr "נבדקו {n} מתוך {total} קטגוריות · {secs:.0} שנ׳"
+
+msgid "Searching · {secs:.0}s"
+msgstr "מחפש · {secs:.0} שנ׳"
+
+msgid "Categories"
+msgstr "קטגוריות"
+
+msgid "Pick the categories to look at"
+msgstr "בחר את הקטגוריות לבדיקה"
+
+msgid "Scan {n} categories"
+msgstr "סרוק {n} קטגוריות"
+
+msgid "Find every entry under a location that mentions a word"
+msgstr "מצא כל רשומה תחת מיקום שמזכירה מילה"
+
+msgid "Scan"
+msgstr "סרוק"
+
+msgid "Registry key"
+msgstr "מפתח רישום"
+
+msgid "Folder"
+msgstr "תיקייה"
+
+msgid "Search for"
+msgstr "חפש את"
+
+msgid "e.g. a program or vendor name"
+msgstr "לדוגמה שם של תוכנה או יצרן"
+
+msgid "{total} item(s) in {cats} category(ies) · {sel} selected"
+msgstr "{total} פריטים ב־{cats} קטגוריות · {sel} נבחרו"
+
+msgid "Scan results"
+msgstr "תוצאות הסריקה"
+
+msgid "Clean ({sel})"
+msgstr "נקה ({sel})"
+
+msgid "Export"
+msgstr "ייצוא"
+
+msgid "File (.txt .csv .html .xml .json)"
+msgstr "קובץ (‎.txt .csv .html .xml .json)"
+
+msgid "Exported to {}"
+msgstr "יוצא אל {}"
+
+msgid "New scan"
+msgstr "סריקה חדשה"
+
+msgid "All clean"
+msgstr "הכול נקי"
+
+msgid "No problems found"
+msgstr "לא נמצאו בעיות"
+
+msgid "Everything we checked looks fine."
+msgstr "כל מה שבדקנו נראה תקין."
+
+msgid "Expand all"
+msgstr "הרחב הכול"
+
+msgid "Collapse all"
+msgstr "כווץ הכול"
+
+msgid "Show details"
+msgstr "הצג פרטים"
+
+msgid "Could not open: {e:#}"
+msgstr "לא ניתן לפתוח: {e:#}"
+
+msgid "Copied {}"
+msgstr "הועתק {}"
+
+msgid "Added to exclude list: {path}"
+msgstr "נוסף לרשימת ההחרגות: {path}"
+
+msgid "Delete {n} item(s)?"
+msgstr "למחוק {n} פריטים?"
+
+msgid "Everything deleted is backed up first and can be restored from Backups."
+msgstr "כל מה שנמחק מגובה קודם וניתן לשחזור מתוך הגיבויים."
+
+msgid "Create a System Restore Point"
+msgstr "צור נקודת שחזור מערכת"
+
+msgid "Create a system snapshot (snapper / timeshift)"
+msgstr "צור תמונת מצב של המערכת (snapper / timeshift)"
+
+msgid "Create a full registry backup"
+msgstr "צור גיבוי מלא של הרישום"
+
+msgid "Create a full config backup"
+msgstr "צור גיבוי מלא של ההגדרות"
+
+msgid "Recommended"
+msgstr "מומלץ"
+
+msgid "Depth"
+msgstr "עומק"
+
+msgid "{categories} categories"
+msgstr "{categories} קטגוריות"
+
+msgid "Unselect this"
+msgstr "בטל בחירה בפריט זה"
+
+msgid "Select this"
+msgstr "בחר פריט זה"
+
+msgid "Open in Registry Editor"
+msgstr "פתח בעורך הרישום"
+
+msgid "Open containing folder"
+msgstr "פתח את התיקייה המכילה"
+
+msgid "Add to exclude list"
+msgstr "הוסף לרשימת ההחרגות"
+
+msgid "Copy"
+msgstr "העתק"
+
+msgid "Reading browser extensions"
+msgstr "קורא הרחבות דפדפן"
+
+msgid "Removed {} item(s). Backup: {}"
+msgstr "הוסרו {} פריטים. גיבוי: {}"
+
+msgid "{} item(s) could not be removed: {}"
+msgstr "לא ניתן היה להסיר {} פריטים: {}"
+
+msgid "Search extensions"
+msgstr "חיפוש הרחבות"
+
+msgid "All browsers"
+msgstr "כל הדפדפנים"
+
+msgid "Remove ({})"
+msgstr "הסר ({})"
+
+msgid "Show built-in extensions"
+msgstr "הצג הרחבות מובנות"
+
+msgid "Built-in"
+msgstr "מובנית"
+
+msgid "No extensions"
+msgstr "אין הרחבות"
+
+msgid "No extensions were found in Chrome, Edge, Brave, Opera, Vivaldi, Chromium or Firefox."
+msgstr "לא נמצאו הרחבות ב־Chrome, ‏Edge, ‏Brave, ‏Opera, ‏Vivaldi, ‏Chromium או Firefox."
+
+msgid "Nothing matches the search."
+msgstr "אין תוצאות לחיפוש."
+
+msgid "Running — close it before removing"
+msgstr "פועל — סגור אותו לפני ההסרה"
+
+msgid "Theme"
+msgstr "ערכת נושא"
+
+msgid "Extension"
+msgstr "הרחבה"
+
+msgid "Disabled"
+msgstr "מושבת"
+
+msgid "Open folder"
+msgstr "פתח תיקייה"
+
+msgid "Remove {} extension(s)?"
+msgstr "להסיר {} הרחבות?"
+
+msgid "Their files, stored data and browser settings entries are removed. Everything is backed up first."
+msgstr "הקבצים שלהן, הנתונים השמורים והרשומות בהגדרות הדפדפן יוסרו. הכול מגובה קודם."
+
+msgid "{}  Close {} first."
+msgstr "{}  סגור קודם את {}."
+
+msgid "Check again"
+msgstr "בדוק שוב"
+
+msgid "Removing extensions"
+msgstr "מסיר הרחבות"
+
+msgid "Measuring history and caches"
+msgstr "מודד היסטוריה ומטמונים"
+
+msgid "Cleaned {} item(s), {}"
+msgstr "נוקו {} פריטים, {}"
+
+msgid ". Skipped {} item(s) of open browsers"
+msgstr ". דולגו {} פריטים של דפדפנים פתוחים"
+
+msgid "{msg}. Failed: {}"
+msgstr "{msg}. נכשלו: {}"
+
+msgid "{} selected · {}"
+msgstr "{} נבחרו · {}"
+
+msgid "Clean"
+msgstr "נקה"
+
+msgid "Nothing to clean"
+msgstr "אין מה לנקות"
+
+msgid "No browser profiles, recent-file lists or caches were found."
+msgstr "לא נמצאו פרופילי דפדפן, רשימות קבצים אחרונים או מטמונים."
+
+msgid "Office"
+msgstr "Office"
+
+msgid "Open — close it to clean"
+msgstr "פתוח — סגור כדי לנקות"
+
+msgid "None"
+msgstr "אין"
+
+msgid "Clean {} item(s)?"
+msgstr "לנקות {} פריטים?"
+
+msgid "History, caches and recent lists are deleted for good; there is no backup of them."
+msgstr "היסטוריה, מטמונים ורשימות אחרונים נמחקים לצמיתות; אין להם גיבוי."
+
+msgid "{}  {} is open; its items will be skipped. Close it first to clean them."
+msgstr "{}  {} פתוח; הפריטים שלו ידולגו. סגור אותו קודם כדי לנקות אותם."
+
+msgid "Cleaning"
+msgstr "מנקה"
+
+msgid "Pick in 3 s"
+msgstr "בחירה בעוד 3 שנ׳"
+
+msgid "Identifying"
+msgstr "מזהה"
+
+msgid "Open CleanCore"
+msgstr "פתח את CleanCore"
+
+msgid "CleanCore Hunter"
+msgstr "CleanCore Hunter"
+
+msgid "Move"
+msgstr "הזז"
+
+msgid "Exit Hunter Mode"
+msgstr "יציאה ממצב צייד"
+
+msgid "Floating hunter target"
+msgstr "מטרת צייד צפה"
+
+msgid "Drag me"
+msgstr "גרור אותי"
+
+msgid "Identifying the window under the pointer"
+msgstr "מזהה את החלון שמתחת לסמן"
+
+msgid "No other program's window is under the pointer."
+msgstr "אין חלון של תוכנה אחרת מתחת לסמן."
+
+msgid "Hunter Mode"
+msgstr "מצב צייד"
+
+msgid "Point at any window to find out which program it belongs to"
+msgstr "הצבע על כל חלון כדי לגלות לאיזו תוכנה הוא שייך"
+
+msgid "Floating target"
+msgstr "מטרה צפה"
+
+msgid "Hide CleanCore and keep a small target on top of every window"
+msgstr "הסתר את CleanCore והשאר מטרה קטנה מעל כל החלונות"
+
+msgid "Refresh running programs"
+msgstr "רענן תוכנות פועלות"
+
+msgid "Hunter target: drag onto a window"
+msgstr "מטרת צייד: גרור אל חלון"
+
+msgid "Drag the target onto a window"
+msgstr "גרור את המטרה אל חלון"
+
+msgid "Hold the mouse button on the crosshair, move it over another program's window and let go."
+msgstr "החזק את לחצן העכבר על הכוונת, הזז אותו מעל חלון של תוכנה אחרת ושחרר."
+
+msgid "{}  Move the pointer over the window… {left:.0}"
+msgstr "{}  הזז את הסמן מעל החלון… {left:.0}"
+
+msgid "Pick in 3 seconds"
+msgstr "בחירה בעוד 3 שניות"
+
+msgid "For windows you can't drag onto"
+msgstr "לחלונות שאי אפשר לגרור אליהם"
+
+msgid "{}  Wayland doesn't allow reading other windows; pick from the list below."
+msgstr "{}  Wayland לא מאפשר לקרוא חלונות אחרים; בחר מהרשימה למטה."
+
+msgid "Running programs"
+msgstr "תוכנות פועלות"
+
+msgid "Filter"
+msgstr "סינון"
+
+msgid "Show all processes"
+msgstr "הצג את כל התהליכים"
+
+msgid "All processes"
+msgstr "כל התהליכים"
+
+msgid "No target yet"
+msgstr "עדיין אין מטרה"
+
+msgid "Drag the crosshair onto a window or pick a running program."
+msgstr "גרור את הכוונת אל חלון או בחר תוכנה פועלת."
+
+msgid "Close {} and delete its program file?"
+msgstr "לסגור את {} ולמחוק את קובץ התוכנה שלו?"
+
+msgid "Unsaved work in it is lost. The file is backed up and can be restored from Backups."
+msgstr "עבודה שלא נשמרה בו תאבד. הקובץ מגובה וניתן לשחזר אותו מהגיבויים."
+
+msgid "Close and delete"
+msgstr "סגור ומחק"
+
+msgid "Deleted {}. Backup: {id}"
+msgstr "{} נמחק. גיבוי: {id}"
+
+msgid "{} · {n} process(es)"
+msgstr "{} · {n} תהליכים"
+
+msgid "Window"
+msgstr "חלון"
+
+msgid "File"
+msgstr "קובץ"
+
+msgid "Installed as"
+msgstr "מותקן בתור"
+
+msgid "Not in the list of installed programs"
+msgstr "לא ברשימת התוכנות המותקנות"
+
+msgid "Doesn't start automatically"
+msgstr "לא מופעל אוטומטית"
+
+msgid " (disabled)"
+msgstr " (מושבת)"
+
+msgid "Actions"
+msgstr "פעולות"
+
+msgid "Uninstall"
+msgstr "הסר התקנה"
+
+msgid "Uninstall the program and scan for leftovers"
+msgstr "הסר את התקנת התוכנה וסרוק שאריות"
+
+msgid "Stop autorun"
+msgstr "עצור הפעלה אוטומטית"
+
+msgid "Don't start this program automatically"
+msgstr "אל תפעיל תוכנה זו אוטומטית"
+
+msgid "Disabled {n} startup entry(ies)"
+msgstr "הושבתו {n} רשומות הפעלה"
+
+msgid "Kill process"
+msgstr "סיים תהליך"
+
+msgid "Force-close it; unsaved work is lost"
+msgstr "סגירה בכוח; עבודה שלא נשמרה תאבד"
+
+msgid "Stopped {n} process(es)"
+msgstr "נעצרו {n} תהליכים"
+
+msgid "Kill and delete"
+msgstr "סיים ומחק"
+
+msgid "Search online"
+msgstr "חפש ברשת"
+
+msgid "Look the program up on the web"
+msgstr "חפש את התוכנה ברשת"
+
+msgid "add location"
+msgstr "הוספת מיקום"
+
+msgid "Deleted {} junk file(s), {}"
+msgstr "נמחקו {} קובצי זבל, {}"
+
+msgid "Deleted {} file(s); {} could not be deleted (first: {})"
+msgstr "נמחקו {} קבצים; לא ניתן היה למחוק {} (הראשון: {})"
+
+msgid "{} folders searched, {} junk files found"
+msgstr "נסרקו {} תיקיות, נמצאו {} קובצי זבל"
+
+msgid "Stop"
+msgstr "עצור"
+
+msgid "Looking for junk files"
+msgstr "מחפש קובצי זבל"
+
+msgid "the default locations"
+msgstr "המיקומים המוגדרים כברירת מחדל"
+
+msgid "{} location(s)"
+msgstr "{} מיקומים"
+
+msgid "{n_pat} patterns in {where_}"
+msgstr "{n_pat} תבניות · {where_}"
+
+msgid "Scan for junk files"
+msgstr "חפש קובצי זבל"
+
+msgid "Where to look"
+msgstr "איפה לחפש"
+
+msgid "{} (default)"
+msgstr "{} (ברירת מחדל)"
+
+msgid "Remove location"
+msgstr "הסר מיקום"
+
+msgid "/home/me/Downloads or /media/disk"
+msgstr "‎/home/me/Downloads או ‎/media/disk"
+
+msgid "Add location"
+msgstr "הוסף מיקום"
+
+msgid "Add {path}"
+msgstr "הוסף את {path}"
+
+msgid "Never look in"
+msgstr "תיקיות שלא ייסרקו"
+
+msgid "A folder to skip"
+msgstr "תיקייה לדילוג"
+
+msgid "The Windows component store, Installer folder, Recycle Bin and CleanCore's backups are always skipped."
+msgstr "מאגר רכיבי Windows, תיקיית Installer, סל המחזור והגיבויים של CleanCore תמיד מדולגים."
+
+msgid "System folders (/usr, /proc, /var/lib, …), the Trash and CleanCore's backups are always skipped."
+msgstr "תיקיות מערכת (‎/usr, /proc, /var/lib, …), האשפה והגיבויים של CleanCore תמיד מדולגים."
+
+msgid "What counts as junk"
+msgstr "מה נחשב לזבל"
+
+msgid "Reset to defaults"
+msgstr "אפס לברירת המחדל"
+
+msgid "File name patterns: * matches anything, ? one character. Click a pattern to switch it off."
+msgstr "תבניות של שמות קבצים: * מתאים לכל דבר, ? לתו אחד. לחץ על תבנית כדי לכבות אותה."
+
+msgid "Click to switch on/off · right-click to remove"
+msgstr "לחץ להפעלה/כיבוי · לחיצה ימנית להסרה"
+
+msgid "Add pattern"
+msgstr "הוסף תבנית"
+
+msgid "Skip files changed in the last 24 hours"
+msgstr "דלג על קבצים ששונו ב־24 השעות האחרונות"
+
+msgid "They may still be in use."
+msgstr "ייתכן שהם עדיין בשימוש."
+
+msgid "Delete to the Recycle Bin"
+msgstr "מחק לסל המחזור"
+
+msgid "Delete to the Trash"
+msgstr "מחק לאשפה"
+
+msgid "Otherwise files are deleted permanently."
+msgstr "אחרת הקבצים נמחקים לצמיתות."
+
+msgid "Delete to the trash"
+msgstr "מחק לאשפה"
+
+msgid "{} junk files · {}"
+msgstr "{} קובצי זבל · {}"
+
+msgid "Delete ({}, {})"
+msgstr "מחק ({}, {})"
+
+msgid "Export list"
+msgstr "ייצוא רשימה"
+
+msgid "File (.txt or .csv)"
+msgstr "קובץ (‎.txt או ‎.csv)"
+
+msgid "No junk files"
+msgstr "אין קובצי זבל"
+
+msgid "Nothing matched the junk patterns in the chosen locations."
+msgstr "שום דבר במיקומים שנבחרו לא תאם לתבניות הזבל."
+
+msgid "Changed"
+msgstr "שונה"
+
+msgid "Pattern"
+msgstr "תבנית"
+
+msgid "Delete {} junk file(s)?"
+msgstr "למחוק {} קובצי זבל?"
+
+msgid "They go to the Trash, so you can still get them back."
+msgstr "הם עוברים לאשפה, כך שעדיין אפשר לשחזר אותם."
+
+msgid "They are deleted permanently."
+msgstr "הם נמחקים לצמיתות."
+
+msgid "Deleting junk files"
+msgstr "מוחק קובצי זבל"
+
+msgid "Logs database updated: {n} new log(s)"
+msgstr "מסד הלוגים עודכן: {n} לוגים חדשים"
+
+msgid "Search logs"
+msgstr "חיפוש לוגים"
+
+msgid "Only logs for this system"
+msgstr "רק לוגים של מערכת זו"
+
+msgid "Only {} {}"
+msgstr "רק {} {}"
+
+msgid "Update"
+msgstr "עדכן"
+
+msgid "Download new logs from the database URL"
+msgstr "הורד לוגים חדשים מכתובת מסד הנתונים"
+
+msgid "Set a database URL in Settings › Uninstaller first"
+msgstr "הגדר קודם כתובת מסד נתונים בהגדרות › הסרת התקנות"
+
+msgid "Downloading logs"
+msgstr "מוריד לוגים"
+
+msgid "No logs database URL is set. Add one in Settings › Uninstaller, or copy .cptrace files into the database folder."
+msgstr "לא הוגדרה כתובת למסד הלוגים. הוסף אחת בהגדרות › הסרת התקנות, או העתק קובצי ‎.cptrace לתיקיית מסד הנתונים."
+
+msgid "Open the database folder"
+msgstr "פתח את תיקיית מסד הנתונים"
+
+msgid "Put shared .cptrace logs in {} or download them with Update. Add your own from Traced programs."
+msgstr "שים לוגים משותפים מסוג ‎.cptrace ב־{} או הורד אותם עם עדכון. הוסף לוגים משלך מתוכנות במעקב."
+
+msgid "No log matches. Turn off \"Only logs for this system\" to see the others."
+msgstr "אין לוג תואם. כבה את \"רק לוגים של מערכת זו\" כדי לראות את האחרים."
+
+msgid "The logs database is empty"
+msgstr "מסד הלוגים ריק"
+
+msgid "{} {} · {} settings · {} files · {}"
+msgstr "{} {} · {} הגדרות · {} קבצים · {}"
+
+msgid "Imports the log into Traced programs and removes what it recorded"
+msgstr "מייבא את הלוג לתוכנות במעקב ומסיר את מה שהוא תיעד"
+
+msgid "Custom uninstall"
+msgstr "הסרה מותאמת"
+
+msgid "Recorded on another system"
+msgstr "תועד במערכת אחרת"
+
+msgid "Select a log. Uninstalling with it imports it into Traced programs first."
+msgstr "בחר לוג. הסרה באמצעותו מייבאת אותו קודם לתוכנות במעקב."
+
+msgid "System"
+msgstr "מערכת"
+
+msgid "Settings"
+msgstr "הגדרות"
+
+msgid "Files"
+msgstr "קבצים"
+
+msgid "Recorded"
+msgstr "תועד"
+
+msgid "CleanCore"
+msgstr "CleanCore"
+
+msgid "Saving settings failed: {e:#}"
+msgstr "שמירת ההגדרות נכשלה: {e:#}"
+
+msgid "Export failed: {e:#}"
+msgstr "הייצוא נכשל: {e:#}"
+
+msgid "Programs"
+msgstr "תוכנות"
+
+msgid "Clean up"
+msgstr "ניקוי"
+
+msgid "Monitor & restore"
+msgstr "ניטור ושחזור"
+
+msgid "Uninstaller"
+msgstr "הסרת התקנות"
+
+msgid "Tuner"
+msgstr "כוונון"
+
+msgid "Watcher"
+msgstr "מעקב שינויים"
+
+msgid "Tools"
+msgstr "כלים"
+
+msgid "Settings could not be read, using defaults: {e:#}"
+msgstr "לא ניתן היה לקרוא את ההגדרות, נעשה שימוש בברירות המחדל: {e:#}"
+
+msgid "Daily backup"
+msgstr "גיבוי יומי"
+
+msgid "Uninstaller & cleaner"
+msgstr "הסרת תוכנות וניקוי"
+
+msgid "Recorder running"
+msgstr "המקליט פועל"
+
+msgid "Recorder stopped"
+msgstr "המקליט עצור"
+
+msgid "Switch to light"
+msgstr "עבור למצב בהיר"
+
+msgid "Switch to dark"
+msgstr "עבור למצב כהה"
+
+msgid "Notifications ({unread} new)"
+msgstr "התראות ({unread} חדשות)"
+
+msgid "Notifications"
+msgstr "התראות"
+
+msgid "Nothing yet."
+msgstr "עדיין אין כלום."
+
+msgid "Clear all"
+msgstr "נקה הכול"
+
+msgid "Daily full backup created ({id})"
+msgstr "נוצר גיבוי מלא יומי ({id})"
+
+msgid "Daily backup failed: {e:#}"
+msgstr "הגיבוי היומי נכשל: {e:#}"
+
+msgid "Welcome to CleanCore"
+msgstr "ברוכים הבאים ל־CleanCore"
+
+msgid "Pick a look. You can change it any time in Settings."
+msgstr "בחר מראה. אפשר לשנות אותו בכל עת בהגדרות."
+
+msgid "Light"
+msgstr "בהיר"
+
+msgid "Dark"
+msgstr "כהה"
+
+msgid "Save changes"
+msgstr "שמור שינויים"
+
+msgid "Appearance, safety options, lists and storage"
+msgstr "מראה, אפשרויות בטיחות, רשימות ואחסון"
+
+msgid "Discard"
+msgstr "בטל שינויים"
+
+msgid "Settings saved"
+msgstr "ההגדרות נשמרו"
+
+msgid "Exclude list"
+msgstr "רשימת החרגות"
+
+msgid "Never reported or deleted. Subkeys / subfolders can be included."
+msgstr "לעולם לא מדווח או נמחק. ניתן לכלול גם מפתחות־משנה / תיקיות־משנה."
+
+msgid "Include list"
+msgstr "רשימת הכללות"
+
+msgid "Contents are always deleted by a Custom Scan with the \"Include list\" category. Be careful."
+msgstr "התוכן תמיד נמחק בסריקה מותאמת עם הקטגוריה \"רשימת הכללות\". היזהר."
+
+msgid "Watcher and notifications"
+msgstr "מעקב שינויים והתראות"
+
+msgid "Maximum log folder size"
+msgstr "גודל מרבי לתיקיית הלוגים"
+
+msgid "When the logs reach this size, all watches pause. 0 means no limit."
+msgstr "כשהלוגים מגיעים לגודל זה, כל המעקבים מושהים. 0 פירושו ללא הגבלה."
+
+msgid " MB"
+msgstr " MB"
+
+msgid "Notify after Auto Clean"
+msgstr "הודע אחרי ניקוי אוטומטי"
+
+msgid "Failures always notify."
+msgstr "על כשלים תמיד מודיעים."
+
+msgid "Notify after Auto Backup"
+msgstr "הודע אחרי גיבוי אוטומטי"
+
+msgid "Skip confirmation dialogs"
+msgstr "דלג על חלונות אישור"
+
+msgid "Clean without asking. Backups are still made."
+msgstr "נקה בלי לשאול. גיבויים עדיין נוצרים."
+
+msgid "Data folder: {}"
+msgstr "תיקיית נתונים: {}"
+
+msgid "Appearance"
+msgstr "מראה"
+
+msgid "{}  System"
+msgstr "{}  מערכת"
+
+msgid "{}  Dark"
+msgstr "{}  כהה"
+
+msgid "{}  Light"
+msgstr "{}  בהיר"
+
+msgid "Language"
+msgstr "שפה"
+
+msgid "English"
+msgstr "English"
+
+msgid "System ({n})"
+msgstr "ברירת המערכת ({n})"
+
+msgid "Accent color"
+msgstr "צבע הדגשה"
+
+msgid "Add to Explorer's right-click menu"
+msgstr "הוסף לתפריט הלחיצה הימנית של סייר הקבצים"
+
+msgid "Add to the file manager's right-click menu"
+msgstr "הוסף לתפריט הלחיצה הימנית של מנהל הקבצים"
+
+msgid "\"Install with CleanCore\" on installers, \"Uninstall with CleanCore\" on programs, shortcuts and folders. Applies at once."
+msgstr "\"התקן עם CleanCore\" על קובצי התקנה, \"הסר עם CleanCore\" על תוכנות, קיצורי דרך ותיקיות. חל מייד."
+
+msgid "File manager menu"
+msgstr "תפריט מנהל הקבצים"
+
+msgid "Added CleanCore to the right-click menu"
+msgstr "CleanCore נוסף לתפריט הלחיצה הימנית"
+
+msgid "Removed CleanCore from the right-click menu"
+msgstr "CleanCore הוסר מתפריט הלחיצה הימנית"
+
+msgid "Leftover scan mode"
+msgstr "מצב סריקת שאריות"
+
+msgid "Used after a program's own uninstaller finishes."
+msgstr "משמש אחרי שמסיר ההתקנה של התוכנה מסיים."
+
+msgid "Advanced"
+msgstr "מתקדם"
+
+msgid "Moderate"
+msgstr "מעמיק"
+
+msgid "Safe"
+msgstr "בטוח"
+
+msgid "Create a restore point before uninstalling"
+msgstr "צור נקודת שחזור לפני הסרת התקנה"
+
+msgid "Create a system snapshot before uninstalling"
+msgstr "צור תמונת מצב של המערכת לפני הסרת התקנה"
+
+msgid "Create a full backup before uninstalling"
+msgstr "צור גיבוי מלא לפני הסרת התקנה"
+
+msgid "Delete leftover files to the Recycle Bin"
+msgstr "מחק קובצי שאריות לסל המחזור"
+
+msgid "Delete leftover files to the Trash"
+msgstr "מחק קובצי שאריות לאשפה"
+
+msgid "Files are also backed up either way."
+msgstr "הקבצים מגובים בכל מקרה."
+
+msgid "Delete leftover files to the trash"
+msgstr "מחק קובצי שאריות לאשפה"
+
+msgid "Close the program before uninstalling"
+msgstr "סגור את התוכנה לפני הסרת ההתקנה"
+
+msgid "Stops its running processes so the uninstaller can remove every file."
+msgstr "עוצר את התהליכים הפועלים שלה כדי שמסיר ההתקנה יוכל למחוק כל קובץ."
+
+msgid "Only run the built-in uninstaller"
+msgstr "הפעל רק את מסיר ההתקנה המובנה"
+
+msgid "Skip the leftover scan afterwards."
+msgstr "דלג על סריקת השאריות אחר כך."
+
+msgid "Tick leftovers by default"
+msgstr "סמן שאריות כברירת מחדל"
+
+msgid "Otherwise you pick each item to delete."
+msgstr "אחרת תבחר כל פריט למחיקה בעצמך."
+
+msgid "Mark programs as new for"
+msgstr "סמן תוכנות כחדשות למשך"
+
+msgid " days"
+msgstr " ימים"
+
+msgid "Only record what the installer itself changes"
+msgstr "תעד רק את מה שתוכנית ההתקנה עצמה משנה"
+
+msgid "Follows the installer's processes with ETW (needs administrator rights), so other programs' changes during a trace are left out."
+msgstr "עוקב אחרי התהליכים של תוכנית ההתקנה באמצעות ETW (נדרשות הרשאות מנהל), כך ששינויים של תוכנות אחרות בזמן המעקב לא נכללים."
+
+msgid "Follows the installer's processes with strace, so other programs' changes during a trace are left out."
+msgstr "עוקב אחרי התהליכים של תוכנית ההתקנה באמצעות strace, כך ששינויים של תוכנות אחרות בזמן המעקב לא נכללים."
+
+msgid "Delete a trace log after uninstalling with it"
+msgstr "מחק לוג מעקב אחרי הסרת התקנה באמצעותו"
+
+msgid "Show system entries in Autorun"
+msgstr "הצג רשומות מערכת בהפעלה אוטומטית"
+
+msgid "Microsoft services and tasks."
+msgstr "שירותים ומשימות של Microsoft."
+
+msgid "Vendor services and desktop components."
+msgstr "שירותים של יצרנים ורכיבי שולחן העבודה."
+
+msgid "Logs database folder (a shared or network folder works too)"
+msgstr "תיקיית מסד הלוגים (גם תיקייה משותפת או ברשת עובדת)"
+
+msgid "Logs database URL (serves index.json and the .cptrace files; optional)"
+msgstr "כתובת מסד הלוגים (מגישה את index.json ואת קובצי ‎.cptrace; אופציונלי)"
+
+msgid "Skip paths on external drives"
+msgstr "דלג על נתיבים בכוננים חיצוניים"
+
+msgid "Items on drives that are not plugged in are never reported."
+msgstr "פריטים בכוננים שאינם מחוברים אף פעם לא מדווחים."
+
+msgid "Skip Windows defaults"
+msgstr "דלג על ברירות המחדל של Windows"
+
+msgid "Skip system defaults"
+msgstr "דלג על ברירות המחדל של המערכת"
+
+msgid "Known entries the system recreates or keeps on purpose."
+msgstr "רשומות מוכרות שהמערכת יוצרת מחדש או שומרת בכוונה."
+
+msgid "Force delete registry keys"
+msgstr "מחיקה בכוח של מפתחות רישום"
+
+msgid "Take ownership when a key is protected."
+msgstr "קבל בעלות כשמפתח מוגן."
+
+msgid "Create a restore point before cleaning"
+msgstr "צור נקודת שחזור לפני ניקוי"
+
+msgid "Create a system snapshot before cleaning"
+msgstr "צור תמונת מצב של המערכת לפני ניקוי"
+
+msgid "Uses Windows System Restore."
+msgstr "משתמש בשחזור המערכת של Windows."
+
+msgid "Uses snapper or timeshift if installed."
+msgstr "משתמש ב־snapper או ב־timeshift אם הם מותקנים."
+
+msgid "Create a full backup before cleaning"
+msgstr "צור גיבוי מלא לפני ניקוי"
+
+msgid "In addition to the backup of deleted items."
+msgstr "בנוסף לגיבוי של הפריטים שנמחקו."
+
+msgid "Quick Clean scan mode"
+msgstr "מצב סריקה בניקוי מהיר"
+
+msgid "Backup folder"
+msgstr "תיקיית גיבויים"
+
+msgid "Delete backups older than"
+msgstr "מחק גיבויים ישנים מ־"
+
+msgid "Delete oldest when all backups exceed"
+msgstr "מחק את הישנים כשכל הגיבויים עוברים"
+
+msgid "Delete oldest when backups exceed"
+msgstr "מחק את הישנים כשהגיבויים עוברים"
+
+msgid "Daily full registry backup"
+msgstr "גיבוי רישום מלא יומי"
+
+msgid "Daily full settings backup"
+msgstr "גיבוי הגדרות מלא יומי"
+
+msgid "The first time CleanCore opens each day, it backs up everything automatically."
+msgstr "בפעם הראשונה ש־CleanCore נפתח בכל יום, הוא מגבה הכול אוטומטית."
+
+msgid "Daily full backup"
+msgstr "גיבוי מלא יומי"
+
+msgid "Only delete automatic backups"
+msgstr "מחק רק גיבויים אוטומטיים"
+
+msgid "Manual backups are always kept."
+msgstr "גיבויים ידניים תמיד נשמרים."
+
+msgid "Empty"
+msgstr "ריק"
+
+msgid "Subkeys"
+msgstr "מפתחות־משנה"
+
+msgid "Weekly clean"
+msgstr "ניקוי שבועי"
+
+msgid "Please select a key to back up."
+msgstr "נא לבחור מפתח לגיבוי."
+
+msgid "Reading scheduled tasks failed: {e:#}"
+msgstr "קריאת המשימות המתוזמנות נכשלה: {e:#}"
+
+msgid "Scheduled cleans"
+msgstr "ניקויים מתוזמנים"
+
+msgid "New task"
+msgstr "משימה חדשה"
+
+msgid "No tasks yet. Fill in the form and save."
+msgstr "עדיין אין משימות. מלא את הטופס ושמור."
+
+msgid "Deleted task {id}"
+msgstr "המשימה {id} נמחקה"
+
+msgid "Deleting task failed: {e:#}"
+msgstr "מחיקת המשימה נכשלה: {e:#}"
+
+msgid "Edit task"
+msgstr "עריכת משימה"
+
+msgid "Repeat"
+msgstr "חזרה"
+
+msgid "Daily"
+msgstr "יומי"
+
+msgid "Weekly"
+msgstr "שבועי"
+
+msgid "Monthly"
+msgstr "חודשי"
+
+msgid "Day"
+msgstr "יום"
+
+msgid "Last day of the month"
+msgstr "היום האחרון בחודש"
+
+msgid "At"
+msgstr "בשעה"
+
+msgid "Accounts"
+msgstr "חשבונות"
+
+msgid "Location"
+msgstr "מיקום"
+
+msgid "Pick below or type a path"
+msgstr "בחר למטה או הקלד נתיב"
+
+msgid "Next run {}"
+msgstr "ההפעלה הבאה {}"
+
+msgid "System scheduler: {}"
+msgstr "מתזמן המערכת: {}"
+
+msgid "Last run {} — {}"
+msgstr "הפעלה אחרונה {} — {}"
+
+msgid "Save"
+msgstr "שמור"
+
+msgid "Running {id}"
+msgstr "מריץ את {id}"
+
+msgid "Task ran: {s}"
+msgstr "המשימה רצה: {s}"
+
+msgid "Task failed: {e}"
+msgstr "המשימה נכשלה: {e}"
+
+msgid "A task with the same parameters already exists!"
+msgstr "כבר קיימת משימה עם אותם פרמטרים!"
+
+msgid "Saved task {id}"
+msgstr "המשימה {id} נשמרה"
+
+msgid "Saving task failed: {e:#}"
+msgstr "שמירת המשימה נכשלה: {e:#}"
+
+msgid "{} · last run failed"
+msgstr "{} · ההפעלה האחרונה נכשלה"
+
+msgid "Overwrite passes"
+msgstr "מעברי דריסה"
+
+msgid "Fast; enough for modern drives"
+msgstr "מהיר; מספיק לכוננים מודרניים"
+
+msgid "Zeros, ones, random (default)"
+msgstr "אפסים, אחדות, אקראי (ברירת מחדל)"
+
+msgid "Seven passes; slow"
+msgstr "שבעה מעברים; איטי"
+
+msgid "On SSDs, flash drives and copy-on-write filesystems (btrfs, ZFS) the drive may keep old copies of data in places software can't reach. Overwriting is most reliable on hard disks; full-disk encryption protects SSDs best."
+msgstr "בכונני SSD, בכונני הבזק ובמערכות קבצים מסוג copy-on-write ‏(btrfs, ZFS) הכונן עשוי לשמור עותקים ישנים של מידע במקומות שתוכנה לא יכולה להגיע אליהם. דריסה אמינה ביותר בכוננים קשיחים; הצפנת דיסק מלאה מגינה הכי טוב על SSD."
+
+msgid "{label} — paused"
+msgstr "{label} — מושהה"
+
+msgid "{label} — pass {pass}"
+msgstr "{label} — מעבר {pass}"
+
+msgid "Resume"
+msgstr "המשך"
+
+msgid "Pause"
+msgstr "השהה"
+
+msgid "{} of {}"
+msgstr "{} מתוך {}"
+
+msgid "{} doesn't exist"
+msgstr "{} לא קיים"
+
+msgid "Shredded {} file(s) and {} folder(s), {}"
+msgstr "נגרסו {} קבצים ו־{} תיקיות, {}"
+
+msgid "Shredded {} file(s); {} item(s) failed: {}"
+msgstr "נגרסו {} קבצים; {} פריטים נכשלו: {}"
+
+msgid "Shredding"
+msgstr "גורס"
+
+msgid "Destroy {} item(s)"
+msgstr "השמד {} פריטים"
+
+msgid "Files and folders to destroy"
+msgstr "קבצים ותיקיות להשמדה"
+
+msgid "Drop files or folders on this window, or type a path."
+msgstr "גרור קבצים או תיקיות לחלון זה, או הקלד נתיב."
+
+msgid "Nothing added yet"
+msgstr "עדיין לא נוסף דבר"
+
+msgid "Remove from the list"
+msgstr "הסר מהרשימה"
+
+msgid "Destroy {} item(s)?"
+msgstr "להשמיד {} פריטים?"
+
+msgid "They are overwritten {} time(s) and deleted. Nothing is backed up and they can't be recovered — not from the Trash, not by CleanCore."
+msgstr "הם נדרסים {} פעמים ונמחקים. שום דבר לא מגובה ואי אפשר לשחזר אותם — לא מהאשפה ולא דרך CleanCore."
+
+msgid "Destroy"
+msgstr "השמד"
+
+msgid "Free space wiped: wrote {} of overwrite data"
+msgstr "המקום הפנוי נמחק: נכתבו {} של נתוני דריסה"
+
+msgid "Wiping free space"
+msgstr "מוחק מקום פנוי"
+
+msgid "Wipe free space"
+msgstr "מחק מקום פנוי"
+
+msgid "Pick a drive first"
+msgstr "בחר קודם כונן"
+
+msgid "Deleted files stay on the drive until something overwrites them. This fills the drive's free space with random data, then deletes it again. Pick a drive:"
+msgstr "קבצים שנמחקו נשארים בכונן עד שמשהו דורס אותם. פעולה זו ממלאת את המקום הפנוי בכונן בנתונים אקראיים ואז מוחקת אותם. בחר כונן:"
+
+msgid "{} free of {}"
+msgstr "{} פנויים מתוך {}"
+
+msgid "Wipe the free space of {}?"
+msgstr "למחוק את המקום הפנוי של {}?"
+
+msgid "{} of random data is written {passes} time(s). This can take a long time, and the drive is briefly full — programs saving files meanwhile may fail. Your files are not touched."
+msgstr "{} של נתונים אקראיים נכתבים {passes} פעמים. זה עלול לקחת זמן רב, והכונן מתמלא לזמן קצר — תוכנות ששומרות קבצים בזמן זה עלולות להיכשל. הקבצים שלך לא נפגעים."
+
+msgid "Wipe"
+msgstr "מחק"
+
+msgid "Wiping"
+msgstr "מוחק"
+
+msgid "Windows only"
+msgstr "ל־Windows בלבד"
+
+msgid "The Microsoft slop cleaner removes Windows' preinstalled apps and turns off Copilot, ads and telemetry. There's nothing like it to clean on Linux."
+msgstr "מנקה הזבל של Microsoft מסיר את האפליקציות המותקנות מראש של Windows ומכבה את Copilot, פרסומות וטלמטריה. אין בלינוקס דבר דומה לנקות."
+
+msgid "Looking for preinstalled apps"
+msgstr "מחפש אפליקציות מותקנות מראש"
+
+msgid "Removed {} app(s)"
+msgstr "הוסרו {} אפליקציות"
+
+msgid "Removed {}; {} failed: {}"
+msgstr "הוסרו {}; {} נכשלו: {}"
+
+msgid "Preinstalled and promoted apps"
+msgstr "אפליקציות מותקנות מראש ומקודמות"
+
+msgid "Remove ({picked})"
+msgstr "הסר ({picked})"
+
+msgid "Scan again"
+msgstr "סרוק שוב"
+
+msgid "Apps Windows installs or pushes on its own. Removed apps can be reinstalled from the Microsoft Store."
+msgstr "אפליקציות ש־Windows מתקין או דוחף בעצמו. אפשר להתקין מחדש אפליקציות שהוסרו מ־Microsoft Store."
+
+msgid "{}  Run CleanCore as administrator to remove apps for every user and stop them from coming back."
+msgstr "{}  הפעל את CleanCore כמנהל כדי להסיר אפליקציות לכל משתמש ולמנוע מהן לחזור."
+
+msgid "For every user account"
+msgstr "לכל חשבון משתמש"
+
+msgid "Also remove the preinstalled copy"
+msgstr "הסר גם את העותק המותקן מראש"
+
+msgid "New accounts and feature updates won't bring the app back"
+msgstr "חשבונות חדשים ועדכוני תכונות לא יחזירו את האפליקציה"
+
+msgid "{}  None of the known preinstalled apps are installed."
+msgstr "{}  אף אחת מהאפליקציות המותקנות מראש המוכרות לא מותקנת."
+
+msgid "Preinstalled for new users"
+msgstr "מותקנת מראש למשתמשים חדשים"
+
+msgid "Only the preinstalled copy"
+msgstr "רק העותק המותקן מראש"
+
+msgid "AI, ads and suggestions"
+msgstr "בינה מלאכותית, פרסומות והצעות"
+
+msgid "Turn all off ({})"
+msgstr "כבה הכול ({})"
+
+msgid "Each switch can be turned back on here or in the Tuner. Some need administrator rights."
+msgstr "כל מתג אפשר להפעיל מחדש כאן או בכוונון. חלקם דורשים הרשאות מנהל."
+
+msgid "by CleanCore"
+msgstr "על ידי CleanCore"
+
+msgid "\"{}\" was set outside CleanCore, so there is nothing to restore. Change it in Windows Settings."
+msgstr "\"{}\" הוגדר מחוץ ל־CleanCore, כך שאין מה לשחזר. שנה אותו בהגדרות Windows."
+
+msgid "Done"
+msgstr "בוצע"
+
+msgid "Restored"
+msgstr "שוחזר"
+
+msgid "Remove {} app(s)?"
+msgstr "להסיר {} אפליקציות?"
+
+msgid "For every user, and they won't come back for new accounts."
+msgstr "לכל משתמש, והן לא יחזרו בחשבונות חדשים."
+
+msgid "For every user account."
+msgstr "לכל חשבון משתמש."
+
+msgid "For you, and they won't come back for new accounts."
+msgstr "עבורך, והן לא יחזרו בחשבונות חדשים."
+
+msgid "For you only."
+msgstr "עבורך בלבד."
+
+msgid "{scope} They can be reinstalled from the Microsoft Store."
+msgstr "{scope} אפשר להתקין אותן מחדש מ־Microsoft Store."
+
+msgid "Removing apps"
+msgstr "מסיר אפליקציות"
+
+msgid "Default"
+msgstr "ברירת מחדל"
+
+msgid "Icon {key}"
+msgstr "סמל {key}"
+
+msgid "Default icon"
+msgstr "סמל ברירת מחדל"
+
+msgid "Blue"
+msgstr "כחול"
+
+msgid "Indigo"
+msgstr "אינדיגו"
+
+msgid "Violet"
+msgstr "סגול"
+
+msgid "Teal"
+msgstr "טורקיז"
+
+msgid "Green"
+msgstr "ירוק"
+
+msgid "Rose"
+msgstr "ורוד"
+
+msgid "Back"
+msgstr "חזרה"
+
+msgid "Clear"
+msgstr "נקה"
+
+msgid "Choose a folder"
+msgstr "בחר תיקייה"
+
+msgid "Choose a file"
+msgstr "בחר קובץ"
+
+msgid "Choose where to save"
+msgstr "בחר היכן לשמור"
+
+msgid "Disks"
+msgstr "דיסקים"
+
+msgid "Network"
+msgstr "רשת"
+
+msgid "Security"
+msgstr "אבטחה"
+
+msgid "Software"
+msgstr "תוכנה"
+
+msgid "My tools"
+msgstr "הכלים שלי"
+
+msgid "Search tools"
+msgstr "חיפוש כלים"
+
+msgid " (asks for administrator rights)"
+msgstr " (מבקש הרשאות מנהל)"
+
+msgid "Add your own tool"
+msgstr "הוסף כלי משלך"
+
+msgid "Any program or command line. Right-click one of your tools to remove it."
+msgstr "כל תוכנה או שורת פקודה. לחיצה ימנית על אחד הכלים שלך מסירה אותו."
+
+msgid "/usr/bin/app --flag"
+msgstr "/usr/bin/app --flag"
+
+msgid "Removed \"{n}\""
+msgstr "הוסר \"{n}\""
+
+msgid "Junk Files"
+msgstr "קובצי זבל"
+
+msgid "Temporary files, editor backups and crash dumps left on your drives"
+msgstr "קבצים זמניים, גיבויי עורכים ודמפים של קריסות שנשארו בכוננים שלך"
+
+msgid "History Cleaner"
+msgstr "ניקוי היסטוריה"
+
+msgid "Browser history and caches, recent files and other traces"
+msgstr "היסטוריית דפדפן ומטמונים, קבצים אחרונים ועקבות אחרים"
+
+msgid "Unrecoverable Delete"
+msgstr "מחיקה בלתי הפיכה"
+
+msgid "Overwrite files and folders so they can't be recovered"
+msgstr "דריסת קבצים ותיקיות כך שלא יהיה אפשר לשחזר אותם"
+
+msgid "Evidence Remover"
+msgstr "מוחק עקבות"
+
+msgid "Overwrite free space so already-deleted files can't be recovered"
+msgstr "דריסת המקום הפנוי כך שקבצים שכבר נמחקו לא ישוחזרו"
+
+msgid "Windows Tools"
+msgstr "כלי Windows"
+
+msgid "System Tools"
+msgstr "כלי מערכת"
+
+msgid "The operating system's own utilities in one place"
+msgstr "כלי העזר של מערכת ההפעלה במקום אחד"
+
+msgid "Microsoft Slop Cleaner"
+msgstr "מנקה הזבל של Microsoft"
+
+msgid "Remove preinstalled apps and turn off Copilot, ads and telemetry"
+msgstr "הסרת אפליקציות מותקנות מראש וכיבוי Copilot, פרסומות וטלמטריה"
+
+msgid "Junk files"
+msgstr "קובצי זבל"
+
+msgid "History"
+msgstr "היסטוריה"
+
+msgid "Unrecoverable delete"
+msgstr "מחיקה בלתי הפיכה"
+
+msgid "Evidence remover"
+msgstr "מוחק עקבות"
+
+msgid "Windows tools"
+msgstr "כלי Windows"
+
+msgid "System tools"
+msgstr "כלי מערכת"
+
+msgid "Microsoft slop"
+msgstr "הזבל של Microsoft"
+
+msgid "Install & trace"
+msgstr "התקנה ומעקב"
+
+msgid "Recording the current state"
+msgstr "מתעד את המצב הנוכחי"
+
+msgid "Install with CleanCore"
+msgstr "התקן עם CleanCore"
+
+msgid "Every change the installation makes is recorded, so it can be undone exactly"
+msgstr "כל שינוי שההתקנה מבצעת מתועד, כך שאפשר לבטל אותו בדיוק"
+
+msgid "Snapshot"
+msgstr "תמונת מצב"
+
+msgid "Install"
+msgstr "התקנה"
+
+msgid "Analyze"
+msgstr "ניתוח"
+
+msgid "Recording the current state…"
+msgstr "מתעד את המצב הנוכחי…"
+
+msgid "Comparing with the snapshot…"
+msgstr "משווה לתמונת המצב…"
+
+msgid "Finding everything the installation created"
+msgstr "מאתר את כל מה שההתקנה יצרה"
+
+msgid "The installer finished ({st}). Run and configure the program if you like, close it, then stop the trace."
+msgstr "תוכנית ההתקנה הסתיימה ({st}). אם תרצה, הפעל והגדר את התוכנה, סגור אותה ואז עצור את המעקב."
+
+msgid "Tracing  {:02}:{:02}"
+msgstr "מעקב  {:02}:{:02}"
+
+msgid "Install the program now: run its installer below, or start it any way you like. Install one program at a time and close other programs."
+msgstr "התקן את התוכנה עכשיו: הפעל את תוכנית ההתקנה שלה למטה, או הפעל אותה בכל דרך שתרצה. התקן תוכנה אחת בכל פעם וסגור תוכנות אחרות."
+
+msgid "/home/you/Downloads/install.sh or a .deb"
+msgstr "‎/home/you/Downloads/install.sh או קובץ ‎.deb"
+
+msgid "Run installer"
+msgstr "הפעל את תוכנית ההתקנה"
+
+msgid "The installer is running…"
+msgstr "תוכנית ההתקנה פועלת…"
+
+msgid "Could not start the installer: {e:#}"
+msgstr "לא ניתן היה להפעיל את תוכנית ההתקנה: {e:#}"
+
+msgid "Stop & analyze"
+msgstr "עצור ונתח"
+
+msgid "Analyzing"
+msgstr "מנתח"
+
+msgid "Nothing was installed"
+msgstr "שום דבר לא הותקן"
+
+msgid "No new files, settings or packages appeared during the trace."
+msgstr "לא הופיעו קבצים, הגדרות או חבילות חדשים במהלך המעקב."
+
+msgid "{} change(s) made by other programs during the trace were left out (only the installer's own processes count)."
+msgstr "{} שינויים שביצעו תוכנות אחרות במהלך המעקב לא נכללו (נספרים רק התהליכים של תוכנית ההתקנה עצמה)."
+
+msgid "Comment"
+msgstr "הערה"
+
+msgid "{created} item(s) created, removable with this log · {modified} existing item(s) changed (kept on uninstall)"
+msgstr "נוצרו {created} פריטים, ניתנים להסרה עם לוג זה · שונו {modified} פריטים קיימים (נשמרים בהסרה)"
+
+msgid "Save log"
+msgstr "שמור לוג"
+
+msgid "Saved trace log \"{}\""
+msgstr "לוג המעקב \"{}\" נשמר"
+
+msgid "Registry"
+msgstr "רישום"
+
+msgid "Settings (dconf)"
+msgstr "הגדרות (dconf)"
+
+msgid "Packages"
+msgstr "חבילות"
+
+msgid "Files and folders"
+msgstr "קבצים ותיקיות"
+
+msgid "Created: removed on uninstall"
+msgstr "נוצר: יוסר בהסרת ההתקנה"
+
+msgid "Existed before: kept on uninstall"
+msgstr "היה קיים קודם: נשמר בהסרת ההתקנה"
+
+msgid "Remove from log"
+msgstr "הסר מהלוג"
+
+msgid "… and {} more (export the log to see all)"
+msgstr "… ועוד {} (ייצא את הלוג כדי לראות הכול)"
+
+msgid "Import a .cptrace log"
+msgstr "ייבוא לוג ‎.cptrace"
+
+msgid "Import"
+msgstr "ייבוא"
+
+msgid "Imported \"{}\""
+msgstr "יובא \"{}\""
+
+msgid "Back up or restore every log (one file)"
+msgstr "גבה או שחזר את כל הלוגים (קובץ אחד)"
+
+msgid "Back up all"
+msgstr "גבה הכול"
+
+msgid "Saved {n} log(s) to {}"
+msgstr "נשמרו {n} לוגים אל {}"
+
+msgid "Restored {n} log(s)"
+msgstr "שוחזרו {n} לוגים"
+
+msgid "{n} logs selected"
+msgstr "{n} לוגים נבחרו"
+
+msgid "Merge"
+msgstr "מזג"
+
+msgid "Merged into \"{}\""
+msgstr "מוזג אל \"{}\""
+
+msgid "Name of the merged log"
+msgstr "שם הלוג הממוזג"
+
+msgid "{} · {} settings · {} files · {}"
+msgstr "{} · {} הגדרות · {} קבצים · {}"
+
+msgid "Rename"
+msgstr "שנה שם"
+
+msgid "{}  Group"
+msgstr "{}  קבוצה"
+
+msgid "New group"
+msgstr "קבוצה חדשה"
+
+msgid "Remove from group"
+msgstr "הסר מהקבוצה"
+
+msgid "{}  Change icon"
+msgstr "{}  שנה סמל"
+
+msgid "Delete log"
+msgstr "מחק לוג"
+
+msgid "Add to logs database"
+msgstr "הוסף למסד הלוגים"
+
+msgid "Share this log through the logs database folder"
+msgstr "שתף לוג זה דרך תיקיית מסד הלוגים"
+
+msgid "Added to the logs database: {}"
+msgstr "נוסף למסד הלוגים: {}"
+
+msgid "Export (.cptrace to share, .html / .txt to read)"
+msgstr "ייצוא (‎.cptrace לשיתוף, ‎.html / ‎.txt לקריאה)"
+
+msgid "Edit"
+msgstr "ערוך"
+
+msgid "No traced programs"
+msgstr "אין תוכנות במעקב"
+
+msgid "Use Install & trace to record an installation; it can then be undone exactly."
+msgstr "השתמש בהתקנה ומעקב כדי לתעד התקנה; אחר כך אפשר לבטל אותה בדיוק."
+
+msgid "Created"
+msgstr "נוצר"
+
+msgid "Imported"
+msgstr "יובא"
+
+msgid "Rename log"
+msgstr "שנה שם ללוג"
+
+msgid "Log renamed"
+msgstr "שם הלוג שונה"
+
+msgid "Delete this log?"
+msgstr "למחוק לוג זה?"
+
+msgid "The program stays installed; only the record of its installation is deleted."
+msgstr "התוכנה נשארת מותקנת; רק התיעוד של ההתקנה שלה נמחק."
+
+msgid "Log deleted"
+msgstr "הלוג נמחק"
+
+msgid "Edit log"
+msgstr "עריכת לוג"
+
+msgid "Author"
+msgstr "מחבר"
+
+msgid "Add item"
+msgstr "הוסף פריט"
+
+msgid "dconf folder"
+msgstr "תיקיית dconf"
+
+msgid "Registry value"
+msgstr "ערך רישום"
+
+msgid "dconf key"
+msgstr "מפתח dconf"
+
+msgid "Path / key"
+msgstr "נתיב / מפתח"
+
+msgid "Value name"
+msgstr "שם הערך"
+
+msgid "Log saved"
+msgstr "הלוג נשמר"
+
+msgid "CleanCore Hunter Mode"
+msgstr "מצב צייד של CleanCore"
+
+msgid "Drag the target onto a program's window"
+msgstr "גרור את המטרה אל חלון של תוכנה"
+
+msgid "Show the target"
+msgstr "הצג את המטרה"
+
+msgid "\"{name}\" was changed outside CleanCore, so there is no original value to restore. Change it in system settings instead."
+msgstr "\"{name}\" שונה מחוץ ל־CleanCore, כך שאין ערך מקורי לשחזר. שנה אותו בהגדרות המערכת."
+
+msgid "Applied: {}"
+msgstr "הוחל: {}"
+
+msgid "Restored the original setting: {}"
+msgstr "ההגדרה המקורית שוחזרה: {}"
+
+msgid "Hidden Windows settings, switched on and off safely"
+msgstr "הגדרות Windows נסתרות, מופעלות ומכובות בבטחה"
+
+msgid "Desktop settings, switched on and off safely"
+msgstr "הגדרות שולחן עבודה, מופעלות ומכובות בבטחה"
+
+msgid "Reset all ({ours})"
+msgstr "אפס הכול ({ours})"
+
+msgid "Restore every setting changed by CleanCore"
+msgstr "שחזר כל הגדרה ש־CleanCore שינה"
+
+msgid "Search tweaks"
+msgstr "חיפוש כוונונים"
+
+msgid "Some changes need one more step: {}."
+msgstr "חלק מהשינויים דורשים צעד נוסף: {}."
+
+msgid "Restart Explorer"
+msgstr "הפעל מחדש את הסייר"
+
+msgid "File Explorer restarted"
+msgstr "סייר הקבצים הופעל מחדש"
+
+msgid "No tweaks match"
+msgstr "אין כוונונים תואמים"
+
+msgid "Try another word."
+msgstr "נסה מילה אחרת."
+
+msgid "Log out"
+msgstr "התנתק"
+
+msgid "Restart PC"
+msgstr "הפעל מחדש את המחשב"
+
+msgid "Caution"
+msgstr "זהירות"
+
+msgid "Not available: {why}"
+msgstr "לא זמין: {why}"
+
+msgid "Restore original"
+msgstr "שחזר מקור"
+
+msgid "Are you sure?"
+msgstr "בטוח?"
+
+msgid "Apply anyway"
+msgstr "החל בכל זאת"
+
+msgid "Uninstall with CleanCore"
+msgstr "הסר עם CleanCore"
+
+msgid "Reading installed programs"
+msgstr "קורא תוכנות מותקנות"
+
+msgid "New"
+msgstr "חדש"
+
+msgid "Uninstalling {}"
+msgstr "מסיר את {}"
+
+msgid "Removing"
+msgstr "מסיר"
+
+msgid "{} program(s)"
+msgstr "{} תוכנות"
+
+msgid "Creating restore point and backup"
+msgstr "יוצר נקודת שחזור וגיבוי"
+
+msgid "Finding the program"
+msgstr "מאתר את התוכנה"
+
+msgid "\"{name}\" isn't in the list of installed programs: Forced Uninstall finds what it left."
+msgstr "\"{name}\" אינה ברשימת התוכנות המותקנות: הסרה בכוח תמצא את מה שהיא השאירה."
+
+msgid "Reading installed programs…"
+msgstr "קורא תוכנות מותקנות…"
+
+msgid "{} programs · {}"
+msgstr "{} תוכנות · {}"
+
+msgid "Forced Uninstall"
+msgstr "הסרה בכוח"
+
+msgid "Remove a program that isn't listed or was partly removed"
+msgstr "הסר תוכנה שאינה ברשימה או שהוסרה חלקית"
+
+msgid "Record an installation so it can be undone exactly"
+msgstr "תעד התקנה כדי שאפשר יהיה לבטל אותה בדיוק"
+
+msgid "File (.txt .html .csv .json)"
+msgstr "קובץ (‎.txt .html .csv .json)"
+
+msgid "Exported {} programs to {}"
+msgstr "יוצאו {} תוכנות אל {}"
+
+msgid "Finish uninstalling {}"
+msgstr "סיים את הסרת {}"
+
+msgid "Its uninstaller asked for a restart"
+msgstr "מסיר ההתקנה שלה ביקש הפעלה מחדש"
+
+msgid "The uninstall was interrupted"
+msgstr "הסרת ההתקנה נקטעה"
+
+msgid "{why} ({}). Scan for the leftovers it left behind."
+msgstr "{why} ({}). סרוק את השאריות שהיא השאירה."
+
+msgid "Dismiss"
+msgstr "סגור"
+
+msgid "Scan for leftovers"
+msgstr "סרוק שאריות"
+
+msgid "Continuing the uninstall started {}."
+msgstr "ממשיך את ההסרה שהתחילה {}."
+
+msgid "Windows Apps"
+msgstr "אפליקציות Windows"
+
+msgid "Flatpak & Snap"
+msgstr "Flatpak / Snap"
+
+msgid "All programs"
+msgstr "כל התוכנות"
+
+msgid "Traced programs"
+msgstr "תוכנות במעקב"
+
+msgid "Browser extensions"
+msgstr "הרחבות דפדפן"
+
+msgid "Logs database"
+msgstr "מסד לוגים"
+
+msgid "Search programs"
+msgstr "חיפוש תוכנות"
+
+msgid "Search name, publisher or comment"
+msgstr "חיפוש לפי שם, מפרסם או הערה"
+
+msgid "All groups"
+msgstr "כל הקבוצות"
+
+msgid "New ({new_n})"
+msgstr "חדשות ({new_n})"
+
+msgid "{}  Manage groups…"
+msgstr "{}  ניהול קבוצות…"
+
+msgid "Filters"
+msgstr "מסננים"
+
+msgid "Show system components"
+msgstr "הצג רכיבי מערכת"
+
+msgid "Updates, runtimes and Windows parts."
+msgstr "עדכונים, סביבות ריצה וחלקי Windows."
+
+msgid "Libraries and packages without an app."
+msgstr "ספריות וחבילות ללא אפליקציה."
+
+msgid "Quick uninstall ({n_checked})"
+msgstr "הסרה מהירה ({n_checked})"
+
+msgid "Clear selection"
+msgstr "נקה בחירה"
+
+msgid "Run its uninstaller, then scan for leftovers"
+msgstr "הפעל את מסיר ההתקנה שלה ואז סרוק שאריות"
+
+msgid "Quick uninstall"
+msgstr "הסרה מהירה"
+
+msgid "Quick uninstall: silent uninstall and automatic leftover removal"
+msgstr "הסרה מהירה: הסרה שקטה והסרה אוטומטית של שאריות"
+
+msgid "No programs match"
+msgstr "אין תוכנות תואמות"
+
+msgid "Try another search or group."
+msgstr "נסה חיפוש או קבוצה אחרים."
+
+msgid "Version"
+msgstr "גרסה"
+
+msgid "Installed"
+msgstr "הותקן"
+
+msgid "Change/Repair is a Windows feature ({cmd})"
+msgstr "שינוי/תיקון זמין רק ב־Windows ({cmd})"
+
+msgid "Added to group {g}"
+msgstr "נוסף לקבוצה {g}"
+
+msgid "{} wasn't running"
+msgstr "{} לא פעל"
+
+msgid "Stopped {}"
+msgstr "{} נעצר"
+
+msgid "Resetting the Microsoft Store…"
+msgstr "מאפס את Microsoft Store…"
+
+msgid "{} removed for all users"
+msgstr "{} הוסר לכל המשתמשים"
+
+msgid "{} was reset"
+msgstr "{} אופס"
+
+msgid "Shown under the program name"
+msgstr "מוצג מתחת לשם התוכנה"
+
+msgid "Comment saved"
+msgstr "ההערה נשמרה"
+
+msgid "Nothing uninstalled yet"
+msgstr "עדיין לא הוסרו תוכנות"
+
+msgid "Programs you remove with CleanCore are listed here."
+msgstr "תוכנות שתסיר עם CleanCore יופיעו כאן."
+
+msgid "{}  {}   ·  {}  ·  {} removed"
+msgstr "{}  {}   ·  {}  ·  הוסרו {}"
+
+msgid "Backup {b} (restore it from Backups)"
+msgstr "גיבוי {b} (שחזר אותו מהגיבויים)"
+
+msgid "Copy as text"
+msgstr "העתק כטקסט"
+
+msgid "Select an entry to see what was removed."
+msgstr "בחר רשומה כדי לראות מה הוסר."
+
+msgid "The uninstaller finished successfully ({})"
+msgstr "מסיר ההתקנה הסתיים בהצלחה ({})"
+
+msgid "The uninstaller ended with exit code {c} ({})"
+msgstr "מסיר ההתקנה הסתיים עם קוד יציאה {c} ({})"
+
+msgid "The uninstaller ended without an exit code ({})"
+msgstr "מסיר ההתקנה הסתיים ללא קוד יציאה ({})"
+
+msgid "No built-in uninstaller: CleanCore removes the program's files and leftovers itself."
+msgstr "אין מסיר התקנה מובנה: CleanCore מסיר את קובצי התוכנה והשאריות בעצמו."
+
+msgid "The built-in uninstaller could not run: {e}"
+msgstr "לא ניתן היה להפעיל את מסיר ההתקנה המובנה: {e}"
+
+msgid "Finishing"
+msgstr "מסיים"
+
+msgid "{}: removed {} leftover(s)"
+msgstr "{}: הוסרו {} שאריות"
+
+msgid "Removing leftovers failed: {e}"
+msgstr "הסרת השאריות נכשלה: {e}"
+
+msgid "Undo exactly what the installation changed"
+msgstr "בטל בדיוק את מה שההתקנה שינתה"
+
+msgid "Run the program's uninstaller, then remove what it leaves behind"
+msgstr "הפעל את מסיר ההתקנה של התוכנה ואז הסר את מה שהיא משאירה"
+
+msgid "Running the program's uninstaller"
+msgstr "מפעיל את מסיר ההתקנה של התוכנה"
+
+msgid "Follow its window. When it closes, CleanCore looks for what it left behind."
+msgstr "עקוב אחרי החלון שלו. כשהוא נסגר, CleanCore מחפש את מה שהוא השאיר."
+
+msgid "It's done, continue"
+msgstr "סיים, המשך"
+
+msgid "Continued before the uninstaller reported back."
+msgstr "המשיך לפני שמסיר ההתקנה דיווח."
+
+msgid "Use this if the uninstaller's window is gone but this screen is still waiting."
+msgstr "השתמש בזה אם החלון של מסיר ההתקנה נעלם אבל המסך הזה עדיין מחכה."
+
+msgid "What happened so far"
+msgstr "מה קרה עד עכשיו"
+
+msgid "How deep to look for leftovers"
+msgstr "עד כמה לעומק לחפש שאריות"
+
+msgid "The usual places in settings and on disk. Fastest."
+msgstr "המקומות הרגילים בהגדרות ובדיסק. המהירה ביותר."
+
+msgid "Safe, plus everything that points to the program. Recommended."
+msgstr "בטוחה, ובנוסף כל מה שמצביע על התוכנה. מומלץ."
+
+msgid "Moderate, plus a deep name search. Review the results."
+msgstr "מעמיקה, ובנוסף חיפוש עמוק לפי שם. בדוק את התוצאות."
+
+msgid "Scan all user accounts"
+msgstr "סרוק את כל חשבונות המשתמשים"
+
+msgid "Also look in other user accounts"
+msgstr "חפש גם בחשבונות משתמשים אחרים"
+
+msgid "Scanning for leftovers"
+msgstr "מחפש שאריות"
+
+msgid "{mode} scan · {secs:.0}s"
+msgstr "סריקה {mode} · {secs:.0} שנ׳"
+
+msgid "Backing up and removing {n} item(s)…"
+msgstr "מגבה ומסיר {n} פריטים…"
+
+msgid "Everything is backed up first · {secs:.0}s"
+msgstr "הכול מגובה קודם · {secs:.0} שנ׳"
+
+msgid "{} is uninstalled"
+msgstr "{} הוסרה"
+
+msgid "Nothing was left behind."
+msgstr "לא נשאר כלום."
+
+msgid "Most of it is gone; a few items could not be removed."
+msgstr "רוב הדברים הוסרו; כמה פריטים לא ניתן היה להסיר."
+
+msgid "Back to programs"
+msgstr "חזרה לתוכנות"
+
+msgid "Leftovers removed"
+msgstr "שאריות שהוסרו"
+
+msgid "Could not be removed"
+msgstr "לא ניתן היה להסיר"
+
+msgid "Backup (restore it in Backups)"
+msgstr "גיבוי (שחזר אותו בגיבויים)"
+
+msgid "{} item(s) could not be removed"
+msgstr "לא ניתן היה להסיר {} פריטים"
+
+msgid "…and {} more"
+msgstr "…ועוד {}"
+
+msgid "Advanced uninstall"
+msgstr "הסרה מתקדמת"
+
+msgid "Look for related data the log didn't capture, such as settings the program created later."
+msgstr "חפש נתונים קשורים שהלוג לא תפס, כמו הגדרות שהתוכנה יצרה מאוחר יותר."
+
+msgid "Scan for related leftovers"
+msgstr "סרוק שאריות קשורות"
+
+msgid "Saving"
+msgstr "שומר"
+
+msgid "Removing leftovers"
+msgstr "מסיר שאריות"
+
+msgid "No leftovers found"
+msgstr "לא נמצאו שאריות"
+
+msgid "The program removed itself cleanly."
+msgstr "התוכנה הסירה את עצמה בצורה נקייה."
+
+msgid "Finish"
+msgstr "סיום"
+
+msgid "Leftovers found"
+msgstr "שאריות שנמצאו"
+
+msgid "Selected to delete"
+msgstr "נבחרו למחיקה"
+
+msgid "Registry entries"
+msgstr "רשומות רישום"
+
+msgid "Settings entries"
+msgstr "רשומות הגדרות"
+
+msgid "Filter leftovers"
+msgstr "סינון שאריות"
+
+msgid "Delete {n_sel} item(s)"
+msgstr "מחק {n_sel} פריטים"
+
+msgid "Backed up before deleting"
+msgstr "מגובה לפני המחיקה"
+
+msgid "Select the whole group"
+msgstr "בחר את כל הקבוצה"
+
+msgid "Quick uninstall finished: {} program(s)"
+msgstr "ההסרה המהירה הסתיימה: {} תוכנות"
+
+msgid "Quick uninstall finished: {failed} of {} program(s) failed"
+msgstr "ההסרה המהירה הסתיימה: {failed} מתוך {} תוכנות נכשלו"
+
+msgid "Quick Uninstall"
+msgstr "הסרה מהירה"
+
+msgid "{total} program(s) · silent uninstallers, then a {mode} leftover scan · leftovers removed automatically"
+msgstr "{total} תוכנות · מסירי התקנה שקטים, ואז סריקת שאריות {mode} · השאריות מוסרות אוטומטית"
+
+msgid "Preparing: restore point and backup…"
+msgstr "מכין: נקודת שחזור וגיבוי…"
+
+msgid "All {total} program(s) uninstalled"
+msgstr "כל {total} התוכנות הוסרו"
+
+msgid "Finished with {failed} problem(s)"
+msgstr "הסתיים עם {failed} בעיות"
+
+msgid "Uninstalling {} of {total}: {current}"
+msgstr "מסיר {} מתוך {total}: {current}"
+
+msgid "{ok} done"
+msgstr "{ok} הושלמו"
+
+msgid "{failed} failed"
+msgstr "{failed} נכשלו"
+
+msgid "{waiting} waiting"
+msgstr "{waiting} ממתינים"
+
+msgid "{removed} leftovers removed"
+msgstr "הוסרו {removed} שאריות"
+
+msgid "Before starting"
+msgstr "לפני ההתחלה"
+
+msgid "Waiting its turn"
+msgstr "ממתין לתורו"
+
+msgid "Running the silent uninstaller, then scanning · {secs:.0}s"
+msgstr "מפעיל את מסיר ההתקנה השקט ואז סורק · {secs:.0} שנ׳"
+
+msgid "{} leftover(s) removed"
+msgstr "הוסרו {} שאריות"
+
+msgid "Leftover scan off in settings"
+msgstr "סריקת השאריות כבויה בהגדרות"
+
+msgid "{} could not be removed"
+msgstr "לא ניתן היה להסיר {}"
+
+msgid "uninstaller exit code {c}"
+msgstr "קוד יציאה של מסיר ההתקנה {c}"
+
+msgid "{}  Still appears to be installed: try a normal Uninstall"
+msgstr "{}  עדיין נראית מותקנת: נסה הסרה רגילה"
+
+msgid "Waiting"
+msgstr "ממתין"
+
+msgid "Uninstalling"
+msgstr "מסיר"
+
+msgid "Check"
+msgstr "לבדוק"
+
+msgid "Removed"
+msgstr "הוסר"
+
+msgid "Failed"
+msgstr "נכשל"
+
+msgid "For programs that aren't listed, were partly removed or have a broken uninstaller"
+msgstr "לתוכנות שלא ברשימה, שהוסרו חלקית או שמסיר ההתקנה שלהן תקול"
+
+msgid "Program name"
+msgstr "שם התוכנה"
+
+msgid "Exact name; several separated by ;"
+msgstr "שם מדויק; כמה שמות מופרדים ב־;"
+
+msgid "Folder or main file"
+msgstr "תיקייה או קובץ ראשי"
+
+msgid "Pick below or type; several separated by ;"
+msgstr "בחר למטה או הקלד; כמה מופרדים ב־;"
+
+msgid "Next"
+msgstr "הבא"
+
+msgid "Find uninstallers"
+msgstr "חפש מסירי התקנה"
+
+msgid "Preparing"
+msgstr "מכין"
+
+msgid "Found {} program(s) with an uninstaller"
+msgstr "נמצאו {} תוכנות עם מסיר התקנה"
+
+msgid "None: Next scans for leftovers by name and path."
+msgstr "אין: \"הבא\" יסרוק שאריות לפי שם ונתיב."
+
+msgid "Don't run an uninstaller, only remove leftovers"
+msgstr "אל תפעיל מסיר התקנה, רק הסר שאריות"
+
+msgid "Run the uninstaller of {} {}"
+msgstr "הפעל את מסיר ההתקנה של {} {}"
+
+msgid "Found {} trace log(s)"
+msgstr "נמצאו {} לוגי מעקב"
+
+msgid " from the logs database"
+msgstr " ממסד הלוגים"
+
+msgid "Use the log \"{}\"{from} ({})"
+msgstr "השתמש בלוג \"{}\"{from} ({})"
+
+msgid "Groups"
+msgstr "קבוצות"
+
+msgid "Programs are added to a group from their right-click menu."
+msgstr "מוסיפים תוכנות לקבוצה מתפריט הלחיצה הימנית שלהן."
+
+msgid "Delete group {g}"
+msgstr "מחק את הקבוצה {g}"
+
+msgid "Rename group {g}"
+msgstr "שנה את שם הקבוצה {g}"
+
+msgid "Move down"
+msgstr "הזז למטה"
+
+msgid "Move up"
+msgstr "הזז למעלה"
+
+msgid "Forced MSI Uninstall"
+msgstr "הסרת MSI בכוח"
+
+msgid "Uninstall for all users"
+msgstr "הסר לכל המשתמשים"
+
+msgid "Reset the app"
+msgstr "אפס את האפליקציה"
+
+msgid "Run"
+msgstr "הפעל"
+
+msgid "Terminate"
+msgstr "סיים"
+
+msgid "Reset Microsoft Store"
+msgstr "אפס את Microsoft Store"
+
+msgid "Change / Repair"
+msgstr "שינוי / תיקון"
+
+msgid "Install location"
+msgstr "מיקום ההתקנה"
+
+msgid "Open registry key"
+msgstr "פתח את מפתח הרישום"
+
+msgid "About link"
+msgstr "קישור \"אודות\""
+
+msgid "Help link"
+msgstr "קישור לעזרה"
+
+msgid "Update link"
+msgstr "קישור לעדכון"
+
+msgid "Add / edit comment"
+msgstr "הוסף / ערוך הערה"
+
+msgid "{}  Add to group"
+msgstr "{}  הוסף לקבוצה"
+
+msgid "Leftovers"
+msgstr "שאריות"
+
+msgid "Summary"
+msgstr "סיכום"
+
+msgid "Traced installation · {items} recorded change(s)"
+msgstr "התקנה במעקב · {items} שינויים מתועדים"
+
+msgid "Version {}"
+msgstr "גרסה {}"
+
+msgid "Installed {}"
+msgstr "הותקן ב־{}"
+
+msgid "Key"
+msgstr "מפתח"
+
+msgid "Value"
+msgstr "ערך"
+
+msgid "Setting"
+msgstr "הגדרה"
+
+msgid "Entry"
+msgstr "רשומה"
+
+msgid "Package"
+msgstr "חבילה"
+
+msgid "up to date"
+msgstr "מעודכן"
+
+msgid "Checking for updates"
+msgstr "בודק עדכונים"
+
+msgid "CleanCore {} is available. Install it from Settings › Updates."
+msgstr "CleanCore {} זמין. התקן אותו בהגדרות › עדכונים."
+
+msgid "Checking for updates failed: {e}"
+msgstr "בדיקת העדכונים נכשלה: {e}"
+
+msgid "The update was not installed: {e}"
+msgstr "העדכון לא הותקן: {e}"
+
+msgid "Updates"
+msgstr "עדכונים"
+
+msgid "CleanCore {}"
+msgstr "CleanCore {}"
+
+msgid "Update installed. Restart CleanCore to use it."
+msgstr "העדכון הותקן. הפעל מחדש את CleanCore כדי להשתמש בו."
+
+msgid "Version {} is available."
+msgstr "גרסה {} זמינה."
+
+msgid "You have the latest version."
+msgstr "יש לך את הגרסה העדכנית ביותר."
+
+msgid "Updates come from the project's GitHub releases."
+msgstr "העדכונים מגיעים מגרסאות הפרויקט ב־GitHub."
+
+msgid "Install {}"
+msgstr "התקן את {}"
+
+msgid "Downloading and verifying the update"
+msgstr "מוריד ומאמת את העדכון"
+
+msgid "What's new"
+msgstr "מה חדש"
+
+msgid "Check for updates"
+msgstr "בדוק עדכונים"
+
+msgid "Check for updates automatically"
+msgstr "בדוק עדכונים אוטומטית"
+
+msgid "Once a day, when CleanCore starts. Updates are installed only when you choose to."
+msgstr "פעם ביום, כש־CleanCore נפתח. עדכונים מותקנים רק כשאתה בוחר בכך."
+
+msgid "{}  Every update is checked against the CleanCore release signature and its checksum before it is installed."
+msgstr "{}  כל עדכון נבדק מול חתימת הגרסה של CleanCore ומול סכום הביקורת שלו לפני ההתקנה."
+
+msgid "Pick or type a key/path to watch."
+msgstr "בחר או הקלד מפתח/נתיב למעקב."
+
+msgid "Resumed watching {path}"
+msgstr "המעקב אחרי {path} חודש"
+
+msgid "Watching {path}"
+msgstr "עוקב אחרי {path}"
+
+msgid "Find out exactly what a program changes in the registry"
+msgstr "גלה בדיוק מה תוכנה משנה ברישום"
+
+msgid "Find out exactly what a program changes in your settings and config files"
+msgstr "גלה בדיוק מה תוכנה משנה בהגדרות ובקובצי התצורה שלך"
+
+msgid "{}  Recording"
+msgstr "{}  מקליט"
+
+msgid "Start recording"
+msgstr "התחל להקליט"
+
+msgid "Record changes while CleanCore is open"
+msgstr "הקלט שינויים כל עוד CleanCore פתוח"
+
+msgid "Start recorder at login"
+msgstr "הפעל את המקליט בכניסה"
+
+msgid "Keep recording in the background, even when CleanCore is closed"
+msgstr "המשך להקליט ברקע, גם כש־CleanCore סגור"
+
+msgid "Record in the background"
+msgstr "הקלט ברקע"
+
+msgid "Recorder started"
+msgstr "המקליט הופעל"
+
+msgid "The recorder now runs in the background from login"
+msgstr "המקליט רץ עכשיו ברקע מרגע הכניסה"
+
+msgid "The recorder no longer runs in the background"
+msgstr "המקליט כבר לא רץ ברקע"
+
+msgid "Choose what to watch"
+msgstr "בחר במה לעקוב"
+
+msgid "Use a quick pick on the left"
+msgstr "השתמש בבחירה מהירה משמאל"
+
+msgid "The button at the top right"
+msgstr "הכפתור בפינה הימנית העליונה"
+
+msgid "Use your program"
+msgstr "השתמש בתוכנה שלך"
+
+msgid "Its changes appear below"
+msgstr "השינויים שלה מופיעים למטה"
+
+msgid "not found"
+msgstr "לא נמצא"
+
+msgid "Resumed"
+msgstr "חודש"
+
+msgid "Paused"
+msgstr "מושהה"
+
+msgid "Changes cleared"
+msgstr "השינויים נוקו"
+
+msgid "Stopped watching {}"
+msgstr "המעקב אחרי {} הופסק"
+
+msgid "What to watch"
+msgstr "במה לעקוב"
+
+msgid "Pick a place a program is likely to change, or choose your own."
+msgstr "בחר מקום שתוכנה צפויה לשנות, או בחר בעצמך."
+
+msgid "A registry key"
+msgstr "מפתח רישום"
+
+msgid "A folder, file or dconf: path"
+msgstr "תיקייה, קובץ או נתיב dconf:"
+
+msgid "Watch"
+msgstr "עקוב"
+
+msgid "Also record reads (very noisy)"
+msgstr "הקלט גם קריאות (רועש מאוד)"
+
+msgid "Hide all locations"
+msgstr "הסתר את כל המיקומים"
+
+msgid "Browse all locations"
+msgstr "עיין בכל המיקומים"
+
+msgid "Reload"
+msgstr "טען מחדש"
+
+msgid "Watching"
+msgstr "במעקב"
+
+msgid "Export all"
+msgstr "ייצא הכול"
+
+msgid "Folder (one CSV per watched place)"
+msgstr "תיקייה (קובץ CSV אחד לכל מקום במעקב)"
+
+msgid "Exported {n} log(s) to {}"
+msgstr "יוצאו {n} לוגים אל {}"
+
+msgid "Nothing yet. Use a quick pick above to start."
+msgstr "עדיין אין כלום. השתמש בבחירה מהירה למעלה כדי להתחיל."
+
+msgid "Stop watching"
+msgstr "הפסק לעקוב"
+
+msgid "Clear its changes"
+msgstr "נקה את השינויים שלו"
+
+msgid "Export its changes"
+msgstr "ייצא את השינויים שלו"
+
+msgid "File (.txt .csv .json)"
+msgstr "קובץ (‎.txt .csv .json)"
+
+msgid "Pause watching"
+msgstr "השהה מעקב"
+
+msgid "Resume watching"
+msgstr "חדש מעקב"
+
+msgid "Changes"
+msgstr "שינויים"
+
+msgid "in {}"
+msgstr "ב־{}"
+
+msgid "Details"
+msgstr "פרטים"
+
+msgid "Every field, as a table"
+msgstr "כל השדות, כטבלה"
+
+msgid "Simple"
+msgstr "פשוט"
+
+msgid "Filter changes"
+msgstr "סינון שינויים"
+
+msgid "Nothing to show yet"
+msgstr "עדיין אין מה להציג"
+
+msgid "Choose what to watch on the left, then start recording."
+msgstr "בחר משמאל במה לעקוב, ואז התחל להקליט."
+
+msgid "Not recording"
+msgstr "לא מקליט"
+
+msgid "Press Start recording at the top right, then use your program."
+msgstr "לחץ על \"התחל להקליט\" בפינה הימנית העליונה, ואז השתמש בתוכנה שלך."
+
+msgid "Waiting for changes"
+msgstr "ממתין לשינויים"
+
+msgid "Use your program now: install it, change a setting, close it. Changes appear here."
+msgstr "השתמש בתוכנה שלך עכשיו: התקן אותה, שנה הגדרה, סגור אותה. השינויים יופיעו כאן."
+
+msgid "Highlight rows"
+msgstr "הדגש שורות"
+
+msgid "Time"
+msgstr "זמן"
+
+msgid "Process"
+msgstr "תהליך"
+
+msgid "Operation"
+msgstr "פעולה"
+
+msgid "New data"
+msgstr "נתונים חדשים"
+
+msgid "Old data"
+msgstr "נתונים ישנים"
+
+msgid "Clear log"
+msgstr "נקה לוג"
+
+msgid "how it works"
+msgstr "איך זה עובד"
+
+msgid "Your programs"
+msgstr "התוכנות שלך"
+
+msgid "Startup"
+msgstr "הפעלה"
+
+msgid "App settings"
+msgstr "הגדרות אפליקציות"
+
+msgid "App data"
+msgstr "נתוני אפליקציות"
+
+msgid "Desktop settings"
+msgstr "הגדרות שולחן העבודה"
+
+msgid "Desktop settings (dconf)"
+msgstr "הגדרות שולחן העבודה (dconf)"
+
+msgid "Desktop setting {rest}"
+msgstr "הגדרת שולחן עבודה {rest}"
+
+msgid "was created"
+msgstr "נוצר"
+
+msgid "was deleted"
+msgstr "נמחק"
+
+msgid "was renamed"
+msgstr "שונה שמו"
+
+msgid "was added"
+msgstr "נוסף"
+
+msgid "was changed"
+msgstr "שונה"
+
+msgid "was removed"
+msgstr "הוסר"
+
+msgid "was updated"
+msgstr "עודכן"
+
+msgid "was read"
+msgstr "נקרא"
+
+msgid "Open"
+msgstr "פתח"
+
+msgid "Broken application launchers"
+msgstr "משגרי אפליקציות שבורים"
+
+msgid "Desktop entries whose program no longer exists."
+msgstr "רשומות שולחן עבודה שהתוכנה שלהן כבר לא קיימת."
+
+msgid "Missing start-up items"
+msgstr "פריטי הפעלה חסרים"
+
+msgid "Autostart entries and systemd user services whose program no longer exists."
+msgstr "רשומות הפעלה אוטומטית ושירותי משתמש של systemd שהתוכנה שלהם כבר לא קיימת."
+
+msgid "Invalid file associations"
+msgstr "שיוכי קבצים לא תקינים"
+
+msgid "mimeapps.list entries that point to applications that are not installed."
+msgstr "רשומות ב־mimeapps.list שמצביעות על אפליקציות שאינן מותקנות."
+
+msgid "Recently used and history lists"
+msgstr "רשימות של שימוש אחרון והיסטוריה"
+
+msgid "Recent-file entries that point to files which no longer exist."
+msgstr "רשומות קבצים אחרונים שמצביעות על קבצים שכבר לא קיימים."
+
+msgid "Broken symbolic links"
+msgstr "קישורים סמליים שבורים"
+
+msgid "Symbolic links in your configuration and local folders whose target is gone."
+msgstr "קישורים סמליים בתיקיות התצורה והתיקיות המקומיות שלך שהיעד שלהם נעלם."
+
+msgid "Empty folders"
+msgstr "תיקיות ריקות"
+
+msgid "Empty folders left in configuration and data directories."
+msgstr "תיקיות ריקות שנשארו בתיקיות התצורה והנתונים."
+
+msgid "Leftover application data"
+msgstr "נתוני אפליקציות שנשארו"
+
+msgid "Configuration and data folders of applications that are no longer installed."
+msgstr "תיקיות תצורה ונתונים של אפליקציות שכבר אינן מותקנות."
+
+msgid "Contents of folders added to the include list."
+msgstr "תוכן התיקיות שנוספו לרשימת ההכללות."
+
+msgid "Missing Shared DLLs"
+msgstr "קובצי DLL משותפים חסרים"
+
+msgid "Shared dynamic-link libraries that do not exist."
+msgstr "ספריות קישור דינמי משותפות שאינן קיימות."
+
+msgid "Unused Shared DLLs"
+msgstr "קובצי DLL משותפים שאינם בשימוש"
+
+msgid "Shared DLLs whose usage counter is 0."
+msgstr "קובצי DLL משותפים שמונה השימוש שלהם 0."
+
+msgid "Missing Windows start-up items"
+msgstr "פריטי הפעלה חסרים של Windows"
+
+msgid "Programs set to start with Windows that no longer exist."
+msgstr "תוכנות שמוגדרות לעלות עם Windows שכבר לא קיימות."
+
+msgid "Wrong applications/paths"
+msgstr "אפליקציות/נתיבים שגויים"
+
+msgid "App Paths and Applications entries whose program is missing."
+msgstr "רשומות App Paths ו־Applications שהתוכנה שלהן חסרה."
+
+msgid "Incorrect uninstaller data"
+msgstr "נתוני הסרה שגויים"
+
+msgid "Uninstall entries for programs that are gone, or empty entries."
+msgstr "רשומות הסרה של תוכנות שנעלמו, או רשומות ריקות."
+
+msgid "Invalid firewall rules"
+msgstr "כללי חומת אש לא תקינים"
+
+msgid "Firewall rules for programs that no longer exist."
+msgstr "כללי חומת אש לתוכנות שכבר לא קיימות."
+
+msgid "Invalid cache entries"
+msgstr "רשומות מטמון לא תקינות"
+
+msgid "MUI cache and compatibility-assistant entries for missing files."
+msgstr "רשומות במטמון MUI ובעוזר התאימות לקבצים חסרים."
+
+msgid "Unavailable Windows services"
+msgstr "שירותי Windows שאינם זמינים"
+
+msgid "Services whose executable or driver file is missing."
+msgstr "שירותים שקובץ ההפעלה או קובץ מנהל ההתקן שלהם חסר."
+
+msgid "Most recently used and history lists"
+msgstr "רשימות שימוש אחרון והיסטוריה"
+
+msgid "Recent files, typed paths, run history and dialog history."
+msgstr "קבצים אחרונים, נתיבים שהוקלדו, היסטוריית הפעלה והיסטוריית חלונות דו־שיח."
+
+msgid "Unused file extensions"
+msgstr "סיומות קבצים שאינן בשימוש"
+
+msgid "Extensions not associated with any program."
+msgstr "סיומות שאינן משויכות לשום תוכנה."
+
+msgid "Corrupted context menu commands"
+msgstr "פקודות פגומות בתפריט ההקשר"
+
+msgid "Context menu commands and handlers that point to missing files or classes."
+msgstr "פקודות ומטפלים בתפריט ההקשר שמצביעים על קבצים או מחלקות חסרים."
+
+msgid "COM and ActiveX missing components"
+msgstr "רכיבי COM ו־ActiveX חסרים"
+
+msgid "COM class and type-library registrations whose files are missing."
+msgstr "רישומים של מחלקות COM וספריות טיפוסים שהקבצים שלהם חסרים."
+
+msgid "Invalid MSI paths"
+msgstr "נתיבי MSI לא תקינים"
+
+msgid "Windows Installer folder references to folders that no longer exist."
+msgstr "הפניות של Windows Installer לתיקיות שכבר לא קיימות."
+
+msgid "Invalid system settings items"
+msgstr "פריטי הגדרות מערכת לא תקינים"
+
+msgid "Fonts, sound events and shell icons that point to missing files."
+msgstr "גופנים, אירועי צליל וסמלי מעטפת שמצביעים על קבצים חסרים."
+
+msgid "Invalid Class keys items"
+msgstr "פריטי מפתחות Class לא תקינים"
+
+msgid "File-type icons and class data that reference missing files."
+msgstr "סמלי סוגי קבצים ונתוני מחלקות שמפנים לקבצים חסרים."
+
+msgid "Empty keys"
+msgstr "מפתחות ריקים"
+
+msgid "Software-related keys that do not contain any data."
+msgstr "מפתחות הקשורים לתוכנות שאינם מכילים נתונים."
+
+msgid "Contents of keys added to the include list."
+msgstr "תוכן המפתחות שנוספו לרשימת ההכללות."
+
+msgid "Win32"
+msgstr "Win32"
+
+msgid "Windows App"
+msgstr "אפליקציית Windows"
+
+msgid "Flatpak"
+msgstr "Flatpak"
+
+msgid "Snap"
+msgstr "Snap"
+
+msgid "AppImage"
+msgstr "AppImage"
+
+msgid "Manual"
+msgstr "ידני"
+
+msgid "Leftovers removal"
+msgstr "הסרת שאריות"
+
+msgid "Traced Uninstall"
+msgstr "הסרה לפי מעקב"
+
+msgid "Registry RunOnce"
+msgstr "Registry RunOnce"
+
+msgid "Autostart"
+msgstr "הפעלה אוטומטית"
+
+msgid "Service"
+msgstr "שירות"
+
+msgid "Scheduled task"
+msgstr "משימה מתוזמנת"
+
+msgid "User service"
+msgstr "שירות משתמש"
+
+msgid "Cron @reboot"
+msgstr "Cron @reboot"
+
+msgid "Login script"
+msgstr "סקריפט כניסה"
+
+msgid "Recently used files"
+msgstr "קבצים אחרונים"
+
+msgid "Thumbnail cache"
+msgstr "מטמון תמונות ממוזערות"
+
+msgid "Small previews of pictures and videos"
+msgstr "תצוגות מקדימות קטנות של תמונות וסרטונים"
+
+msgid "Trash"
+msgstr "אשפה"
+
+msgid "Files you deleted"
+msgstr "קבצים שמחקת"
+
+msgid "Clipboard"
+msgstr "לוח העריכה"
+
+msgid "What was last copied"
+msgstr "מה שהועתק לאחרונה"
+
+msgid "Command history"
+msgstr "היסטוריית פקודות"
+
+msgid "Commands typed in terminals (bash, zsh, fish, Python, less)"
+msgstr "פקודות שהוקלדו במסופים (bash, zsh, fish, Python, less)"
+
+msgid "Application caches"
+msgstr "מטמוני אפליקציות"
+
+msgid "Crash reports"
+msgstr "דוחות קריסה"
+
+msgid "Reports left by programs that crashed"
+msgstr "דוחות שהשאירו תוכנות שקרסו"
+
+msgid "LibreOffice recent documents"
+msgstr "מסמכים אחרונים של LibreOffice"
+
+msgid "The Start Center and File › Recent lists"
+msgstr "מרכז ההתחלה ורשימות קובץ › אחרונים"
+
+msgid "HistoryInfo['PickList']"
+msgstr "HistoryInfo['PickList']"
+
+msgid "System Monitor"
+msgstr "צג המערכת"
+
+msgid "Running processes and resource use"
+msgstr "תהליכים פועלים ושימוש במשאבים"
+
+msgid "Processes in a terminal"
+msgstr "תהליכים במסוף"
+
+msgid "System settings"
+msgstr "הגדרות מערכת"
+
+msgid "System Settings"
+msgstr "הגדרות המערכת"
+
+msgid "dconf Editor"
+msgstr "עורך dconf"
+
+msgid "Low-level desktop settings"
+msgstr "הגדרות שולחן עבודה ברמה נמוכה"
+
+msgid "Logs"
+msgstr "לוגים"
+
+msgid "System journal"
+msgstr "יומן המערכת"
+
+msgid "Journal (errors)"
+msgstr "יומן (שגיאות)"
+
+msgid "Errors since the last start"
+msgstr "שגיאות מאז ההפעלה האחרונה"
+
+msgid "journalctl -b -p err --no-pager"
+msgstr "journalctl -b -p err --no-pager"
+
+msgid "Services"
+msgstr "שירותים"
+
+msgid "Running system services"
+msgstr "שירותי מערכת פועלים"
+
+msgid "systemctl list-units --type=service --no-pager"
+msgstr "systemctl list-units --type=service --no-pager"
+
+msgid "System Information"
+msgstr "מידע מערכת"
+
+msgid "Hardware and benchmarks"
+msgstr "חומרה ומבחני ביצועים"
+
+msgid "Hardware summary"
+msgstr "סיכום חומרה"
+
+msgid "CPU, memory, disks"
+msgstr "מעבד, זיכרון, דיסקים"
+
+msgid "inxi -Fxz"
+msgstr "inxi -Fxz"
+
+msgid "Partitions, SMART data, formatting"
+msgstr "מחיצות, נתוני SMART, אתחול"
+
+msgid "Disk Usage Analyzer"
+msgstr "מנתח השימוש בדיסק"
+
+msgid "What fills the disk"
+msgstr "מה ממלא את הדיסק"
+
+msgid "Filelight"
+msgstr "Filelight"
+
+msgid "Partition editor"
+msgstr "עורך מחיצות"
+
+msgid "Free space"
+msgstr "מקום פנוי"
+
+msgid "Free space on every drive"
+msgstr "המקום הפנוי בכל כונן"
+
+msgid "df -h"
+msgstr "df -h"
+
+msgid "Network Connections"
+msgstr "חיבורי רשת"
+
+msgid "Edit network connections"
+msgstr "עריכת חיבורי רשת"
+
+msgid "Network information"
+msgstr "מידע רשת"
+
+msgid "Addresses and routes"
+msgstr "כתובות ונתיבים"
+
+msgid "ip -c a"
+msgstr "ip -c a"
+
+msgid "Ping"
+msgstr "Ping"
+
+msgid "Check the internet connection"
+msgstr "בדיקת החיבור לאינטרנט"
+
+msgid "ping -c 4 1.1.1.1"
+msgstr "ping -c 4 1.1.1.1"
+
+msgid "Trace route"
+msgstr "מעקב נתיב"
+
+msgid "The path to a server"
+msgstr "הנתיב לשרת"
+
+msgid "tracepath -n 1.1.1.1"
+msgstr "tracepath -n 1.1.1.1"
+
+msgid "Firewall"
+msgstr "חומת אש"
+
+msgid "Firewall rules"
+msgstr "כללי חומת אש"
+
+msgid "Passwords and Keys"
+msgstr "סיסמאות ומפתחות"
+
+msgid "Stored passwords and keys"
+msgstr "סיסמאות ומפתחות שמורים"
+
+msgid "Software Updater"
+msgstr "מעדכן התוכנות"
+
+msgid "Install updates"
+msgstr "התקנת עדכונים"
+
+msgid "Software & Updates"
+msgstr "תוכנות ועדכונים"
+
+msgid "Repositories and drivers"
+msgstr "מאגרים ומנהלי התקנים"
+
+msgid "Install and remove apps"
+msgstr "התקנה והסרה של אפליקציות"
+
+msgid "Discover"
+msgstr "Discover"
+
+msgid "Terminal"
+msgstr "מסוף"
+
+msgid "A command line"
+msgstr "שורת פקודה"
+
+msgid "no terminal emulator found"
+msgstr "לא נמצא אמולטור מסוף"
+
+msgid "all drives, no UI"
+msgstr "כל הכוננים, ללא ממשק"
+
+msgid "the clipboard is in use by another program"
+msgstr "לוח העריכה בשימוש של תוכנה אחרת"
+
+msgid "the clipboard could not be cleared"
+msgstr "לא ניתן היה לנקות את לוח העריכה"
+
+msgid "Windows"
+msgstr "Windows"
+
+msgid "SystemRoot"
+msgstr "SystemRoot"
+
+msgid "ProgramData"
+msgstr "ProgramData"
+
+msgid "Recent documents"
+msgstr "מסמכים אחרונים"
+
+msgid "Recent files and jump lists"
+msgstr "קבצים אחרונים ורשימות קפיצה"
+
+msgid "RecentDocs"
+msgstr "RecentDocs"
+
+msgid "Run history"
+msgstr "היסטוריית הפעלה"
+
+msgid "Commands typed in Win+R"
+msgstr "פקודות שהוקלדו ב־Win+R"
+
+msgid "RunMRU"
+msgstr "RunMRU"
+
+msgid "Typed paths"
+msgstr "נתיבים שהוקלדו"
+
+msgid "Addresses typed in File Explorer"
+msgstr "כתובות שהוקלדו בסייר הקבצים"
+
+msgid "TypedPaths"
+msgstr "TypedPaths"
+
+msgid "File Explorer search history"
+msgstr "היסטוריית החיפוש בסייר הקבצים"
+
+msgid "Searches typed in File Explorer"
+msgstr "חיפושים שהוקלדו בסייר הקבצים"
+
+msgid "WordWheelQuery"
+msgstr "WordWheelQuery"
+
+msgid "Recent files and folders in Open and Save dialogs"
+msgstr "קבצים ותיקיות אחרונים בחלונות פתיחה ושמירה"
+
+msgid "Temporary files"
+msgstr "קבצים זמניים"
+
+msgid "Your temp folder and the Windows temp folder (files in use are skipped)"
+msgstr "תיקיית הקבצים הזמניים שלך ושל Windows (קבצים בשימוש מדולגים)"
+
+msgid "Crash dumps and error reports"
+msgstr "דמפים של קריסות ודוחות שגיאה"
+
+msgid "Memory dumps and Windows Error Reporting files"
+msgstr "דמפים של זיכרון וקובצי דיווח שגיאות של Windows"
+
+msgid "Recycle Bin"
+msgstr "סל המחזור"
+
+msgid "File MRU"
+msgstr "File MRU"
+
+msgid "Place MRU"
+msgstr "Place MRU"
+
+msgid "User MRU"
+msgstr "User MRU"
+
+msgid "Microsoft Office recent documents"
+msgstr "מסמכים אחרונים של Microsoft Office"
+
+msgid "Recent files and places in Word, Excel, PowerPoint and the others"
+msgstr "קבצים ומקומות אחרונים ב־Word, ‏Excel, ‏PowerPoint ובשאר"
+
+msgid "Hardware, drivers and software summary"
+msgstr "סיכום חומרה, מנהלי התקנים ותוכנות"
+
+msgid "Task Manager"
+msgstr "מנהל המשימות"
+
+msgid "Running programs and performance"
+msgstr "תוכנות פועלות וביצועים"
+
+msgid "Resource Monitor"
+msgstr "צג המשאבים"
+
+msgid "CPU, memory, disk and network use per process"
+msgstr "שימוש במעבד, בזיכרון, בדיסק וברשת לפי תהליך"
+
+msgid "Performance Monitor"
+msgstr "צג הביצועים"
+
+msgid "Performance counters and reports"
+msgstr "מוני ביצועים ודוחות"
+
+msgid "Event Viewer"
+msgstr "מציג האירועים"
+
+msgid "System and application logs"
+msgstr "לוגים של המערכת ושל אפליקציות"
+
+msgid "Start, stop and configure services"
+msgstr "הפעלה, עצירה והגדרה של שירותים"
+
+msgid "Device Manager"
+msgstr "מנהל ההתקנים"
+
+msgid "Hardware and drivers"
+msgstr "חומרה ומנהלי התקנים"
+
+msgid "Computer Management"
+msgstr "ניהול מחשב"
+
+msgid "Users, shares, disks, services"
+msgstr "משתמשים, שיתופים, דיסקים, שירותים"
+
+msgid "System Configuration"
+msgstr "תצורת המערכת"
+
+msgid "Boot options and startup"
+msgstr "אפשרויות אתחול והפעלה"
+
+msgid "Registry Editor"
+msgstr "עורך הרישום"
+
+msgid "Edit the registry"
+msgstr "עריכת הרישום"
+
+msgid "Group Policy Editor"
+msgstr "עורך המדיניות הקבוצתית"
+
+msgid "Local policies (Pro editions)"
+msgstr "מדיניות מקומית (מהדורות Pro)"
+
+msgid "DirectX Diagnostic Tool"
+msgstr "כלי האבחון של DirectX"
+
+msgid "Graphics and sound details"
+msgstr "פרטי גרפיקה וצליל"
+
+msgid "System Restore"
+msgstr "שחזור מערכת"
+
+msgid "Go back to a restore point"
+msgstr "חזרה לנקודת שחזור"
+
+msgid "Memory Diagnostic"
+msgstr "אבחון זיכרון"
+
+msgid "Test the RAM at the next restart"
+msgstr "בדיקת זיכרון ה־RAM בהפעלה הבאה"
+
+msgid "System File Checker"
+msgstr "בודק קובצי המערכת"
+
+msgid "Find and repair damaged Windows files"
+msgstr "איתור ותיקון של קובצי Windows פגומים"
+
+msgid "Disk Cleanup"
+msgstr "ניקוי הדיסק"
+
+msgid "Windows' own cleanup of system files"
+msgstr "הניקוי של Windows עצמו לקובצי מערכת"
+
+msgid "Optimize Drives"
+msgstr "ייעול כוננים"
+
+msgid "Disk Management"
+msgstr "ניהול דיסקים"
+
+msgid "Partitions and volumes"
+msgstr "מחיצות ואמצעי אחסון"
+
+msgid "Check Disk"
+msgstr "בדיקת דיסק"
+
+msgid "Check the system drive for errors (read-only)"
+msgstr "בדיקת כונן המערכת לשגיאות (קריאה בלבד)"
+
+msgid "Network adapters"
+msgstr "מתאמי רשת"
+
+msgid "IP addresses, DNS and gateways"
+msgstr "כתובות IP, ‏DNS ושערים"
+
+msgid "ping 1.1.1.1"
+msgstr "ping 1.1.1.1"
+
+msgid "tracert 1.1.1.1"
+msgstr "tracert 1.1.1.1"
+
+msgid "Windows Firewall"
+msgstr "חומת האש של Windows"
+
+msgid "Windows Security"
+msgstr "אבטחת Windows"
+
+msgid "Antivirus and protection"
+msgstr "אנטי־וירוס והגנה"
+
+msgid "Programs and Features"
+msgstr "תוכניות ותכונות"
+
+msgid "Windows' own uninstaller list"
+msgstr "רשימת מסירי ההתקנה של Windows עצמו"
+
+msgid "Windows Features"
+msgstr "תכונות Windows"
+
+msgid "Turn Windows features on or off"
+msgstr "הפעלה או כיבוי של תכונות Windows"
+
+msgid "Windows Update"
+msgstr "Windows Update"
+
+msgid "Power Options"
+msgstr "אפשרויות צריכת חשמל"
+
+msgid "Power plans"
+msgstr "תוכניות צריכת חשמל"
+
+msgid "Remote Desktop"
+msgstr "שולחן עבודה מרוחק"
+
+msgid "Connect to another PC"
+msgstr "התחברות למחשב אחר"
+
+msgid "Command Prompt"
+msgstr "שורת הפקודה"
+
+msgid "Games and promoted apps"
+msgstr "משחקים ואפליקציות מקודמות"
+
+msgid "Microsoft extras"
+msgstr "תוספות של Microsoft"
+
+msgid "AI and Copilot"
+msgstr "בינה מלאכותית ו־Copilot"
+
+msgid "Xbox"
+msgstr "Xbox"
+
+msgid "Communication"
+msgstr "תקשורת"
+
+msgid "Candy Crush and other King games"
+msgstr "Candy Crush ומשחקי King אחרים"
+
+msgid "Pushed by Windows"
+msgstr "נדחף על ידי Windows"
+
+msgid "Microsoft.MicrosoftSolitaireCollection"
+msgstr "Microsoft.MicrosoftSolitaireCollection"
+
+msgid "Solitaire Collection"
+msgstr "Solitaire Collection"
+
+msgid "Ads unless you pay"
+msgstr "פרסומות אלא אם משלמים"
+
+msgid "SpotifyAB.SpotifyMusic"
+msgstr "SpotifyAB.SpotifyMusic"
+
+msgid "Spotify"
+msgstr "Spotify"
+
+msgid "Disney+"
+msgstr "Disney+"
+
+msgid "Facebook.*"
+msgstr "Facebook.*"
+
+msgid "BytedancePte.Ltd.TikTok"
+msgstr "BytedancePte.Ltd.TikTok"
+
+msgid "TikTok"
+msgstr "TikTok"
+
+msgid "AmazonVideo.PrimeVideo"
+msgstr "AmazonVideo.PrimeVideo"
+
+msgid "Prime Video"
+msgstr "Prime Video"
+
+msgid "LinkedIn"
+msgstr "LinkedIn"
+
+msgid "Clipchamp.Clipchamp"
+msgstr "Clipchamp.Clipchamp"
+
+msgid "Clipchamp"
+msgstr "Clipchamp"
+
+msgid "Video editor, online account needed"
+msgstr "עורך וידאו, נדרש חשבון מקוון"
+
+msgid "Microsoft.BingNews"
+msgstr "Microsoft.BingNews"
+
+msgid "News"
+msgstr "חדשות"
+
+msgid "Microsoft.BingWeather"
+msgstr "Microsoft.BingWeather"
+
+msgid "Weather"
+msgstr "מזג אוויר"
+
+msgid "Microsoft.BingSearch"
+msgstr "Microsoft.BingSearch"
+
+msgid "Bing Search"
+msgstr "חיפוש Bing"
+
+msgid "Microsoft.BingFinance"
+msgstr "Microsoft.BingFinance"
+
+msgid "Money"
+msgstr "כסף"
+
+msgid "Microsoft.BingSports"
+msgstr "Microsoft.BingSports"
+
+msgid "Sports"
+msgstr "ספורט"
+
+msgid "Microsoft.GetHelp"
+msgstr "Microsoft.GetHelp"
+
+msgid "Get Help"
+msgstr "קבלת עזרה"
+
+msgid "Microsoft.Getstarted"
+msgstr "Microsoft.Getstarted"
+
+msgid "Tips"
+msgstr "טיפים"
+
+msgid "Microsoft.MicrosoftOfficeHub"
+msgstr "Microsoft.MicrosoftOfficeHub"
+
+msgid "Microsoft 365 (Office) hub"
+msgstr "מרכז Microsoft 365 (Office)"
+
+msgid "An ad for Microsoft 365, not Office itself"
+msgstr "פרסומת ל־Microsoft 365, לא Office עצמו"
+
+msgid "Microsoft.WindowsFeedbackHub"
+msgstr "Microsoft.WindowsFeedbackHub"
+
+msgid "Feedback Hub"
+msgstr "מרכז המשוב"
+
+msgid "Microsoft.WindowsMaps"
+msgstr "Microsoft.WindowsMaps"
+
+msgid "Maps"
+msgstr "מפות"
+
+msgid "Microsoft.People"
+msgstr "Microsoft.People"
+
+msgid "People"
+msgstr "אנשים"
+
+msgid "Microsoft.MixedReality.Portal"
+msgstr "Microsoft.MixedReality.Portal"
+
+msgid "Mixed Reality Portal"
+msgstr "פורטל המציאות המעורבת"
+
+msgid "Microsoft.Microsoft3DViewer"
+msgstr "Microsoft.Microsoft3DViewer"
+
+msgid "3D Viewer"
+msgstr "מציג תלת־ממד"
+
+msgid "Microsoft.Print3D"
+msgstr "Microsoft.Print3D"
+
+msgid "Print 3D"
+msgstr "הדפסה בתלת־ממד"
+
+msgid "Microsoft.PowerAutomateDesktop"
+msgstr "Microsoft.PowerAutomateDesktop"
+
+msgid "Power Automate"
+msgstr "Power Automate"
+
+msgid "Microsoft.Todos"
+msgstr "Microsoft.Todos"
+
+msgid "Microsoft To Do"
+msgstr "Microsoft To Do"
+
+msgid "Microsoft.MicrosoftStickyNotes"
+msgstr "Microsoft.MicrosoftStickyNotes"
+
+msgid "Sticky Notes"
+msgstr "פתקים דביקים"
+
+msgid "Useful for many"
+msgstr "שימושי לרבים"
+
+msgid "Microsoft.Windows.DevHome"
+msgstr "Microsoft.Windows.DevHome"
+
+msgid "Dev Home"
+msgstr "Dev Home"
+
+msgid "Retired by Microsoft"
+msgstr "הופסק על ידי Microsoft"
+
+msgid "Microsoft.Wallet"
+msgstr "Microsoft.Wallet"
+
+msgid "Wallet"
+msgstr "ארנק"
+
+msgid "Microsoft.ZuneVideo"
+msgstr "Microsoft.ZuneVideo"
+
+msgid "Movies & TV"
+msgstr "סרטים וטלוויזיה"
+
+msgid "Microsoft.Office.Sway"
+msgstr "Microsoft.Office.Sway"
+
+msgid "Sway"
+msgstr "Sway"
+
+msgid "Microsoft.OneConnect"
+msgstr "Microsoft.OneConnect"
+
+msgid "Mobile Plans"
+msgstr "תוכניות סלולר"
+
+msgid "Microsoft.Copilot"
+msgstr "Microsoft.Copilot"
+
+msgid "Copilot"
+msgstr "Copilot"
+
+msgid "Microsoft.Windows.Ai.Copilot.Provider"
+msgstr "Microsoft.Windows.Ai.Copilot.Provider"
+
+msgid "Copilot provider"
+msgstr "ספק Copilot"
+
+msgid "Microsoft.549981C3F5F10"
+msgstr "Microsoft.549981C3F5F10"
+
+msgid "Cortana"
+msgstr "Cortana"
+
+msgid "Microsoft.MicrosoftJournal"
+msgstr "Microsoft.MicrosoftJournal"
+
+msgid "Journal"
+msgstr "יומן"
+
+msgid "Microsoft.XboxApp"
+msgstr "Microsoft.XboxApp"
+
+msgid "Xbox Console Companion"
+msgstr "Xbox Console Companion"
+
+msgid "Old Xbox app"
+msgstr "אפליקציית Xbox הישנה"
+
+msgid "Microsoft.GamingApp"
+msgstr "Microsoft.GamingApp"
+
+msgid "Needed for Game Pass"
+msgstr "נדרש ל־Game Pass"
+
+msgid "Microsoft.XboxGamingOverlay"
+msgstr "Microsoft.XboxGamingOverlay"
+
+msgid "Xbox Game Bar"
+msgstr "Xbox Game Bar"
+
+msgid "Win+G overlay, screen recording"
+msgstr "שכבת Win+G, הקלטת מסך"
+
+msgid "Microsoft.XboxGameOverlay"
+msgstr "Microsoft.XboxGameOverlay"
+
+msgid "Xbox Game Overlay"
+msgstr "Xbox Game Overlay"
+
+msgid "Microsoft.XboxSpeechToTextOverlay"
+msgstr "Microsoft.XboxSpeechToTextOverlay"
+
+msgid "Xbox speech-to-text"
+msgstr "המרת דיבור לטקסט של Xbox"
+
+msgid "Microsoft.Xbox.TCUI"
+msgstr "Microsoft.Xbox.TCUI"
+
+msgid "Xbox TCUI"
+msgstr "Xbox TCUI"
+
+msgid "Some games need it to sign in"
+msgstr "חלק מהמשחקים צריכים אותו כדי להתחבר"
+
+msgid "MicrosoftTeams"
+msgstr "MicrosoftTeams"
+
+msgid "Teams (personal)"
+msgstr "Teams (אישי)"
+
+msgid "Not Teams for work or school"
+msgstr "לא Teams לעבודה או ללימודים"
+
+msgid "Teams"
+msgstr "Teams"
+
+msgid "Needed for work or school accounts"
+msgstr "נדרש לחשבונות עבודה או לימודים"
+
+msgid "Microsoft.SkypeApp"
+msgstr "Microsoft.SkypeApp"
+
+msgid "Skype"
+msgstr "Skype"
+
+msgid "Microsoft.YourPhone"
+msgstr "Microsoft.YourPhone"
+
+msgid "Phone Link"
+msgstr "קישור לטלפון"
+
+msgid "Connects an Android phone or iPhone"
+msgstr "מחבר טלפון Android או iPhone"
+
+msgid "Microsoft.OutlookForWindows"
+msgstr "Microsoft.OutlookForWindows"
+
+msgid "Outlook (new)"
+msgstr "Outlook (החדש)"
+
+msgid "Microsoft.windowscommunicationsapps"
+msgstr "Microsoft.windowscommunicationsapps"
+
+msgid "Mail and Calendar"
+msgstr "דואר ולוח שנה"
+
+msgid "Retired; replaced by the new Outlook"
+msgstr "הופסק; הוחלף ב־Outlook החדש"
+
+msgid "Microsoft.Messaging"
+msgstr "Microsoft.Messaging"
+
+msgid "Messaging"
+msgstr "הודעות"
+
+msgid "DisplayName"
+msgstr "DisplayName"
+
+msgid "PackageName"
+msgstr "PackageName"
+
+msgid "the Microsoft slop cleaner is for Windows"
+msgstr "מנקה הזבל של Microsoft מיועד ל־Windows"
+
+msgid " -AllUsers"
+msgstr " -AllUsers"
+
+msgid "Google Chrome › Work"
+msgstr "Google Chrome › Work"
+
+msgid "Cache"
+msgstr "מטמון"
+
+msgid "Downloaded copies of web pages and images"
+msgstr "עותקים שהורדו של דפי אינטרנט ותמונות"
+
+msgid "Browsing and download history"
+msgstr "היסטוריית גלישה והורדות"
+
+msgid "Visited pages and downloads; bookmarks are kept"
+msgstr "דפים שביקרת בהם והורדות; הסימניות נשמרות"
+
+msgid "DELETE FROM moz_historyvisits"
+msgstr "DELETE FROM moz_historyvisits"
+
+msgid "DELETE FROM moz_inputhistory"
+msgstr "DELETE FROM moz_inputhistory"
+
+msgid "DELETE FROM moz_annos"
+msgstr "DELETE FROM moz_annos"
+
+msgid "DELETE FROM moz_places WHERE id NOT IN (SELECT fk FROM moz_bookmarks WHERE fk IS NOT NULL)"
+msgstr "DELETE FROM moz_places WHERE id NOT IN (SELECT fk FROM moz_bookmarks WHERE fk IS NOT NULL)"
+
+msgid "UPDATE moz_places SET visit_count = 0, last_visit_date = NULL, frecency = 0"
+msgstr "UPDATE moz_places SET visit_count = 0, last_visit_date = NULL, frecency = 0"
+
+msgid "Form and search history"
+msgstr "היסטוריית טפסים וחיפושים"
+
+msgid "Text typed into forms and the search bar"
+msgstr "טקסט שהוקלד בטפסים ובשורת החיפוש"
+
+msgid "Cookies"
+msgstr "עוגיות"
+
+msgid "Signs you out of websites"
+msgstr "מנתק אותך מאתרים"
+
+msgid "Session"
+msgstr "הפעלה"
+
+msgid "Open tabs restored at the next start"
+msgstr "כרטיסיות פתוחות שישוחזרו בהפעלה הבאה"
+
+msgid "Visited pages, downloads, top sites and typed addresses"
+msgstr "דפים שביקרת בהם, הורדות, אתרים מובילים וכתובות שהוקלדו"
+
+msgid "History-journal"
+msgstr "History-journal"
+
+msgid "Visited Links"
+msgstr "Visited Links"
+
+msgid "Top Sites"
+msgstr "Top Sites"
+
+msgid "Top Sites-journal"
+msgstr "Top Sites-journal"
+
+msgid "Shortcuts"
+msgstr "Shortcuts"
+
+msgid "Shortcuts-journal"
+msgstr "Shortcuts-journal"
+
+msgid "Network Action Predictor"
+msgstr "Network Action Predictor"
+
+msgid "Network Action Predictor-journal"
+msgstr "Network Action Predictor-journal"
+
+msgid "Form data"
+msgstr "נתוני טפסים"
+
+msgid "Text typed into forms (autofill)"
+msgstr "טקסט שהוקלד בטפסים (מילוי אוטומטי)"
+
+msgid "Color scheme"
+msgstr "ערכת צבעים"
+
+msgid "Light or dark style for apps that follow the system preference."
+msgstr "סגנון בהיר או כהה לאפליקציות שעוקבות אחרי העדפת המערכת."
+
+msgid "Prefer dark"
+msgstr "העדף כהה"
+
+msgid "Prefer light"
+msgstr "העדף בהיר"
+
+msgid "Disable animations"
+msgstr "בטל אנימציות"
+
+msgid "Windows, menus and the overview open instantly."
+msgstr "חלונות, תפריטים והסקירה נפתחים מייד."
+
+msgid "Show battery percentage"
+msgstr "הצג אחוז סוללה"
+
+msgid "Title bar buttons"
+msgstr "כפתורי שורת הכותרת"
+
+msgid "Which window buttons are shown and on which side."
+msgstr "אילו כפתורי חלון מוצגים ובאיזה צד."
+
+msgid "Minimize, maximize, close on the right"
+msgstr "מזער, הגדל, סגור מימין"
+
+msgid "Close, minimize, maximize on the left"
+msgstr "סגור, מזער, הגדל משמאל"
+
+msgid "Open folders in list view"
+msgstr "פתח תיקיות בתצוגת רשימה"
+
+msgid "The Files app shows details (size, type, date) by default."
+msgstr "אפליקציית הקבצים מציגה פרטים (גודל, סוג, תאריך) כברירת מחדל."
+
+msgid "Add \"Delete Permanently\" to the Files menu"
+msgstr "הוסף \"מחק לצמיתות\" לתפריט הקבצים"
+
+msgid "Add \"Create Link\" to the Files menu"
+msgstr "הוסף \"צור קישור\" לתפריט הקבצים"
+
+msgid "Open items with a single click"
+msgstr "פתח פריטים בלחיצה אחת"
+
+msgid "Search inside subfolders"
+msgstr "חפש בתוך תיקיות־משנה"
+
+msgid "Where the Files app searches subfolders."
+msgstr "איפה אפליקציית הקבצים מחפשת בתיקיות־משנה."
+
+msgid "Everywhere, including network locations"
+msgstr "בכל מקום, כולל מיקומי רשת"
+
+msgid "Never (faster)"
+msgstr "אף פעם (מהיר יותר)"
+
+msgid "Show hidden files in file dialogs"
+msgstr "הצג קבצים מוסתרים בחלונות קבצים"
+
+msgid "Show seconds in the top-bar clock"
+msgstr "הצג שניות בשעון בסרגל העליון"
+
+msgid "Show the weekday in the top-bar clock"
+msgstr "הצג את היום בשבוע בשעון בסרגל העליון"
+
+msgid "Disable the hot corner"
+msgstr "בטל את הפינה החמה"
+
+msgid "Moving the pointer to the top-left corner no longer opens the overview."
+msgstr "הזזת הסמן לפינה השמאלית העליונה כבר לא פותחת את הסקירה."
+
+msgid "Open new windows in the center"
+msgstr "פתח חלונות חדשים במרכז"
+
+msgid "Snap windows to screen edges"
+msgstr "הצמד חלונות לקצוות המסך"
+
+msgid "Dock position"
+msgstr "מיקום המעגן"
+
+msgid "Ubuntu Dock / Dash to Dock placement."
+msgstr "מיקום Ubuntu Dock / Dash to Dock."
+
+msgid "Left"
+msgstr "שמאל"
+
+msgid "Bottom"
+msgstr "למטה"
+
+msgid "Right"
+msgstr "ימין"
+
+msgid "Locate the pointer with Ctrl"
+msgstr "איתור הסמן עם Ctrl"
+
+msgid "Pressing Ctrl highlights where the mouse pointer is."
+msgstr "לחיצה על Ctrl מדגישה את מיקום סמן העכבר."
+
+msgid "Never autorun software on inserted media"
+msgstr "לעולם אל תפעיל תוכנות ממדיה שהוכנסה"
+
+msgid "Reduces the risk of malware starting from USB drives and discs."
+msgstr "מפחית את הסיכון שתוכנה זדונית תופעל מכונני USB ותקליטורים."
+
+msgid "Hide notifications on the lock screen"
+msgstr "הסתר התראות במסך הנעילה"
+
+msgid "Don't remember recently used files"
+msgstr "אל תזכור קבצים שהיו בשימוש לאחרונה"
+
+msgid "Empty trash and temp files older than 30 days"
+msgstr "רוקן אשפה וקבצים זמניים בני יותר מ־30 יום"
+
+msgid "Don't send problem reports or usage statistics"
+msgstr "אל תשלח דוחות בעיות או סטטיסטיקות שימוש"
+
+msgid "Block camera access"
+msgstr "חסום גישה למצלמה"
+
+msgid "Apps using the GNOME camera portal can't use the camera."
+msgstr "אפליקציות שמשתמשות בפורטל המצלמה של GNOME לא יכולות להשתמש במצלמה."
+
+msgid "Tap to click on the touchpad"
+msgstr "הקשה ללחיצה במשטח המגע"
+
+msgid "Natural scrolling for the mouse"
+msgstr "גלילה טבעית בעכבר"
+
+msgid "Turn Num Lock on at login"
+msgstr "הפעל את Num Lock בכניסה"
+
+msgid "Disable event sounds"
+msgstr "בטל צלילי אירועים"
+
+msgid "Enable Night Light"
+msgstr "הפעל תאורת לילה"
+
+msgid "Never suspend automatically when plugged in"
+msgstr "לעולם אל תיכנס להשהיה אוטומטית כשמחובר לחשמל"
+
+msgid "Power button action"
+msgstr "פעולת לחצן ההפעלה"
+
+msgid "Suspend"
+msgstr "השהיה"
+
+msgid "Show the power-off dialog"
+msgstr "הצג את חלון הכיבוי"
+
+msgid "Do nothing"
+msgstr "אל תעשה כלום"
+
+msgid "Don't download software updates automatically"
+msgstr "אל תוריד עדכוני תוכנה אוטומטית"
+
+msgid "GNOME Software stops downloading updates in the background."
+msgstr "GNOME Software מפסיק להוריד עדכונים ברקע."
+
+msgid "Disable external search providers"
+msgstr "בטל ספקי חיפוש חיצוניים"
+
+msgid "Overview search only shows local results."
+msgstr "החיפוש בסקירה מציג רק תוצאות מקומיות."
+
+msgid "Use a fixed number of workspaces"
+msgstr "השתמש במספר קבוע של סביבות עבודה"
+
+msgid "Show taskbar thumbnails faster"
+msgstr "הצג תמונות ממוזערות בשורת המשימות מהר יותר"
+
+msgid "Hovering over a taskbar button shows window thumbnails with almost no delay."
+msgstr "ריחוף מעל כפתור בשורת המשימות מציג תמונות ממוזערות של חלונות כמעט ללא השהיה."
+
+msgid "Show Peek at desktop faster"
+msgstr "הצג את \"הצצה לשולחן העבודה\" מהר יותר"
+
+msgid "Shorter delay before the desktop preview appears when hovering the corner of the taskbar."
+msgstr "השהיה קצרה יותר לפני שתצוגה מקדימה של שולחן העבודה מופיעה בריחוף מעל פינת שורת המשימות."
+
+msgid "Speed up Windows menus"
+msgstr "האץ את תפריטי Windows"
+
+msgid "Minimizes the delay before a submenu opens (default 400 ms)."
+msgstr "מקצר את ההשהיה לפני שתת־תפריט נפתח (ברירת מחדל 400 מ״ש)."
+
+msgid "Use the Windows 10 context menu"
+msgstr "השתמש בתפריט ההקשר של Windows 10"
+
+msgid "Opens the full classic right-click menu directly instead of the Windows 11 compact menu."
+msgstr "פותח את תפריט הלחיצה הימנית הקלאסי המלא ישירות במקום התפריט המצומצם של Windows 11."
+
+msgid "Disable ads and suggested apps"
+msgstr "בטל פרסומות ואפליקציות מוצעות"
+
+msgid "Stops Start suggestions, silently installed promoted apps, tips and sync-provider ads in File Explorer."
+msgstr "עוצר הצעות בתפריט התחל, אפליקציות מקודמות שמותקנות בשקט, טיפים ופרסומות של ספקי סנכרון בסייר הקבצים."
+
+msgid "Disable blur on the sign-in screen"
+msgstr "בטל טשטוש במסך הכניסה"
+
+msgid "Shows the sign-in background image sharp instead of blurred."
+msgstr "מציג את תמונת הרקע של מסך הכניסה חדה במקום מטושטשת."
+
+msgid "Use the classic battery indicator"
+msgstr "השתמש במחוון הסוללה הקלאסי"
+
+msgid "Replaces the modern battery flyout with the Windows 7 style one."
+msgstr "מחליף את חלונית הסוללה המודרנית בזו בסגנון Windows 7."
+
+msgid "Show estimated battery time remaining"
+msgstr "הצג זמן סוללה משוער שנותר"
+
+msgid "Shows remaining battery time in the battery tooltip and flyout."
+msgstr "מציג את זמן הסוללה שנותר בתיאור הכלי ובחלונית הסוללה."
+
+msgid "Disable Widgets"
+msgstr "בטל ווידג'טים"
+
+msgid "Removes the Widgets board and its taskbar button."
+msgstr "מסיר את לוח הווידג'טים ואת הכפתור שלו בשורת המשימות."
+
+msgid "Remove the shortcut arrow overlay"
+msgstr "הסר את שכבת החץ של קיצורי דרך"
+
+msgid "Hides the small arrow drawn on shortcut icons."
+msgstr "מסתיר את החץ הקטן שמצויר על סמלי קיצורי דרך."
+
+msgid "Disable Peek at desktop"
+msgstr "בטל את \"הצצה לשולחן העבודה\""
+
+msgid "Turns off the desktop preview when hovering the end of the taskbar."
+msgstr "מכבה את התצוגה המקדימה של שולחן העבודה בריחוף מעל קצה שורת המשימות."
+
+msgid "Use the classic volume control"
+msgstr "השתמש בבקרת עוצמת הקול הקלאסית"
+
+msgid "Shows the Windows 7 style volume slider from the tray icon."
+msgstr "מציג את מחוון עוצמת הקול בסגנון Windows 7 מסמל המגש."
+
+msgid "Disable \"You have new apps that can open this type of file\""
+msgstr "בטל את \"יש לך אפליקציות חדשות שיכולות לפתוח סוג קובץ זה\""
+
+msgid "Stops the prompt that appears after installing an app that handles a file type."
+msgstr "עוצר את ההודעה שמופיעה אחרי התקנת אפליקציה שמטפלת בסוג קובץ."
+
+msgid "Add \"Command Prompt as Administrator\" to the folder context menu"
+msgstr "הוסף \"שורת פקודה כמנהל\" לתפריט ההקשר של תיקיות"
+
+msgid "Right-click the background of a folder to open an elevated command prompt there."
+msgstr "לחיצה ימנית על רקע תיקייה פותחת שם שורת פקודה עם הרשאות מוגברות."
+
+msgid "Check \"Do this for all current items\" by default"
+msgstr "סמן \"עשה זאת לכל הפריטים הנוכחיים\" כברירת מחדל"
+
+msgid "Pre-checks the box in the file conflict dialog."
+msgstr "מסמן מראש את התיבה בחלון התנגשות הקבצים."
+
+msgid "Enable inline AutoComplete"
+msgstr "הפעל השלמה אוטומטית בשורה"
+
+msgid "Completes typed text in the address bar, Run dialog and Open/Save dialogs."
+msgstr "משלים טקסט שהוקלד בשורת הכתובת, בחלון ההפעלה ובחלונות פתיחה/שמירה."
+
+msgid "Open File Explorer to"
+msgstr "פתח את סייר הקבצים ב"
+
+msgid "Choose the folder a new File Explorer window starts in."
+msgstr "בחר את התיקייה שבה חלון חדש של סייר הקבצים נפתח."
+
+msgid "This PC"
+msgstr "המחשב הזה"
+
+msgid "Quick access / Home"
+msgstr "גישה מהירה / בית"
+
+msgid "Downloads"
+msgstr "הורדות"
+
+msgid "Disable pop-up descriptions"
+msgstr "בטל תיאורים קופצים"
+
+msgid "Hides the tooltip shown when hovering over files and folders."
+msgstr "מסתיר את תיאור הכלי שמוצג בריחוף מעל קבצים ותיקיות."
+
+msgid "Show drive letters first"
+msgstr "הצג אותיות כוננים קודם"
+
+msgid "Shows \"(C:) Local Disk\" instead of \"Local Disk (C:)\"."
+msgstr "מציג \"(C:) דיסק מקומי\" במקום \"דיסק מקומי (C:)\"."
+
+msgid "Show full details in file operation dialogs"
+msgstr "הצג פרטים מלאים בחלונות פעולות קבצים"
+
+msgid "Copy, move and delete dialogs open with \"More details\" expanded."
+msgstr "חלונות העתקה, העברה ומחיקה נפתחים עם \"פרטים נוספים\" מורחב."
+
+msgid "Add Rotate left/right to the image context menu"
+msgstr "הוסף \"סובב שמאלה/ימינה\" לתפריט ההקשר של תמונות"
+
+msgid "Adds rotate commands for JPEG, PNG and BMP files."
+msgstr "מוסיף פקודות סיבוב לקובצי JPEG, ‏PNG ו־BMP."
+
+msgid "Use the classic File Explorer ribbon"
+msgstr "השתמש ברצועת הכלים הקלאסית של סייר הקבצים"
+
+msgid "Restores the Windows 10 tabbed ribbon. Works on early Windows 11 releases only."
+msgstr "משחזר את רצועת הכלים עם הכרטיסיות של Windows 10. עובד רק בגרסאות מוקדמות של Windows 11."
+
+msgid "Don't add \"- Shortcut\" to new shortcuts"
+msgstr "אל תוסיף \"- קיצור דרך\" לקיצורי דרך חדשים"
+
+msgid "New shortcuts keep the original name."
+msgstr "קיצורי דרך חדשים שומרים על השם המקורי."
+
+msgid "Speed up mouse hover"
+msgstr "האץ ריחוף עכבר"
+
+msgid "Tooltips and hover previews appear faster (default 400 ms)."
+msgstr "תיאורי כלים ותצוגות ריחוף מופיעים מהר יותר (ברירת מחדל 400 מ״ש)."
+
+msgid "Increase the icon cache"
+msgstr "הגדל את מטמון הסמלים"
+
+msgid "Lets Windows keep more icons in memory, so folders and the desktop load faster."
+msgstr "מאפשר ל־Windows לשמור יותר סמלים בזיכרון, כך שתיקיות ושולחן העבודה נטענים מהר יותר."
+
+msgid "Disable Bing in taskbar search"
+msgstr "בטל את Bing בחיפוש בשורת המשימות"
+
+msgid "Search on the taskbar only looks at your PC, not the web."
+msgstr "החיפוש בשורת המשימות מחפש רק במחשב שלך, לא ברשת."
+
+msgid "Add \"End task\" to the taskbar menu"
+msgstr "הוסף \"סיים משימה\" לתפריט שורת המשימות"
+
+msgid "Right-click a taskbar button to force-close the app."
+msgstr "לחיצה ימנית על כפתור בשורת המשימות סוגרת את האפליקציה בכוח."
+
+msgid "Align taskbar buttons to the left"
+msgstr "יישר את כפתורי שורת המשימות לשמאל"
+
+msgid "Moves the centered Windows 11 taskbar icons to the left."
+msgstr "מעביר את הסמלים הממורכזים של שורת המשימות ב־Windows 11 לשמאל."
+
+msgid "Show seconds in the taskbar clock"
+msgstr "הצג שניות בשעון בשורת המשימות"
+
+msgid "Show the Windows version on the desktop"
+msgstr "הצג את גרסת Windows על שולחן העבודה"
+
+msgid "Draws the Windows edition and build in the lower-right corner."
+msgstr "מציג את מהדורת Windows ואת מספר ה־build בפינה הימנית התחתונה."
+
+msgid "Disable AutoPlay on all drives"
+msgstr "בטל הפעלה אוטומטית בכל הכוננים"
+
+msgid "Close unresponsive apps automatically"
+msgstr "סגור אוטומטית אפליקציות שלא מגיבות"
+
+msgid "Ends hung apps faster and skips the \"This app is preventing shutdown\" screen."
+msgstr "מסיים אפליקציות תקועות מהר יותר ומדלג על המסך \"אפליקציה זו מונעת כיבוי\"."
+
+msgid "Never end apps automatically at shutdown"
+msgstr "לעולם אל תסגור אפליקציות אוטומטית בכיבוי"
+
+msgid "Windows waits for you instead of closing apps with unsaved work."
+msgstr "Windows ממתין לך במקום לסגור אפליקציות עם עבודה שלא נשמרה."
+
+msgid "Disable the security warning on downloaded files"
+msgstr "בטל את אזהרת האבטחה בקבצים שהורדו"
+
+msgid "Downloaded files are no longer marked as coming from the internet."
+msgstr "קבצים שהורדו כבר לא מסומנים כמגיעים מהאינטרנט."
+
+msgid "Add \"Take Ownership\" to the context menu"
+msgstr "הוסף \"קבל בעלות\" לתפריט ההקשר"
+
+msgid "Right-click a file or folder to give Administrators full access to it."
+msgstr "לחיצה ימנית על קובץ או תיקייה נותנת למנהלים גישה מלאה אליהם."
+
+msgid "Disable SmartScreen"
+msgstr "בטל את SmartScreen"
+
+msgid "Turns off SmartScreen checks for apps and files."
+msgstr "מכבה את בדיקות SmartScreen לאפליקציות ולקבצים."
+
+msgid "Show details on blue screens"
+msgstr "הצג פרטים במסכים כחולים"
+
+msgid "Shows the classic stop-error details instead of the sad face."
+msgstr "מציג את פרטי שגיאת העצירה הקלאסיים במקום הפרצוף העצוב."
+
+msgid "Let elevated apps see mapped network drives"
+msgstr "אפשר לאפליקציות עם הרשאות מוגברות לראות כונני רשת ממופים"
+
+msgid "Apps run as administrator can access drives mapped by your normal session."
+msgstr "אפליקציות שרצות כמנהל יכולות לגשת לכוננים שמופו בהפעלה הרגילה שלך."
+
+msgid "Disable User Account Control (UAC)"
+msgstr "בטל את בקרת חשבון המשתמש (UAC)"
+
+msgid "Every app runs with full administrator rights and no prompt."
+msgstr "כל אפליקציה רצה עם הרשאות מנהל מלאות וללא בקשה."
+
+msgid "Block potentially unwanted apps (adware) in Defender"
+msgstr "חסום אפליקציות שעלולות להיות לא רצויות (תוכנות פרסום) ב־Defender"
+
+msgid "Make USB storage read-only"
+msgstr "הפוך אחסון USB לקריאה בלבד"
+
+msgid "Nothing can be written to USB mass storage devices."
+msgstr "אי אפשר לכתוב דבר להתקני אחסון USB."
+
+msgid "Notify when the camera turns on or off"
+msgstr "הודע כשהמצלמה נדלקת או נכבית"
+
+msgid "Save a crash dump when a program crashes"
+msgstr "שמור דמפ קריסה כשתוכנה קורסת"
+
+msgid "Writes full dumps to %LOCALAPPDATA%\\CrashDumps (keeps the last 10)."
+msgstr "כותב דמפים מלאים אל %LOCALAPPDATA%\\CrashDumps (שומר את 10 האחרונים)."
+
+msgid "Allow Windows 11 upgrade on unsupported hardware"
+msgstr "אפשר שדרוג ל־Windows 11 בחומרה שאינה נתמכת"
+
+msgid "Lets the Windows 11 installer skip the TPM 2.0 and CPU checks."
+msgstr "מאפשר לתוכנית ההתקנה של Windows 11 לדלג על בדיקות TPM 2.0 והמעבד."
+
+msgid "Enable Windows Photo Viewer"
+msgstr "הפעל את מציג התמונות של Windows"
+
+msgid "Makes the classic Photo Viewer available in \"Open with\" for common image types."
+msgstr "מאפשר את מציג התמונות הקלאסי ב\"פתח באמצעות\" לסוגי תמונות נפוצים."
+
+msgid "Disable background apps"
+msgstr "בטל אפליקציות ברקע"
+
+msgid "Store apps can't run in the background, which saves power."
+msgstr "אפליקציות Store לא יכולות לרוץ ברקע, מה שחוסך בחשמל."
+
+msgid "Add classic User Accounts to Control Panel"
+msgstr "הוסף את חשבונות המשתמשים הקלאסיים ללוח הבקרה"
+
+msgid "Adds an entry that opens the advanced user accounts dialog (netplwiz)."
+msgstr "מוסיף רשומה שפותחת את חלון חשבונות המשתמשים המתקדם (netplwiz)."
+
+msgid "Use classic Alt+Tab"
+msgstr "השתמש ב־Alt+Tab הקלאסי"
+
+msgid "Small icons instead of large window previews."
+msgstr "סמלים קטנים במקום תצוגות מקדימות גדולות של חלונות."
+
+msgid "Disable driver updates via Windows Update"
+msgstr "בטל עדכוני מנהלי התקנים דרך Windows Update"
+
+msgid "Disable automatic Store app updates"
+msgstr "בטל עדכונים אוטומטיים של אפליקציות Store"
+
+msgid "Disable power throttling"
+msgstr "בטל ויסות צריכת חשמל"
+
+msgid "Background apps keep full CPU speed. Uses more battery."
+msgstr "אפליקציות ברקע שומרות על מהירות מעבד מלאה. צורך יותר סוללה."
+
+msgid "Minimize telemetry and data collection"
+msgstr "צמצם טלמטריה ואיסוף נתונים"
+
+msgid "Sets diagnostic data to the lowest level the edition allows."
+msgstr "מגדיר את נתוני האבחון לרמה הנמוכה ביותר שהמהדורה מאפשרת."
+
+msgid "Stop Microsoft Edge running in the background"
+msgstr "עצור את ריצת Microsoft Edge ברקע"
+
+msgid "Clear the page file at shutdown"
+msgstr "נקה את קובץ ההחלפה בכיבוי"
+
+msgid "Wipes virtual memory on shutdown for privacy. Shutdown takes longer."
+msgstr "מוחק את הזיכרון הווירטואלי בכיבוי לשם פרטיות. הכיבוי לוקח יותר זמן."
+
+msgid "Turn off Copilot"
+msgstr "כבה את Copilot"
+
+msgid "Turns off Windows Copilot and hides its taskbar button (policy for this user and the PC)."
+msgstr "מכבה את Windows Copilot ומסתיר את הכפתור שלו בשורת המשימות (מדיניות למשתמש זה ולמחשב)."
+
+msgid "Turn off Recall snapshots"
+msgstr "כבה את תמונות המצב של Recall"
+
+msgid "Stops Recall from saving screenshots of your activity (Copilot+ PCs)."
+msgstr "מונע מ־Recall לשמור צילומי מסך של הפעילות שלך (מחשבי Copilot+)."
+
+msgid "Turn off Click to Do"
+msgstr "כבה את Click to Do"
+
+msgid "Disables the AI actions overlay (Win + click) on Copilot+ PCs."
+msgstr "מבטל את שכבת פעולות הבינה המלאכותית (Win + לחיצה) במחשבי Copilot+."
+
+msgid "Turn off AI features in Paint and Notepad"
+msgstr "כבה תכונות בינה מלאכותית ב־Paint וב־Notepad"
+
+msgid "Hides Cocreator, Image Creator and generative erase in Paint, and Copilot rewrite in Notepad."
+msgstr "מסתיר את Cocreator, ‏Image Creator ומחיקה גנרטיבית ב־Paint, ואת השכתוב של Copilot ב־Notepad."
+
+msgid "Turn off the advertising ID"
+msgstr "כבה את מזהה הפרסום"
+
+msgid "Apps can no longer use your advertising ID to show personalized ads."
+msgstr "אפליקציות כבר לא יכולות להשתמש במזהה הפרסום שלך כדי להציג פרסומות מותאמות אישית."
+
+msgid "Turn off tips and ads on the lock screen"
+msgstr "כבה טיפים ופרסומות במסך הנעילה"
+
+msgid "Removes \"fun facts, tips, tricks and more\" and promoted content from the lock screen."
+msgstr "מסיר \"עובדות מעניינות, טיפים, טריקים ועוד\" ותוכן מקודם ממסך הנעילה."
+
+msgid "Turn off Start menu recommendations"
+msgstr "כבה את ההמלצות בתפריט התחל"
+
+msgid "Stops promoted apps and \"recommended\" tips in the Start menu."
+msgstr "עוצר אפליקציות מקודמות וטיפים \"מומלצים\" בתפריט התחל."
+
+msgid "Turn off Copilot and shopping in Microsoft Edge"
+msgstr "כבה את Copilot והקניות ב־Microsoft Edge"
+
+msgid "Hides Edge's sidebar (Copilot), shopping assistant and Microsoft Rewards."
+msgstr "מסתיר את סרגל הצד של Edge ‏(Copilot), את עוזר הקניות ואת Microsoft Rewards."
+

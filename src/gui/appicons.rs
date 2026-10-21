@@ -56,7 +56,7 @@ impl IconCache {
     pub fn poll(&mut self, ctx: &egui::Context) {
         let Some(rx) = &self.rx else { return };
         for (id, img) in rx.try_iter() {
-            let tex = ctx.load_texture(format!("app-icon:{id}"), img, TextureOptions::LINEAR);
+            let tex = ctx.load_texture(crate::tf!("app-icon:{id}"), img, TextureOptions::LINEAR);
             self.textures.insert(id, tex);
         }
     }
@@ -141,7 +141,7 @@ mod tests {
 
     #[test]
     fn decodes_png_and_svg() {
-        let dir = std::env::temp_dir().join(format!("cleancore-icons-{}", std::process::id()));
+        let dir = std::env::temp_dir().join(crate::tf!("cleancore-icons-{}", std::process::id()));
         std::fs::create_dir_all(&dir).unwrap();
         let png = dir.join("a.png");
         image::RgbaImage::from_pixel(128, 64, image::Rgba([255, 0, 0, 255])).save(&png).unwrap();

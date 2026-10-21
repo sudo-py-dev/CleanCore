@@ -2,6 +2,7 @@
 
 use super::style::{self, icon, Palette};
 use super::{Cx, Pending};
+use crate::i18n::tr;
 use crate::tracer::{self, ItemKind, ItemStatus, Session, TraceItem, TraceLog};
 use eframe::egui::{self, RichText, Ui};
 use egui_extras::{Column, TableBuilder};
@@ -99,7 +100,7 @@ impl TraceScreen {
             TraceStep::Tracing(session) => {
                 if let Some(c) = &mut self.child {
                     if let Ok(Some(st)) = c.try_wait() {
-                        self.child_status = Some(format!("The installer finished ({st}). Run and configure the program if you like, close it, then stop the trace."));
+                        self.child_status = Some(crate::tf!("The installer finished ({st}). Run and configure the program if you like, close it, then stop the trace."));
                         self.child = None;
                     }
                 }
@@ -109,19 +110,19 @@ impl TraceScreen {
                         let (r, _) = ui.allocate_exact_size(egui::vec2(12.0, 12.0), egui::Sense::hover());
                         ui.painter().circle_filled(r.center(), 6.0, p.danger);
                         let since = session.as_ref().map(|s| (chrono::Local::now() - s.started).num_seconds()).unwrap_or(0);
-                        ui.label(style::strong(format!("Tracing  {:02}:{:02}", since / 60, since % 60)).size(16.0));
+                        ui.label(style::strong(crate::tf!("Tracing  {:02}:{:02}", since / 60, since % 60)).size(16.0));
                     });
                     ui.add_space(6.0);
                     ui.label(style::muted(
                         ui,
-                        "Install the program now: run its installer below, or start it any way you like. Install one program at a time and close other programs.",
+                        tr("Install the program now: run its installer below, or start it any way you like. Install one program at a time and close other programs."),
                     ));
                     ui.add_space(10.0);
                     ui.horizontal(|ui| {
                         style::text_input(
                             ui,
                             &mut self.installer,
-                            if cfg!(windows) { r"C:\Downloads\setup.exe" } else { "/home/you/Downloads/install.sh or a .deb" },
+                            if cfg!(windows) { r"C:\Downloads\setup.exe" } else { tr("/home/you/Downloads/install.sh or a .deb") },
                             ui.available_width() - 160.0 - style::CONTROL_H - 8.0,
                         );
                         if let Some(p) = style::browse_button(ui, "trace-installer", style::Pick::File, &self.installer) {
@@ -138,7 +139,7 @@ impl TraceScreen {
                                     self.child = Some(c);
                                     self.child_status = Some("The installer is running…".into());
                                 }
-                                Err(e) => cx.error(format!("Could not start the installer: {e:#}")),
+                                Err(e) => cx.error(crate::tf!("Could not start the installer: {e:#}")),
                             }
                         }
                     });
@@ -167,22 +168,25 @@ impl TraceScreen {
                 let mut save = false;
                 if self.left_out > 0 {
                     ui.label(
-                        style::muted(ui, format!("{} change(s) made by other programs during the trace were left out (only the installer's own processes count).", self.left_out))
-                            .size(12.5),
+                        style::muted(
+                            ui,
+                            crate::tf!("{} change(s) made by other programs during the trace were left out (only the installer's own processes count).", self.left_out),
+                        )
+                        .size(12.5),
                     );
                     ui.add_space(6.0);
                 }
                 style::card(ui, |ui| {
                     egui::Grid::new("trace-save").num_columns(2).spacing([16.0, 10.0]).show(ui, |ui| {
-                        ui.label(style::muted(ui, "Name"));
+                        ui.label(style::muted(ui, tr("Name")));
                         style::text_input(ui, &mut self.name, "", 420.0);
                         ui.end_row();
-                        ui.label(style::muted(ui, "Comment"));
+                        ui.label(style::muted(ui, tr("Comment")));
                         style::text_input(ui, &mut self.comment, "Optional", 420.0);
                         ui.end_row();
                     });
                     ui.add_space(6.0);
-                    ui.label(style::muted(ui, format!("{created} item(s) created, removable with this log · {modified} existing item(s) changed (kept on uninstall)")));
+                    ui.label(style::muted(ui, crate::tf!("{created} item(s) created, removable with this log · {modified} existing item(s) changed (kept on uninstall)")));
                     ui.add_space(8.0);
                     save = ui.add_enabled_ui(!self.name.trim().is_empty(), |ui| style::primary(ui, icon::FLOPPY, "Save log")).inner.clicked();
                 });
@@ -193,10 +197,10 @@ impl TraceScreen {
                     log.comment = self.comment.clone();
                     match tracer::save(&log) {
                         Ok(()) => {
-                            cx.info(format!("Saved trace log \"{}\"", log.name));
+                            cx.info(crate::tf!("Saved trace log \"{}\"", log.name));
                             return false;
                         }
-                        Err(e) => cx.error(format!("{e:#}")),
+                        Err(e) => cx.error(crate::tf!("{e:#}")),
                     }
                 }
             }
@@ -233,7 +237,7 @@ fn steps(ui: &mut Ui, idx: usize, labels: &[&str], p: Palette) {
             ui.painter().circle_filled(rect.center(), 12.0, bg);
             let mark = if i < idx { icon::CHECK.to_string() } else { (i + 1).to_string() };
             ui.painter().text(rect.center(), egui::Align2::CENTER_CENTER, mark, egui::FontId::new(12.5, style::semibold()), fg);
-            ui.label(RichText::new(*label).color(if i <= idx { p.text } else { p.muted }));
+            ui.label(RichText::new(tr(label)).color(if i <= idx { p.text } else { p.muted }));
             if i + 1 < labels.len() {
                 let (r, _) = ui.allocate_exact_size(egui::vec2(36.0, 2.0), egui::Sense::hover());
                 ui.painter().rect_filled(r, 1.0, if i < idx { p.success } else { p.border });
@@ -245,7 +249,7 @@ fn steps(ui: &mut Ui, idx: usize, labels: &[&str], p: Palette) {
 /// Items grouped by kind; `remove` lets the editor delete entries.
 fn item_list(ui: &mut Ui, items: &[TraceItem], p: Palette, mut remove: Option<&mut Option<usize>>) {
     egui::ScrollArea::vertical().id_salt("trace-items").auto_shrink([false, false]).show(ui, |ui| {
-        let reg = if cfg!(windows) { "Registry" } else { "Settings (dconf)" };
+        let reg = if cfg!(windows) { tr("Registry") } else { tr("Settings (dconf)") };
         for (kinds, title, ic) in [
             (&[ItemKind::Package][..], "Packages", icon::PACKAGE),
             (&[ItemKind::SettingsKey, ItemKind::SettingsValue][..], reg, icon::TREE),
@@ -267,9 +271,9 @@ fn item_list(ui: &mut Ui, items: &[TraceItem], p: Palette, mut remove: Option<&m
                     ui.horizontal(|ui| {
                         let (mark, col) = if it.status == ItemStatus::Created { (icon::PLUS, p.success) } else { (icon::DOTS, p.muted) };
                         ui.label(RichText::new(mark).color(col)).on_hover_text(if it.status == ItemStatus::Created {
-                            "Created: removed on uninstall"
+                            tr("Created: removed on uninstall")
                         } else {
-                            "Existed before: kept on uninstall"
+                            tr("Existed before: kept on uninstall")
                         });
                         ui.add(
                             egui::Label::new(RichText::new(it.label()).monospace().size(12.5).color(if it.status == ItemStatus::Created { p.text } else { p.muted })).truncate(),
@@ -284,7 +288,7 @@ fn item_list(ui: &mut Ui, items: &[TraceItem], p: Palette, mut remove: Option<&m
                     });
                 }
                 if idx.len() > 500 {
-                    ui.label(style::muted(ui, format!("… and {} more (export the log to see all)", idx.len() - 500)));
+                    ui.label(style::muted(ui, crate::tf!("… and {} more (export the log to see all)", idx.len() - 500)));
                 }
             });
             ui.add_space(10.0);
@@ -366,7 +370,7 @@ impl TracedTab {
                 }
                 for g in groups {
                     let n = self.logs.iter().filter(|l| l.group.as_deref() == Some(g.as_str())).count();
-                    if style::segment(ui, self.group.as_deref() == Some(g.as_str()), &format!("{g}  {n}")).clicked() {
+                    if style::segment(ui, self.group.as_deref() == Some(g.as_str()), &crate::tf!("{g}  {n}")).clicked() {
                         self.group = Some(g);
                     }
                 }
@@ -374,7 +378,7 @@ impl TracedTab {
             ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
                 let r = style::secondary(ui, icon::DOTS, "More");
                 egui::Popup::menu(&r).width(380.0).show(|ui| {
-                    ui.label(style::muted(ui, "Import a .cptrace log"));
+                    ui.label(style::muted(ui, tr("Import a .cptrace log")));
                     ui.horizontal(|ui| {
                         style::text_input(ui, &mut self.import_path, "path/to/log.cptrace", 260.0 - style::CONTROL_H - 8.0);
                         if let Some(p) = style::browse_button(ui, "trace-import", style::Pick::File, &self.import_path) {
@@ -382,29 +386,29 @@ impl TracedTab {
                         }
                         if style::secondary(ui, icon::DOWNLOAD, "Import").clicked() {
                             match tracer::import(std::path::Path::new(self.import_path.trim())) {
-                                Ok(l) => cx.info(format!("Imported \"{}\"", l.name)),
-                                Err(e) => cx.error(format!("{e:#}")),
+                                Ok(l) => cx.info(crate::tf!("Imported \"{}\"", l.name)),
+                                Err(e) => cx.error(crate::tf!("{e:#}")),
                             }
                             self.loaded = false;
                             ui.close();
                         }
                     });
                     ui.separator();
-                    ui.label(style::muted(ui, "Back up or restore every log (one file)"));
+                    ui.label(style::muted(ui, tr("Back up or restore every log (one file)")));
                     style::path_input(ui, "trace-backup", &mut self.export_path, "", 360.0, style::Pick::Save);
                     ui.horizontal(|ui| {
                         if style::secondary(ui, icon::FLOPPY, "Back up all").clicked() {
                             let path = std::path::Path::new(&self.export_path).with_extension("cptraces");
                             match tracer::backup_all(&path) {
-                                Ok(n) => cx.info(format!("Saved {n} log(s) to {}", path.display())),
-                                Err(e) => cx.error(format!("{e:#}")),
+                                Ok(n) => cx.info(crate::tf!("Saved {n} log(s) to {}", path.display())),
+                                Err(e) => cx.error(crate::tf!("{e:#}")),
                             }
                             ui.close();
                         }
                         if style::secondary(ui, icon::UNDO, "Restore").clicked() {
                             match tracer::restore_all(std::path::Path::new(&self.export_path)) {
-                                Ok(n) => cx.info(format!("Restored {n} log(s)")),
-                                Err(e) => cx.error(format!("{e:#}")),
+                                Ok(n) => cx.info(crate::tf!("Restored {n} log(s)")),
+                                Err(e) => cx.error(crate::tf!("{e:#}")),
                             }
                             self.loaded = false;
                             ui.close();
@@ -420,7 +424,7 @@ impl TracedTab {
             .logs
             .iter()
             .filter(|l| self.group.is_none() || l.group == self.group)
-            .filter(|l| q.is_empty() || format!("{} {}", l.name, l.comment).to_lowercase().contains(&q))
+            .filter(|l| q.is_empty() || crate::tf!("{} {}", l.name, l.comment).to_lowercase().contains(&q))
             .cloned()
             .collect();
         let focus = self.focus.as_ref().and_then(|id| self.logs.iter().find(|l| &l.id == id)).cloned();
@@ -431,14 +435,14 @@ impl TracedTab {
                 ui.horizontal(|ui| {
                     let n = self.checked.len();
                     if n > 1 {
-                        ui.label(style::strong(format!("{n} logs selected")));
+                        ui.label(style::strong(crate::tf!("{n} logs selected")));
                         ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
                             let ready = !self.merge_name.trim().is_empty();
                             if ui.add_enabled_ui(ready, |ui| style::primary(ui, icon::LIST_CHECKS, "Merge")).inner.clicked() {
                                 let ids: Vec<String> = self.checked.iter().cloned().collect();
                                 match tracer::merge(&ids, self.merge_name.trim()) {
-                                    Ok(m) => cx.info(format!("Merged into \"{}\"", m.name)),
-                                    Err(e) => cx.error(format!("{e:#}")),
+                                    Ok(m) => cx.info(crate::tf!("Merged into \"{}\"", m.name)),
+                                    Err(e) => cx.error(crate::tf!("{e:#}")),
                                 }
                                 self.checked.clear();
                                 self.merge_name.clear();
@@ -453,7 +457,13 @@ impl TracedTab {
                             ui.label(
                                 style::muted(
                                     ui,
-                                    format!("{} · {} settings · {} files · {}", l.created.format("%d %b %Y"), l.count(true), l.count(false), crate::backup::human_size(l.size())),
+                                    crate::tf!(
+                                        "{} · {} settings · {} files · {}",
+                                        l.created.format("%d %b %Y"),
+                                        l.count(true),
+                                        l.count(false),
+                                        crate::backup::human_size(l.size())
+                                    ),
                                 )
                                 .size(12.5),
                             );
@@ -465,7 +475,7 @@ impl TracedTab {
                                     self.rename = Some((l.id.clone(), l.name.clone()));
                                     ui.close();
                                 }
-                                ui.menu_button(format!("{}  Group", icon::TAG), |ui| {
+                                ui.menu_button(crate::tf!("{}  Group", icon::TAG), |ui| {
                                     let mut pick: Option<Option<String>> = None;
                                     let mut groups: Vec<String> = self.logs.iter().filter_map(|x| x.group.clone()).collect();
                                     groups.sort_by_key(|g| g.to_lowercase());
@@ -477,7 +487,7 @@ impl TracedTab {
                                     }
                                     ui.horizontal(|ui| {
                                         style::text_input(ui, &mut self.new_group, "New group", 140.0);
-                                        if ui.button("Add").clicked() && !self.new_group.trim().is_empty() {
+                                        if ui.button(tr("Add")).clicked() && !self.new_group.trim().is_empty() {
                                             pick = Some(Some(self.new_group.trim().to_string()));
                                             self.new_group.clear();
                                         }
@@ -487,16 +497,16 @@ impl TracedTab {
                                     }
                                     if let Some(g) = pick {
                                         if let Err(e) = tracer::set_group(&l.id, g.as_deref()) {
-                                            cx.error(format!("{e:#}"));
+                                            cx.error(crate::tf!("{e:#}"));
                                         }
                                         self.loaded = false;
                                         ui.close();
                                     }
                                 });
-                                ui.menu_button(format!("{}  Change icon", icon::PALETTE), |ui| {
+                                ui.menu_button(crate::tf!("{}  Change icon", icon::PALETTE), |ui| {
                                     if let Some(choice) = style::icon_picker(ui, l.icon.as_deref()) {
                                         if let Err(e) = tracer::set_icon(&l.id, choice.as_deref()) {
-                                            cx.error(format!("{e:#}"));
+                                            cx.error(crate::tf!("{e:#}"));
                                         }
                                         self.loaded = false;
                                         ui.close();
@@ -506,17 +516,17 @@ impl TracedTab {
                                     self.confirm_delete = Some(l.id.clone());
                                     ui.close();
                                 }
-                                if style::ghost(ui, icon::DATABASE, "Add to logs database").on_hover_text("Share this log through the logs database folder").clicked() {
+                                if style::ghost(ui, icon::DATABASE, "Add to logs database").on_hover_text(tr("Share this log through the logs database folder")).clicked() {
                                     match tracer::db_add(cx.settings, l) {
-                                        Ok(p) => cx.info(format!("Added to the logs database: {}", p.display())),
-                                        Err(e) => cx.error(format!("{e:#}")),
+                                        Ok(p) => cx.info(crate::tf!("Added to the logs database: {}", p.display())),
+                                        Err(e) => cx.error(crate::tf!("{e:#}")),
                                     }
                                     ui.close();
                                 }
                                 ui.separator();
                                 super::export_fields(ui, cx, &mut self.export_path, "Export (.cptrace to share, .html / .txt to read)", |f| {
                                     tracer::export(l, f)?;
-                                    Ok(format!("Exported to {}", f.display()))
+                                    Ok(crate::tf!("Exported to {}", f.display()))
                                 });
                             });
                             if style::secondary(ui, icon::WRENCH, "Edit").clicked() {
@@ -553,9 +563,9 @@ impl TracedTab {
                 .column(Column::exact(90.0))
                 .column(Column::exact(90.0))
                 .header(26.0, |mut h| {
-                    for t in ["", "Name", "Created", if cfg!(windows) { "Registry" } else { "Settings" }, "Files", "Size"] {
+                    for t in ["", "Name", "Created", if cfg!(windows) { tr("Registry") } else { tr("Settings") }, "Files", "Size"] {
                         h.col(|ui| {
-                            ui.label(RichText::new(t).size(12.5).color(p.muted));
+                            ui.label(RichText::new(tr(t)).size(12.5).color(p.muted));
                         });
                     }
                 })
@@ -626,7 +636,7 @@ impl TracedTab {
             let mut done = None;
             egui::Modal::new(egui::Id::unique("rename-log")).show(ctx, |ui| {
                 ui.set_width(400.0);
-                ui.label(style::strong("Rename log").size(18.0));
+                ui.label(style::strong(tr("Rename log")).size(18.0));
                 style::text_input(ui, name, "", 380.0);
                 ui.add_space(10.0);
                 ui.horizontal(|ui| {
@@ -641,8 +651,8 @@ impl TracedTab {
             if let Some(ok) = done {
                 if ok {
                     match tracer::rename(id, name.trim()) {
-                        Ok(()) => cx.info("Log renamed"),
-                        Err(e) => cx.error(format!("{e:#}")),
+                        Ok(()) => cx.info(tr("Log renamed")),
+                        Err(e) => cx.error(crate::tf!("{e:#}")),
                     }
                     self.loaded = false;
                 }
@@ -655,8 +665,8 @@ impl TracedTab {
                 ui.set_width(420.0);
                 style::icon_tile(ui, icon::TRASH, p.danger, 44.0);
                 ui.add_space(8.0);
-                ui.label(style::strong("Delete this log?").size(18.0));
-                ui.label(style::muted(ui, "The program stays installed; only the record of its installation is deleted."));
+                ui.label(style::strong(tr("Delete this log?")).size(18.0));
+                ui.label(style::muted(ui, tr("The program stays installed; only the record of its installation is deleted.")));
                 ui.add_space(12.0);
                 ui.horizontal(|ui| {
                     if style::primary(ui, "", "Delete").clicked() {
@@ -670,8 +680,8 @@ impl TracedTab {
             if let Some(ok) = done {
                 if ok {
                     match tracer::delete(&id) {
-                        Ok(()) => cx.info("Log deleted"),
-                        Err(e) => cx.error(format!("{e:#}")),
+                        Ok(()) => cx.info(tr("Log deleted")),
+                        Err(e) => cx.error(crate::tf!("{e:#}")),
                     }
                     self.focus = None;
                     self.loaded = false;
@@ -685,24 +695,24 @@ impl TracedTab {
             egui::Modal::new(egui::Id::unique("edit-log")).show(ctx, |ui| {
                 ui.set_width(760.0);
                 ui.set_max_height(620.0);
-                ui.label(style::strong("Edit log").size(19.0));
+                ui.label(style::strong(tr("Edit log")).size(19.0));
                 egui::Grid::new("edit-props").num_columns(2).spacing([16.0, 8.0]).show(ui, |ui| {
-                    ui.label(style::muted(ui, "Name"));
+                    ui.label(style::muted(ui, tr("Name")));
                     style::text_input(ui, &mut ed.log.name, "", 420.0);
                     ui.end_row();
-                    ui.label(style::muted(ui, "Author"));
+                    ui.label(style::muted(ui, tr("Author")));
                     style::text_input(ui, &mut ed.log.author, "", 420.0);
                     ui.end_row();
-                    ui.label(style::muted(ui, "Comment"));
+                    ui.label(style::muted(ui, tr("Comment")));
                     style::text_input(ui, &mut ed.log.comment, "", 420.0);
                     ui.end_row();
-                    ui.label(style::muted(ui, "Add item"));
+                    ui.label(style::muted(ui, tr("Add item")));
                     ui.horizontal(|ui| {
                         let kinds = [
                             (ItemKind::File, "File"),
                             (ItemKind::Folder, "Folder"),
-                            (ItemKind::SettingsKey, if cfg!(windows) { "Registry key" } else { "dconf folder" }),
-                            (ItemKind::SettingsValue, if cfg!(windows) { "Registry value" } else { "dconf key" }),
+                            (ItemKind::SettingsKey, if cfg!(windows) { tr("Registry key") } else { tr("dconf folder") }),
+                            (ItemKind::SettingsValue, if cfg!(windows) { tr("Registry value") } else { tr("dconf key") }),
                         ];
                         egui::ComboBox::from_id_salt("new-kind").width(130.0).selected_text(kinds.iter().find(|k| k.0 == ed.new_kind).map(|k| k.1).unwrap_or("")).show_ui(
                             ui,
@@ -756,8 +766,8 @@ impl TracedTab {
                 if ok {
                     ed.log.modified = chrono::Local::now();
                     match tracer::save(&ed.log) {
-                        Ok(()) => cx.info("Log saved"),
-                        Err(e) => cx.error(format!("{e:#}")),
+                        Ok(()) => cx.info(tr("Log saved")),
+                        Err(e) => cx.error(crate::tf!("{e:#}")),
                     }
                     self.loaded = false;
                 }
