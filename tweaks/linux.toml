@@ -1,0 +1,337 @@
+# CleanCore Tuner: Linux tweaks (GNOME-family desktops, via gsettings).
+#
+#   { type = "gsettings", schema = "org.gnome...", key = "name", value = "<GVariant text>" }
+# `value` must be written exactly as `gsettings get` prints it (strings quoted: "'list-view'",
+# integers typed: "uint32 30") so CleanCore can tell whether the tweak is active.
+# A tweak is shown as unavailable when its schema or key isn't installed.
+
+# ------------------------------------------------------------------ Appearance
+
+[[tweak]]
+id = "color_scheme"
+name = "Color scheme"
+category = "appearance"
+description = "Light or dark style for apps that follow the system preference."
+[[tweak.option]]
+id = "dark"
+label = "Prefer dark"
+set = [{ type = "gsettings", schema = "org.gnome.desktop.interface", key = "color-scheme", value = "'prefer-dark'" }]
+[[tweak.option]]
+id = "light"
+label = "Prefer light"
+set = [{ type = "gsettings", schema = "org.gnome.desktop.interface", key = "color-scheme", value = "'prefer-light'" }]
+
+[[tweak]]
+id = "no_animations"
+name = "Disable animations"
+category = "appearance"
+description = "Windows, menus and the overview open instantly."
+[[tweak.option]]
+id = "on"
+set = [{ type = "gsettings", schema = "org.gnome.desktop.interface", key = "enable-animations", value = "false" }]
+
+[[tweak]]
+id = "battery_percentage"
+name = "Show battery percentage"
+category = "appearance"
+[[tweak.option]]
+id = "on"
+set = [{ type = "gsettings", schema = "org.gnome.desktop.interface", key = "show-battery-percentage", value = "true" }]
+
+[[tweak]]
+id = "titlebar_buttons"
+name = "Title bar buttons"
+category = "appearance"
+description = "Which window buttons are shown and on which side."
+[[tweak.option]]
+id = "right"
+label = "Minimize, maximize, close on the right"
+set = [{ type = "gsettings", schema = "org.gnome.desktop.wm.preferences", key = "button-layout", value = "'appmenu:minimize,maximize,close'" }]
+[[tweak.option]]
+id = "left"
+label = "Close, minimize, maximize on the left"
+set = [{ type = "gsettings", schema = "org.gnome.desktop.wm.preferences", key = "button-layout", value = "'close,minimize,maximize:appmenu'" }]
+
+# ------------------------------------------------------------------ Files
+
+[[tweak]]
+id = "files_list_view"
+name = "Open folders in list view"
+category = "file_explorer"
+description = "The Files app shows details (size, type, date) by default."
+[[tweak.option]]
+id = "on"
+set = [{ type = "gsettings", schema = "org.gnome.nautilus.preferences", key = "default-folder-viewer", value = "'list-view'" }]
+
+[[tweak]]
+id = "files_delete_permanently"
+name = "Add \"Delete Permanently\" to the Files menu"
+category = "file_explorer"
+[[tweak.option]]
+id = "on"
+set = [{ type = "gsettings", schema = "org.gnome.nautilus.preferences", key = "show-delete-permanently", value = "true" }]
+
+[[tweak]]
+id = "files_create_link"
+name = "Add \"Create Link\" to the Files menu"
+category = "file_explorer"
+[[tweak.option]]
+id = "on"
+set = [{ type = "gsettings", schema = "org.gnome.nautilus.preferences", key = "show-create-link", value = "true" }]
+
+[[tweak]]
+id = "files_single_click"
+name = "Open items with a single click"
+category = "file_explorer"
+[[tweak.option]]
+id = "on"
+set = [{ type = "gsettings", schema = "org.gnome.nautilus.preferences", key = "click-policy", value = "'single'" }]
+
+[[tweak]]
+id = "files_recursive_search"
+name = "Search inside subfolders"
+category = "file_explorer"
+description = "Where the Files app searches subfolders."
+[[tweak.option]]
+id = "always"
+label = "Everywhere, including network locations"
+set = [{ type = "gsettings", schema = "org.gnome.nautilus.preferences", key = "recursive-search", value = "'always'" }]
+[[tweak.option]]
+id = "never"
+label = "Never (faster)"
+set = [{ type = "gsettings", schema = "org.gnome.nautilus.preferences", key = "recursive-search", value = "'never'" }]
+
+[[tweak]]
+id = "dialog_show_hidden"
+name = "Show hidden files in file dialogs"
+category = "file_explorer"
+[[tweak.option]]
+id = "on"
+set = [
+  { type = "gsettings", schema = "org.gtk.gtk4.Settings.FileChooser", key = "show-hidden", value = "true" },
+  { type = "gsettings", schema = "org.gtk.Settings.FileChooser", key = "show-hidden", value = "true" },
+]
+
+# ------------------------------------------------------------------ Desktop
+
+[[tweak]]
+id = "clock_seconds"
+name = "Show seconds in the top-bar clock"
+category = "desktop"
+[[tweak.option]]
+id = "on"
+set = [{ type = "gsettings", schema = "org.gnome.desktop.interface", key = "clock-show-seconds", value = "true" }]
+
+[[tweak]]
+id = "clock_weekday"
+name = "Show the weekday in the top-bar clock"
+category = "desktop"
+[[tweak.option]]
+id = "on"
+set = [{ type = "gsettings", schema = "org.gnome.desktop.interface", key = "clock-show-weekday", value = "true" }]
+
+[[tweak]]
+id = "no_hot_corner"
+name = "Disable the hot corner"
+category = "desktop"
+description = "Moving the pointer to the top-left corner no longer opens the overview."
+[[tweak.option]]
+id = "on"
+set = [{ type = "gsettings", schema = "org.gnome.desktop.interface", key = "enable-hot-corners", value = "false" }]
+
+[[tweak]]
+id = "center_new_windows"
+name = "Open new windows in the center"
+category = "desktop"
+[[tweak.option]]
+id = "on"
+set = [{ type = "gsettings", schema = "org.gnome.mutter", key = "center-new-windows", value = "true" }]
+
+[[tweak]]
+id = "edge_tiling"
+name = "Snap windows to screen edges"
+category = "desktop"
+[[tweak.option]]
+id = "on"
+set = [{ type = "gsettings", schema = "org.gnome.mutter", key = "edge-tiling", value = "true" }]
+
+[[tweak]]
+id = "dock_position"
+name = "Dock position"
+category = "desktop"
+description = "Ubuntu Dock / Dash to Dock placement."
+[[tweak.option]]
+id = "left"
+label = "Left"
+set = [{ type = "gsettings", schema = "org.gnome.shell.extensions.dash-to-dock", key = "dock-position", value = "'LEFT'" }]
+[[tweak.option]]
+id = "bottom"
+label = "Bottom"
+set = [{ type = "gsettings", schema = "org.gnome.shell.extensions.dash-to-dock", key = "dock-position", value = "'BOTTOM'" }]
+[[tweak.option]]
+id = "right"
+label = "Right"
+set = [{ type = "gsettings", schema = "org.gnome.shell.extensions.dash-to-dock", key = "dock-position", value = "'RIGHT'" }]
+
+[[tweak]]
+id = "locate_pointer"
+name = "Locate the pointer with Ctrl"
+category = "desktop"
+description = "Pressing Ctrl highlights where the mouse pointer is."
+[[tweak.option]]
+id = "on"
+set = [{ type = "gsettings", schema = "org.gnome.desktop.interface", key = "locate-pointer", value = "true" }]
+
+# ------------------------------------------------------------------ Security and privacy
+
+[[tweak]]
+id = "no_autorun"
+name = "Never autorun software on inserted media"
+category = "security"
+description = "Reduces the risk of malware starting from USB drives and discs."
+[[tweak.option]]
+id = "on"
+set = [{ type = "gsettings", schema = "org.gnome.desktop.media-handling", key = "autorun-never", value = "true" }]
+
+[[tweak]]
+id = "no_lockscreen_notifications"
+name = "Hide notifications on the lock screen"
+category = "security"
+[[tweak.option]]
+id = "on"
+set = [{ type = "gsettings", schema = "org.gnome.desktop.notifications", key = "show-in-lock-screen", value = "false" }]
+
+[[tweak]]
+id = "no_recent_files"
+name = "Don't remember recently used files"
+category = "security"
+[[tweak.option]]
+id = "on"
+set = [{ type = "gsettings", schema = "org.gnome.desktop.privacy", key = "remember-recent-files", value = "false" }]
+
+[[tweak]]
+id = "auto_empty_trash"
+name = "Empty trash and temp files older than 30 days"
+category = "security"
+[[tweak.option]]
+id = "on"
+set = [
+  { type = "gsettings", schema = "org.gnome.desktop.privacy", key = "remove-old-trash-files", value = "true" },
+  { type = "gsettings", schema = "org.gnome.desktop.privacy", key = "remove-old-temp-files", value = "true" },
+  { type = "gsettings", schema = "org.gnome.desktop.privacy", key = "old-files-age", value = "uint32 30" },
+]
+
+[[tweak]]
+id = "no_problem_reports"
+name = "Don't send problem reports or usage statistics"
+category = "security"
+[[tweak.option]]
+id = "on"
+set = [
+  { type = "gsettings", schema = "org.gnome.desktop.privacy", key = "report-technical-problems", value = "false" },
+  { type = "gsettings", schema = "org.gnome.desktop.privacy", key = "send-software-usage-stats", value = "false" },
+]
+
+[[tweak]]
+id = "disable_camera"
+name = "Block camera access"
+category = "security"
+description = "Apps using the GNOME camera portal can't use the camera."
+[[tweak.option]]
+id = "on"
+set = [{ type = "gsettings", schema = "org.gnome.desktop.privacy", key = "disable-camera", value = "true" }]
+
+# ------------------------------------------------------------------ Usage
+
+[[tweak]]
+id = "tap_to_click"
+name = "Tap to click on the touchpad"
+category = "usage"
+[[tweak.option]]
+id = "on"
+set = [{ type = "gsettings", schema = "org.gnome.desktop.peripherals.touchpad", key = "tap-to-click", value = "true" }]
+
+[[tweak]]
+id = "mouse_natural_scroll"
+name = "Natural scrolling for the mouse"
+category = "usage"
+[[tweak.option]]
+id = "on"
+set = [{ type = "gsettings", schema = "org.gnome.desktop.peripherals.mouse", key = "natural-scroll", value = "true" }]
+
+[[tweak]]
+id = "numlock_on"
+name = "Turn Num Lock on at login"
+category = "usage"
+[[tweak.option]]
+id = "on"
+set = [{ type = "gsettings", schema = "org.gnome.desktop.peripherals.keyboard", key = "numlock-state", value = "true" }]
+
+[[tweak]]
+id = "no_event_sounds"
+name = "Disable event sounds"
+category = "usage"
+[[tweak.option]]
+id = "on"
+set = [{ type = "gsettings", schema = "org.gnome.desktop.sound", key = "event-sounds", value = "false" }]
+
+[[tweak]]
+id = "night_light"
+name = "Enable Night Light"
+category = "usage"
+[[tweak.option]]
+id = "on"
+set = [{ type = "gsettings", schema = "org.gnome.settings-daemon.plugins.color", key = "night-light-enabled", value = "true" }]
+
+# ------------------------------------------------------------------ System
+
+[[tweak]]
+id = "no_sleep_on_ac"
+name = "Never suspend automatically when plugged in"
+category = "system"
+[[tweak.option]]
+id = "on"
+set = [{ type = "gsettings", schema = "org.gnome.settings-daemon.plugins.power", key = "sleep-inactive-ac-type", value = "'nothing'" }]
+
+[[tweak]]
+id = "power_button"
+name = "Power button action"
+category = "system"
+[[tweak.option]]
+id = "suspend"
+label = "Suspend"
+set = [{ type = "gsettings", schema = "org.gnome.settings-daemon.plugins.power", key = "power-button-action", value = "'suspend'" }]
+[[tweak.option]]
+id = "poweroff"
+label = "Show the power-off dialog"
+set = [{ type = "gsettings", schema = "org.gnome.settings-daemon.plugins.power", key = "power-button-action", value = "'interactive'" }]
+[[tweak.option]]
+id = "nothing"
+label = "Do nothing"
+set = [{ type = "gsettings", schema = "org.gnome.settings-daemon.plugins.power", key = "power-button-action", value = "'nothing'" }]
+
+[[tweak]]
+id = "no_auto_updates"
+name = "Don't download software updates automatically"
+category = "system"
+description = "GNOME Software stops downloading updates in the background."
+[[tweak.option]]
+id = "on"
+set = [{ type = "gsettings", schema = "org.gnome.software", key = "download-updates", value = "false" }]
+
+[[tweak]]
+id = "no_web_search"
+name = "Disable external search providers"
+category = "system"
+description = "Overview search only shows local results."
+[[tweak.option]]
+id = "on"
+set = [{ type = "gsettings", schema = "org.gnome.desktop.search-providers", key = "disable-external", value = "true" }]
+
+[[tweak]]
+id = "static_workspaces"
+name = "Use a fixed number of workspaces"
+category = "system"
+[[tweak.option]]
+id = "on"
+set = [{ type = "gsettings", schema = "org.gnome.mutter", key = "dynamic-workspaces", value = "false" }]

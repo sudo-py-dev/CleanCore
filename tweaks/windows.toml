@@ -1,0 +1,772 @@
+# CleanCore Registry Tuner: Windows tweaks.
+#
+# Each [[tweak]] has one [[tweak.option]] (a toggle, id "on") or several (a choice).
+# Settings:
+#   { type = "reg",        key = 'HKEY_...\Path', name = "Value", data = { dword = 1 } }
+#   { type = "reg_delete", key = 'HKEY_...\Path', name = "Value" }
+# data kinds: dword, qword, sz, expand_sz, multi_sz, binary.  name = "" is the (Default) value.
+# Reverting restores whatever was there before, so no "off" data is needed.
+# Builds: Windows 7 = 7600, 8.1 = 9600, 10 = 10240, 11 = 22000.
+
+# ------------------------------------------------------------------ Appearance
+
+[[tweak]]
+id = "taskbar_thumbnails_fast"
+name = "Show taskbar thumbnails faster"
+category = "appearance"
+description = "Hovering over a taskbar button shows window thumbnails with almost no delay."
+requires = "explorer"
+[[tweak.option]]
+id = "on"
+set = [{ type = "reg", key = 'HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced', name = "ExtendedUIHoverTime", data = { dword = 1 } }]
+
+[[tweak]]
+id = "peek_fast"
+name = "Show Peek at desktop faster"
+category = "appearance"
+description = "Shorter delay before the desktop preview appears when hovering the corner of the taskbar."
+requires = "explorer"
+[[tweak.option]]
+id = "on"
+set = [{ type = "reg", key = 'HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced', name = "DesktopLivePreviewHoverTime", data = { dword = 100 } }]
+
+[[tweak]]
+id = "menus_fast"
+name = "Speed up Windows menus"
+category = "appearance"
+description = "Minimizes the delay before a submenu opens (default 400 ms)."
+requires = "logoff"
+[[tweak.option]]
+id = "on"
+set = [{ type = "reg", key = 'HKEY_CURRENT_USER\Control Panel\Desktop', name = "MenuShowDelay", data = { sz = "50" } }]
+
+[[tweak]]
+id = "classic_context_menu"
+name = "Use the Windows 10 context menu"
+category = "appearance"
+description = "Opens the full classic right-click menu directly instead of the Windows 11 compact menu."
+requires = "explorer"
+min_build = 22000
+[[tweak.option]]
+id = "on"
+set = [{ type = "reg", key = 'HKEY_CURRENT_USER\Software\Classes\CLSID\{86ca1aa0-34aa-4e8b-a509-50c905bae2a2}\InprocServer32', name = "", data = { sz = "" } }]
+
+[[tweak]]
+id = "disable_ads"
+name = "Disable ads and suggested apps"
+category = "appearance"
+description = "Stops Start suggestions, silently installed promoted apps, tips and sync-provider ads in File Explorer."
+requires = "logoff"
+min_build = 10240
+[[tweak.option]]
+id = "on"
+set = [
+  { type = "reg", key = 'HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager', name = "SilentInstalledAppsEnabled", data = { dword = 0 } },
+  { type = "reg", key = 'HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager', name = "SystemPaneSuggestionsEnabled", data = { dword = 0 } },
+  { type = "reg", key = 'HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager', name = "SoftLandingEnabled", data = { dword = 0 } },
+  { type = "reg", key = 'HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager', name = "SubscribedContent-338388Enabled", data = { dword = 0 } },
+  { type = "reg", key = 'HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager', name = "SubscribedContent-338389Enabled", data = { dword = 0 } },
+  { type = "reg", key = 'HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager', name = "SubscribedContent-310093Enabled", data = { dword = 0 } },
+  { type = "reg", key = 'HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced', name = "ShowSyncProviderNotifications", data = { dword = 0 } },
+]
+
+[[tweak]]
+id = "no_logon_blur"
+name = "Disable blur on the sign-in screen"
+category = "appearance"
+description = "Shows the sign-in background image sharp instead of blurred."
+requires = "logoff"
+min_build = 18362
+[[tweak.option]]
+id = "on"
+set = [{ type = "reg", key = 'HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\System', name = "DisableAcrylicBackgroundOnLogon", data = { dword = 1 } }]
+
+[[tweak]]
+id = "classic_battery_flyout"
+name = "Use the classic battery indicator"
+category = "appearance"
+description = "Replaces the modern battery flyout with the Windows 7 style one."
+requires = "logoff"
+min_build = 10240
+max_build = 21999
+[[tweak.option]]
+id = "on"
+set = [{ type = "reg", key = 'HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\ImmersiveShell', name = "UseWin32BatteryFlyout", data = { dword = 1 } }]
+
+[[tweak]]
+id = "battery_time_estimate"
+name = "Show estimated battery time remaining"
+category = "appearance"
+description = "Shows remaining battery time in the battery tooltip and flyout."
+requires = "reboot"
+[[tweak.option]]
+id = "on"
+set = [
+  { type = "reg", key = 'HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Power', name = "EnergyEstimationEnabled", data = { dword = 1 } },
+  { type = "reg_delete", key = 'HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Power', name = "EEEnabled" },
+  { type = "reg_delete", key = 'HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Power', name = "UserBatteryDischargeEstimator" },
+]
+
+[[tweak]]
+id = "disable_widgets"
+name = "Disable Widgets"
+category = "appearance"
+description = "Removes the Widgets board and its taskbar button."
+requires = "logoff"
+min_build = 22000
+[[tweak.option]]
+id = "on"
+set = [{ type = "reg", key = 'HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Dsh', name = "AllowNewsAndInterests", data = { dword = 0 } }]
+
+[[tweak]]
+id = "no_shortcut_arrow"
+name = "Remove the shortcut arrow overlay"
+category = "appearance"
+description = "Hides the small arrow drawn on shortcut icons."
+requires = "explorer"
+[[tweak.option]]
+id = "on"
+set = [{ type = "reg", key = 'HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Shell Icons', name = "29", data = { expand_sz = '%SystemRoot%\System32\imageres.dll,-17' } }]
+
+[[tweak]]
+id = "disable_peek"
+name = "Disable Peek at desktop"
+category = "appearance"
+description = "Turns off the desktop preview when hovering the end of the taskbar."
+requires = "explorer"
+[[tweak.option]]
+id = "on"
+set = [{ type = "reg", key = 'HKEY_CURRENT_USER\Software\Microsoft\Windows\DWM', name = "EnableAeroPeek", data = { dword = 0 } }]
+
+[[tweak]]
+id = "classic_volume"
+name = "Use the classic volume control"
+category = "appearance"
+description = "Shows the Windows 7 style volume slider from the tray icon."
+requires = "explorer"
+min_build = 10240
+max_build = 21999
+[[tweak.option]]
+id = "on"
+set = [{ type = "reg", key = 'HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\MTCUVC', name = "EnableMtcUvc", data = { dword = 0 } }]
+
+# ------------------------------------------------------------------ File Explorer
+
+[[tweak]]
+id = "no_new_app_alert"
+name = "Disable \"You have new apps that can open this type of file\""
+category = "file_explorer"
+description = "Stops the prompt that appears after installing an app that handles a file type."
+requires = "logoff"
+[[tweak.option]]
+id = "on"
+set = [{ type = "reg", key = 'HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\Explorer', name = "NoNewAppAlert", data = { dword = 1 } }]
+
+[[tweak]]
+id = "cmd_admin_here"
+name = "Add \"Command Prompt as Administrator\" to the folder context menu"
+category = "file_explorer"
+description = "Right-click the background of a folder to open an elevated command prompt there."
+[[tweak.option]]
+id = "on"
+set = [
+  { type = "reg", key = 'HKEY_LOCAL_MACHINE\SOFTWARE\Classes\Directory\Background\shell\runas', name = "", data = { sz = "Command Prompt as Administrator" } },
+  { type = "reg", key = 'HKEY_LOCAL_MACHINE\SOFTWARE\Classes\Directory\Background\shell\runas', name = "HasLUAShield", data = { sz = "" } },
+  { type = "reg", key = 'HKEY_LOCAL_MACHINE\SOFTWARE\Classes\Directory\Background\shell\runas\command', name = "", data = { sz = 'cmd.exe /s /k pushd "%V"' } },
+]
+
+[[tweak]]
+id = "do_for_all_checked"
+name = "Check \"Do this for all current items\" by default"
+category = "file_explorer"
+description = "Pre-checks the box in the file conflict dialog."
+[[tweak.option]]
+id = "on"
+set = [{ type = "reg", key = 'HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\OperationStatusManager', name = "ConfirmationCheckBoxDoForAll", data = { dword = 1 } }]
+
+[[tweak]]
+id = "autocomplete"
+name = "Enable inline AutoComplete"
+category = "file_explorer"
+description = "Completes typed text in the address bar, Run dialog and Open/Save dialogs."
+requires = "logoff"
+[[tweak.option]]
+id = "on"
+set = [
+  { type = "reg", key = 'HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\AutoComplete', name = "Append Completion", data = { sz = "yes" } },
+  { type = "reg", key = 'HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\AutoComplete', name = "AutoSuggest", data = { sz = "yes" } },
+]
+
+[[tweak]]
+id = "explorer_open_to"
+name = "Open File Explorer to"
+category = "file_explorer"
+description = "Choose the folder a new File Explorer window starts in."
+min_build = 10240
+[[tweak.option]]
+id = "this_pc"
+label = "This PC"
+set = [{ type = "reg", key = 'HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced', name = "LaunchTo", data = { dword = 1 } }]
+[[tweak.option]]
+id = "quick_access"
+label = "Quick access / Home"
+set = [{ type = "reg", key = 'HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced', name = "LaunchTo", data = { dword = 2 } }]
+[[tweak.option]]
+id = "downloads"
+label = "Downloads"
+set = [{ type = "reg", key = 'HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced', name = "LaunchTo", data = { dword = 3 } }]
+
+[[tweak]]
+id = "no_info_tips"
+name = "Disable pop-up descriptions"
+category = "file_explorer"
+description = "Hides the tooltip shown when hovering over files and folders."
+requires = "explorer"
+[[tweak.option]]
+id = "on"
+set = [{ type = "reg", key = 'HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced', name = "ShowInfoTip", data = { dword = 0 } }]
+
+[[tweak]]
+id = "drive_letters_first"
+name = "Show drive letters first"
+category = "file_explorer"
+description = "Shows \"(C:) Local Disk\" instead of \"Local Disk (C:)\"."
+requires = "explorer"
+[[tweak.option]]
+id = "on"
+set = [{ type = "reg", key = 'HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer', name = "ShowDriveLettersFirst", data = { dword = 4 } }]
+
+[[tweak]]
+id = "operation_details"
+name = "Show full details in file operation dialogs"
+category = "file_explorer"
+description = "Copy, move and delete dialogs open with \"More details\" expanded."
+requires = "explorer"
+[[tweak.option]]
+id = "on"
+set = [{ type = "reg", key = 'HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\OperationStatusManager', name = "EnthusiastMode", data = { dword = 1 } }]
+
+[[tweak]]
+id = "rotate_context_menu"
+name = "Add Rotate left/right to the image context menu"
+category = "file_explorer"
+description = "Adds rotate commands for JPEG, PNG and BMP files."
+max_build = 21999
+[[tweak.option]]
+id = "on"
+set = [
+  { type = "reg", key = 'HKEY_LOCAL_MACHINE\SOFTWARE\Classes\SystemFileAssociations\.jpg\ShellEx\ContextMenuHandlers\ShellImagePreview', name = "", data = { sz = "{FFE2A43C-56B9-4bf5-9A79-CC6D4285608A}" } },
+  { type = "reg", key = 'HKEY_LOCAL_MACHINE\SOFTWARE\Classes\SystemFileAssociations\.jpeg\ShellEx\ContextMenuHandlers\ShellImagePreview', name = "", data = { sz = "{FFE2A43C-56B9-4bf5-9A79-CC6D4285608A}" } },
+  { type = "reg", key = 'HKEY_LOCAL_MACHINE\SOFTWARE\Classes\SystemFileAssociations\.png\ShellEx\ContextMenuHandlers\ShellImagePreview', name = "", data = { sz = "{FFE2A43C-56B9-4bf5-9A79-CC6D4285608A}" } },
+  { type = "reg", key = 'HKEY_LOCAL_MACHINE\SOFTWARE\Classes\SystemFileAssociations\.bmp\ShellEx\ContextMenuHandlers\ShellImagePreview', name = "", data = { sz = "{FFE2A43C-56B9-4bf5-9A79-CC6D4285608A}" } },
+]
+
+[[tweak]]
+id = "classic_ribbon"
+name = "Use the classic File Explorer ribbon"
+category = "file_explorer"
+description = "Restores the Windows 10 tabbed ribbon. Works on early Windows 11 releases only."
+requires = "explorer"
+min_build = 22000
+max_build = 22621
+[[tweak.option]]
+id = "on"
+set = [{ type = "reg", key = 'HKEY_CURRENT_USER\Software\Classes\CLSID\{d93ed569-3b3e-4bff-8355-3c44f6a52bb5}\InprocServer32', name = "", data = { sz = "" } }]
+
+[[tweak]]
+id = "no_shortcut_suffix"
+name = "Don't add \"- Shortcut\" to new shortcuts"
+category = "file_explorer"
+description = "New shortcuts keep the original name."
+requires = "explorer"
+min_build = 10240
+[[tweak.option]]
+id = "on"
+set = [{ type = "reg", key = 'HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\NamingTemplates', name = "ShortcutNameTemplate", data = { sz = '"%s.lnk"' } }]
+
+# ------------------------------------------------------------------ Desktop
+
+[[tweak]]
+id = "hover_fast"
+name = "Speed up mouse hover"
+category = "desktop"
+description = "Tooltips and hover previews appear faster (default 400 ms)."
+requires = "logoff"
+[[tweak.option]]
+id = "on"
+set = [{ type = "reg", key = 'HKEY_CURRENT_USER\Control Panel\Mouse', name = "MouseHoverTime", data = { sz = "100" } }]
+
+[[tweak]]
+id = "icon_cache"
+name = "Increase the icon cache"
+category = "desktop"
+description = "Lets Windows keep more icons in memory, so folders and the desktop load faster."
+requires = "reboot"
+[[tweak.option]]
+id = "on"
+set = [{ type = "reg", key = 'HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer', name = "Max Cached Icons", data = { sz = "4096" } }]
+
+[[tweak]]
+id = "no_bing_search"
+name = "Disable Bing in taskbar search"
+category = "desktop"
+description = "Search on the taskbar only looks at your PC, not the web."
+requires = "logoff"
+min_build = 10240
+[[tweak.option]]
+id = "on"
+set = [
+  { type = "reg", key = 'HKEY_CURRENT_USER\Software\Policies\Microsoft\Windows\Explorer', name = "DisableSearchBoxSuggestions", data = { dword = 1 } },
+  { type = "reg", key = 'HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Search', name = "BingSearchEnabled", data = { dword = 0 } },
+]
+
+[[tweak]]
+id = "taskbar_end_task"
+name = "Add \"End task\" to the taskbar menu"
+category = "desktop"
+description = "Right-click a taskbar button to force-close the app."
+min_build = 22631
+[[tweak.option]]
+id = "on"
+set = [{ type = "reg", key = 'HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced\TaskbarDeveloperSettings', name = "TaskbarEndTask", data = { dword = 1 } }]
+
+[[tweak]]
+id = "taskbar_left"
+name = "Align taskbar buttons to the left"
+category = "desktop"
+description = "Moves the centered Windows 11 taskbar icons to the left."
+requires = "explorer"
+min_build = 22000
+[[tweak.option]]
+id = "on"
+set = [{ type = "reg", key = 'HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced', name = "TaskbarAl", data = { dword = 0 } }]
+
+[[tweak]]
+id = "clock_seconds"
+name = "Show seconds in the taskbar clock"
+category = "desktop"
+requires = "explorer"
+min_build = 10240
+[[tweak.option]]
+id = "on"
+set = [{ type = "reg", key = 'HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced', name = "ShowSecondsInSystemClock", data = { dword = 1 } }]
+
+[[tweak]]
+id = "desktop_version"
+name = "Show the Windows version on the desktop"
+category = "desktop"
+description = "Draws the Windows edition and build in the lower-right corner."
+requires = "logoff"
+[[tweak.option]]
+id = "on"
+set = [{ type = "reg", key = 'HKEY_CURRENT_USER\Control Panel\Desktop', name = "PaintDesktopVersion", data = { dword = 1 } }]
+
+# ------------------------------------------------------------------ Security and Stability
+
+[[tweak]]
+id = "disable_autoplay"
+name = "Disable AutoPlay on all drives"
+category = "security"
+description = "Reduces the risk of malware starting from USB drives and discs."
+requires = "logoff"
+[[tweak.option]]
+id = "on"
+set = [
+  { type = "reg", key = 'HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Explorer', name = "NoDriveTypeAutoRun", data = { dword = 255 } },
+  { type = "reg", key = 'HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\AutoplayHandlers', name = "DisableAutoplay", data = { dword = 1 } },
+]
+
+[[tweak]]
+id = "close_hung_apps"
+name = "Close unresponsive apps automatically"
+category = "security"
+description = "Ends hung apps faster and skips the \"This app is preventing shutdown\" screen."
+requires = "logoff"
+[[tweak.option]]
+id = "on"
+set = [
+  { type = "reg", key = 'HKEY_CURRENT_USER\Control Panel\Desktop', name = "AutoEndTasks", data = { sz = "1" } },
+  { type = "reg", key = 'HKEY_CURRENT_USER\Control Panel\Desktop', name = "HungAppTimeout", data = { sz = "2000" } },
+  { type = "reg", key = 'HKEY_CURRENT_USER\Control Panel\Desktop', name = "WaitToKillAppTimeout", data = { sz = "2000" } },
+]
+
+[[tweak]]
+id = "never_auto_end_tasks"
+name = "Never end apps automatically at shutdown"
+category = "security"
+description = "Windows waits for you instead of closing apps with unsaved work."
+requires = "logoff"
+[[tweak.option]]
+id = "on"
+set = [{ type = "reg", key = 'HKEY_CURRENT_USER\Control Panel\Desktop', name = "AutoEndTasks", data = { sz = "0" } }]
+
+[[tweak]]
+id = "no_download_block"
+name = "Disable the security warning on downloaded files"
+category = "security"
+description = "Downloaded files are no longer marked as coming from the internet."
+requires = "logoff"
+warning = "Downloaded files will open without the \"unknown publisher\" warning."
+[[tweak.option]]
+id = "on"
+set = [{ type = "reg", key = 'HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Policies\Attachments', name = "SaveZoneInformation", data = { dword = 1 } }]
+
+[[tweak]]
+id = "take_ownership"
+name = "Add \"Take Ownership\" to the context menu"
+category = "security"
+description = "Right-click a file or folder to give Administrators full access to it."
+[[tweak.option]]
+id = "on"
+set = [
+  { type = "reg", key = 'HKEY_LOCAL_MACHINE\SOFTWARE\Classes\*\shell\runas', name = "", data = { sz = "Take Ownership" } },
+  { type = "reg", key = 'HKEY_LOCAL_MACHINE\SOFTWARE\Classes\*\shell\runas', name = "HasLUAShield", data = { sz = "" } },
+  { type = "reg", key = 'HKEY_LOCAL_MACHINE\SOFTWARE\Classes\*\shell\runas', name = "NoWorkingDirectory", data = { sz = "" } },
+  { type = "reg", key = 'HKEY_LOCAL_MACHINE\SOFTWARE\Classes\*\shell\runas\command', name = "", data = { sz = 'cmd.exe /c takeown /f "%1" && icacls "%1" /grant administrators:F' } },
+  { type = "reg", key = 'HKEY_LOCAL_MACHINE\SOFTWARE\Classes\*\shell\runas\command', name = "IsolatedCommand", data = { sz = 'cmd.exe /c takeown /f "%1" && icacls "%1" /grant administrators:F' } },
+  { type = "reg", key = 'HKEY_LOCAL_MACHINE\SOFTWARE\Classes\Directory\shell\runas', name = "", data = { sz = "Take Ownership" } },
+  { type = "reg", key = 'HKEY_LOCAL_MACHINE\SOFTWARE\Classes\Directory\shell\runas', name = "HasLUAShield", data = { sz = "" } },
+  { type = "reg", key = 'HKEY_LOCAL_MACHINE\SOFTWARE\Classes\Directory\shell\runas', name = "NoWorkingDirectory", data = { sz = "" } },
+  { type = "reg", key = 'HKEY_LOCAL_MACHINE\SOFTWARE\Classes\Directory\shell\runas\command', name = "", data = { sz = 'cmd.exe /c takeown /f "%1" /r /d y && icacls "%1" /grant administrators:F /t' } },
+  { type = "reg", key = 'HKEY_LOCAL_MACHINE\SOFTWARE\Classes\Directory\shell\runas\command', name = "IsolatedCommand", data = { sz = 'cmd.exe /c takeown /f "%1" /r /d y && icacls "%1" /grant administrators:F /t' } },
+]
+
+[[tweak]]
+id = "disable_smartscreen"
+name = "Disable SmartScreen"
+category = "security"
+description = "Turns off SmartScreen checks for apps and files."
+requires = "logoff"
+min_build = 22000
+warning = "SmartScreen blocks known malicious downloads. Only disable it if you have other protection."
+[[tweak.option]]
+id = "on"
+set = [
+  { type = "reg", key = 'HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\System', name = "EnableSmartScreen", data = { dword = 0 } },
+  { type = "reg", key = 'HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer', name = "SmartScreenEnabled", data = { sz = "Off" } },
+]
+
+[[tweak]]
+id = "bsod_details"
+name = "Show details on blue screens"
+category = "security"
+description = "Shows the classic stop-error details instead of the sad face."
+requires = "reboot"
+min_build = 10240
+[[tweak.option]]
+id = "on"
+set = [
+  { type = "reg", key = 'HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\CrashControl', name = "DisplayParameters", data = { dword = 1 } },
+  { type = "reg", key = 'HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\CrashControl', name = "DisableEmoticon", data = { dword = 1 } },
+]
+
+[[tweak]]
+id = "linked_connections"
+name = "Let elevated apps see mapped network drives"
+category = "security"
+description = "Apps run as administrator can access drives mapped by your normal session."
+requires = "reboot"
+[[tweak.option]]
+id = "on"
+set = [{ type = "reg", key = 'HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System', name = "EnableLinkedConnections", data = { dword = 1 } }]
+
+[[tweak]]
+id = "disable_uac"
+name = "Disable User Account Control (UAC)"
+category = "security"
+description = "Every app runs with full administrator rights and no prompt."
+requires = "reboot"
+warning = "Disabling UAC lets any program change the system without asking. Not recommended."
+[[tweak.option]]
+id = "on"
+set = [{ type = "reg", key = 'HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System', name = "EnableLUA", data = { dword = 0 } }]
+
+[[tweak]]
+id = "defender_pua"
+name = "Block potentially unwanted apps (adware) in Defender"
+category = "security"
+requires = "logoff"
+min_build = 10240
+[[tweak.option]]
+id = "on"
+set = [{ type = "reg", key = 'HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows Defender\MpEngine', name = "MpEnablePus", data = { dword = 1 } }]
+
+[[tweak]]
+id = "usb_write_protect"
+name = "Make USB storage read-only"
+category = "security"
+description = "Nothing can be written to USB mass storage devices."
+requires = "reboot"
+[[tweak.option]]
+id = "on"
+set = [{ type = "reg", key = 'HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\StorageDevicePolicies', name = "WriteProtect", data = { dword = 1 } }]
+
+[[tweak]]
+id = "camera_osd"
+name = "Notify when the camera turns on or off"
+category = "security"
+requires = "logoff"
+min_build = 10240
+[[tweak.option]]
+id = "on"
+set = [{ type = "reg", key = 'HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\OEM\Device\Capture', name = "NoPhysicalCameraLED", data = { dword = 1 } }]
+
+[[tweak]]
+id = "crash_dumps"
+name = "Save a crash dump when a program crashes"
+category = "security"
+description = "Writes full dumps to %LOCALAPPDATA%\\CrashDumps (keeps the last 10)."
+[[tweak.option]]
+id = "on"
+set = [
+  { type = "reg", key = 'HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\Windows Error Reporting\LocalDumps', name = "DumpType", data = { dword = 2 } },
+  { type = "reg", key = 'HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\Windows Error Reporting\LocalDumps', name = "DumpCount", data = { dword = 10 } },
+  { type = "reg", key = 'HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\Windows Error Reporting\LocalDumps', name = "DumpFolder", data = { expand_sz = '%LOCALAPPDATA%\CrashDumps' } },
+]
+
+[[tweak]]
+id = "win11_unsupported_upgrade"
+name = "Allow Windows 11 upgrade on unsupported hardware"
+category = "security"
+description = "Lets the Windows 11 installer skip the TPM 2.0 and CPU checks."
+min_build = 10240
+warning = "Microsoft may not provide updates to unsupported devices."
+[[tweak.option]]
+id = "on"
+set = [{ type = "reg", key = 'HKEY_LOCAL_MACHINE\SYSTEM\Setup\MoSetup', name = "AllowUpgradesWithUnsupportedTPMOrCPU", data = { dword = 1 } }]
+
+# ------------------------------------------------------------------ Usage
+
+[[tweak]]
+id = "photo_viewer"
+name = "Enable Windows Photo Viewer"
+category = "usage"
+description = "Makes the classic Photo Viewer available in \"Open with\" for common image types."
+min_build = 10240
+[[tweak.option]]
+id = "on"
+set = [
+  { type = "reg", key = 'HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Photo Viewer\Capabilities\FileAssociations', name = ".jpg", data = { sz = "PhotoViewer.FileAssoc.Tiff" } },
+  { type = "reg", key = 'HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Photo Viewer\Capabilities\FileAssociations', name = ".jpeg", data = { sz = "PhotoViewer.FileAssoc.Tiff" } },
+  { type = "reg", key = 'HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Photo Viewer\Capabilities\FileAssociations', name = ".png", data = { sz = "PhotoViewer.FileAssoc.Tiff" } },
+  { type = "reg", key = 'HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Photo Viewer\Capabilities\FileAssociations', name = ".bmp", data = { sz = "PhotoViewer.FileAssoc.Tiff" } },
+  { type = "reg", key = 'HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Photo Viewer\Capabilities\FileAssociations', name = ".gif", data = { sz = "PhotoViewer.FileAssoc.Tiff" } },
+]
+
+[[tweak]]
+id = "no_background_apps"
+name = "Disable background apps"
+category = "usage"
+description = "Store apps can't run in the background, which saves power."
+requires = "logoff"
+min_build = 9600
+[[tweak.option]]
+id = "on"
+set = [
+  { type = "reg", key = 'HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\BackgroundAccessApplications', name = "GlobalUserDisabled", data = { dword = 1 } },
+  { type = "reg", key = 'HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Search', name = "BackgroundAppGlobalToggle", data = { dword = 0 } },
+]
+
+[[tweak]]
+id = "classic_user_accounts"
+name = "Add classic User Accounts to Control Panel"
+category = "usage"
+description = "Adds an entry that opens the advanced user accounts dialog (netplwiz)."
+[[tweak.option]]
+id = "on"
+set = [
+  { type = "reg", key = 'HKEY_LOCAL_MACHINE\SOFTWARE\Classes\CLSID\{6c3a8e52-0f4b-4d7e-9a1c-2b5d8f3e7a10}', name = "", data = { sz = "User Accounts (classic)" } },
+  { type = "reg", key = 'HKEY_LOCAL_MACHINE\SOFTWARE\Classes\CLSID\{6c3a8e52-0f4b-4d7e-9a1c-2b5d8f3e7a10}', name = "System.ControlPanel.Category", data = { sz = "9" } },
+  { type = "reg", key = 'HKEY_LOCAL_MACHINE\SOFTWARE\Classes\CLSID\{6c3a8e52-0f4b-4d7e-9a1c-2b5d8f3e7a10}\DefaultIcon', name = "", data = { expand_sz = '%SystemRoot%\System32\netplwiz.exe' } },
+  { type = "reg", key = 'HKEY_LOCAL_MACHINE\SOFTWARE\Classes\CLSID\{6c3a8e52-0f4b-4d7e-9a1c-2b5d8f3e7a10}\Shell\Open\command', name = "", data = { expand_sz = '%SystemRoot%\System32\netplwiz.exe' } },
+  { type = "reg", key = 'HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\ControlPanel\NameSpace\{6c3a8e52-0f4b-4d7e-9a1c-2b5d8f3e7a10}', name = "", data = { sz = "User Accounts (classic)" } },
+]
+
+# ------------------------------------------------------------------ System
+
+[[tweak]]
+id = "classic_alt_tab"
+name = "Use classic Alt+Tab"
+category = "system"
+description = "Small icons instead of large window previews."
+requires = "explorer"
+[[tweak.option]]
+id = "on"
+set = [{ type = "reg", key = 'HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer', name = "AltTabSettings", data = { dword = 1 } }]
+
+[[tweak]]
+id = "no_driver_updates"
+name = "Disable driver updates via Windows Update"
+category = "system"
+requires = "logoff"
+[[tweak.option]]
+id = "on"
+set = [{ type = "reg", key = 'HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate', name = "ExcludeWUDriversInQualityUpdate", data = { dword = 1 } }]
+
+[[tweak]]
+id = "no_store_autoupdate"
+name = "Disable automatic Store app updates"
+category = "system"
+requires = "logoff"
+min_build = 10240
+[[tweak.option]]
+id = "on"
+set = [{ type = "reg", key = 'HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\WindowsStore', name = "AutoDownload", data = { dword = 2 } }]
+
+[[tweak]]
+id = "no_power_throttling"
+name = "Disable power throttling"
+category = "system"
+description = "Background apps keep full CPU speed. Uses more battery."
+requires = "reboot"
+min_build = 16299
+[[tweak.option]]
+id = "on"
+set = [{ type = "reg", key = 'HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Power\PowerThrottling', name = "PowerThrottlingOff", data = { dword = 1 } }]
+
+[[tweak]]
+id = "no_telemetry"
+name = "Minimize telemetry and data collection"
+category = "system"
+description = "Sets diagnostic data to the lowest level the edition allows."
+requires = "logoff"
+[[tweak.option]]
+id = "on"
+set = [{ type = "reg", key = 'HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\DataCollection', name = "AllowTelemetry", data = { dword = 0 } }]
+
+[[tweak]]
+id = "edge_no_background"
+name = "Stop Microsoft Edge running in the background"
+category = "system"
+requires = "logoff"
+[[tweak.option]]
+id = "on"
+set = [
+  { type = "reg", key = 'HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Edge', name = "StartupBoostEnabled", data = { dword = 0 } },
+  { type = "reg", key = 'HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Edge', name = "BackgroundModeEnabled", data = { dword = 0 } },
+]
+
+[[tweak]]
+id = "clear_pagefile"
+name = "Clear the page file at shutdown"
+category = "system"
+description = "Wipes virtual memory on shutdown for privacy. Shutdown takes longer."
+requires = "reboot"
+[[tweak.option]]
+id = "on"
+set = [{ type = "reg", key = 'HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management', name = "ClearPageFileAtShutdown", data = { dword = 1 } }]
+
+# ------------------------------------------------------------------ AI, ads and suggestions
+# Also offered by Tools › Microsoft slop cleaner.
+
+[[tweak]]
+id = "disable_copilot"
+name = "Turn off Copilot"
+category = "ai"
+description = "Turns off Windows Copilot and hides its taskbar button (policy for this user and the PC)."
+requires = "logoff"
+min_build = 22000
+[[tweak.option]]
+id = "on"
+set = [
+  { type = "reg", key = 'HKEY_CURRENT_USER\Software\Policies\Microsoft\Windows\WindowsCopilot', name = "TurnOffWindowsCopilot", data = { dword = 1 } },
+  { type = "reg", key = 'HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\WindowsCopilot', name = "TurnOffWindowsCopilot", data = { dword = 1 } },
+  { type = "reg", key = 'HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced', name = "ShowCopilotButton", data = { dword = 0 } },
+]
+
+[[tweak]]
+id = "disable_recall"
+name = "Turn off Recall snapshots"
+category = "ai"
+description = "Stops Recall from saving screenshots of your activity (Copilot+ PCs)."
+requires = "logoff"
+min_build = 26100
+[[tweak.option]]
+id = "on"
+set = [
+  { type = "reg", key = 'HKEY_CURRENT_USER\Software\Policies\Microsoft\Windows\WindowsAI', name = "DisableAIDataAnalysis", data = { dword = 1 } },
+  { type = "reg", key = 'HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\WindowsAI', name = "DisableAIDataAnalysis", data = { dword = 1 } },
+  { type = "reg", key = 'HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\WindowsAI', name = "AllowRecallEnablement", data = { dword = 0 } },
+]
+
+[[tweak]]
+id = "disable_click_to_do"
+name = "Turn off Click to Do"
+category = "ai"
+description = "Disables the AI actions overlay (Win + click) on Copilot+ PCs."
+requires = "logoff"
+min_build = 26100
+[[tweak.option]]
+id = "on"
+set = [
+  { type = "reg", key = 'HKEY_CURRENT_USER\Software\Policies\Microsoft\Windows\WindowsAI', name = "DisableClickToDo", data = { dword = 1 } },
+  { type = "reg", key = 'HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\WindowsAI', name = "DisableClickToDo", data = { dword = 1 } },
+]
+
+[[tweak]]
+id = "disable_ai_in_apps"
+name = "Turn off AI features in Paint and Notepad"
+category = "ai"
+description = "Hides Cocreator, Image Creator and generative erase in Paint, and Copilot rewrite in Notepad."
+requires = "logoff"
+min_build = 22000
+[[tweak.option]]
+id = "on"
+set = [
+  { type = "reg", key = 'HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Paint', name = "DisableCocreator", data = { dword = 1 } },
+  { type = "reg", key = 'HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Paint', name = "DisableImageCreator", data = { dword = 1 } },
+  { type = "reg", key = 'HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Paint', name = "DisableGenerativeFill", data = { dword = 1 } },
+  { type = "reg", key = 'HKEY_LOCAL_MACHINE\SOFTWARE\Policies\WindowsNotepad', name = "DisableAIFeatures", data = { dword = 1 } },
+]
+
+[[tweak]]
+id = "no_advertising_id"
+name = "Turn off the advertising ID"
+category = "ai"
+description = "Apps can no longer use your advertising ID to show personalized ads."
+[[tweak.option]]
+id = "on"
+set = [
+  { type = "reg", key = 'HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\AdvertisingInfo', name = "Enabled", data = { dword = 0 } },
+  { type = "reg", key = 'HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Privacy', name = "TailoredExperiencesWithDiagnosticDataEnabled", data = { dword = 0 } },
+]
+
+[[tweak]]
+id = "no_lockscreen_ads"
+name = "Turn off tips and ads on the lock screen"
+category = "ai"
+description = "Removes \"fun facts, tips, tricks and more\" and promoted content from the lock screen."
+[[tweak.option]]
+id = "on"
+set = [
+  { type = "reg", key = 'HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager', name = "RotatingLockScreenOverlayEnabled", data = { dword = 0 } },
+  { type = "reg", key = 'HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager', name = "SubscribedContent-338387Enabled", data = { dword = 0 } },
+]
+
+[[tweak]]
+id = "no_start_recommendations"
+name = "Turn off Start menu recommendations"
+category = "ai"
+description = "Stops promoted apps and \"recommended\" tips in the Start menu."
+requires = "explorer"
+min_build = 22000
+[[tweak.option]]
+id = "on"
+set = [
+  { type = "reg", key = 'HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced', name = "Start_IrisRecommendations", data = { dword = 0 } },
+  { type = "reg", key = 'HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced', name = "Start_AccountNotifications", data = { dword = 0 } },
+]
+
+[[tweak]]
+id = "no_edge_bing_sidebar"
+name = "Turn off Copilot and shopping in Microsoft Edge"
+category = "ai"
+description = "Hides Edge's sidebar (Copilot), shopping assistant and Microsoft Rewards."
+requires = "logoff"
+[[tweak.option]]
+id = "on"
+set = [
+  { type = "reg", key = 'HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Edge', name = "HubsSidebarEnabled", data = { dword = 0 } },
+  { type = "reg", key = 'HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Edge', name = "EdgeShoppingAssistantEnabled", data = { dword = 0 } },
+  { type = "reg", key = 'HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Edge', name = "ShowMicrosoftRewards", data = { dword = 0 } },
+]

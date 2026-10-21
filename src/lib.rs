@@ -1,0 +1,28 @@
+//! CleanCore: fast cross-platform registry / configuration cleaner.
+
+pub mod autorun;
+pub mod backup;
+pub mod cleaner;
+pub mod config;
+pub mod engine;
+pub mod export;
+pub mod extensions;
+#[cfg(feature = "gui")]
+pub mod gui;
+pub mod history;
+pub mod hunter;
+pub mod icons;
+pub mod junk;
+pub mod migrate;
+pub mod model;
+pub mod pathutil;
+pub mod platform;
+pub mod scheduler;
+pub mod shell;
+pub mod shred;
+pub mod slop;
+pub mod systools;
+pub mod tracer;
+pub mod tuner;
+pub mod uninstaller;
+pub mod watcher;

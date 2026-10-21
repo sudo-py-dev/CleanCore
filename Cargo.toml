@@ -1,0 +1,64 @@
+[package]
+name = "cleancore"
+version = "0.1.0"
+edition = "2021"
+description = "Fast cross-platform system cleaner: registry (Windows) and config-store (Linux) scanner, backups, tuner"
+license = "Apache-2.0"
+repository = "https://github.com/sudo-py-dev/CleanCore"
+
+[[bin]]
+name = "cleancore"
+path = "src/main.rs"
+
+[[bin]]
+name = "cleancore-gui"
+path = "src/bin/cleancore-gui.rs"
+required-features = ["gui"]
+
+[features]
+default = ["gui"]
+gui = ["dep:eframe", "dep:egui_extras", "dep:ksni", "dep:tray-icon", "dep:image", "dep:resvg", "dep:rfd", "dep:winit"]
+
+[dependencies]
+anyhow = "1"
+chrono = { version = "0.4", features = ["serde"] }
+clap = { version = "4", features = ["derive"] }
+dirs = "6"
+# glow (OpenGL) renderer: far smaller than the default wgpu one, and plenty for a 2D app
+eframe = { version = "0.37", optional = true, default-features = false, features = ["glow", "accesskit", "default_fonts", "wayland", "x11", "clipboard", "links"] }
+egui_extras = { version = "0.37", optional = true }
+# Program icons in the GUI: PNG/ICO/BMP and SVG (no text rendering needed)
+image = { version = "0.25", optional = true, default-features = false, features = ["png", "ico", "bmp"] }
+resvg = { version = "0.45", optional = true, default-features = false }
+rayon = "1"
+# Native folder and file pickers (the desktop portal on Linux, the shell dialog on Windows)
+rfd = { version = "0.17", optional = true }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+rusqlite = { version = "0.37", features = ["bundled"] }
+toml = "1.1.8"
+
+[target.'cfg(windows)'.dependencies]
+ferrisetw = "1.2.0"
+windows-sys = { version = "0.61.2", features = ["Win32_Foundation", "Win32_System_Registry", "Win32_System_Threading", "Win32_System_ProcessStatus", "Win32_Security", "Win32_UI_Shell", "Win32_System_Diagnostics_ToolHelp", "Win32_UI_WindowsAndMessaging", "Win32_Storage_FileSystem", "Win32_Graphics_Gdi", "Win32_System_DataExchange"] }
+winreg = "0.55"
+# Hunter Mode tray icon
+tray-icon = { version = "0.26", optional = true }
+
+[target.'cfg(target_os = "linux")'.dependencies]
+inotify = "0.11.5"
+# GNOME-style (Adwaita) window title bar on Wayland desktops that don't draw one themselves.
+# eframe only turns it on through its default features, which also pull in the large wgpu renderer.
+winit = { version = "0.30", optional = true, default-features = false, features = ["wayland", "wayland-csd-adwaita"] }
+# Hunter Mode tray icon (StatusNotifierItem over D-Bus, pure Rust)
+ksni = { version = "0.3", optional = true, default-features = false, features = ["blocking", "async-io"] }
+
+[profile.release]
+lto = "fat"
+codegen-units = 1
+panic = "abort"
+strip = true
+
+
+[dev-dependencies]
+egui_kittest = { version = "0.37", features = ["wgpu", "snapshot", "eframe"] }
