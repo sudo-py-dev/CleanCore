@@ -11,6 +11,12 @@ fn main() -> eframe::Result {
         let _ = std::fs::OpenOptions::new().create(true).append(true).open(dir.join("gui-crash.log")).and_then(|mut f| std::io::Write::write_all(&mut f, text.as_bytes()));
         default(info);
     }));
+    // Windows: ask for administrator rights once, here, so the uninstallers started later
+    // don't each ask. Declined: carry on without them.
+    #[cfg(windows)]
+    if cleancore::elevate::relaunch_elevated() {
+        return Ok(());
+    }
     cleancore::migrate::from_old_name();
     cleancore::update::cleanup_after_update();
     cleancore::gui::run()

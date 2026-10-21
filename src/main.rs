@@ -169,6 +169,9 @@ enum Cmd {
     /// System Tools: open the operating system's utilities
     #[command(subcommand)]
     Tools(ToolsCmd),
+    /// Internal: the administrator helper, started through pkexec (see `elevate`)
+    #[command(hide = true)]
+    RootHelper,
     /// Update CleanCore to the latest release (signature and checksum verified first)
     Update {
         /// Only say whether a newer version exists
@@ -800,6 +803,15 @@ enum SettingsCmd {
 }
 
 fn main() {
+    // The administrator helper runs as root: it only serves requests, nothing else.
+    #[cfg(not(windows))]
+    if std::env::args().nth(1).as_deref() == Some("root-helper") {
+        if let Err(e) = cleancore::elevate::serve() {
+            eprintln!("error: {e:#}");
+            std::process::exit(1);
+        }
+        return;
+    }
     let args = translate_legacy(std::env::args().collect());
     let cli = Cli::parse_from(args);
     if let Some(d) = &cli.data_dir {
@@ -1077,6 +1089,7 @@ fn run(cli: Cli) -> Result<()> {
         Cmd::WipeFree { drive, passes, max_mb, yes } => run_wipe(&settings, drive, passes, max_mb, yes)?,
         Cmd::Tools(c) => run_tools(&mut settings, c)?,
         Cmd::Update { check } => run_update(check)?,
+        Cmd::RootHelper => anyhow::bail!("the administrator helper is started by CleanCore itself"),
         Cmd::Slop(c) => run_slop(&settings, c)?,
         Cmd::Groups(c) => run_groups(&settings, c)?,
         Cmd::App(c) => run_app(&settings, c)?,

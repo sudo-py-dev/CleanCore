@@ -32,29 +32,6 @@ fn has(cmd: &str) -> bool {
     which(cmd, &PathCache::default()).is_some()
 }
 
-fn is_root() -> bool {
-    fs::metadata("/proc/self").map(|m| m.uid() == 0).unwrap_or(false)
-}
-
-/// A command that runs as root: directly when already root, pkexec for GUI sessions, sudo in a terminal.
-fn privileged(args: &[&str]) -> Command {
-    use std::io::IsTerminal;
-    let mut c = if is_root() {
-        Command::new(args[0])
-    } else if !std::io::stdin().is_terminal() && has("pkexec") {
-        let mut c = Command::new("pkexec");
-        c.arg(args[0]);
-        c
-    } else {
-        let mut c = Command::new("sudo");
-        c.arg(args[0]);
-        c
-    };
-    c.args(&args[1..]);
-    c.env("DEBIAN_FRONTEND", "noninteractive");
-    c
-}
-
 fn mtime_date(p: &Path) -> Option<NaiveDate> {
     let t = fs::metadata(p).and_then(|m| m.modified()).ok()?;
     Some(DateTime::<Local>::from(t).date_naive())
@@ -523,14 +500,23 @@ pub fn program_exists(p: &Program) -> bool {
 
 pub fn run_uninstaller(p: &Program, mode: RunMode) -> Result<RunResult> {
     let pkg = p.package.clone().unwrap_or_default();
+    // Package removal runs as root through the one administrator helper (one password prompt
+    // for the whole session, however many programs are removed).
+    let as_root: Option<Vec<&str>> = match p.kind {
+        ProgramKind::Deb if has("apt-get") => Some(vec!["apt-get", "remove", "-y", &pkg]),
+        ProgramKind::Deb => Some(vec!["dpkg", "-r", &pkg]),
+        ProgramKind::Rpm if has("dnf") => Some(vec!["dnf", "remove", "-y", &pkg]),
+        ProgramKind::Rpm if has("zypper") => Some(vec!["zypper", "-n", "remove", &pkg]),
+        ProgramKind::Rpm => Some(vec!["rpm", "-e", &pkg]),
+        ProgramKind::Pacman => Some(vec!["pacman", "-R", "--noconfirm", &pkg]),
+        ProgramKind::Snap => Some(vec!["snap", "remove", &pkg]),
+        _ => None,
+    };
+    if let Some(args) = as_root {
+        let code = crate::elevate::run_as_root(&args)?;
+        return Ok(RunResult { command: args.join(" "), exit_code: code });
+    }
     let mut cmd = match p.kind {
-        ProgramKind::Deb if has("apt-get") => privileged(&["apt-get", "remove", "-y", &pkg]),
-        ProgramKind::Deb => privileged(&["dpkg", "-r", &pkg]),
-        ProgramKind::Rpm if has("dnf") => privileged(&["dnf", "remove", "-y", &pkg]),
-        ProgramKind::Rpm if has("zypper") => privileged(&["zypper", "-n", "remove", &pkg]),
-        ProgramKind::Rpm => privileged(&["rpm", "-e", &pkg]),
-        ProgramKind::Pacman => privileged(&["pacman", "-R", "--noconfirm", &pkg]),
-        ProgramKind::Snap => privileged(&["snap", "remove", &pkg]),
         ProgramKind::Flatpak => {
             let mut c = Command::new("flatpak");
             c.args(["uninstall", "-y", "--noninteractive", if p.user_scope { "--user" } else { "--system" }, &pkg]);
@@ -552,18 +538,24 @@ pub fn run_uninstaller(p: &Program, mode: RunMode) -> Result<RunResult> {
 /// Remove a package completely (configuration included). Used for residual deb config and for
 /// packages a traced installer pulled in.
 pub fn purge(manager: &str, name: &str) -> Result<()> {
-    let st = match manager {
-        "dpkg" if has("apt-get") => privileged(&["apt-get", "purge", "-y", name]).status()?,
-        "dpkg" => privileged(&["dpkg", "--purge", name]).status()?,
-        "rpm" if has("dnf") => privileged(&["dnf", "remove", "-y", name]).status()?,
-        "rpm" if has("zypper") => privileged(&["zypper", "-n", "remove", name]).status()?,
-        "rpm" => privileged(&["rpm", "-e", name]).status()?,
-        "pacman" => privileged(&["pacman", "-Rns", "--noconfirm", name]).status()?,
-        "flatpak" => Command::new("flatpak").args(["uninstall", "-y", "--noninteractive", "--delete-data", name]).status()?,
-        "snap" => privileged(&["snap", "remove", "--purge", name]).status()?,
+    let args: Vec<&str> = match manager {
+        "dpkg" if has("apt-get") => vec!["apt-get", "purge", "-y", name],
+        "dpkg" => vec!["dpkg", "--purge", name],
+        "rpm" if has("dnf") => vec!["dnf", "remove", "-y", name],
+        "rpm" if has("zypper") => vec!["zypper", "-n", "remove", name],
+        "rpm" => vec!["rpm", "-e", name],
+        "pacman" => vec!["pacman", "-Rns", "--noconfirm", name],
+        "flatpak" => {
+            let st = Command::new("flatpak").args(["uninstall", "-y", "--noninteractive", "--delete-data", name]).status()?;
+            if !st.success() {
+                bail!("purge {name} failed");
+            }
+            return Ok(());
+        }
+        "snap" => vec!["snap", "remove", "--purge", name],
         other => bail!("removing {other} packages is not supported"),
     };
-    if !st.success() {
+    if crate::elevate::run_as_root(&args)? != Some(0) {
         bail!("purge {name} failed");
     }
     Ok(())

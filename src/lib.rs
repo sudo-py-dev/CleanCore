@@ -4,6 +4,7 @@ pub mod autorun;
 pub mod backup;
 pub mod cleaner;
 pub mod config;
+pub mod elevate;
 pub mod engine;
 pub mod export;
 pub mod extensions;
