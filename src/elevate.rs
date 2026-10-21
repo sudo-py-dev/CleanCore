@@ -8,6 +8,7 @@
 //! Windows: the desktop app asks for elevation once at start (`relaunch_elevated`), so the
 //! programs' uninstallers it starts don't each ask again.
 
+#[cfg(not(windows))]
 use anyhow::{bail, Context, Result};
 
 /// Run a package-manager command as root and return its exit code. `args[0]` is the program.
