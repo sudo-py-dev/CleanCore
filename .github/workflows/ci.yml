@@ -1,0 +1,61 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+# A newer push to the same branch or pull request cancels the run still going.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  format:
+    name: Format
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt
+      - run: cargo fmt --all --check
+
+  linux:
+    name: Linux build and tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      # Wayland headers for the build; software Vulkan (lavapipe) so the GUI tests can render
+      # without a GPU; gsettings and the GNOME schemas for the tuner tests.
+      - name: System packages
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y pkg-config libwayland-dev mesa-vulkan-drivers libglib2.0-bin gsettings-desktop-schemas
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+      - name: Build
+        run: cargo build --all-targets --locked
+      - name: Tests
+        run: cargo test --locked
+      - name: Screenshots from the GUI tests
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: gui-screenshots
+          path: target/gui-shots/
+          if-no-files-found: ignore
+
+  windows:
+    name: Windows build and tests
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+      - name: Build
+        run: cargo build --all-targets --locked
+      - name: Tests
+        run: cargo test --locked
