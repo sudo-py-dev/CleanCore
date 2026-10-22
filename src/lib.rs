@@ -17,6 +17,7 @@ pub mod i18n;
 pub mod icons;
 pub mod junk;
 pub mod keepaway;
+pub mod launch;
 pub mod migrate;
 pub mod model;
 pub mod pathutil;

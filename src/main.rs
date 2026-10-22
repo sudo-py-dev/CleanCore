@@ -1,3 +1,7 @@
+// Windows: a windowed program, so opening CleanCore shows no console window behind it. The
+// command line still prints to the terminal it was started from (see `attach_console`).
+#![cfg_attr(all(windows, feature = "gui"), windows_subsystem = "windows")]
+
 use anyhow::{bail, Context, Result};
 use clap::{Args, Parser, Subcommand};
 use cleancore::backup::{self, Backup, BackupKind};
@@ -854,6 +858,13 @@ fn main() {
         }
         return;
     }
+    #[cfg(feature = "gui")]
+    if cleancore::launch::opens_window(&std::env::args_os().skip(1).collect::<Vec<_>>()) && has_display() {
+        run_window();
+        return;
+    }
+    #[cfg(all(windows, feature = "gui"))]
+    attach_console();
     let args = translate_legacy(std::env::args().collect());
     let cli = Cli::parse_from(args);
     if let Some(d) = &cli.data_dir {
@@ -865,6 +876,78 @@ fn main() {
     if let Err(e) = run(cli) {
         eprintln!("error: {e:#}");
         std::process::exit(1);
+    }
+}
+
+/// The window: `cleancore` with no command (or with one of the window's options).
+#[cfg(feature = "gui")]
+fn run_window() {
+    cleancore::launch::set_window();
+    // A windowed app has no console for panic messages: also keep them in the data folder.
+    let default = std::panic::take_hook();
+    std::panic::set_hook(Box::new(move |info| {
+        let dir = cleancore::config::data_dir();
+        let _ = std::fs::create_dir_all(&dir);
+        let text = format!("[{}] {info}\n{}\n\n", chrono::Local::now().format("%Y-%m-%d %H:%M:%S"), std::backtrace::Backtrace::force_capture());
+        let _ = std::fs::OpenOptions::new().create(true).append(true).open(dir.join("gui-crash.log")).and_then(|mut f| f.write_all(text.as_bytes()));
+        default(info);
+    }));
+    let args: Vec<String> = std::env::args().skip(1).collect();
+    let dir = match args.first().map(String::as_str) {
+        Some("--data-dir") => args.get(1).cloned(),
+        Some(a) => a.strip_prefix("--data-dir=").map(str::to_string),
+        None => None,
+    };
+    if let Some(d) = dir {
+        let d = PathBuf::from(d);
+        std::env::set_var("CLEANCORE_DATA_DIR", std::path::absolute(&d).unwrap_or(d));
+    }
+    // Windows: ask for administrator rights once, here, so the uninstallers started later
+    // don't each ask. Declined: carry on without them.
+    #[cfg(windows)]
+    if cleancore::elevate::relaunch_elevated() {
+        return;
+    }
+    cleancore::migrate::from_old_name();
+    cleancore::migrate::from_gui_program();
+    cleancore::update::cleanup_after_update();
+    if let Err(e) = cleancore::gui::run() {
+        eprintln!("error: {e}");
+        std::process::exit(1);
+    }
+}
+
+/// Linux without a desktop (a server, an SSH session): `cleancore` alone shows the command
+/// line's help instead of failing to open a window.
+#[cfg(feature = "gui")]
+fn has_display() -> bool {
+    cfg!(not(target_os = "linux")) || ["DISPLAY", "WAYLAND_DISPLAY"].iter().any(|v| std::env::var_os(v).is_some_and(|s| !s.is_empty()))
+}
+
+/// Windows: print to the terminal this was started from. Started through `cleancore.com`, or
+/// with its output redirected, the handles it was given are kept; started as `cleancore.exe`
+/// from a terminal, they are opened on that terminal's console.
+#[cfg(all(windows, feature = "gui"))]
+fn attach_console() {
+    use windows_sys::Win32::Foundation::{GENERIC_READ, GENERIC_WRITE, INVALID_HANDLE_VALUE};
+    use windows_sys::Win32::Storage::FileSystem::{CreateFileW, FILE_SHARE_READ, FILE_SHARE_WRITE, OPEN_EXISTING};
+    use windows_sys::Win32::System::Console::{AttachConsole, GetStdHandle, SetStdHandle, ATTACH_PARENT_PROCESS, STD_ERROR_HANDLE, STD_INPUT_HANDLE, STD_OUTPUT_HANDLE};
+    // SAFETY: plain Win32 calls with NUL-terminated wide strings that outlive them.
+    unsafe {
+        if AttachConsole(ATTACH_PARENT_PROCESS) == 0 {
+            return;
+        }
+        for (std, name) in [(STD_INPUT_HANDLE, "CONIN$"), (STD_OUTPUT_HANDLE, "CONOUT$"), (STD_ERROR_HANDLE, "CONOUT$")] {
+            let h = GetStdHandle(std);
+            if !h.is_null() && h != INVALID_HANDLE_VALUE {
+                continue;
+            }
+            let wide: Vec<u16> = name.encode_utf16().chain(Some(0)).collect();
+            let h = CreateFileW(wide.as_ptr(), GENERIC_READ | GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE, std::ptr::null(), OPEN_EXISTING, 0, std::ptr::null_mut());
+            if h != INVALID_HANDLE_VALUE {
+                SetStdHandle(std, h);
+            }
+        }
     }
 }
 
@@ -1456,12 +1539,11 @@ fn run_autorun(settings: &Settings, cmd: AutorunCmd) -> Result<()> {
 fn run_hunter(gui: bool, settings: &Settings, list: bool, all: bool, pid: Option<u32>, at_pointer: bool, action: &str, yes: bool) -> Result<()> {
     use cleancore::hunter;
     if gui {
-        let exe = std::env::current_exe()?.with_file_name(if cfg!(windows) { "cleancore-gui.exe" } else { "cleancore-gui" });
-        if exe.exists() {
-            std::process::Command::new(exe).arg("--hunter").spawn().context("starting cleancore-gui")?;
+        if cfg!(feature = "gui") {
+            std::process::Command::new(cleancore::launch::program()?).arg("--hunter").spawn().context("opening the CleanCore window")?;
             return Ok(());
         }
-        eprintln!("cleancore-gui isn't installed next to cleancore; listing programs instead.");
+        eprintln!("This cleancore was built without the window; listing programs instead.");
     }
     if list || (pid.is_none() && !at_pointer) {
         for p in hunter::gui_processes(all) {

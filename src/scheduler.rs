@@ -349,11 +349,7 @@ pub fn history() -> Result<Vec<HistoryEntry>> {
 
 /// The command line the OS scheduler should run (absolute exe, plus the data folder if overridden).
 pub fn exe_args(args: &[&str]) -> Result<(PathBuf, Vec<String>)> {
-    let mut exe = std::env::current_exe().context("locating the cleancore executable")?;
-    // The GUI schedules work for the command-line binary that ships next to it.
-    if exe.file_stem().is_some_and(|s| s == "cleancore-gui") {
-        exe = exe.with_file_name(if cfg!(windows) { "cleancore.exe" } else { "cleancore" });
-    }
+    let exe = crate::launch::program().context("locating the cleancore executable")?;
     let mut v = Vec::new();
     if let Some(d) = std::env::var_os("CLEANCORE_DATA_DIR") {
         v.push("--data-dir".to_string());

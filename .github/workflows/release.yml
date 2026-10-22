@@ -54,8 +54,13 @@ jobs:
         shell: pwsh
         run: |
           $v = "$env:GITHUB_REF_NAME".TrimStart("v")
-          New-Item -ItemType Directory -Force out | Out-Null
-          Compress-Archive -Path target/release/cleancore.exe, target/release/cleancore-gui.exe, README.md, LICENSE -DestinationPath "out/cleancore-$v-windows-x64.zip"
+          $files = "out/cleancore-$v-windows-x64"
+          New-Item -ItemType Directory -Force $files | Out-Null
+          # cleancore.com is what a terminal runs for `cleancore`; cleancore-gui.exe is a
+          # stand-in for updates from 0.2.8 and older (src/bin/cleancore-gui.rs).
+          Copy-Item target/release/cleancore.exe, target/release/cleancore-gui.exe, README.md, LICENSE $files
+          Copy-Item target/release/cleancore-console.exe "$files/cleancore.com"
+          Compress-Archive -Path "$files/*" -DestinationPath "$files.zip"
       # The setup wizard (Inno Setup): cleancore-<version>-windows-x64-setup.exe
       - name: Setup wizard
         shell: pwsh

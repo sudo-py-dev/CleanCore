@@ -657,9 +657,9 @@ pub fn clear_pending() {
     let _ = resume_at_login(false);
 }
 
-/// Start `cleancore-gui --resume` at the next login (Windows: RunOnce; Linux: autostart).
+/// Start `cleancore --resume` at the next login (Windows: RunOnce; Linux: autostart).
 fn resume_at_login(on: bool) -> Result<()> {
-    let exe = std::env::current_exe()?.with_file_name(if cfg!(windows) { "cleancore-gui.exe" } else { "cleancore-gui" });
+    let exe = crate::launch::program()?;
     #[cfg(windows)]
     {
         let key = winreg::RegKey::predef(winreg::enums::HKEY_CURRENT_USER).create_subkey(r"Software\Microsoft\Windows\CurrentVersion\RunOnce")?.0;

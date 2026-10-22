@@ -56,6 +56,16 @@ pub fn from_old_name() {
     }
 }
 
+/// The window was its own program, `cleancore-gui`, until 0.2.8; it is now `cleancore`. Point
+/// the file-manager menu at it. (Scheduled tasks and the recorder always ran `cleancore`.)
+pub fn from_gui_program() {
+    if crate::shell::uses_old_program() {
+        if let Err(e) = crate::shell::integrate(true) {
+            eprintln!("warning: could not update the file manager menu: {e:#}");
+        }
+    }
+}
+
 /// Settings may name folders inside the old data folder (a custom backup folder, say).
 fn fix_settings_paths(file: &Path, old: &Path, new: &Path) {
     let Ok(text) = std::fs::read_to_string(file) else { return };

@@ -10,10 +10,15 @@ repository = "https://github.com/sudo-py-dev/CleanCore"
 name = "cleancore"
 path = "src/main.rs"
 
+# Windows: packaged as cleancore.com, the terminal's way into cleancore.exe (src/launch.rs).
+[[bin]]
+name = "cleancore-console"
+path = "src/bin/cleancore-console.rs"
+
+# Opens cleancore: a stand-in for the window's own program until 0.2.8 (see the file).
 [[bin]]
 name = "cleancore-gui"
 path = "src/bin/cleancore-gui.rs"
-required-features = ["gui"]
 
 [features]
 default = ["gui"]
@@ -48,7 +53,7 @@ toml = "1.1.8"
 
 [target.'cfg(windows)'.dependencies]
 ferrisetw = "1.2.0"
-windows-sys = { version = "0.61.2", features = ["Win32_Foundation", "Win32_System_Registry", "Win32_System_Threading", "Win32_System_ProcessStatus", "Win32_Security", "Win32_UI_Shell", "Win32_System_Diagnostics_ToolHelp", "Win32_UI_WindowsAndMessaging", "Win32_Storage_FileSystem", "Win32_Graphics_Gdi", "Win32_System_DataExchange", "Win32_Globalization"] }
+windows-sys = { version = "0.61.2", features = ["Win32_Foundation", "Win32_System_Registry", "Win32_System_Threading", "Win32_System_ProcessStatus", "Win32_Security", "Win32_UI_Shell", "Win32_System_Diagnostics_ToolHelp", "Win32_UI_WindowsAndMessaging", "Win32_Storage_FileSystem", "Win32_Graphics_Gdi", "Win32_System_DataExchange", "Win32_System_Console", "Win32_Globalization"] }
 winreg = "0.55"
 # Hunter Mode tray icon
 tray-icon = { version = "0.26", optional = true }

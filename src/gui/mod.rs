@@ -255,7 +255,7 @@ impl App {
         Self {
             options: options::SettingsView::new(&settings),
             settings,
-            // `cleancore-gui --hunter` (RevoUninPro /hunter) opens Hunter Mode.
+            // `cleancore --hunter` (RevoUninPro /hunter) opens Hunter Mode.
             tool: if Tool::Hunter.supported() && std::env::args().skip(1).any(|a| a == "--hunter" || a.eq_ignore_ascii_case("/hunter")) { Tool::Hunter } else { Tool::Uninstaller },
             notices,
             seen_notices: 0,

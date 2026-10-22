@@ -94,12 +94,8 @@ cd CleanCore
 cargo build --release
 ```
 
-This builds two programs in `target/release`:
-
-| Program | What it is |
-| --- | --- |
-| `cleancore-gui` | The desktop app |
-| `cleancore` | The command line tool |
+This builds `cleancore` in `target/release`. On its own it opens the desktop app, and with a
+command (`cleancore scan`) it is the command line tool.
 
 ## Command line
 

@@ -65,22 +65,26 @@ Name: "uk"; MessagesFile: "compiler:Languages\Ukrainian.isl"
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
 [Files]
-Source: "{#BinDir}\cleancore-gui.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "{#BinDir}\cleancore.exe"; DestDir: "{app}"; Flags: ignoreversion
+; What a terminal runs for `cleancore` (src/bin/cleancore-console.rs).
+Source: "{#BinDir}\cleancore-console.exe"; DestDir: "{app}"; DestName: "cleancore.com"; Flags: ignoreversion
 Source: "cleancore.ico"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\..\README.md"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\..\LICENSE"; DestDir: "{app}"; DestName: "LICENSE.txt"; Flags: ignoreversion
 
 [Icons]
-Name: "{autoprograms}\CleanCore"; Filename: "{app}\cleancore-gui.exe"; IconFilename: "{app}\cleancore.ico"; Comment: "Uninstaller and system cleaner"
-Name: "{autodesktop}\CleanCore"; Filename: "{app}\cleancore-gui.exe"; IconFilename: "{app}\cleancore.ico"; Tasks: desktopicon
+Name: "{autoprograms}\CleanCore"; Filename: "{app}\cleancore.exe"; IconFilename: "{app}\cleancore.ico"; Comment: "Uninstaller and system cleaner"
+Name: "{autodesktop}\CleanCore"; Filename: "{app}\cleancore.exe"; IconFilename: "{app}\cleancore.ico"; Tasks: desktopicon
 
 [Run]
-Filename: "{app}\cleancore-gui.exe"; Description: "{cm:LaunchProgram,CleanCore}"; Flags: nowait postinstall skipifsilent
+Filename: "{app}\cleancore.exe"; Description: "{cm:LaunchProgram,CleanCore}"; Flags: nowait postinstall skipifsilent
 ; An update CleanCore started (silent): CleanCore closed for it, so start it again.
-Filename: "{app}\cleancore-gui.exe"; Flags: nowait runasoriginaluser; Check: WizardSilent
+Filename: "{app}\cleancore.exe"; Flags: nowait runasoriginaluser; Check: WizardSilent
+
+[InstallDelete]
+; The window's own program until 0.2.8: cleancore.exe is now the window too.
+Type: files; Name: "{app}\cleancore-gui.exe"
 
 [UninstallDelete]
-; Copies an in-place update left behind.
-Type: files; Name: "{app}\cleancore.old"
-Type: files; Name: "{app}\cleancore-gui.old"
+; Copies an in-place update left behind (0.2.8 and older named them <name>.old).
+Type: files; Name: "{app}\*.old"

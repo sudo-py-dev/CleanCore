@@ -9,7 +9,17 @@ use anyhow::{Context, Result};
 use std::path::{Path, PathBuf};
 
 fn gui_exe() -> Result<PathBuf> {
-    Ok(std::env::current_exe()?.with_file_name(if cfg!(windows) { "cleancore-gui.exe" } else { "cleancore-gui" }))
+    Ok(crate::launch::program()?)
+}
+
+/// Whether the menu entries start `cleancore-gui`, the window's own program until 0.2.8.
+pub fn uses_old_program() -> bool {
+    #[cfg(windows)]
+    let command: Option<String> =
+        winreg::RegKey::predef(winreg::enums::HKEY_CURRENT_USER).open_subkey(format!(r"Software\Classes\{}\command", VERBS[0].0)).and_then(|k| k.get_value("")).ok();
+    #[cfg(not(windows))]
+    let command = std::fs::read_to_string(&linux_files()[0]).ok();
+    command.is_some_and(|c| c.contains("cleancore-gui"))
 }
 
 // ---------------------------------------------------------------- Windows

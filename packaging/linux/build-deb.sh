@@ -1,6 +1,7 @@
 #!/bin/sh
 # Build the .deb from release binaries: packaging/linux/build-deb.sh <version> <bin-dir> <out-dir>
-# Installs cleancore and cleancore-gui to /usr/bin, plus a menu entry and an icon.
+# Installs cleancore to /usr/bin, plus a menu entry and an icon. cleancore-gui, a stand-in that
+# opens cleancore, stays for updates from 0.2.8 and older (src/bin/cleancore-gui.rs).
 set -eu
 version="$1"
 bin="$2"

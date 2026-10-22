@@ -241,12 +241,11 @@ pub fn install(file: &Path) -> Result<Installed> {
         bail!("{}", crate::i18n::tr("Could not unpack the update."));
     }
     let dir = std::env::current_exe()?.parent().context("locating the program folder")?.to_path_buf();
-    let names: &[&str] = if cfg!(windows) { &["cleancore.exe", "cleancore-gui.exe"] } else { &["cleancore", "cleancore-gui"] };
-    for n in names {
+    for n in PROGRAMS {
         let Some(new) = find_file(&unpacked, n) else { continue };
         let dest = dir.join(n);
         // A running program can't be overwritten on Windows, but it can be renamed.
-        let old = dest.with_extension("old");
+        let old = dir.join(format!("{n}.old"));
         let _ = std::fs::remove_file(&old);
         if dest.exists() {
             std::fs::rename(&dest, &old).with_context(|| format!("replacing {}", dest.display()))?;
@@ -266,6 +265,11 @@ pub fn install(file: &Path) -> Result<Installed> {
     Ok(Installed::InPlace)
 }
 
+/// The programs a .zip or .tar.gz holds. `cleancore-gui` was the window's own program until
+/// 0.2.8: the packages keep a stand-in under that name, which opens `cleancore`, because
+/// 0.2.8 and older restart `cleancore-gui` after updating themselves.
+const PROGRAMS: &[&str] = if cfg!(windows) { &["cleancore.exe", "cleancore.com", "cleancore-gui.exe"] } else { &["cleancore", "cleancore-gui"] };
+
 /// Start the CleanCore window again, from where this copy runs: after an update in place,
 /// that is the new version.
 pub fn relaunch() -> Result<()> {
@@ -274,12 +278,12 @@ pub fn relaunch() -> Result<()> {
     Ok(())
 }
 
-/// The CleanCore window's program next to `exe`, the running one (the window, or the command
-/// line tool).
+/// The CleanCore program where `exe`, the running one, was: by name, since on Windows the
+/// running file was renamed out of the way.
 fn gui_beside(exe: &Path) -> PathBuf {
     // Linux names a running program whose file was replaced "<path> (deleted)".
     let exe = PathBuf::from(exe.to_string_lossy().trim_end_matches(" (deleted)").to_string());
-    exe.with_file_name(if cfg!(windows) { "cleancore-gui.exe" } else { "cleancore-gui" })
+    exe.with_file_name(if cfg!(windows) { "cleancore.exe" } else { "cleancore" })
 }
 
 fn find_file(dir: &Path, name: &str) -> Option<PathBuf> {
@@ -299,7 +303,8 @@ fn find_file(dir: &Path, name: &str) -> Option<PathBuf> {
 /// Remove the copies a Windows update left behind (`*.old` next to the program).
 pub fn cleanup_after_update() {
     if let Some(dir) = std::env::current_exe().ok().and_then(|e| e.parent().map(Path::to_path_buf)) {
-        for n in ["cleancore.old", "cleancore-gui.old"] {
+        // Also the names 0.2.8 and older left (`<stem>.old`).
+        for n in PROGRAMS.iter().map(|n| format!("{n}.old")).chain(["cleancore.old".into(), "cleancore-gui.old".into()]) {
             let _ = std::fs::remove_file(dir.join(n));
         }
     }
@@ -312,8 +317,8 @@ mod tests {
     #[test]
     #[cfg(unix)]
     fn restarts_the_window_from_a_replaced_program() {
-        assert_eq!(gui_beside(Path::new("/usr/bin/cleancore-gui (deleted)")), PathBuf::from("/usr/bin/cleancore-gui"));
-        assert_eq!(gui_beside(Path::new("/opt/cleancore/cleancore")), PathBuf::from("/opt/cleancore/cleancore-gui"));
+        assert_eq!(gui_beside(Path::new("/usr/bin/cleancore (deleted)")), PathBuf::from("/usr/bin/cleancore"));
+        assert_eq!(gui_beside(Path::new("/opt/cleancore/cleancore-gui")), PathBuf::from("/opt/cleancore/cleancore"));
     }
 
     #[test]

@@ -25,8 +25,7 @@ pub fn run_as_root(args: &[&str]) -> Result<Option<i32>> {
     }
     // The command line in a terminal uses sudo, which asks once and remembers the password for
     // a while by itself. The desktop app always uses the graphical prompt.
-    let gui = std::env::current_exe().is_ok_and(|e| e.file_stem().is_some_and(|s| s == "cleancore-gui"));
-    if (!gui && std::io::IsTerminal::is_terminal(&std::io::stdin())) || which("pkexec").is_none() {
+    if (!crate::launch::in_window() && std::io::IsTerminal::is_terminal(&std::io::stdin())) || which("pkexec").is_none() {
         let st = std::process::Command::new("sudo").args(args).env("DEBIAN_FRONTEND", "noninteractive").status().context("starting sudo")?;
         return Ok(st.code());
     }
@@ -91,15 +90,14 @@ impl Helper {
     }
 }
 
-/// The command-line binary, which hosts the helper (it sits next to the desktop app).
+/// This program, which hosts the helper (`cleancore root-helper`).
 #[cfg(not(windows))]
 fn helper_exe() -> Result<std::path::PathBuf> {
-    let exe = std::env::current_exe().context("locating CleanCore")?;
-    let cli = if exe.file_stem().is_some_and(|s| s == "cleancore-gui") { exe.with_file_name("cleancore") } else { exe };
-    if !cli.exists() {
-        bail!("{} is missing", cli.display());
+    let exe = crate::launch::program().context("locating CleanCore")?;
+    if !exe.exists() {
+        bail!("{} is missing", exe.display());
     }
-    Ok(cli)
+    Ok(exe)
 }
 
 /// The root side: run allowed commands read from stdin until it closes (CleanCore exited).
