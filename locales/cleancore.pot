@@ -1758,7 +1758,7 @@ msgstr ""
 msgid "Keep away"
 msgstr ""
 
-msgid "Links and Windows features that open Edge use your default browser instead. WebView2, which other apps need, stays."
+msgid "Links and Windows features that open Edge use your default browser instead. WebView2, which other apps need, stays, but doesn't update while Edge Update is off."
 msgstr ""
 
 msgid "Files in your OneDrive folder stay on this PC; they just stop syncing."
@@ -1767,7 +1767,7 @@ msgstr ""
 msgid "Remove {} and keep it away?"
 msgstr ""
 
-msgid "Edge is uninstalled for every user, and Edge Update is told not to install it again. Links and Windows features that open Edge use your default browser instead. WebView2 stays."
+msgid "Edge is uninstalled for every user, and Edge Update is told not to install it again and turned off. Links and Windows features that open Edge use your default browser instead. WebView2 stays, but doesn't update until you allow Edge again."
 msgstr ""
 
 msgid "OneDrive is uninstalled for every user and stopped from running or installing for new accounts. Files in your OneDrive folder stay on this PC; they just stop syncing."

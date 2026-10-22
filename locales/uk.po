@@ -1759,8 +1759,8 @@ msgstr "Видалити й заблокувати"
 msgid "Keep away"
 msgstr "Заблокувати"
 
-msgid "Links and Windows features that open Edge use your default browser instead. WebView2, which other apps need, stays."
-msgstr "Посилання й функції Windows, що відкривають Edge, використовуватимуть типовий браузер. WebView2, потрібний іншим застосункам, залишається."
+msgid "Links and Windows features that open Edge use your default browser instead. WebView2, which other apps need, stays, but doesn't update while Edge Update is off."
+msgstr "Посилання й функції Windows, що відкривають Edge, використовуватимуть типовий браузер. WebView2, потрібний іншим застосункам, залишається, але не оновлюється, поки Edge Update вимкнено."
 
 msgid "Files in your OneDrive folder stay on this PC; they just stop syncing."
 msgstr "Файли в теці OneDrive залишаються на цьому комп'ютері; вони просто перестають синхронізуватися."
@@ -1768,8 +1768,8 @@ msgstr "Файли в теці OneDrive залишаються на цьому �
 msgid "Remove {} and keep it away?"
 msgstr "Видалити {} і заблокувати?"
 
-msgid "Edge is uninstalled for every user, and Edge Update is told not to install it again. Links and Windows features that open Edge use your default browser instead. WebView2 stays."
-msgstr "Edge видаляється для всіх користувачів, а Edge Update отримує заборону встановлювати його знову. Посилання й функції Windows, що відкривають Edge, використовуватимуть типовий браузер. WebView2 залишається."
+msgid "Edge is uninstalled for every user, and Edge Update is told not to install it again and turned off. Links and Windows features that open Edge use your default browser instead. WebView2 stays, but doesn't update until you allow Edge again."
+msgstr "Edge видаляється для всіх користувачів, а Edge Update отримує заборону встановлювати його знову й вимикається. Посилання й функції Windows, що відкривають Edge, використовуватимуть типовий браузер. WebView2 залишається, але не оновлюватиметься, доки ви знову не дозволите Edge."
 
 msgid "OneDrive is uninstalled for every user and stopped from running or installing for new accounts. Files in your OneDrive folder stay on this PC; they just stop syncing."
 msgstr "OneDrive видаляється для всіх користувачів, йому заборонено запускатися й встановлюватися для нових облікових записів. Файли в теці OneDrive залишаються на цьому комп'ютері; вони просто перестають синхронізуватися."

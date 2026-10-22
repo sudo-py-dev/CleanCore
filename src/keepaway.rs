@@ -103,6 +103,23 @@ pub fn installed(app: App) -> bool {
 
 // ---------------------------------------------------------------- the scripts
 
+/// Put before a script that calls `Remove-Autostart 'OneDrive*'`: it deletes the matching
+/// Run and RunOnce values, machine-wide and for every signed-in user, and their on/off state
+/// in Task Manager's Startup tab.
+const AUTOSTART: &str = r#"
+function Remove-Autostart($like) {
+  $roots = @('HKLM:\SOFTWARE', 'HKLM:\SOFTWARE\WOW6432Node')
+  $roots += Get-ChildItem Registry::HKEY_USERS | Where-Object { $_.PSChildName -match '^S-1-5-21-[\d-]+$' } | ForEach-Object { "Registry::$($_.Name)\Software" }
+  foreach ($r in $roots) {
+    foreach ($k in 'Run', 'RunOnce', 'Explorer\StartupApproved\Run', 'Explorer\StartupApproved\Run32') {
+      $key = "$r\Microsoft\Windows\CurrentVersion\$k"
+      $names = @((Get-Item -LiteralPath $key).Property | Where-Object { $_ -like $like })
+      if ($names.Count) { Remove-ItemProperty -LiteralPath $key -Name $names }
+    }
+  }
+}
+"#;
+
 /// OneDrive: its own uninstallers (this user's copy, then the machine-wide one).
 const ONEDRIVE_REMOVE: &str = r#"
 $ErrorActionPreference = 'SilentlyContinue'
@@ -134,7 +151,8 @@ if (Test-Path $hive) {
   [gc]::Collect()
   reg.exe unload 'HKU\CleanCoreDefault' | Out-Null
 }
-Remove-ItemProperty 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Run' -Name OneDrive, OneDriveSetup
+# Starting at sign-in, and its update, reporting and startup tasks.
+Remove-Autostart 'OneDrive*'
 Get-ScheduledTask -TaskName 'OneDrive*' | Unregister-ScheduledTask -Confirm:$false
 # Explorer's sidebar entry.
 foreach ($c in 'HKCU:\Software\Classes\CLSID\{018D5C66-4533-4307-9B53-224DE2ED1FE6}', 'HKCU:\Software\Classes\WOW6432Node\CLSID\{018D5C66-4533-4307-9B53-224DE2ED1FE6}') {
@@ -224,6 +242,13 @@ foreach ($r in $roots) {
   }
 }
 
+# Starting at sign-in ("startup boost"), and Active Setup, which sets Edge up again for each
+# user at sign-in.
+Remove-Autostart 'MicrosoftEdgeAutoLaunch*'
+foreach ($k in 'HKLM:\SOFTWARE\Microsoft\Active Setup\Installed Components', 'HKLM:\SOFTWARE\WOW6432Node\Microsoft\Active Setup\Installed Components') {
+  Remove-Item "$k\{9459C573-B17A-45AE-9F64-1857B5D58CEE}" -Recurse -Force
+}
+
 # Its Store placeholder and shortcuts.
 Get-AppxPackage -AllUsers 'Microsoft.MicrosoftEdge.Stable' | Remove-AppxPackage -AllUsers
 Remove-Item "$env:PUBLIC\Desktop\Microsoft Edge.lnk", "$env:USERPROFILE\Desktop\Microsoft Edge.lnk", "$env:ProgramData\Microsoft\Windows\Start Menu\Programs\Microsoft Edge.lnk" -Force
@@ -241,12 +266,20 @@ $pol = 'HKLM:\SOFTWARE\Policies\Microsoft\EdgeUpdate'
 New-Item $pol -Force | Out-Null
 Set-ItemProperty $pol -Name 'Install{56EB18F8-B008-4CBD-B6D2-8C97FE7E9062}' -Value 0 -Type DWord
 Set-ItemProperty $pol -Name 'CreateDesktopShortcut{56EB18F8-B008-4CBD-B6D2-8C97FE7E9062}' -Value 0 -Type DWord
+# Edge Update off: its services and scheduled tasks are disabled, not deleted (Allow turns them
+# back on).
+foreach ($s in 'edgeupdate', 'edgeupdatem') { Stop-Service $s -Force; Set-Service $s -StartupType Disabled }
+Get-ScheduledTask -TaskName 'MicrosoftEdgeUpdateTask*' | Disable-ScheduledTask | Out-Null
 "#;
 
 const EDGE_ALLOW: &str = r#"
 $ErrorActionPreference = 'SilentlyContinue'
 Remove-ItemProperty 'HKLM:\SOFTWARE\Microsoft\EdgeUpdate' -Name DoNotUpdateToEdgeWithChromium
 Remove-ItemProperty 'HKLM:\SOFTWARE\Policies\Microsoft\EdgeUpdate' -Name 'Install{56EB18F8-B008-4CBD-B6D2-8C97FE7E9062}', 'CreateDesktopShortcut{56EB18F8-B008-4CBD-B6D2-8C97FE7E9062}'
+# Edge Update back as Windows sets it up: delayed start, the second one on demand.
+sc.exe config edgeupdate start= delayed-auto | Out-Null
+Set-Service edgeupdatem -StartupType Manual
+Get-ScheduledTask -TaskName 'MicrosoftEdgeUpdateTask*' | Enable-ScheduledTask | Out-Null
 "#;
 
 // ---------------------------------------------------------------- doing it
@@ -292,7 +325,7 @@ pub fn uninstall_edge() -> Result<bool> {
 
 /// Run `EDGE_REMOVE`; true when some files are deleted at the next restart.
 fn remove_edge() -> Result<bool> {
-    Ok(ps(EDGE_REMOVE)?.lines().any(|l| l.trim() == "REBOOT"))
+    Ok(ps(&format!("{AUTOSTART}{EDGE_REMOVE}"))?.lines().any(|l| l.trim() == "REBOOT"))
 }
 
 /// Remove the app and block it from coming back. Keeps the daily check running.
@@ -313,7 +346,7 @@ pub fn remove(app: App) -> Result<String> {
         }
         App::OneDrive => {
             ps(ONEDRIVE_REMOVE)?;
-            let old = ps(ONEDRIVE_BLOCK)?.trim().to_string();
+            let old = ps(&format!("{AUTOSTART}{ONEDRIVE_BLOCK}"))?.trim().to_string();
             // Keep an entry saved by an earlier removal: this run found it already gone.
             Some(old).filter(|s| !s.is_empty()).or_else(|| k.get(app).and_then(|r| r.default_run.clone()))
         }
@@ -429,7 +462,7 @@ mod tests {
     #[test]
     #[cfg(windows)]
     fn scripts_parse() {
-        for s in [EDGE_REMOVE, EDGE_BLOCK, EDGE_ALLOW, ONEDRIVE_REMOVE, ONEDRIVE_BLOCK, ONEDRIVE_ALLOW] {
+        for s in [AUTOSTART, EDGE_REMOVE, EDGE_BLOCK, EDGE_ALLOW, ONEDRIVE_REMOVE, ONEDRIVE_BLOCK, ONEDRIVE_ALLOW] {
             let check = "$e = $null; [void][System.Management.Automation.Language.Parser]::ParseInput($env:CLEANCORE_SCRIPT, [ref]$null, [ref]$e); if ($e) { $e | ForEach-Object { $_.Message }; exit 1 }";
             let o = std::process::Command::new("powershell").args(["-NoProfile", "-NonInteractive", "-Command", check]).env("CLEANCORE_SCRIPT", s).output().unwrap();
             assert!(o.status.success(), "{}\n{s}", String::from_utf8_lossy(&o.stdout));

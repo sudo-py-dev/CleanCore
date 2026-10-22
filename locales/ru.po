@@ -1759,8 +1759,8 @@ msgstr "Удалить и заблокировать"
 msgid "Keep away"
 msgstr "Заблокировать"
 
-msgid "Links and Windows features that open Edge use your default browser instead. WebView2, which other apps need, stays."
-msgstr "Ссылки и функции Windows, открывающие Edge, будут использовать браузер по умолчанию. WebView2, нужный другим приложениям, остаётся."
+msgid "Links and Windows features that open Edge use your default browser instead. WebView2, which other apps need, stays, but doesn't update while Edge Update is off."
+msgstr "Ссылки и функции Windows, открывающие Edge, будут использовать браузер по умолчанию. WebView2, нужный другим приложениям, остаётся, но не обновляется, пока Edge Update выключен."
 
 msgid "Files in your OneDrive folder stay on this PC; they just stop syncing."
 msgstr "Файлы в папке OneDrive остаются на этом компьютере; они просто перестают синхронизироваться."
@@ -1768,8 +1768,8 @@ msgstr "Файлы в папке OneDrive остаются на этом ком�
 msgid "Remove {} and keep it away?"
 msgstr "Удалить {} и заблокировать?"
 
-msgid "Edge is uninstalled for every user, and Edge Update is told not to install it again. Links and Windows features that open Edge use your default browser instead. WebView2 stays."
-msgstr "Edge удаляется для всех пользователей, а Edge Update получает запрет на его повторную установку. Ссылки и функции Windows, открывающие Edge, будут использовать браузер по умолчанию. WebView2 остаётся."
+msgid "Edge is uninstalled for every user, and Edge Update is told not to install it again and turned off. Links and Windows features that open Edge use your default browser instead. WebView2 stays, but doesn't update until you allow Edge again."
+msgstr "Edge удаляется для всех пользователей, а Edge Update получает запрет на его повторную установку и выключается. Ссылки и функции Windows, открывающие Edge, будут использовать браузер по умолчанию. WebView2 остаётся, но не обновляется, пока вы снова не разрешите Edge."
 
 msgid "OneDrive is uninstalled for every user and stopped from running or installing for new accounts. Files in your OneDrive folder stay on this PC; they just stop syncing."
 msgstr "OneDrive удаляется для всех пользователей, ему запрещается запускаться и устанавливаться для новых учётных записей. Файлы в папке OneDrive остаются на этом компьютере; они просто перестают синхронизироваться."

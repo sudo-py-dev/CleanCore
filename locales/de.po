@@ -1759,8 +1759,8 @@ msgstr "Entfernen und sperren"
 msgid "Keep away"
 msgstr "Sperren"
 
-msgid "Links and Windows features that open Edge use your default browser instead. WebView2, which other apps need, stays."
-msgstr "Links und Windows-Funktionen, die Edge öffnen, verwenden stattdessen Ihren Standardbrowser. WebView2, das andere Apps brauchen, bleibt erhalten."
+msgid "Links and Windows features that open Edge use your default browser instead. WebView2, which other apps need, stays, but doesn't update while Edge Update is off."
+msgstr "Links und Windows-Funktionen, die Edge öffnen, verwenden stattdessen Ihren Standardbrowser. WebView2, das andere Apps brauchen, bleibt erhalten, wird aber nicht aktualisiert, solange Edge Update aus ist."
 
 msgid "Files in your OneDrive folder stay on this PC; they just stop syncing."
 msgstr "Dateien in Ihrem OneDrive-Ordner bleiben auf diesem PC; sie werden nur nicht mehr synchronisiert."
@@ -1768,8 +1768,8 @@ msgstr "Dateien in Ihrem OneDrive-Ordner bleiben auf diesem PC; sie werden nur n
 msgid "Remove {} and keep it away?"
 msgstr "{} entfernen und sperren?"
 
-msgid "Edge is uninstalled for every user, and Edge Update is told not to install it again. Links and Windows features that open Edge use your default browser instead. WebView2 stays."
-msgstr "Edge wird für alle Benutzer deinstalliert, und Edge Update wird angewiesen, es nicht wieder zu installieren. Links und Windows-Funktionen, die Edge öffnen, verwenden stattdessen Ihren Standardbrowser. WebView2 bleibt."
+msgid "Edge is uninstalled for every user, and Edge Update is told not to install it again and turned off. Links and Windows features that open Edge use your default browser instead. WebView2 stays, but doesn't update until you allow Edge again."
+msgstr "Edge wird für alle Benutzer deinstalliert, und Edge Update wird angewiesen, es nicht wieder zu installieren, und ausgeschaltet. Links und Windows-Funktionen, die Edge öffnen, verwenden stattdessen Ihren Standardbrowser. WebView2 bleibt, wird aber erst wieder aktualisiert, wenn Sie Edge wieder zulassen."
 
 msgid "OneDrive is uninstalled for every user and stopped from running or installing for new accounts. Files in your OneDrive folder stay on this PC; they just stop syncing."
 msgstr "OneDrive wird für alle Benutzer deinstalliert und daran gehindert, zu laufen oder sich für neue Konten zu installieren. Dateien in Ihrem OneDrive-Ordner bleiben auf diesem PC; sie werden nur nicht mehr synchronisiert."

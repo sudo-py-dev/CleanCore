@@ -228,7 +228,7 @@ impl SlopView {
                     });
                 });
                 let note = match app {
-                    App::Edge => tr("Links and Windows features that open Edge use your default browser instead. WebView2, which other apps need, stays."),
+                    App::Edge => tr("Links and Windows features that open Edge use your default browser instead. WebView2, which other apps need, stays, but doesn't update while Edge Update is off."),
                     App::OneDrive => tr("Files in your OneDrive folder stay on this PC; they just stop syncing."),
                 };
                 ui.add(style::Label::new(style::muted(ui, note).size(12.0)));
@@ -243,7 +243,7 @@ impl SlopView {
             ui.add(style::Label::new(style::strong(crate::tf!("Remove {} and keep it away?", app.name())).size(18.0)));
             ui.add_space(6.0);
             let what = match app {
-                App::Edge => tr("Edge is uninstalled for every user, and Edge Update is told not to install it again. Links and Windows features that open Edge use your default browser instead. WebView2 stays."),
+                App::Edge => tr("Edge is uninstalled for every user, and Edge Update is told not to install it again and turned off. Links and Windows features that open Edge use your default browser instead. WebView2 stays, but doesn't update until you allow Edge again."),
                 App::OneDrive => tr("OneDrive is uninstalled for every user and stopped from running or installing for new accounts. Files in your OneDrive folder stay on this PC; they just stop syncing."),
             };
             ui.add(style::Label::new(what).wrap());

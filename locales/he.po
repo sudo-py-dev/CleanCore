@@ -1760,8 +1760,8 @@ msgstr "הסר וחסום"
 msgid "Keep away"
 msgstr "חסום"
 
-msgid "Links and Windows features that open Edge use your default browser instead. WebView2, which other apps need, stays."
-msgstr "קישורים ותכונות של Windows שפותחים את Edge ישתמשו בדפדפן ברירת המחדל שלך. WebView2, שאפליקציות אחרות צריכות, נשאר."
+msgid "Links and Windows features that open Edge use your default browser instead. WebView2, which other apps need, stays, but doesn't update while Edge Update is off."
+msgstr "קישורים ותכונות של Windows שפותחים את Edge ישתמשו בדפדפן ברירת המחדל שלך. WebView2, שאפליקציות אחרות צריכות, נשאר, אבל לא מתעדכן כל עוד Edge Update כבוי."
 
 msgid "Files in your OneDrive folder stay on this PC; they just stop syncing."
 msgstr "הקבצים בתיקיית OneDrive נשארים במחשב; הם רק מפסיקים להסתנכרן."
@@ -1769,8 +1769,8 @@ msgstr "הקבצים בתיקיית OneDrive נשארים במחשב; הם רק 
 msgid "Remove {} and keep it away?"
 msgstr "להסיר את {} ולחסום אותה?"
 
-msgid "Edge is uninstalled for every user, and Edge Update is told not to install it again. Links and Windows features that open Edge use your default browser instead. WebView2 stays."
-msgstr "Edge יוסר לכל המשתמשים, ו־Edge Update יונחה לא להתקין אותו שוב. קישורים ותכונות של Windows שפותחים את Edge ישתמשו בדפדפן ברירת המחדל שלך. WebView2 נשאר."
+msgid "Edge is uninstalled for every user, and Edge Update is told not to install it again and turned off. Links and Windows features that open Edge use your default browser instead. WebView2 stays, but doesn't update until you allow Edge again."
+msgstr "Edge יוסר לכל המשתמשים, ו־Edge Update יונחה לא להתקין אותו שוב ויכובה. קישורים ותכונות של Windows שפותחים את Edge ישתמשו בדפדפן ברירת המחדל שלך. WebView2 נשאר, אבל לא יתעדכן עד שתאפשר שוב את Edge."
 
 msgid "OneDrive is uninstalled for every user and stopped from running or installing for new accounts. Files in your OneDrive folder stay on this PC; they just stop syncing."
 msgstr "OneDrive יוסר לכל המשתמשים וייחסם מלפעול או להתקין את עצמו בחשבונות חדשים. הקבצים בתיקיית OneDrive נשארים במחשב; הם רק מפסיקים להסתנכרן."
