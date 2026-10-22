@@ -90,7 +90,7 @@ pub fn is_newer(a: &str, b: &str) -> bool {
 }
 
 fn curl(args: &[&str]) -> Result<Vec<u8>> {
-    let out = Command::new(if cfg!(windows) { "curl.exe" } else { "curl" })
+    let out = crate::platform::hidden(if cfg!(windows) { "curl.exe" } else { "curl" })
         .args(["--fail", "--silent", "--show-error", "--location", "--proto", "=https", "--tlsv1.2", "--max-time", "300"])
         .args(args)
         .output()
@@ -214,7 +214,7 @@ pub fn install(file: &Path) -> Result<String> {
     let _ = std::fs::remove_dir_all(&unpacked);
     crate::config::ensure_dir(&unpacked)?;
     // bsdtar on Windows reads .zip; GNU tar on Linux reads .tar.gz.
-    let st = Command::new("tar").arg("-xf").arg(file).arg("-C").arg(&unpacked).status().context("running tar")?;
+    let st = crate::platform::hidden("tar").arg("-xf").arg(file).arg("-C").arg(&unpacked).status().context("running tar")?;
     if !st.success() {
         bail!("{}", crate::i18n::tr("Could not unpack the update."));
     }

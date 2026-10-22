@@ -96,7 +96,7 @@ pub fn sched_status(id: &str) -> String {
     let (dir, activate) = unit_dir();
     let timer = format!("{}.timer", task_unit(id));
     if !dir.join(&timer).exists() {
-        return "not registered".into();
+        return crate::scheduler::NOT_REGISTERED.into();
     }
     if !activate {
         return "unit written (not activated)".into();

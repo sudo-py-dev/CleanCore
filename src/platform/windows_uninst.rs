@@ -183,6 +183,10 @@ pub fn run_uninstaller(p: &Program, mode: RunMode) -> Result<RunResult> {
         let r = powershell(&script);
         return Ok(RunResult { command: script, exit_code: Some(if r.is_ok() { 0 } else { 1 }) });
     }
+    if mode != RunMode::ForcedMsi && crate::keepaway::is_edge(p) {
+        crate::keepaway::uninstall_edge()?;
+        return Ok(RunResult { command: "setup.exe --uninstall --msedge --system-level --force-uninstall".into(), exit_code: Some(0) });
+    }
     let cmd = match mode {
         RunMode::Normal => p.uninstall_string.clone(),
         RunMode::Quiet => quiet_command(p).or_else(|| p.uninstall_string.clone()),

@@ -1405,23 +1405,62 @@ msgstr "Selecciona una clave para la copia."
 msgid "Reading scheduled tasks failed: {e:#}"
 msgstr "Error al leer las tareas programadas: {e:#}"
 
+msgid "Task ran: {s}"
+msgstr "La tarea se ejecutó: {s}"
+
+msgid "Task failed: {e}"
+msgstr "La tarea falló: {e}"
+
 msgid "Scheduled cleans"
 msgstr "Limpiezas programadas"
 
-msgid "New task"
-msgstr "Nueva tarea"
+msgid "New schedule"
+msgstr "Nueva programación"
 
-msgid "No tasks yet. Fill in the form and save."
-msgstr "Aún no hay tareas. Rellena el formulario y guarda."
+msgid "No scheduled cleans yet"
+msgstr "Aún no hay limpiezas programadas"
 
-msgid "Deleted task {id}"
-msgstr "Se eliminó la tarea {id}"
+msgid "CleanCore can scan and clean on its own every day, week or month. Every clean is backed up first."
+msgstr "CleanCore puede buscar y limpiar por sí solo cada día, semana o mes. Antes de cada limpieza se hace una copia de seguridad."
+
+msgid "No scheduled backups yet"
+msgstr "Aún no hay copias programadas"
+
+msgid "CleanCore can make backups on its own every day, week or month."
+msgstr "CleanCore puede hacer copias de seguridad por sí solo cada día, semana o mes."
+
+msgid "Editing"
+msgstr "Editando"
+
+msgid "Edit"
+msgstr "Editar"
+
+msgid "Running {}"
+msgstr "Ejecutando {}"
+
+msgid "Next run {}"
+msgstr "Próxima ejecución {}"
+
+msgid "Last run {}: {}"
+msgstr "Última ejecución {}: {}"
+
+msgid "Hasn't run yet"
+msgstr "Aún no se ha ejecutado"
+
+msgid "The system scheduler doesn't have this task, so it won't run on its own. Edit it and save to set it up again."
+msgstr "El programador del sistema no tiene esta tarea, así que no se ejecutará sola. Edítala y guárdala para configurarla de nuevo."
+
+msgid "Delete \"{}\"? It stops running on its schedule."
+msgstr "¿Eliminar «{}»? Dejará de ejecutarse según su programación."
+
+msgid "Schedule deleted"
+msgstr "Programación eliminada"
 
 msgid "Deleting task failed: {e:#}"
 msgstr "Error al eliminar la tarea: {e:#}"
 
-msgid "Edit task"
-msgstr "Editar tarea"
+msgid "Edit schedule"
+msgstr "Editar programación"
 
 msgid "Repeat"
 msgstr "Repetir"
@@ -1434,6 +1473,27 @@ msgstr "Semanal"
 
 msgid "Monthly"
 msgstr "Mensual"
+
+msgid "Mon"
+msgstr "lun"
+
+msgid "Tue"
+msgstr "mar"
+
+msgid "Wed"
+msgstr "mié"
+
+msgid "Thu"
+msgstr "jue"
+
+msgid "Fri"
+msgstr "vie"
+
+msgid "Sat"
+msgstr "sáb"
+
+msgid "Sun"
+msgstr "dom"
 
 msgid "Day"
 msgstr "Día"
@@ -1453,38 +1513,17 @@ msgstr "Ubicación"
 msgid "Pick below or type a path"
 msgstr "Elige abajo o escribe una ruta"
 
-msgid "Next run {}"
-msgstr "Próxima ejecución {}"
-
-msgid "System scheduler: {}"
-msgstr "Programador del sistema: {}"
-
-msgid "Last run {}: {}"
-msgstr "Última ejecución {}: {}"
-
 msgid "Save"
 msgstr "Guardar"
-
-msgid "Running {id}"
-msgstr "Ejecutando {id}"
-
-msgid "Task ran: {s}"
-msgstr "La tarea se ejecutó: {s}"
-
-msgid "Task failed: {e}"
-msgstr "La tarea falló: {e}"
 
 msgid "A task with the same parameters already exists!"
 msgstr "¡Ya existe una tarea con los mismos parámetros!"
 
-msgid "Saved task {id}"
-msgstr "Se guardó la tarea {id}"
+msgid "Saved \"{name}\""
+msgstr "«{name}» guardado"
 
 msgid "Saving task failed: {e:#}"
 msgstr "Error al guardar la tarea: {e:#}"
-
-msgid "{} · last run failed"
-msgstr "{} · la última ejecución falló"
 
 msgid "Overwrite passes"
 msgstr "Pasadas de sobrescritura"
@@ -2056,9 +2095,6 @@ msgstr "Añadido a la base de registros: {}"
 msgid "Export (.cptrace to share, .html / .txt to read)"
 msgstr "Exportar (.cptrace para compartir, .html / .txt para leer)"
 
-msgid "Edit"
-msgstr "Editar"
-
 msgid "No traced programs"
 msgstr "No hay programas rastreados"
 
@@ -2182,6 +2218,24 @@ msgstr "¿Seguro?"
 msgid "Apply anyway"
 msgstr "Aplicar de todos modos"
 
+msgid "Turning on System Restore failed: {e:#}"
+msgstr "No se pudo activar Restaurar sistema: {e:#}"
+
+msgid "Uninstalling {}"
+msgstr "Desinstalando {}"
+
+msgid "The restore point could not be created"
+msgstr "No se pudo crear el punto de restauración"
+
+msgid "Nothing has been changed yet. Without a restore point, the uninstall can't be undone with System Restore."
+msgstr "Aún no se ha cambiado nada. Sin un punto de restauración, la desinstalación no se puede deshacer con Restaurar sistema."
+
+msgid "Turn on System Restore and try again"
+msgstr "Activar Restaurar sistema y volver a intentarlo"
+
+msgid "Uninstall without a restore point"
+msgstr "Desinstalar sin punto de restauración"
+
 msgid "Uninstall with CleanCore"
 msgstr "Desinstalar con CleanCore"
 
@@ -2191,11 +2245,11 @@ msgstr "Leyendo programas instalados"
 msgid "New"
 msgstr "Nuevo"
 
-msgid "Uninstalling {}"
-msgstr "Desinstalando {}"
-
 msgid "Removing"
 msgstr "Quitando"
+
+msgid "The restore point could not be created, so nothing was removed: {}"
+msgstr "No se pudo crear el punto de restauración, así que no se quitó nada: {}"
 
 msgid "{} program(s)"
 msgstr "{} programa(s)"
@@ -2365,17 +2419,20 @@ msgstr "Copiar como texto"
 msgid "Select an entry to see what was removed."
 msgstr "Selecciona una entrada para ver qué se quitó."
 
-msgid "The uninstaller finished successfully ({})"
-msgstr "El desinstalador terminó correctamente ({})"
+msgid "The uninstaller finished successfully."
+msgstr "El desinstalador terminó correctamente."
 
-msgid "The uninstaller ended with exit code {c} ({})"
-msgstr "El desinstalador terminó con el código de salida {c} ({})"
+msgid "The uninstaller ended with exit code {c}."
+msgstr "El desinstalador terminó con el código de salida {c}."
 
-msgid "The uninstaller ended without an exit code ({})"
-msgstr "El desinstalador terminó sin código de salida ({})"
+msgid "The uninstaller ended without an exit code."
+msgstr "El desinstalador terminó sin código de salida."
 
 msgid "No built-in uninstaller: CleanCore removes the program's files and leftovers itself."
 msgstr "Sin desinstalador integrado: CleanCore quita los archivos y restos del programa por sí mismo."
+
+msgid "{} is still installed: its uninstaller did not remove it. A leftover scan now would list files it still uses."
+msgstr "{} sigue instalado: su desinstalador no lo quitó. Buscar restos ahora mostraría archivos que todavía usa."
 
 msgid "The built-in uninstaller could not run: {e}"
 msgstr "No se pudo ejecutar el desinstalador integrado: {e}"
@@ -2430,6 +2487,9 @@ msgstr "Analizar todas las cuentas de usuario"
 
 msgid "Also look in other user accounts"
 msgstr "Buscar también en otras cuentas de usuario"
+
+msgid "Scan anyway"
+msgstr "Buscar de todos modos"
 
 msgid "Scanning for leftovers"
 msgstr "Buscando restos"
@@ -2553,6 +2613,9 @@ msgstr "{waiting} en espera"
 
 msgid "{removed} leftovers removed"
 msgstr "{removed} restos quitados"
+
+msgid "Creating backup"
+msgstr "Creando copia de seguridad"
 
 msgid "Before starting"
 msgstr "Antes de empezar"
@@ -4135,6 +4198,12 @@ msgstr "Texto escrito en formularios (autocompletar)"
 msgid "Run CleanCore as administrator to remove it for every user and keep it away."
 msgstr "Ejecuta CleanCore como administrador para quitarla para todos los usuarios y bloquearla."
 
+msgid "Run CleanCore as administrator to uninstall Microsoft Edge."
+msgstr "Ejecuta CleanCore como administrador para desinstalar Microsoft Edge."
+
+msgid "{}'s uninstaller did not remove it."
+msgstr "El desinstalador de {} no lo quitó."
+
 msgid "{}'s uninstaller did not remove it. It stays blocked, and the daily check tries again."
 msgstr "El desinstalador de {} no la quitó. Sigue bloqueada y la comprobación diaria lo volverá a intentar."
 
@@ -4146,6 +4215,90 @@ msgstr "{} vuelve a estar permitida y se ha reinstalado."
 
 msgid "{} is allowed again. Reinstall it from microsoft.com or the Microsoft Store."
 msgstr "{} vuelve a estar permitida. Reinstálala desde microsoft.com o Microsoft Store."
+
+msgid "System Restore is turned off on this PC: System Protection for the system drive, or the Volume Shadow Copy service, is disabled."
+msgstr "Restaurar sistema está desactivado en este PC: la protección del sistema de la unidad del sistema, o el servicio Instantáneas de volumen, está deshabilitado."
+
+msgid "Every day at {}"
+msgstr "Cada día a las {}"
+
+msgid "Every {} at {}"
+msgstr "Cada {} a las {}"
+
+msgid "On day {d} of every month at {}"
+msgstr "El día {d} de cada mes a las {}"
+
+msgid "On the last day of every month at {}"
+msgstr "El último día de cada mes a las {}"
+
+msgid "Monday"
+msgstr "lunes"
+
+msgid "Tuesday"
+msgstr "martes"
+
+msgid "Wednesday"
+msgstr "miércoles"
+
+msgid "Thursday"
+msgstr "jueves"
+
+msgid "Friday"
+msgstr "viernes"
+
+msgid "Saturday"
+msgstr "sábado"
+
+msgid "Sunday"
+msgstr "domingo"
+
+msgid "Failed: {e:#}"
+msgstr "Error: {e:#}"
+
+msgid "Auto Clean Completed"
+msgstr "Limpieza automática completada"
+
+msgid "Auto Clean Failed"
+msgstr "Error en la limpieza automática"
+
+msgid "Auto Backup Completed"
+msgstr "Copia automática completada"
+
+msgid "Auto Backup Failed"
+msgstr "Error en la copia automática"
+
+msgid "Automatic App Removal Completed"
+msgstr "Eliminación automática de apps completada"
+
+msgid "Automatic App Removal Failed"
+msgstr "Error en la eliminación automática de apps"
+
+msgid "Removed {} item(s), backup {}"
+msgstr "Se quitaron {} elemento(s), copia {}"
+
+msgid "Removed {} item(s), backup {}, {} could not be removed"
+msgstr "Se quitaron {} elemento(s), copia {}, {} no se pudieron quitar"
+
+msgid "Created backup {} ({} entries), deleted {} old backup(s)"
+msgstr "Copia {} creada ({} entradas), {} copia(s) antiguas eliminadas"
+
+msgid "Restore point created"
+msgstr "Punto de restauración creado"
+
+msgid "Full backup {id}"
+msgstr "Copia de seguridad completa {id}"
+
+msgid "Full backup failed: {e:#}"
+msgstr "Error en la copia de seguridad completa: {e:#}"
+
+msgid "Continued without a restore point"
+msgstr "Se continuó sin punto de restauración"
+
+msgid "Closed the running program first"
+msgstr "Primero se cerró el programa en ejecución"
+
+msgid "The uninstaller asks for a restart. You can scan for leftovers now, or restart: CleanCore then continues where it stopped."
+msgstr "El desinstalador pide reiniciar. Puedes buscar restos ahora o reiniciar: CleanCore continuará donde se quedó."
 
 msgid "{name} does not match its signed checksum, so it was not installed."
 msgstr "{name} no coincide con su suma de comprobación firmada, así que no se instaló."

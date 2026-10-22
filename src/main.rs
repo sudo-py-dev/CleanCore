@@ -2017,9 +2017,7 @@ fn run_trace(settings: &Settings, cmd: TraceCmd) -> Result<()> {
                 if !yes && !confirm("Remove them? Everything is backed up first.")? {
                     return Ok(());
                 }
-                for n in uninst::prepare(settings, &l.name) {
-                    println!("{n}");
-                }
+                prepare_uninstall(settings, &l.name, yes)?;
                 let r = tracer::uninstall(settings, &l, &issues)?;
                 println!("Removed {} item(s). Backup: {}", r.cleaned, r.backup_id);
                 for (loc, err) in &r.failed {
@@ -2156,9 +2154,7 @@ fn run_uninstall(settings: &Settings, a: UninstallArgs) -> Result<()> {
         let names: Vec<String> = a.names.iter().flat_map(|n| n.split(';').map(|x| x.trim().to_string())).filter(|n| !n.is_empty()).collect();
         let target = Target { names: names.clone(), paths: a.path.clone(), ..Default::default() };
         let label = if names.is_empty() { a.path.join(", ") } else { names.join(", ") };
-        for n in uninst::prepare(settings, &label) {
-            println!("{n}");
-        }
+        prepare_uninstall(settings, &label, a.yes)?;
         return leftovers_step(settings, &target, &a, &label, "", Operation::ForcedUninstall);
     }
     let list = uninst::list_programs(&s);
@@ -2180,9 +2176,7 @@ fn run_uninstall(settings: &Settings, a: UninstallArgs) -> Result<()> {
         if !a.yes && !confirm(&format!("Quick uninstall {} program(s): {}?", programs.len(), programs.iter().map(|p| p.name.as_str()).collect::<Vec<_>>().join(", ")))? {
             return Ok(());
         }
-        for n in uninst::prepare(settings, &format!("{} program(s)", programs.len())) {
-            println!("{n}");
-        }
+        prepare_uninstall(settings, &format!("{} program(s)", programs.len()), a.yes)?;
         let mut s2 = settings.clone();
         if let Some(m) = a.mode {
             s2.uninstall_scan_mode = m;
@@ -2205,9 +2199,7 @@ fn run_uninstall(settings: &Settings, a: UninstallArgs) -> Result<()> {
         t.paths.extend(a.path.iter().cloned());
         return leftovers_step(settings, &t, &a, &p.name, &p.version, Operation::LeftoversOnly);
     }
-    for n in uninst::prepare(settings, &p.name) {
-        println!("{n}");
-    }
+    prepare_uninstall(settings, &p.name, a.yes)?;
     let mode = if a.msi { RunMode::ForcedMsi } else { RunMode::Normal };
     if p.uninstall_string.is_none() && !a.msi {
         println!("No built-in uninstaller: removing the program's files and leftovers.");
@@ -2237,6 +2229,26 @@ fn run_uninstall(settings: &Settings, a: UninstallArgs) -> Result<()> {
     leftovers_step(settings, &target, &a, &p.name, &p.version, Operation::Uninstall)
 }
 
+/// `uninst::prepare` (restore point and backup). When the restore point fails, asks before
+/// uninstalling without it, and stops when it can't ask (`--yes`, or no terminal).
+fn prepare_uninstall(settings: &Settings, label: &str, yes: bool) -> Result<()> {
+    use std::io::IsTerminal;
+    let notes = match uninst::prepare(settings, label) {
+        Ok(notes) => notes,
+        Err(failed) => {
+            eprintln!("Restore point not created: {}", failed.0);
+            if yes || !std::io::stdin().is_terminal() || !confirm("Uninstall without a restore point?")? {
+                bail!("stopped before uninstalling: no restore point (switch off uninstall_restore_point to uninstall without one)");
+            }
+            uninst::prepare_without_restore_point(settings, label)
+        }
+    };
+    for n in notes {
+        println!("{n}");
+    }
+    Ok(())
+}
+
 fn add_task(mut tasks: Vec<Task>, name: String, note: String, when: &str, action: Action) -> Result<()> {
     let task = Task { id: scheduler::make_id(&name, &tasks), name, note, schedule: scheduler::parse_when(when)?, action, created: chrono::Local::now(), last_run: None };
     if let Some(dup) = tasks.iter().find(|t| t.same_params(&task)) {
@@ -2253,6 +2265,7 @@ fn run_schedule(settings: &Settings, cmd: ScheduleCmd) -> Result<()> {
     let mut tasks = scheduler::load_tasks()?;
     let find =
         |tasks: &[Task], id: &str| -> Result<usize> { tasks.iter().position(|t| t.id == id).ok_or_else(|| anyhow::anyhow!("no task '{id}' (see `cleancore schedule list`)")) };
+    let exec = matches!(cmd, ScheduleCmd::Exec { .. });
     match cmd {
         ScheduleCmd::AddClean { name, note, when, mode, all_users } => {
             add_task(tasks, name, note, &when, Action::AutoClean { mode, all_users })?;
@@ -2332,6 +2345,10 @@ fn run_schedule(settings: &Settings, cmd: ScheduleCmd) -> Result<()> {
         }
         ScheduleCmd::Run { id } | ScheduleCmd::Exec { id } => {
             find(&tasks, &id)?;
+            // The run's summary and notification are shown in the app: in its language.
+            if exec {
+                cleancore::i18n::set_language(&settings.language);
+            }
             println!("{}", scheduler::execute(settings, &id)?);
         }
         ScheduleCmd::History { limit } => {

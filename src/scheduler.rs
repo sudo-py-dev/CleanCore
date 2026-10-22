@@ -7,6 +7,7 @@
 use crate::backup::{Backup, BackupKind};
 use crate::config::{data_dir, ensure_dir, Settings};
 use crate::engine::{self, Selection};
+use crate::i18n::tr;
 use crate::model::{ScanMode, Scope};
 use anyhow::{bail, Context, Result};
 use chrono::{DateTime, Datelike, Duration, Local, NaiveDate, NaiveTime, TimeZone, Weekday};
@@ -142,18 +143,111 @@ pub fn on_calendar(s: &Schedule) -> String {
     }
 }
 
-/// `schtasks /Create` schedule arguments.
-pub fn schtasks_args(s: &Schedule) -> Vec<String> {
-    let st = |t: &NaiveTime| t.format("%H:%M").to_string();
-    let day3 = |d: &Weekday| format!("{d}").to_uppercase();
+/// When a schedule runs, in plain words for the interface.
+pub fn describe(s: &Schedule) -> String {
     match s {
-        Schedule::Daily { time } => vec!["/SC".into(), "DAILY".into(), "/ST".into(), st(time)],
-        Schedule::Weekly { day, time } => vec!["/SC".into(), "WEEKLY".into(), "/D".into(), day3(day), "/ST".into(), st(time)],
-        Schedule::Monthly { day: MonthDay::Day(d), time } => vec!["/SC".into(), "MONTHLY".into(), "/D".into(), d.to_string(), "/ST".into(), st(time)],
-        Schedule::Monthly { day: MonthDay::Last, time } => {
-            vec!["/SC".into(), "MONTHLY".into(), "/MO".into(), "LASTDAY".into(), "/M".into(), "*".into(), "/ST".into(), st(time)]
-        }
+        Schedule::Daily { time } => crate::tf!("Every day at {}", time.format("%H:%M")),
+        Schedule::Weekly { day, time } => crate::tf!("Every {} at {}", day_name(*day), time.format("%H:%M")),
+        Schedule::Monthly { day: MonthDay::Day(d), time } => crate::tf!("On day {d} of every month at {}", time.format("%H:%M")),
+        Schedule::Monthly { day: MonthDay::Last, time } => crate::tf!("On the last day of every month at {}", time.format("%H:%M")),
     }
+}
+
+/// The day's full name, in the interface language.
+pub fn day_name(d: Weekday) -> &'static str {
+    match d {
+        Weekday::Mon => tr("Monday"),
+        Weekday::Tue => tr("Tuesday"),
+        Weekday::Wed => tr("Wednesday"),
+        Weekday::Thu => tr("Thursday"),
+        Weekday::Fri => tr("Friday"),
+        Weekday::Sat => tr("Saturday"),
+        Weekday::Sun => tr("Sunday"),
+    }
+}
+
+/// The day's English name, as Task Scheduler's XML spells it.
+fn weekday_name(d: Weekday) -> &'static str {
+    match d {
+        Weekday::Mon => "Monday",
+        Weekday::Tue => "Tuesday",
+        Weekday::Wed => "Wednesday",
+        Weekday::Thu => "Thursday",
+        Weekday::Fri => "Friday",
+        Weekday::Sat => "Saturday",
+        Weekday::Sun => "Sunday",
+    }
+}
+
+fn xml_escape(s: &str) -> String {
+    s.replace('&', "&amp;").replace('<', "&lt;").replace('>', "&gt;").replace('"', "&quot;").replace('\'', "&apos;")
+}
+
+/// Task Scheduler trigger for a schedule, starting from `today`.
+pub fn task_trigger(s: &Schedule, today: NaiveDate) -> String {
+    let start = |t: &NaiveTime| format!("<StartBoundary>{}T{}</StartBoundary><Enabled>true</Enabled>", today.format("%Y-%m-%d"), t.format("%H:%M:%S"));
+    let body = match s {
+        Schedule::Daily { time } => format!("{}<ScheduleByDay><DaysInterval>1</DaysInterval></ScheduleByDay>", start(time)),
+        Schedule::Weekly { day, time } => {
+            format!("{}<ScheduleByWeek><WeeksInterval>1</WeeksInterval><DaysOfWeek><{}/></DaysOfWeek></ScheduleByWeek>", start(time), weekday_name(*day))
+        }
+        Schedule::Monthly { day, time } => {
+            let day = match day {
+                MonthDay::Day(d) => d.to_string(),
+                MonthDay::Last => "Last".into(),
+            };
+            let months: String = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
+                .iter()
+                .map(|m| format!("<{m}/>"))
+                .collect();
+            format!("{}<ScheduleByMonth><DaysOfMonth><Day>{day}</Day></DaysOfMonth><Months>{months}</Months></ScheduleByMonth>", start(time))
+        }
+    };
+    format!("<CalendarTrigger>{body}</CalendarTrigger>")
+}
+
+/// Task Scheduler trigger for "when `user` signs in".
+pub fn logon_trigger(user: &str) -> String {
+    format!("<LogonTrigger><Enabled>true</Enabled><UserId>{}</UserId></LogonTrigger>", xml_escape(user))
+}
+
+/// A whole Task Scheduler task, for `schtasks /Create /XML`. It sets what plain `schtasks /Create`
+/// can't: a run missed while the PC was off or asleep happens as soon as it can, and tasks run
+/// on battery too (Windows' defaults skip both, so a 03:00 clean on a laptop never ran).
+/// `time_limit` is an ISO 8601 duration (`PT0S` = none, for the recorder).
+pub fn task_xml(description: &str, trigger: &str, user: &str, highest: bool, command: &str, arguments: &str, time_limit: &str) -> String {
+    format!(
+        r#"<?xml version="1.0" encoding="UTF-16"?>
+<Task version="1.2" xmlns="http://schemas.microsoft.com/windows/2004/02/mit/task">
+  <RegistrationInfo><Description>{desc}</Description></RegistrationInfo>
+  <Triggers>{trigger}</Triggers>
+  <Principals>
+    <Principal id="Author"><UserId>{user}</UserId><LogonType>InteractiveToken</LogonType><RunLevel>{level}</RunLevel></Principal>
+  </Principals>
+  <Settings>
+    <MultipleInstancesPolicy>IgnoreNew</MultipleInstancesPolicy>
+    <DisallowStartIfOnBatteries>false</DisallowStartIfOnBatteries>
+    <StopIfGoingOnBatteries>false</StopIfGoingOnBatteries>
+    <StartWhenAvailable>true</StartWhenAvailable>
+    <RunOnlyIfNetworkAvailable>false</RunOnlyIfNetworkAvailable>
+    <IdleSettings><StopOnIdleEnd>false</StopOnIdleEnd><RestartOnIdle>false</RestartOnIdle></IdleSettings>
+    <AllowStartOnDemand>true</AllowStartOnDemand>
+    <Enabled>true</Enabled>
+    <Hidden>false</Hidden>
+    <RunOnlyIfIdle>false</RunOnlyIfIdle>
+    <WakeToRun>false</WakeToRun>
+    <ExecutionTimeLimit>{time_limit}</ExecutionTimeLimit>
+    <Priority>7</Priority>
+  </Settings>
+  <Actions Context="Author"><Exec><Command>{command}</Command><Arguments>{arguments}</Arguments></Exec></Actions>
+</Task>
+"#,
+        desc = xml_escape(description),
+        user = xml_escape(user),
+        level = if highest { "HighestAvailable" } else { "LeastPrivilege" },
+        command = xml_escape(command),
+        arguments = xml_escape(arguments),
+    )
 }
 
 fn at(date: NaiveDate, time: NaiveTime) -> Option<DateTime<Local>> {
@@ -269,6 +363,9 @@ pub fn exe_args(args: &[&str]) -> Result<(PathBuf, Vec<String>)> {
     Ok((exe, v))
 }
 
+/// What `platform::sched_status` says about a task the system scheduler doesn't have.
+pub const NOT_REGISTERED: &str = "not registered";
+
 pub fn register(task: &Task) -> Result<()> {
     let (exe, args) = exe_args(&["schedule", "exec", &task.id])?;
     crate::platform::sched_register(task, &exe, &args)
@@ -287,7 +384,7 @@ pub fn execute(settings: &Settings, id: &str) -> Result<String> {
     let result = run_action(settings, &task);
     let (ok, summary) = match &result {
         Ok(s) => (true, s.clone()),
-        Err(e) => (false, format!("failed: {e:#}")),
+        Err(e) => (false, crate::tf!("Failed: {e:#}")),
     };
 
     let now = Local::now();
@@ -301,9 +398,9 @@ pub fn execute(settings: &Settings, id: &str) -> Result<String> {
     writeln!(f, "{}", serde_json::to_string(&entry)?)?;
 
     let (title, wanted) = match task.action {
-        Action::AutoClean { .. } => (if ok { "Auto Clean Completed" } else { "Auto Clean Failed" }, settings.notify_auto_clean),
-        Action::AutoBackup { .. } => (if ok { "Auto Backup Completed" } else { "Auto Backup Failed" }, settings.notify_auto_backup),
-        Action::RemoveSlop { .. } | Action::KeepAway => (if ok { "Automatic App Removal Completed" } else { "Automatic App Removal Failed" }, settings.notify_auto_clean),
+        Action::AutoClean { .. } => (if ok { tr("Auto Clean Completed") } else { tr("Auto Clean Failed") }, settings.notify_auto_clean),
+        Action::AutoBackup { .. } => (if ok { tr("Auto Backup Completed") } else { tr("Auto Backup Failed") }, settings.notify_auto_backup),
+        Action::RemoveSlop { .. } | Action::KeepAway => (if ok { tr("Automatic App Removal Completed") } else { tr("Automatic App Removal Failed") }, settings.notify_auto_clean),
     };
     // Failures are always shown: a silent failing schedule is worse than an extra popup.
     if wanted || !ok {
@@ -320,14 +417,14 @@ fn run_action(settings: &Settings, task: &Task) -> Result<String> {
             let scope = if *all_users { Scope::AllUsers } else { Scope::CurrentUser };
             let issues = engine::run_scan(settings, &Selection::Mode(*mode), scope);
             if issues.is_empty() {
-                return Ok("nothing to clean".into());
+                return Ok(tr("Nothing to clean").to_string());
             }
             let r = crate::cleaner::clean(settings, &issues)?;
-            let mut s = format!("removed {} item(s), backup {}", r.cleaned, r.backup_id);
-            if !r.failed.is_empty() {
-                s.push_str(&format!(", {} failed", r.failed.len()));
-            }
-            Ok(s)
+            Ok(if r.failed.is_empty() {
+                crate::tf!("Removed {} item(s), backup {}", r.cleaned, r.backup_id)
+            } else {
+                crate::tf!("Removed {} item(s), backup {}, {} could not be removed", r.cleaned, r.backup_id, r.failed.len())
+            })
         }
         Action::KeepAway => crate::keepaway::enforce(),
         Action::RemoveSlop { apps } => {
@@ -365,11 +462,11 @@ fn run_action(settings: &Settings, task: &Task) -> Result<String> {
             }
             b.save()?;
             let pruned = crate::backup::prune(settings)?;
-            let mut s = format!("created backup {} ({} entries)", b.manifest.id, b.manifest.entries.len());
-            if !pruned.is_empty() {
-                s.push_str(&format!(", auto-deleted {} old backup(s)", pruned.len()));
-            }
-            Ok(s)
+            Ok(if pruned.is_empty() {
+                crate::tf!("Created backup {} ({} entries)", b.manifest.id, b.manifest.entries.len())
+            } else {
+                crate::tf!("Created backup {} ({} entries), deleted {} old backup(s)", b.manifest.id, b.manifest.entries.len(), pruned.len())
+            })
         }
     }
 }
@@ -427,8 +524,37 @@ mod tests {
         assert_eq!(on_calendar(&parse_when("weekly mon 09:00").unwrap()), "Mon *-*-* 09:00:00");
         assert_eq!(on_calendar(&parse_when("monthly 5 09:00").unwrap()), "*-*-05 09:00:00");
         assert_eq!(on_calendar(&parse_when("monthly last 21:30").unwrap()), "*-*~01 21:30:00");
-        assert_eq!(schtasks_args(&parse_when("weekly fri 08:15").unwrap()).join(" "), "/SC WEEKLY /D FRI /ST 08:15");
-        assert_eq!(schtasks_args(&parse_when("monthly last 08:15").unwrap()).join(" "), "/SC MONTHLY /MO LASTDAY /M * /ST 08:15");
+        let today = NaiveDate::from_ymd_opt(2026, 10, 22).unwrap();
+        assert_eq!(
+            task_trigger(&parse_when("weekly fri 08:15").unwrap(), today),
+            "<CalendarTrigger><StartBoundary>2026-10-22T08:15:00</StartBoundary><Enabled>true</Enabled><ScheduleByWeek><WeeksInterval>1</WeeksInterval><DaysOfWeek><Friday/></DaysOfWeek></ScheduleByWeek></CalendarTrigger>"
+        );
+        assert!(task_trigger(&parse_when("monthly last 08:15").unwrap(), today).contains("<DaysOfMonth><Day>Last</Day></DaysOfMonth><Months><January/>"));
+        assert!(task_trigger(&parse_when("daily 03:00").unwrap(), today).contains("<ScheduleByDay><DaysInterval>1</DaysInterval></ScheduleByDay>"));
+    }
+
+    #[test]
+    fn windows_task_runs_when_missed_and_on_battery() {
+        let xml = task_xml(
+            "Weekly <clean>",
+            &logon_trigger(r"PC\me"),
+            r"PC\me",
+            true,
+            "conhost.exe",
+            r#"--headless "C:\Program Files\CleanCore\cleancore.exe" schedule exec weekly"#,
+            "PT4H",
+        );
+        for want in [
+            "<StartWhenAvailable>true</StartWhenAvailable>",
+            "<DisallowStartIfOnBatteries>false</DisallowStartIfOnBatteries>",
+            "<StopIfGoingOnBatteries>false</StopIfGoingOnBatteries>",
+            "<RunLevel>HighestAvailable</RunLevel>",
+            "<ExecutionTimeLimit>PT4H</ExecutionTimeLimit>",
+            "<Description>Weekly &lt;clean&gt;</Description>",
+            "&quot;C:\\Program Files\\CleanCore\\cleancore.exe&quot;",
+        ] {
+            assert!(xml.contains(want), "{want}");
+        }
     }
 
     #[test]

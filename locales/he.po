@@ -1406,23 +1406,62 @@ msgstr "נא לבחור מפתח לגיבוי."
 msgid "Reading scheduled tasks failed: {e:#}"
 msgstr "קריאת המשימות המתוזמנות נכשלה: {e:#}"
 
+msgid "Task ran: {s}"
+msgstr "המשימה רצה: {s}"
+
+msgid "Task failed: {e}"
+msgstr "המשימה נכשלה: {e}"
+
 msgid "Scheduled cleans"
 msgstr "ניקויים מתוזמנים"
 
-msgid "New task"
-msgstr "משימה חדשה"
+msgid "New schedule"
+msgstr "תזמון חדש"
 
-msgid "No tasks yet. Fill in the form and save."
-msgstr "עדיין אין משימות. מלא את הטופס ושמור."
+msgid "No scheduled cleans yet"
+msgstr "עדיין אין ניקויים מתוזמנים"
 
-msgid "Deleted task {id}"
-msgstr "המשימה {id} נמחקה"
+msgid "CleanCore can scan and clean on its own every day, week or month. Every clean is backed up first."
+msgstr "CleanCore יכול לסרוק ולנקות בעצמו בכל יום, שבוע או חודש. לפני כל ניקוי נוצר גיבוי."
+
+msgid "No scheduled backups yet"
+msgstr "עדיין אין גיבויים מתוזמנים"
+
+msgid "CleanCore can make backups on its own every day, week or month."
+msgstr "CleanCore יכול ליצור גיבויים בעצמו בכל יום, שבוע או חודש."
+
+msgid "Editing"
+msgstr "בעריכה"
+
+msgid "Edit"
+msgstr "ערוך"
+
+msgid "Running {}"
+msgstr "מריץ את {}"
+
+msgid "Next run {}"
+msgstr "ההפעלה הבאה {}"
+
+msgid "Last run {}: {}"
+msgstr "הפעלה אחרונה {}: {}"
+
+msgid "Hasn't run yet"
+msgstr "עדיין לא רץ"
+
+msgid "The system scheduler doesn't have this task, so it won't run on its own. Edit it and save to set it up again."
+msgstr "מתזמן המערכת לא מכיר את המשימה הזו, ולכן היא לא תרוץ מעצמה. ערוך ושמור אותה כדי להגדיר אותה מחדש."
+
+msgid "Delete \"{}\"? It stops running on its schedule."
+msgstr "למחוק את \"{}\"? היא תפסיק לרוץ לפי התזמון."
+
+msgid "Schedule deleted"
+msgstr "התזמון נמחק"
 
 msgid "Deleting task failed: {e:#}"
 msgstr "מחיקת המשימה נכשלה: {e:#}"
 
-msgid "Edit task"
-msgstr "עריכת משימה"
+msgid "Edit schedule"
+msgstr "עריכת תזמון"
 
 msgid "Repeat"
 msgstr "חזרה"
@@ -1435,6 +1474,27 @@ msgstr "שבועי"
 
 msgid "Monthly"
 msgstr "חודשי"
+
+msgid "Mon"
+msgstr "שני"
+
+msgid "Tue"
+msgstr "שלישי"
+
+msgid "Wed"
+msgstr "רביעי"
+
+msgid "Thu"
+msgstr "חמישי"
+
+msgid "Fri"
+msgstr "שישי"
+
+msgid "Sat"
+msgstr "שבת"
+
+msgid "Sun"
+msgstr "ראשון"
 
 msgid "Day"
 msgstr "יום"
@@ -1454,38 +1514,17 @@ msgstr "מיקום"
 msgid "Pick below or type a path"
 msgstr "בחר למטה או הקלד נתיב"
 
-msgid "Next run {}"
-msgstr "ההפעלה הבאה {}"
-
-msgid "System scheduler: {}"
-msgstr "מתזמן המערכת: {}"
-
-msgid "Last run {}: {}"
-msgstr "הפעלה אחרונה {}: {}"
-
 msgid "Save"
 msgstr "שמור"
-
-msgid "Running {id}"
-msgstr "מריץ את {id}"
-
-msgid "Task ran: {s}"
-msgstr "המשימה רצה: {s}"
-
-msgid "Task failed: {e}"
-msgstr "המשימה נכשלה: {e}"
 
 msgid "A task with the same parameters already exists!"
 msgstr "כבר קיימת משימה עם אותם פרמטרים!"
 
-msgid "Saved task {id}"
-msgstr "המשימה {id} נשמרה"
+msgid "Saved \"{name}\""
+msgstr "\"{name}\" נשמר"
 
 msgid "Saving task failed: {e:#}"
 msgstr "שמירת המשימה נכשלה: {e:#}"
-
-msgid "{} · last run failed"
-msgstr "{} · ההפעלה האחרונה נכשלה"
 
 msgid "Overwrite passes"
 msgstr "מעברי דריסה"
@@ -2057,9 +2096,6 @@ msgstr "נוסף למסד הלוגים: {}"
 msgid "Export (.cptrace to share, .html / .txt to read)"
 msgstr "ייצוא (‎.cptrace לשיתוף, ‎.html / ‎.txt לקריאה)"
 
-msgid "Edit"
-msgstr "ערוך"
-
 msgid "No traced programs"
 msgstr "אין תוכנות במעקב"
 
@@ -2183,6 +2219,24 @@ msgstr "בטוח?"
 msgid "Apply anyway"
 msgstr "החל בכל זאת"
 
+msgid "Turning on System Restore failed: {e:#}"
+msgstr "הפעלת שחזור המערכת נכשלה: {e:#}"
+
+msgid "Uninstalling {}"
+msgstr "מסיר את {}"
+
+msgid "The restore point could not be created"
+msgstr "לא ניתן היה ליצור נקודת שחזור"
+
+msgid "Nothing has been changed yet. Without a restore point, the uninstall can't be undone with System Restore."
+msgstr "שום דבר עוד לא שונה. בלי נקודת שחזור, אי אפשר לבטל את הסרת ההתקנה בעזרת שחזור המערכת."
+
+msgid "Turn on System Restore and try again"
+msgstr "הפעל את שחזור המערכת ונסה שוב"
+
+msgid "Uninstall without a restore point"
+msgstr "הסר בלי נקודת שחזור"
+
 msgid "Uninstall with CleanCore"
 msgstr "הסר עם CleanCore"
 
@@ -2192,11 +2246,11 @@ msgstr "קורא תוכנות מותקנות"
 msgid "New"
 msgstr "חדש"
 
-msgid "Uninstalling {}"
-msgstr "מסיר את {}"
-
 msgid "Removing"
 msgstr "מסיר"
+
+msgid "The restore point could not be created, so nothing was removed: {}"
+msgstr "לא ניתן היה ליצור נקודת שחזור, לכן שום דבר לא הוסר: {}"
 
 msgid "{} program(s)"
 msgstr "{} תוכנות"
@@ -2366,17 +2420,20 @@ msgstr "העתק כטקסט"
 msgid "Select an entry to see what was removed."
 msgstr "בחר רשומה כדי לראות מה הוסר."
 
-msgid "The uninstaller finished successfully ({})"
-msgstr "מסיר ההתקנה הסתיים בהצלחה ({})"
+msgid "The uninstaller finished successfully."
+msgstr "מסיר ההתקנה הסתיים בהצלחה."
 
-msgid "The uninstaller ended with exit code {c} ({})"
-msgstr "מסיר ההתקנה הסתיים עם קוד יציאה {c} ({})"
+msgid "The uninstaller ended with exit code {c}."
+msgstr "מסיר ההתקנה הסתיים עם קוד יציאה {c}."
 
-msgid "The uninstaller ended without an exit code ({})"
-msgstr "מסיר ההתקנה הסתיים ללא קוד יציאה ({})"
+msgid "The uninstaller ended without an exit code."
+msgstr "מסיר ההתקנה הסתיים בלי קוד יציאה."
 
 msgid "No built-in uninstaller: CleanCore removes the program's files and leftovers itself."
 msgstr "אין מסיר התקנה מובנה: CleanCore מסיר את קובצי התוכנה והשאריות בעצמו."
+
+msgid "{} is still installed: its uninstaller did not remove it. A leftover scan now would list files it still uses."
+msgstr "{} עדיין מותקנת: מסיר ההתקנה שלה לא הסיר אותה. סריקת שאריות עכשיו תציג קבצים שהיא עדיין משתמשת בהם."
 
 msgid "The built-in uninstaller could not run: {e}"
 msgstr "לא ניתן היה להפעיל את מסיר ההתקנה המובנה: {e}"
@@ -2431,6 +2488,9 @@ msgstr "סרוק את כל חשבונות המשתמשים"
 
 msgid "Also look in other user accounts"
 msgstr "חפש גם בחשבונות משתמשים אחרים"
+
+msgid "Scan anyway"
+msgstr "סרוק בכל זאת"
 
 msgid "Scanning for leftovers"
 msgstr "מחפש שאריות"
@@ -2554,6 +2614,9 @@ msgstr "{waiting} ממתינים"
 
 msgid "{removed} leftovers removed"
 msgstr "הוסרו {removed} שאריות"
+
+msgid "Creating backup"
+msgstr "יוצר גיבוי"
 
 msgid "Before starting"
 msgstr "לפני ההתחלה"
@@ -4136,6 +4199,12 @@ msgstr "טקסט שהוקלד בטפסים (מילוי אוטומטי)"
 msgid "Run CleanCore as administrator to remove it for every user and keep it away."
 msgstr "הפעל את CleanCore כמנהל מערכת כדי להסיר אותה לכל המשתמשים ולחסום אותה."
 
+msgid "Run CleanCore as administrator to uninstall Microsoft Edge."
+msgstr "הפעל את CleanCore כמנהל מערכת כדי להסיר את Microsoft Edge."
+
+msgid "{}'s uninstaller did not remove it."
+msgstr "מסיר ההתקנה של {} לא הסיר אותה."
+
 msgid "{}'s uninstaller did not remove it. It stays blocked, and the daily check tries again."
 msgstr "מסיר ההתקנה של {} לא הסיר אותה. היא נשארת חסומה, והבדיקה היומית תנסה שוב."
 
@@ -4147,6 +4216,90 @@ msgstr "{} מותרת שוב והותקנה מחדש."
 
 msgid "{} is allowed again. Reinstall it from microsoft.com or the Microsoft Store."
 msgstr "{} מותרת שוב. התקן אותה מחדש מ־microsoft.com או מ־Microsoft Store."
+
+msgid "System Restore is turned off on this PC: System Protection for the system drive, or the Volume Shadow Copy service, is disabled."
+msgstr "שחזור המערכת כבוי במחשב הזה: הגנת המערכת של כונן המערכת, או השירות Volume Shadow Copy, מושבתים."
+
+msgid "Every day at {}"
+msgstr "בכל יום בשעה {}"
+
+msgid "Every {} at {}"
+msgstr "בכל {} בשעה {}"
+
+msgid "On day {d} of every month at {}"
+msgstr "ב־{d} בכל חודש בשעה {}"
+
+msgid "On the last day of every month at {}"
+msgstr "ביום האחרון של כל חודש בשעה {}"
+
+msgid "Monday"
+msgstr "יום שני"
+
+msgid "Tuesday"
+msgstr "יום שלישי"
+
+msgid "Wednesday"
+msgstr "יום רביעי"
+
+msgid "Thursday"
+msgstr "יום חמישי"
+
+msgid "Friday"
+msgstr "יום שישי"
+
+msgid "Saturday"
+msgstr "שבת"
+
+msgid "Sunday"
+msgstr "יום ראשון"
+
+msgid "Failed: {e:#}"
+msgstr "נכשל: {e:#}"
+
+msgid "Auto Clean Completed"
+msgstr "הניקוי האוטומטי הושלם"
+
+msgid "Auto Clean Failed"
+msgstr "הניקוי האוטומטי נכשל"
+
+msgid "Auto Backup Completed"
+msgstr "הגיבוי האוטומטי הושלם"
+
+msgid "Auto Backup Failed"
+msgstr "הגיבוי האוטומטי נכשל"
+
+msgid "Automatic App Removal Completed"
+msgstr "ההסרה האוטומטית של אפליקציות הושלמה"
+
+msgid "Automatic App Removal Failed"
+msgstr "ההסרה האוטומטית של אפליקציות נכשלה"
+
+msgid "Removed {} item(s), backup {}"
+msgstr "הוסרו {} פריטים, גיבוי {}"
+
+msgid "Removed {} item(s), backup {}, {} could not be removed"
+msgstr "הוסרו {} פריטים, גיבוי {}, {} לא הוסרו"
+
+msgid "Created backup {} ({} entries), deleted {} old backup(s)"
+msgstr "נוצר גיבוי {} ({} רשומות), נמחקו {} גיבויים ישנים"
+
+msgid "Restore point created"
+msgstr "נקודת שחזור נוצרה"
+
+msgid "Full backup {id}"
+msgstr "גיבוי מלא {id}"
+
+msgid "Full backup failed: {e:#}"
+msgstr "הגיבוי המלא נכשל: {e:#}"
+
+msgid "Continued without a restore point"
+msgstr "המשיך בלי נקודת שחזור"
+
+msgid "Closed the running program first"
+msgstr "התוכנה הפועלת נסגרה קודם"
+
+msgid "The uninstaller asks for a restart. You can scan for leftovers now, or restart: CleanCore then continues where it stopped."
+msgstr "מסיר ההתקנה מבקש הפעלה מחדש. אפשר לסרוק שאריות עכשיו, או להפעיל מחדש: CleanCore ימשיך מאיפה שעצר."
 
 msgid "{name} does not match its signed checksum, so it was not installed."
 msgstr "{name} לא תואם לסכום הביקורת החתום שלו, ולכן לא הותקן."

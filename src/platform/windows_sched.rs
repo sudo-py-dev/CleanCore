@@ -2,13 +2,14 @@
 //! `schtasks.exe`, and toast notifications.
 //!
 //! Tasks run through `conhost.exe --headless` so no console window flashes on screen.
-//! They are created with highest privileges when CleanCore itself runs elevated, which an
-//! Auto Clean of HKEY_LOCAL_MACHINE and a full hive backup need.
+//! They are created from task XML (`scheduler::task_xml`) so a run missed while the PC was off
+//! or asleep still happens and laptops run them on battery, and with highest privileges when
+//! CleanCore itself runs elevated, which an Auto Clean of HKEY_LOCAL_MACHINE and a full hive
+//! backup need.
 
-use crate::scheduler::{schtasks_args, Task};
+use crate::scheduler::{logon_trigger, task_trigger, task_xml, Task};
 use anyhow::{bail, Context, Result};
 use std::path::Path;
-use std::process::Command;
 
 const RECORDER: &str = r"CleanCore\Recorder";
 
@@ -24,14 +25,24 @@ fn win_quote(s: &str) -> String {
     format!("\"{}\"", s.replace('"', "\\\""))
 }
 
-fn task_run_line(exe: &Path, args: &[String]) -> String {
-    let mut parts = vec!["conhost.exe".to_string(), "--headless".to_string(), win_quote(&exe.to_string_lossy())];
+/// conhost's arguments: headless, then CleanCore's command line.
+fn task_arguments(exe: &Path, args: &[String]) -> String {
+    let mut parts = vec!["--headless".to_string(), win_quote(&exe.to_string_lossy())];
     parts.extend(args.iter().map(|a| win_quote(a)));
     parts.join(" ")
 }
 
+/// The signed-in account, as Task Scheduler names it.
+fn user() -> String {
+    let name = std::env::var("USERNAME").unwrap_or_default();
+    match std::env::var("USERDOMAIN") {
+        Ok(d) if !d.is_empty() => format!(r"{d}\{name}"),
+        _ => name,
+    }
+}
+
 fn schtasks(args: &[String]) -> Result<String> {
-    let out = Command::new("schtasks").args(args).output().context("running schtasks")?;
+    let out = crate::platform::hidden("schtasks").args(args).output().context("running schtasks")?;
     if !out.status.success() {
         let err = String::from_utf8_lossy(&out.stderr).trim().to_string();
         let msg = if err.is_empty() { String::from_utf8_lossy(&out.stdout).trim().to_string() } else { err };
@@ -41,26 +52,29 @@ fn schtasks(args: &[String]) -> Result<String> {
 }
 
 /// Create (or replace) a task; elevated if possible, otherwise as a normal-rights task.
-fn create(name: &str, run: &str, schedule: Vec<String>) -> Result<()> {
-    let mut base = vec!["/Create".to_string(), "/F".into(), "/TN".into(), name.into(), "/TR".into(), run.into()];
-    if run.len() > 261 {
-        bail!("command line is longer than Task Scheduler allows (261 chars); move cleancore.exe to a shorter path");
-    }
-    base.extend(schedule);
-    let mut elevated = base.clone();
-    elevated.extend(["/RL".to_string(), "HIGHEST".into()]);
-    match schtasks(&elevated) {
+fn create(name: &str, trigger: &str, exe: &Path, args: &[String], time_limit: &str) -> Result<()> {
+    let file = std::env::temp_dir().join(format!("cleancore-task-{}.xml", std::process::id()));
+    let arguments = task_arguments(exe, args);
+    let attempt = |highest: bool| -> Result<String> {
+        // schtasks reads task XML as UTF-16 with a byte order mark.
+        let xml = task_xml(name, trigger, &user(), highest, "conhost.exe", &arguments, time_limit);
+        let mut bytes = vec![0xFF, 0xFE];
+        bytes.extend(xml.encode_utf16().flat_map(u16::to_le_bytes));
+        std::fs::write(&file, bytes).context("writing the task definition")?;
+        schtasks(&["/Create".into(), "/F".into(), "/TN".into(), name.into(), "/XML".into(), file.to_string_lossy().into_owned()])
+    };
+    let r = match attempt(true) {
         Ok(_) => Ok(()),
-        Err(e) => {
-            schtasks(&base).with_context(|| format!("creating task {name} (elevated attempt: {e})"))?;
-            eprintln!("warning: created '{name}' without administrator rights (run CleanCore as administrator to fix); machine-wide items will be skipped");
-            Ok(())
-        }
-    }
+        Err(e) => attempt(false)
+            .map(|_| eprintln!("warning: created '{name}' without administrator rights (run CleanCore as administrator to fix); machine-wide items will be skipped"))
+            .with_context(|| format!("creating task {name} (elevated attempt: {e})")),
+    };
+    let _ = std::fs::remove_file(&file);
+    r
 }
 
 pub fn sched_register(task: &Task, exe: &Path, args: &[String]) -> Result<()> {
-    create(&task_name(&task.id), &task_run_line(exe, args), schtasks_args(&task.schedule))
+    create(&task_name(&task.id), &task_trigger(&task.schedule, chrono::Local::now().date_naive()), exe, args, "PT4H")
 }
 
 pub fn sched_unregister(id: &str) -> Result<()> {
@@ -80,13 +94,13 @@ fn query(name: &str) -> Option<(String, String)> {
 pub fn sched_status(id: &str) -> String {
     match query(&task_name(id)) {
         Some((status, next)) => format!("{status}, next run {next}"),
-        None => "not registered".into(),
+        None => crate::scheduler::NOT_REGISTERED.into(),
     }
 }
 
 pub fn recorder_enable(exe: &Path, args: &[String]) -> Result<()> {
-    let run = task_run_line(exe, args);
-    create(RECORDER, &run, vec!["/SC".into(), "ONLOGON".into()])?;
+    // Runs for the whole session: no time limit.
+    create(RECORDER, &logon_trigger(&user()), exe, args, "PT0S")?;
     // Start it now too, not only at the next login.
     schtasks(&["/Run".into(), "/TN".into(), RECORDER.into()])?;
     Ok(())
@@ -135,7 +149,7 @@ pub fn notify(title: &str, body: &str) -> Result<()> {
         esc(title),
         esc(body)
     );
-    let out = Command::new("powershell").args(["-NoProfile", "-NonInteractive", "-WindowStyle", "Hidden", "-Command", &script]).output()?;
+    let out = crate::platform::hidden("powershell").args(["-NoProfile", "-NonInteractive", "-WindowStyle", "Hidden", "-Command", &script]).output()?;
     if !out.status.success() {
         bail!("{}", String::from_utf8_lossy(&out.stderr).trim());
     }
@@ -148,7 +162,7 @@ mod tests {
 
     #[test]
     fn run_line() {
-        let l = task_run_line(Path::new(r"C:\Program Files\CleanCore\cleancore.exe"), &["schedule".into(), "exec".into(), "x".into()]);
-        assert_eq!(l, r#"conhost.exe --headless "C:\Program Files\CleanCore\cleancore.exe" schedule exec x"#);
+        let l = task_arguments(Path::new(r"C:\Program Files\CleanCore\cleancore.exe"), &["schedule".into(), "exec".into(), "x".into()]);
+        assert_eq!(l, r#"--headless "C:\Program Files\CleanCore\cleancore.exe" schedule exec x"#);
     }
 }

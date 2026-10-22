@@ -1404,22 +1404,61 @@ msgstr ""
 msgid "Reading scheduled tasks failed: {e:#}"
 msgstr ""
 
+msgid "Task ran: {s}"
+msgstr ""
+
+msgid "Task failed: {e}"
+msgstr ""
+
 msgid "Scheduled cleans"
 msgstr ""
 
-msgid "New task"
+msgid "New schedule"
 msgstr ""
 
-msgid "No tasks yet. Fill in the form and save."
+msgid "No scheduled cleans yet"
 msgstr ""
 
-msgid "Deleted task {id}"
+msgid "CleanCore can scan and clean on its own every day, week or month. Every clean is backed up first."
+msgstr ""
+
+msgid "No scheduled backups yet"
+msgstr ""
+
+msgid "CleanCore can make backups on its own every day, week or month."
+msgstr ""
+
+msgid "Editing"
+msgstr ""
+
+msgid "Edit"
+msgstr ""
+
+msgid "Running {}"
+msgstr ""
+
+msgid "Next run {}"
+msgstr ""
+
+msgid "Last run {}: {}"
+msgstr ""
+
+msgid "Hasn't run yet"
+msgstr ""
+
+msgid "The system scheduler doesn't have this task, so it won't run on its own. Edit it and save to set it up again."
+msgstr ""
+
+msgid "Delete \"{}\"? It stops running on its schedule."
+msgstr ""
+
+msgid "Schedule deleted"
 msgstr ""
 
 msgid "Deleting task failed: {e:#}"
 msgstr ""
 
-msgid "Edit task"
+msgid "Edit schedule"
 msgstr ""
 
 msgid "Repeat"
@@ -1432,6 +1471,27 @@ msgid "Weekly"
 msgstr ""
 
 msgid "Monthly"
+msgstr ""
+
+msgid "Mon"
+msgstr ""
+
+msgid "Tue"
+msgstr ""
+
+msgid "Wed"
+msgstr ""
+
+msgid "Thu"
+msgstr ""
+
+msgid "Fri"
+msgstr ""
+
+msgid "Sat"
+msgstr ""
+
+msgid "Sun"
 msgstr ""
 
 msgid "Day"
@@ -1452,37 +1512,16 @@ msgstr ""
 msgid "Pick below or type a path"
 msgstr ""
 
-msgid "Next run {}"
-msgstr ""
-
-msgid "System scheduler: {}"
-msgstr ""
-
-msgid "Last run {}: {}"
-msgstr ""
-
 msgid "Save"
-msgstr ""
-
-msgid "Running {id}"
-msgstr ""
-
-msgid "Task ran: {s}"
-msgstr ""
-
-msgid "Task failed: {e}"
 msgstr ""
 
 msgid "A task with the same parameters already exists!"
 msgstr ""
 
-msgid "Saved task {id}"
+msgid "Saved \"{name}\""
 msgstr ""
 
 msgid "Saving task failed: {e:#}"
-msgstr ""
-
-msgid "{} · last run failed"
 msgstr ""
 
 msgid "Overwrite passes"
@@ -2055,9 +2094,6 @@ msgstr ""
 msgid "Export (.cptrace to share, .html / .txt to read)"
 msgstr ""
 
-msgid "Edit"
-msgstr ""
-
 msgid "No traced programs"
 msgstr ""
 
@@ -2181,6 +2217,24 @@ msgstr ""
 msgid "Apply anyway"
 msgstr ""
 
+msgid "Turning on System Restore failed: {e:#}"
+msgstr ""
+
+msgid "Uninstalling {}"
+msgstr ""
+
+msgid "The restore point could not be created"
+msgstr ""
+
+msgid "Nothing has been changed yet. Without a restore point, the uninstall can't be undone with System Restore."
+msgstr ""
+
+msgid "Turn on System Restore and try again"
+msgstr ""
+
+msgid "Uninstall without a restore point"
+msgstr ""
+
 msgid "Uninstall with CleanCore"
 msgstr ""
 
@@ -2190,10 +2244,10 @@ msgstr ""
 msgid "New"
 msgstr ""
 
-msgid "Uninstalling {}"
+msgid "Removing"
 msgstr ""
 
-msgid "Removing"
+msgid "The restore point could not be created, so nothing was removed: {}"
 msgstr ""
 
 msgid "{} program(s)"
@@ -2364,16 +2418,19 @@ msgstr ""
 msgid "Select an entry to see what was removed."
 msgstr ""
 
-msgid "The uninstaller finished successfully ({})"
+msgid "The uninstaller finished successfully."
 msgstr ""
 
-msgid "The uninstaller ended with exit code {c} ({})"
+msgid "The uninstaller ended with exit code {c}."
 msgstr ""
 
-msgid "The uninstaller ended without an exit code ({})"
+msgid "The uninstaller ended without an exit code."
 msgstr ""
 
 msgid "No built-in uninstaller: CleanCore removes the program's files and leftovers itself."
+msgstr ""
+
+msgid "{} is still installed: its uninstaller did not remove it. A leftover scan now would list files it still uses."
 msgstr ""
 
 msgid "The built-in uninstaller could not run: {e}"
@@ -2428,6 +2485,9 @@ msgid "Scan all user accounts"
 msgstr ""
 
 msgid "Also look in other user accounts"
+msgstr ""
+
+msgid "Scan anyway"
 msgstr ""
 
 msgid "Scanning for leftovers"
@@ -2551,6 +2611,9 @@ msgid "{waiting} waiting"
 msgstr ""
 
 msgid "{removed} leftovers removed"
+msgstr ""
+
+msgid "Creating backup"
 msgstr ""
 
 msgid "Before starting"
@@ -4134,6 +4197,12 @@ msgstr ""
 msgid "Run CleanCore as administrator to remove it for every user and keep it away."
 msgstr ""
 
+msgid "Run CleanCore as administrator to uninstall Microsoft Edge."
+msgstr ""
+
+msgid "{}'s uninstaller did not remove it."
+msgstr ""
+
 msgid "{}'s uninstaller did not remove it. It stays blocked, and the daily check tries again."
 msgstr ""
 
@@ -4144,6 +4213,90 @@ msgid "{} is allowed again and reinstalled."
 msgstr ""
 
 msgid "{} is allowed again. Reinstall it from microsoft.com or the Microsoft Store."
+msgstr ""
+
+msgid "System Restore is turned off on this PC: System Protection for the system drive, or the Volume Shadow Copy service, is disabled."
+msgstr ""
+
+msgid "Every day at {}"
+msgstr ""
+
+msgid "Every {} at {}"
+msgstr ""
+
+msgid "On day {d} of every month at {}"
+msgstr ""
+
+msgid "On the last day of every month at {}"
+msgstr ""
+
+msgid "Monday"
+msgstr ""
+
+msgid "Tuesday"
+msgstr ""
+
+msgid "Wednesday"
+msgstr ""
+
+msgid "Thursday"
+msgstr ""
+
+msgid "Friday"
+msgstr ""
+
+msgid "Saturday"
+msgstr ""
+
+msgid "Sunday"
+msgstr ""
+
+msgid "Failed: {e:#}"
+msgstr ""
+
+msgid "Auto Clean Completed"
+msgstr ""
+
+msgid "Auto Clean Failed"
+msgstr ""
+
+msgid "Auto Backup Completed"
+msgstr ""
+
+msgid "Auto Backup Failed"
+msgstr ""
+
+msgid "Automatic App Removal Completed"
+msgstr ""
+
+msgid "Automatic App Removal Failed"
+msgstr ""
+
+msgid "Removed {} item(s), backup {}"
+msgstr ""
+
+msgid "Removed {} item(s), backup {}, {} could not be removed"
+msgstr ""
+
+msgid "Created backup {} ({} entries), deleted {} old backup(s)"
+msgstr ""
+
+msgid "Restore point created"
+msgstr ""
+
+msgid "Full backup {id}"
+msgstr ""
+
+msgid "Full backup failed: {e:#}"
+msgstr ""
+
+msgid "Continued without a restore point"
+msgstr ""
+
+msgid "Closed the running program first"
+msgstr ""
+
+msgid "The uninstaller asks for a restart. You can scan for leftovers now, or restart: CleanCore then continues where it stopped."
 msgstr ""
 
 msgid "{name} does not match its signed checksum, so it was not installed."

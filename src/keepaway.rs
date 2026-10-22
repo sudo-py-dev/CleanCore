@@ -226,6 +226,26 @@ fn need_admin() -> Result<()> {
     Ok(())
 }
 
+/// The Uninstaller's entry for Edge itself (WebView2 is listed apart, as "Microsoft Edge
+/// WebView2 Runtime", and never goes this way).
+pub fn is_edge(p: &crate::uninstaller::Program) -> bool {
+    cfg!(windows) && p.name == "Microsoft Edge" && p.uninstall_string.as_deref().is_some_and(|c| c.to_lowercase().contains(r"\edge\application\"))
+}
+
+/// Uninstall Edge without blocking it: what the Uninstaller runs for it. Edge's registered
+/// uninstall command is refused outside the EEA (exit code 93); this sets Microsoft's switches
+/// for the run, as `remove` does.
+pub fn uninstall_edge() -> Result<()> {
+    if !crate::slop::is_admin() {
+        bail!("{}", crate::i18n::tr("Run CleanCore as administrator to uninstall Microsoft Edge."));
+    }
+    ps(EDGE_REMOVE)?;
+    if installed(App::Edge) {
+        bail!("{}", crate::tf!("{}'s uninstaller did not remove it.", App::Edge.name()));
+    }
+    Ok(())
+}
+
 /// Remove the app and block it from coming back. Keeps the daily check running.
 pub fn remove(app: App) -> Result<String> {
     need_admin()?;
@@ -268,9 +288,8 @@ pub fn allow(app: App) -> Result<String> {
     k.set(app, None);
     save(&k)?;
     ensure_daily_check(&k)?;
-    let st = std::process::Command::new("winget")
-        .args(["install", "--id", app.winget_id(), "--exact", "--silent", "--accept-package-agreements", "--accept-source-agreements"])
-        .status();
+    let st =
+        crate::platform::hidden("winget").args(["install", "--id", app.winget_id(), "--exact", "--silent", "--accept-package-agreements", "--accept-source-agreements"]).status();
     match st {
         Ok(s) if s.success() => Ok(crate::tf!("{} is allowed again and reinstalled.", app.name())),
         _ => Ok(crate::tf!("{} is allowed again. Reinstall it from microsoft.com or the Microsoft Store.", app.name())),

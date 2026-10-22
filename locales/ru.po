@@ -1405,23 +1405,62 @@ msgstr "Выберите раздел для резервирования."
 msgid "Reading scheduled tasks failed: {e:#}"
 msgstr "Не удалось прочитать задания: {e:#}"
 
+msgid "Task ran: {s}"
+msgstr "Задание выполнено: {s}"
+
+msgid "Task failed: {e}"
+msgstr "Задание не выполнено: {e}"
+
 msgid "Scheduled cleans"
 msgstr "Очистка по расписанию"
 
-msgid "New task"
-msgstr "Новое задание"
+msgid "New schedule"
+msgstr "Новое расписание"
 
-msgid "No tasks yet. Fill in the form and save."
-msgstr "Заданий пока нет. Заполните форму и сохраните."
+msgid "No scheduled cleans yet"
+msgstr "Запланированных очисток пока нет"
 
-msgid "Deleted task {id}"
-msgstr "Задание {id} удалено"
+msgid "CleanCore can scan and clean on its own every day, week or month. Every clean is backed up first."
+msgstr "CleanCore может сам искать и очищать каждый день, неделю или месяц. Перед каждой очисткой создаётся резервная копия."
+
+msgid "No scheduled backups yet"
+msgstr "Запланированных резервных копий пока нет"
+
+msgid "CleanCore can make backups on its own every day, week or month."
+msgstr "CleanCore может сам создавать резервные копии каждый день, неделю или месяц."
+
+msgid "Editing"
+msgstr "Редактируется"
+
+msgid "Edit"
+msgstr "Изменить"
+
+msgid "Running {}"
+msgstr "Выполняется {}"
+
+msgid "Next run {}"
+msgstr "Следующий запуск {}"
+
+msgid "Last run {}: {}"
+msgstr "Последний запуск {}: {}"
+
+msgid "Hasn't run yet"
+msgstr "Ещё не запускалось"
+
+msgid "The system scheduler doesn't have this task, so it won't run on its own. Edit it and save to set it up again."
+msgstr "Планировщик системы не знает об этой задаче, поэтому она не запустится сама. Откройте её и сохраните, чтобы настроить заново."
+
+msgid "Delete \"{}\"? It stops running on its schedule."
+msgstr "Удалить «{}»? Она перестанет запускаться по расписанию."
+
+msgid "Schedule deleted"
+msgstr "Расписание удалено"
 
 msgid "Deleting task failed: {e:#}"
 msgstr "Не удалось удалить задание: {e:#}"
 
-msgid "Edit task"
-msgstr "Изменить задание"
+msgid "Edit schedule"
+msgstr "Изменить расписание"
 
 msgid "Repeat"
 msgstr "Повтор"
@@ -1434,6 +1473,27 @@ msgstr "Еженедельно"
 
 msgid "Monthly"
 msgstr "Ежемесячно"
+
+msgid "Mon"
+msgstr "Пн"
+
+msgid "Tue"
+msgstr "Вт"
+
+msgid "Wed"
+msgstr "Ср"
+
+msgid "Thu"
+msgstr "Чт"
+
+msgid "Fri"
+msgstr "Пт"
+
+msgid "Sat"
+msgstr "Сб"
+
+msgid "Sun"
+msgstr "Вс"
 
 msgid "Day"
 msgstr "День"
@@ -1453,38 +1513,17 @@ msgstr "Расположение"
 msgid "Pick below or type a path"
 msgstr "Выберите ниже или введите путь"
 
-msgid "Next run {}"
-msgstr "Следующий запуск {}"
-
-msgid "System scheduler: {}"
-msgstr "Планировщик системы: {}"
-
-msgid "Last run {}: {}"
-msgstr "Последний запуск {}: {}"
-
 msgid "Save"
 msgstr "Сохранить"
-
-msgid "Running {id}"
-msgstr "Выполняется {id}"
-
-msgid "Task ran: {s}"
-msgstr "Задание выполнено: {s}"
-
-msgid "Task failed: {e}"
-msgstr "Задание не выполнено: {e}"
 
 msgid "A task with the same parameters already exists!"
 msgstr "Задание с такими параметрами уже существует!"
 
-msgid "Saved task {id}"
-msgstr "Задание {id} сохранено"
+msgid "Saved \"{name}\""
+msgstr "«{name}» сохранено"
 
 msgid "Saving task failed: {e:#}"
 msgstr "Не удалось сохранить задание: {e:#}"
-
-msgid "{} · last run failed"
-msgstr "{} · последний запуск не удался"
 
 msgid "Overwrite passes"
 msgstr "Проходы перезаписи"
@@ -2056,9 +2095,6 @@ msgstr "Добавлено в базу журналов: {}"
 msgid "Export (.cptrace to share, .html / .txt to read)"
 msgstr "Экспорт (.cptrace для обмена, .html / .txt для чтения)"
 
-msgid "Edit"
-msgstr "Изменить"
-
 msgid "No traced programs"
 msgstr "Нет отслеженных программ"
 
@@ -2182,6 +2218,24 @@ msgstr "Вы уверены?"
 msgid "Apply anyway"
 msgstr "Всё равно применить"
 
+msgid "Turning on System Restore failed: {e:#}"
+msgstr "Не удалось включить восстановление системы: {e:#}"
+
+msgid "Uninstalling {}"
+msgstr "Удаление {}"
+
+msgid "The restore point could not be created"
+msgstr "Не удалось создать точку восстановления"
+
+msgid "Nothing has been changed yet. Without a restore point, the uninstall can't be undone with System Restore."
+msgstr "Пока ничего не изменено. Без точки восстановления удаление нельзя будет отменить с помощью восстановления системы."
+
+msgid "Turn on System Restore and try again"
+msgstr "Включить восстановление системы и повторить"
+
+msgid "Uninstall without a restore point"
+msgstr "Удалить без точки восстановления"
+
 msgid "Uninstall with CleanCore"
 msgstr "Удалить с CleanCore"
 
@@ -2191,11 +2245,11 @@ msgstr "Чтение установленных программ"
 msgid "New"
 msgstr "Новое"
 
-msgid "Uninstalling {}"
-msgstr "Удаление {}"
-
 msgid "Removing"
 msgstr "Удаление"
+
+msgid "The restore point could not be created, so nothing was removed: {}"
+msgstr "Не удалось создать точку восстановления, поэтому ничего не удалено: {}"
 
 msgid "{} program(s)"
 msgstr "Программ: {}"
@@ -2365,17 +2419,20 @@ msgstr "Копировать как текст"
 msgid "Select an entry to see what was removed."
 msgstr "Выберите запись, чтобы увидеть, что было удалено."
 
-msgid "The uninstaller finished successfully ({})"
-msgstr "Деинсталлятор успешно завершился ({})"
+msgid "The uninstaller finished successfully."
+msgstr "Деинсталлятор успешно завершил работу."
 
-msgid "The uninstaller ended with exit code {c} ({})"
-msgstr "Деинсталлятор завершился с кодом {c} ({})"
+msgid "The uninstaller ended with exit code {c}."
+msgstr "Деинсталлятор завершился с кодом {c}."
 
-msgid "The uninstaller ended without an exit code ({})"
-msgstr "Деинсталлятор завершился без кода выхода ({})"
+msgid "The uninstaller ended without an exit code."
+msgstr "Деинсталлятор завершился без кода выхода."
 
 msgid "No built-in uninstaller: CleanCore removes the program's files and leftovers itself."
 msgstr "Встроенного деинсталлятора нет: CleanCore сам удалит файлы и остатки программы."
+
+msgid "{} is still installed: its uninstaller did not remove it. A leftover scan now would list files it still uses."
+msgstr "{} всё ещё установлен: его деинсталлятор не удалил его. Поиск остатков сейчас покажет файлы, которые он ещё использует."
 
 msgid "The built-in uninstaller could not run: {e}"
 msgstr "Не удалось запустить встроенный деинсталлятор: {e}"
@@ -2430,6 +2487,9 @@ msgstr "Сканировать все учётные записи"
 
 msgid "Also look in other user accounts"
 msgstr "Искать и в других учётных записях"
+
+msgid "Scan anyway"
+msgstr "Всё равно искать"
 
 msgid "Scanning for leftovers"
 msgstr "Поиск остатков"
@@ -2553,6 +2613,9 @@ msgstr "Ожидают: {waiting}"
 
 msgid "{removed} leftovers removed"
 msgstr "Удалено остатков: {removed}"
+
+msgid "Creating backup"
+msgstr "Создание резервной копии"
 
 msgid "Before starting"
 msgstr "Перед началом"
@@ -4135,6 +4198,12 @@ msgstr "Текст, введённый в формы (автозаполнени
 msgid "Run CleanCore as administrator to remove it for every user and keep it away."
 msgstr "Запустите CleanCore от имени администратора, чтобы удалить его для всех пользователей и заблокировать."
 
+msgid "Run CleanCore as administrator to uninstall Microsoft Edge."
+msgstr "Запустите CleanCore от имени администратора, чтобы удалить Microsoft Edge."
+
+msgid "{}'s uninstaller did not remove it."
+msgstr "Деинсталлятор {} не удалил его."
+
 msgid "{}'s uninstaller did not remove it. It stays blocked, and the daily check tries again."
 msgstr "Деинсталлятор {} не удалил его. Блокировка остаётся, ежедневная проверка попробует снова."
 
@@ -4146,6 +4215,90 @@ msgstr "{} снова разрешено и установлено заново.
 
 msgid "{} is allowed again. Reinstall it from microsoft.com or the Microsoft Store."
 msgstr "{} снова разрешено. Установите его заново с microsoft.com или из Microsoft Store."
+
+msgid "System Restore is turned off on this PC: System Protection for the system drive, or the Volume Shadow Copy service, is disabled."
+msgstr "Восстановление системы на этом ПК выключено: защита системного диска или служба теневого копирования тома отключены."
+
+msgid "Every day at {}"
+msgstr "Каждый день в {}"
+
+msgid "Every {} at {}"
+msgstr "Каждую неделю: {}, в {}"
+
+msgid "On day {d} of every month at {}"
+msgstr "{d}-го числа каждого месяца в {}"
+
+msgid "On the last day of every month at {}"
+msgstr "В последний день каждого месяца в {}"
+
+msgid "Monday"
+msgstr "понедельник"
+
+msgid "Tuesday"
+msgstr "вторник"
+
+msgid "Wednesday"
+msgstr "среда"
+
+msgid "Thursday"
+msgstr "четверг"
+
+msgid "Friday"
+msgstr "пятница"
+
+msgid "Saturday"
+msgstr "суббота"
+
+msgid "Sunday"
+msgstr "воскресенье"
+
+msgid "Failed: {e:#}"
+msgstr "Ошибка: {e:#}"
+
+msgid "Auto Clean Completed"
+msgstr "Автоочистка завершена"
+
+msgid "Auto Clean Failed"
+msgstr "Автоочистка не удалась"
+
+msgid "Auto Backup Completed"
+msgstr "Авторезервирование завершено"
+
+msgid "Auto Backup Failed"
+msgstr "Авторезервирование не удалось"
+
+msgid "Automatic App Removal Completed"
+msgstr "Автоудаление приложений завершено"
+
+msgid "Automatic App Removal Failed"
+msgstr "Автоудаление приложений не удалось"
+
+msgid "Removed {} item(s), backup {}"
+msgstr "Удалено элементов: {}, резервная копия {}"
+
+msgid "Removed {} item(s), backup {}, {} could not be removed"
+msgstr "Удалено элементов: {}, резервная копия {}, не удалось удалить: {}"
+
+msgid "Created backup {} ({} entries), deleted {} old backup(s)"
+msgstr "Создана резервная копия {} (записей: {}), удалено старых копий: {}"
+
+msgid "Restore point created"
+msgstr "Точка восстановления создана"
+
+msgid "Full backup {id}"
+msgstr "Полная резервная копия {id}"
+
+msgid "Full backup failed: {e:#}"
+msgstr "Не удалось создать полную резервную копию: {e:#}"
+
+msgid "Continued without a restore point"
+msgstr "Продолжено без точки восстановления"
+
+msgid "Closed the running program first"
+msgstr "Сначала закрыта запущенная программа"
+
+msgid "The uninstaller asks for a restart. You can scan for leftovers now, or restart: CleanCore then continues where it stopped."
+msgstr "Деинсталлятор просит перезагрузку. Можно искать остатки сейчас или перезагрузить: CleanCore продолжит с того места, где остановился."
 
 msgid "{name} does not match its signed checksum, so it was not installed."
 msgstr "{name} не совпадает с подписанной контрольной суммой, поэтому не установлен."

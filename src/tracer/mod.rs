@@ -829,7 +829,10 @@ pub fn db_update(settings: &Settings) -> Result<usize> {
     let folder = db_folder(settings);
     ensure_dir(&folder)?;
     let fetch = |u: &str| -> Result<Vec<u8>> {
-        let o = std::process::Command::new("curl").args(["-fsSL", "--max-time", "60", u]).output().context("curl is needed to update the logs database")?;
+        let o = crate::platform::hidden(if cfg!(windows) { "curl.exe" } else { "curl" })
+            .args(["-fsSL", "--max-time", "60", u])
+            .output()
+            .context("curl is needed to update the logs database")?;
         if !o.status.success() {
             bail!("downloading {u} failed: {}", String::from_utf8_lossy(&o.stderr).trim());
         }

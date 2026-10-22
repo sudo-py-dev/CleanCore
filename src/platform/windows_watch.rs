@@ -117,7 +117,7 @@ fn current_user_sid() -> String {
         }
     }
     // `whoami /user /fo csv /nh` → "domain\user","S-1-5-21-..."
-    std::process::Command::new("whoami")
+    crate::platform::hidden("whoami")
         .args(["/user", "/fo", "csv", "/nh"])
         .output()
         .ok()

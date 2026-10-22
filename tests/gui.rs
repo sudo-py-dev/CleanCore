@@ -317,10 +317,14 @@ fn walk_through_every_tool() {
     h.run_steps(3);
     h.get_by_label_contains("Auto Clean").click();
     h.run_steps(3);
+    h.get_by_label_contains("New schedule").click();
+    h.run_steps(3);
+    shot(&mut h, "05-auto-clean-new");
     h.get_by_label_contains("Save").click();
-    wait_for(&mut h, "Saved task");
+    wait_for(&mut h, "Saved \"Weekly clean\"");
     shot(&mut h, "05-auto-clean");
     assert!(root.join("units/cleancore-task-weekly-clean.timer").exists());
+    assert!(h.query_all_by_label_contains("Every Sunday at 03:00").next().is_some());
     h.get_by_role_and_label(Role::Button, "Back").click();
     h.run_steps(2);
 

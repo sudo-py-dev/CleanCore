@@ -150,7 +150,7 @@ pub fn walk_settings(ex: &Excludes, f: &mut dyn FnMut(SettingsEntry)) {
 
 /// Store apps (desktop programs are captured through the registry and files).
 pub fn package_snapshot() -> BTreeSet<String> {
-    let o = Command::new("powershell")
+    let o = crate::platform::hidden("powershell")
         .args(["-NoProfile", "-NonInteractive", "-Command", "Get-AppxPackage | ForEach-Object { $_.PackageFullName }"])
         .creation_flags(0x0800_0000)
         .output();

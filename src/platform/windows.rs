@@ -666,7 +666,7 @@ pub fn backup_full(dir: &Path) -> Result<Vec<BackupEntry>> {
     let mut bat = String::from("@echo off\r\nrem Run from the Windows Recovery Environment command prompt.\r\nset CFG=%SystemDrive%\\Windows\\System32\\config\r\n");
     for (key, file) in hives {
         let target = dir.join(file);
-        let st = Command::new("reg").args(["save", key, &target.to_string_lossy(), "/y"]).output()?;
+        let st = crate::platform::hidden("reg").args(["save", key, &target.to_string_lossy(), "/y"]).output()?;
         if !st.status.success() {
             bail!("reg save {key} failed (run as administrator): {}", String::from_utf8_lossy(&st.stderr).trim());
         }
@@ -688,7 +688,7 @@ pub fn restore_entries(dir: &Path, entries: &[&BackupEntry]) -> Result<()> {
         }
         match e {
             BackupEntry::RegFile { file, label } => {
-                let st = Command::new("reg").args(["import", &dir.join(file).to_string_lossy()]).output()?;
+                let st = crate::platform::hidden("reg").args(["import", &dir.join(file).to_string_lossy()]).output()?;
                 if !st.status.success() {
                     bail!("reg import failed for {label}: {}", String::from_utf8_lossy(&st.stderr).trim());
                 }
@@ -745,11 +745,29 @@ pub fn apply_fix(fix: &Fix, settings: &Settings) -> Result<()> {
 
 pub fn create_restore_point(description: &str) -> Result<()> {
     let cmd = format!("Checkpoint-Computer -Description '{}' -RestorePointType MODIFY_SETTINGS", description.replace('\'', "''"));
-    let st = Command::new("powershell").args(["-NoProfile", "-NonInteractive", "-Command", &cmd]).output()?;
+    let st = crate::platform::hidden("powershell").args(["-NoProfile", "-NonInteractive", "-Command", &cmd]).output()?;
     if !st.status.success() {
-        bail!("{}", String::from_utf8_lossy(&st.stderr).trim());
+        let err = String::from_utf8_lossy(&st.stderr);
+        // Debloat guides often switch off System Protection or the Volume Shadow Copy service.
+        if err.contains("ServiceDisabled") || err.contains("is disabled") {
+            bail!("{}", crate::i18n::tr("System Restore is turned off on this PC: System Protection for the system drive, or the Volume Shadow Copy service, is disabled."));
+        }
+        // PowerShell's first line says it; the rest is where in the command it happened.
+        let first = err.lines().map(str::trim).find(|l| !l.is_empty()).unwrap_or("");
+        bail!("{}", first.trim_start_matches("Checkpoint-Computer :").trim());
     }
     Ok(())
+}
+
+/// Turn System Restore back on: the Volume Shadow Copy service on demand (its default) and
+/// System Protection for the system drive.
+pub fn enable_system_restore() -> Result<()> {
+    crate::platform::powershell(
+        "$ErrorActionPreference = 'Stop'\n\
+         if ((Get-Service VSS).StartType -eq 'Disabled') { Set-Service VSS -StartupType Manual }\n\
+         Enable-ComputerRestore -Drive \"$env:SystemDrive\\\"",
+    )
+    .map(|_| ())
 }
 
 pub fn open_in_editor(key: &str) -> Result<()> {
@@ -899,7 +917,7 @@ impl TuneBackend {
 
 /// Restart File Explorer so shell tweaks take effect.
 pub fn restart_shell() -> Result<()> {
-    Command::new("taskkill").args(["/f", "/im", "explorer.exe"]).output()?;
+    crate::platform::hidden("taskkill").args(["/f", "/im", "explorer.exe"]).output()?;
     Command::new("explorer.exe").spawn()?;
     Ok(())
 }

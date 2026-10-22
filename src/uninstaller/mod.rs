@@ -6,6 +6,7 @@
 //! item is backed up before it is deleted and can be restored from Backups.
 
 use crate::config::{data_dir, ensure_dir, Settings};
+use crate::i18n::tr;
 use crate::model::{Issue, ScanMode, Scope};
 use anyhow::{Context, Result};
 use chrono::{DateTime, Local, NaiveDate};
@@ -501,15 +502,57 @@ pub fn is_new(p: &Program, days: u32) -> bool {
 
 // ---------------------------------------------------------------- uninstall flow
 
+/// How a line of the uninstall report went.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum Tone {
+    Done,
+    Info,
+    Problem,
+}
+
+/// A line of the uninstall report, in the interface language, with an optional detail shown
+/// apart from it (a command or a path, which would scramble inside right-to-left text).
+#[derive(Debug, Clone)]
+pub struct Note {
+    pub tone: Tone,
+    pub text: String,
+    pub detail: String,
+}
+
+impl Note {
+    pub fn new(tone: Tone, text: impl Into<String>) -> Self {
+        Self { tone, text: text.into(), detail: String::new() }
+    }
+
+    pub fn with_detail(mut self, detail: impl Into<String>) -> Self {
+        self.detail = detail.into();
+        self
+    }
+}
+
+impl std::fmt::Display for Note {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        if self.detail.is_empty() {
+            write!(f, "{}", self.text)
+        } else {
+            write!(f, "{} ({})", self.text, self.detail)
+        }
+    }
+}
+
+/// The restore point was asked for and could not be made: why.
+#[derive(Debug, Clone)]
+pub struct RestorePointFailed(pub String);
+
 /// Before anything is changed: restore point and full registry backup, as configured.
-/// Run once per uninstall session (once for a whole Multiple Uninstall queue).
-pub fn prepare(settings: &Settings, label: &str) -> Vec<String> {
+/// Run once per uninstall session (once for a whole Multiple Uninstall queue). Stops before
+/// anything else when the restore point fails: uninstalling without the protection the user
+/// asked for is theirs to decide (`prepare_without_restore_point`).
+pub fn prepare(settings: &Settings, label: &str) -> std::result::Result<Vec<Note>, RestorePointFailed> {
     let mut notes = Vec::new();
     if settings.uninstall_restore_point {
-        match crate::platform::create_restore_point(&format!("CleanCore: before uninstalling {label}")) {
-            Ok(()) => notes.push("Restore point created".into()),
-            Err(e) => notes.push(format!("Restore point not created: {e:#}")),
-        }
+        crate::platform::create_restore_point(&format!("CleanCore: before uninstalling {label}")).map_err(|e| RestorePointFailed(format!("{e:#}")))?;
+        notes.push(Note::new(Tone::Done, tr("Restore point created")));
     }
     if settings.uninstall_full_backup {
         let r = (|| -> Result<String> {
@@ -518,11 +561,20 @@ pub fn prepare(settings: &Settings, label: &str) -> Vec<String> {
             b.save()?;
             Ok(b.manifest.id)
         })();
-        match r {
-            Ok(id) => notes.push(format!("Full backup {id}")),
-            Err(e) => notes.push(format!("Full backup failed: {e:#}")),
-        }
+        notes.push(match r {
+            Ok(id) => Note::new(Tone::Done, crate::tf!("Full backup {id}")),
+            Err(e) => Note::new(Tone::Problem, crate::tf!("Full backup failed: {e:#}")),
+        });
     }
+    Ok(notes)
+}
+
+/// `prepare` once the user chose to go on although the restore point failed.
+pub fn prepare_without_restore_point(settings: &Settings, label: &str) -> Vec<Note> {
+    let mut s = settings.clone();
+    s.uninstall_restore_point = false;
+    let mut notes = vec![Note::new(Tone::Problem, tr("Continued without a restore point"))];
+    notes.extend(prepare(&s, label).unwrap_or_default());
     notes
 }
 
@@ -635,12 +687,12 @@ fn resume_at_login(on: bool) -> Result<()> {
 
 /// Run the built-in uninstaller with the user's options: close the program first if asked,
 /// remember the uninstall so it can be resumed, and note when a restart is needed.
-pub fn run_with_options(settings: &Settings, p: &Program, mode: RunMode, op: Operation) -> Result<(Vec<String>, RunResult)> {
+pub fn run_with_options(settings: &Settings, p: &Program, mode: RunMode, op: Operation) -> Result<(Vec<Note>, RunResult)> {
     let mut notes = Vec::new();
     if settings.uninstall_kill_running {
         let stopped = stop_running(p);
         if !stopped.is_empty() {
-            notes.push(format!("Closed the running program first: {}", stopped.join(", ")));
+            notes.push(Note::new(Tone::Done, tr("Closed the running program first")).with_detail(stopped.join(", ")));
         }
     }
     let mut state = PendingUninstall {
@@ -658,7 +710,7 @@ pub fn run_with_options(settings: &Settings, p: &Program, mode: RunMode, op: Ope
         state.reboot_needed = true;
         let _ = set_pending(&state);
         let _ = resume_at_login(true);
-        notes.push("The uninstaller asks for a restart. You can scan for leftovers now, or restart: CleanCore then continues where it stopped.".into());
+        notes.push(Note::new(Tone::Info, tr("The uninstaller asks for a restart. You can scan for leftovers now, or restart: CleanCore then continues where it stopped.")));
     }
     Ok((notes, r))
 }
@@ -686,11 +738,21 @@ pub fn scan(settings: &Settings, target: &Target, mode: ScanMode, all_users: boo
             issues.push(i);
         }
     }
-    issues.retain(|i| !settings.is_excluded(&i.location));
+    issues.retain(|i| !settings.is_excluded(&i.location) && !shared_runtime(&i.location));
     let mut seen = std::collections::HashSet::new();
     issues.retain(|i| seen.insert(i.fix.clone()));
     issues.sort_by(|a, b| a.category.cmp(b.category).then_with(|| a.location.cmp(&b.location)));
     issues
+}
+
+/// Parts of a location that belong to Microsoft runtimes other programs need, though they look
+/// like Edge's leftovers: WebView2 (Widgets, Teams, Outlook and many more use it), Edge Update
+/// (it keeps WebView2 current; its services and tasks too) and EdgeCore, which both share.
+fn shared_runtime(location: &str) -> bool {
+    location.split(['\\', '/', '|']).map(|part| part.to_lowercase().replace([' ', '_', '-'], "")).any(|part| {
+        matches!(part.as_str(), "edgewebview" | "edgecore" | "edgeupdate" | "edgeupdatem" | "microsoftedgewebview" | "microsoftedgewebview2runtime")
+            || part.starts_with("microsoftedgeupdate")
+    })
 }
 
 /// Delete the selected leftovers (backed up first) and record the uninstall in the history.
@@ -918,6 +980,31 @@ pub fn export(programs: &[Program], path: &std::path::Path) -> Result<()> {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn never_offers_the_runtimes_edge_shares() {
+        for kept in [
+            r"C:\Program Files (x86)\Microsoft\EdgeWebView\Application",
+            r"C:\Program Files (x86)\Microsoft\EdgeUpdate",
+            r"C:\Program Files (x86)\Microsoft\EdgeCore\131.0.2903.70",
+            r"HKLM\SOFTWARE\WOW6432Node\Microsoft\EdgeUpdate\Clients",
+            r"HKLM\SYSTEM\CurrentControlSet\Services\edgeupdatem",
+            r"C:\Windows\System32\Tasks\MicrosoftEdgeUpdateTaskMachineCore",
+            r"HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Microsoft EdgeWebView",
+            r"HKCU\Software\Microsoft\Windows\CurrentVersion\Run | MicrosoftEdgeUpdate",
+        ] {
+            assert!(shared_runtime(kept), "{kept}");
+        }
+        for offered in [
+            r"C:\Program Files (x86)\Microsoft\Edge",
+            r"C:\Users\me\AppData\Local\Microsoft\Edge\User Data",
+            r"HKLM\SOFTWARE\Microsoft\Edge",
+            r"C:\Program Files\KnowledgeCore",
+            r"C:\Users\me\AppData\Local\EdgeCoreTools",
+        ] {
+            assert!(!shared_runtime(offered), "{offered}");
+        }
+    }
 
     #[test]
     fn version_stripping_and_tokens() {

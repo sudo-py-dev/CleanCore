@@ -6,10 +6,11 @@ use super::style::{self, icon, Palette};
 use super::traced::{TraceScreen, TracedAction, TracedTab};
 use super::{take, tree::Browser, Cx, Pending};
 use crate::cleaner::CleanReport;
+use crate::config::Settings;
 use crate::gui::style::ColumnsInOrder;
 use crate::i18n::tr;
 use crate::model::{Issue, ScanMode};
-use crate::uninstaller::{self as uninst, HistoryEntry, Meta, Operation, Program, ProgramKind, RunMode, RunResult, Target};
+use crate::uninstaller::{self as uninst, HistoryEntry, Meta, Note, Operation, Program, ProgramKind, RunMode, RunResult, Target, Tone};
 use eframe::egui::{self, Color32, Ui, Vec2};
 use egui_extras::{Column, TableBuilder};
 use std::collections::BTreeSet;
@@ -27,6 +28,8 @@ enum Tab {
 #[derive(PartialEq, Eq, Clone, Copy)]
 enum Step {
     Running,
+    /// The restore point failed before anything changed: the user decides.
+    RestorePoint,
     ChooseMode,
     Scanning,
     Leftovers,
@@ -40,8 +43,14 @@ struct Wizard {
     target: Target,
     op: Operation,
     step: Step,
-    run: Option<Pending<Result<(Vec<String>, Option<RunResult>), String>>>,
-    run_info: Vec<String>,
+    run: Option<Pending<Result<Ran, String>>>,
+    run_info: Vec<Note>,
+    /// How the program's uninstaller runs (kept to run it after the restore-point decision).
+    run_mode: RunMode,
+    /// Why the restore point failed (`Step::RestorePoint`).
+    restore_failed: String,
+    /// The program's uninstaller ran but the program is still installed.
+    still_installed: bool,
     mode: ScanMode,
     all_users: bool,
     scan: Option<Pending<Vec<Issue>>>,
@@ -55,6 +64,89 @@ struct Wizard {
     advanced_done: bool,
     /// Leftovers review: only rows whose location or detail contains this.
     filter: String,
+}
+
+/// What the first stage of an uninstall came back with.
+enum Ran {
+    /// Restore point, backup and the program's uninstaller (when it has one) ran; and whether
+    /// the program is still installed afterwards.
+    Done(Vec<Note>, Option<RunResult>, bool),
+    /// The restore point failed: nothing was changed yet.
+    RestorePointFailed(String),
+}
+
+/// The first stage of an uninstall, off the interface thread: restore point and backup, then
+/// the program's own uninstaller when there is one. `turn_on_restore` first switches System
+/// Restore back on (the user's choice after it failed).
+fn first_stage(settings: &Settings, label: &str, prog: Option<&Program>, run_mode: RunMode, restore_point: bool, turn_on_restore: bool) -> Result<Ran, String> {
+    if turn_on_restore {
+        if let Err(e) = crate::platform::enable_system_restore() {
+            return Ok(Ran::RestorePointFailed(crate::tf!("Turning on System Restore failed: {e:#}")));
+        }
+    }
+    let mut notes = if restore_point {
+        match uninst::prepare(settings, label) {
+            Ok(notes) => notes,
+            Err(failed) => return Ok(Ran::RestorePointFailed(failed.0)),
+        }
+    } else {
+        uninst::prepare_without_restore_point(settings, label)
+    };
+    let Some(prog) = prog.filter(|p| p.uninstall_string.is_some() || run_mode == RunMode::ForcedMsi) else {
+        return Ok(Ran::Done(notes, None, false));
+    };
+    let (more, r) = uninst::run_with_options(settings, prog, run_mode, Operation::Uninstall).map_err(|e| crate::tf!("{e:#}"))?;
+    notes.extend(more);
+    Ok(Ran::Done(notes, Some(r), uninst::still_installed(prog)))
+}
+
+impl Wizard {
+    /// Start (or, after the restore-point decision, restart) the first stage.
+    fn start_first_stage(&mut self, ctx: &egui::Context, settings: &Settings, restore_point: bool, turn_on_restore: bool) {
+        let (s, label, prog, mode) = (settings.clone(), self.label.clone(), self.program.clone(), self.run_mode);
+        self.run = Some(Pending::spawn(ctx, crate::tf!("Uninstalling {}", label), move || first_stage(&s, &label, prog.as_ref(), mode, restore_point, turn_on_restore)));
+        self.step = Step::Running;
+    }
+}
+
+/// What the user chose after the restore point failed.
+enum RestoreChoice {
+    Cancel,
+    WithoutIt,
+    TurnOnAndRetry,
+}
+
+/// The restore point failed and nothing was changed yet: cancel, go on without one, or (on
+/// Windows) switch System Restore on and try again.
+fn restore_point_card(ui: &mut Ui, why: &str, p: Palette) -> Option<RestoreChoice> {
+    let mut choice = None;
+    style::card(ui, |ui| {
+        crate::gui::style::row_top(ui, |ui| {
+            ui.add(style::Label::new(style::rich(icon::WARNING).size(20.0).color(p.warning)));
+            crate::gui::style::column(ui, |ui| {
+                ui.spacing_mut().item_spacing.y = 4.0;
+                ui.add(style::Label::new(style::strong(tr("The restore point could not be created")).size(16.0)));
+                ui.add(
+                    style::Label::new(style::muted(ui, tr("Nothing has been changed yet. Without a restore point, the uninstall can't be undone with System Restore.")).size(13.0))
+                        .wrap(),
+                );
+                ui.add(style::Label::new(style::rich(why).size(12.5).color(p.warning)).wrap());
+            });
+        });
+        ui.add_space(10.0);
+        crate::gui::style::row_wrapped(ui, |ui| {
+            if cfg!(windows) && style::primary(ui, icon::REFRESH, "Turn on System Restore and try again").clicked() {
+                choice = Some(RestoreChoice::TurnOnAndRetry);
+            }
+            if style::secondary(ui, crate::gui::style::icon_forward(), "Uninstall without a restore point").clicked() {
+                choice = Some(RestoreChoice::WithoutIt);
+            }
+            if style::ghost(ui, icon::X, "Cancel").clicked() {
+                choice = Some(RestoreChoice::Cancel);
+            }
+        });
+    });
+    choice
 }
 
 #[derive(Clone)]
@@ -75,8 +167,10 @@ struct QItem {
 struct Queue {
     items: Vec<QItem>,
     job: Option<Pending<Result<uninst::QuickReport, String>>>,
-    prepared: Option<Pending<Vec<String>>>,
-    notes: Vec<String>,
+    prepared: Option<Pending<Result<Vec<Note>, uninst::RestorePointFailed>>>,
+    notes: Vec<Note>,
+    /// Why the restore point failed: the queue waits for the user's decision.
+    restore_failed: Option<String>,
     started: std::time::Instant,
     /// Total seconds, once every program is done.
     took: Option<f32>,
@@ -205,26 +299,17 @@ impl UninstallerView {
     // ------------------------------------------------------------ actions
 
     fn start_wizard(&mut self, ctx: &egui::Context, cx: &Cx, p: Program, run_mode: RunMode) {
-        let settings = cx.settings.clone();
-        let prog = p.clone();
-        let has_uninstaller = p.uninstall_string.is_some() || run_mode == RunMode::ForcedMsi;
-        let run = Pending::spawn(ctx, crate::tf!("Uninstalling {}", p.name), move || {
-            let mut notes = uninst::prepare(&settings, &prog.name);
-            if !has_uninstaller {
-                return Ok((notes, None));
-            }
-            let (more, r) = uninst::run_with_options(&settings, &prog, run_mode, Operation::Uninstall).map_err(|e| crate::tf!("{e:#}"))?;
-            notes.extend(more);
-            Ok((notes, Some(r)))
-        });
-        self.screen = Screen::Wizard(Box::new(Wizard {
+        let mut w = Box::new(Wizard {
             label: p.name.clone(),
             target: Target::from_program(&p),
             program: Some(p),
             op: Operation::Uninstall,
             step: Step::Running,
-            run: Some(run),
+            run: None,
             run_info: Vec::new(),
+            run_mode,
+            restore_failed: String::new(),
+            still_installed: false,
             mode: cx.settings.uninstall_scan_mode,
             all_users: false,
             scan: None,
@@ -235,7 +320,9 @@ impl UninstallerView {
             log_id: None,
             advanced_done: false,
             filter: String::new(),
-        }));
+        });
+        w.start_first_stage(ctx, cx.settings, true, false);
+        self.screen = Screen::Wizard(w);
     }
 
     /// Uninstall with a trace log: straight away (Uninstall) or after review (Custom Uninstall).
@@ -249,6 +336,9 @@ impl UninstallerView {
             step: if custom { Step::Leftovers } else { Step::Removing },
             run: None,
             run_info: Vec::new(),
+            run_mode: RunMode::Normal,
+            restore_failed: String::new(),
+            still_installed: false,
             mode: ScanMode::Moderate,
             all_users: false,
             scan: None,
@@ -263,7 +353,9 @@ impl UninstallerView {
         if !custom {
             let (s, name) = (cx.settings.clone(), log.name.clone());
             w.removing = Some(Pending::spawn(ctx, "Removing", move || {
-                let _ = uninst::prepare(&s, &name);
+                if let Err(failed) = uninst::prepare(&s, &name) {
+                    return Err(crate::tf!("The restore point could not be created, so nothing was removed: {}", failed.0));
+                }
                 uninst::remove(&s, &name, "", Operation::TracedUninstall, &items).map_err(|e| crate::tf!("{e:#}"))
             }));
         }
@@ -279,6 +371,7 @@ impl UninstallerView {
             job: None,
             prepared: Some(prepared),
             notes: Vec::new(),
+            restore_failed: None,
             started: std::time::Instant::now(),
             took: None,
         });
@@ -460,7 +553,10 @@ impl UninstallerView {
                     op: pend.op,
                     step: Step::ChooseMode,
                     run: None,
-                    run_info: vec![crate::tf!("Continuing the uninstall started {}.", pend.started.format("%d %b %Y %H:%M"))],
+                    run_info: vec![Note::new(Tone::Info, crate::tf!("Continuing the uninstall started {}.", pend.started.format("%d %b %Y %H:%M")))],
+                    run_mode: RunMode::Normal,
+                    restore_failed: String::new(),
+                    still_installed: false,
                     mode: cx.settings.uninstall_scan_mode,
                     all_users: false,
                     scan: None,
@@ -623,22 +719,37 @@ impl UninstallerView {
                 style::empty_state(ui, icon::SEARCH, "No programs match", "Try another search or group.");
                 return;
             }
+            // Checkbox, icon, Name, Version, Size, Installed, Type. Columns that don't fit the card
+            // go, the least needed first (Installed, Version, Type), so no row runs off the edge.
+            let widths = [
+                28.0,
+                34.0,
+                if narrow { 150.0 } else { 220.0 },
+                if narrow { 96.0 } else { 130.0 },
+                if narrow { 76.0 } else { 90.0 },
+                if narrow { 92.0 } else { 100.0 },
+                if narrow { 72.0 } else { 90.0 },
+            ];
+            let gap = ui.spacing().item_spacing.x;
+            let mut show = [true; 7];
+            for drop in [5, 3, 6] {
+                if widths.iter().zip(show).filter(|(_, on)| *on).map(|(w, _)| w + gap).sum::<f32>() > ui.available_width() {
+                    show[drop] = false;
+                }
+            }
+            let columns = (0..7).map(|i| match i {
+                2 => Column::remainder().at_least(widths[i]).clip(true),
+                3 => Column::exact(widths[i]).clip(true),
+                _ => Column::exact(widths[i]),
+            });
             TableBuilder::new(ui)
                 .striped(true)
                 .sense(egui::Sense::click())
                 .cell_layout(crate::gui::style::near_layout(egui::Align::Center))
                 .auto_shrink([false, false])
-                .columns_in_order(vec![
-                    Column::exact(28.0),
-                    Column::exact(34.0),
-                    Column::remainder().at_least(if narrow { 150.0 } else { 220.0 }).clip(true),
-                    Column::exact(if narrow { 96.0 } else { 130.0 }).clip(true),
-                    Column::exact(if narrow { 76.0 } else { 90.0 }),
-                    Column::exact(if narrow { 92.0 } else { 100.0 }),
-                    Column::exact(if narrow { 72.0 } else { 90.0 }),
-                ])
+                .columns_in_order(only(columns.collect(), show))
                 .header(26.0, |mut h| {
-                    for t in crate::gui::style::ordered(vec!["", "", "Name", "Version", "Size", "Installed", "Type"]) {
+                    for t in crate::gui::style::ordered(only(vec!["", "", "Name", "Version", "Size", "Installed", "Type"], show)) {
                         h.col(|ui| {
                             ui.add(style::Label::new(style::rich(tr(t)).size(12.5).color(p.muted)));
                         });
@@ -649,58 +760,63 @@ impl UninstallerView {
                         let prog = &self.programs[visible[row.index()]];
                         let ticked = self.checked.contains(&prog.id);
                         row.set_selected(ticked);
-                        crate::gui::style::cells_in_order(
-                            &mut row,
-                            vec![
-                                Box::new(|ui: &mut Ui| {
-                                    let mut c = self.checked.contains(&prog.id);
-                                    let r = ui.checkbox(&mut c, style::vis(""));
-                                    r.widget_info(|| egui::WidgetInfo::selected(egui::Role::CheckBox, ui.is_enabled(), c, &prog.name));
-                                    if r.changed() {
-                                        if c {
-                                            self.checked.insert(prog.id.clone());
-                                        } else {
-                                            self.checked.remove(&prog.id);
-                                        }
+                        let cells: Vec<Box<dyn FnOnce(&mut Ui) + '_>> = vec![
+                            Box::new(|ui: &mut Ui| {
+                                let mut c = self.checked.contains(&prog.id);
+                                let r = ui.checkbox(&mut c, style::vis(""));
+                                r.widget_info(|| egui::WidgetInfo::selected(egui::Role::CheckBox, ui.is_enabled(), c, &prog.name));
+                                if r.changed() {
+                                    if c {
+                                        self.checked.insert(prog.id.clone());
+                                    } else {
+                                        self.checked.remove(&prog.id);
                                     }
-                                }),
-                                Box::new(|ui: &mut Ui| {
-                                    program_icon(ui, &self.app_icons, &self.meta, prog, 22.0, p.accent);
-                                }),
-                                Box::new(|ui: &mut Ui| {
-                                    crate::gui::style::column(ui, |ui| {
-                                        ui.spacing_mut().item_spacing.y = 1.0;
-                                        ui.spacing_mut().interact_size.y = 18.0;
-                                        crate::gui::style::row(ui, |ui| {
+                                }
+                            }),
+                            Box::new(|ui: &mut Ui| {
+                                program_icon(ui, &self.app_icons, &self.meta, prog, 22.0, p.accent);
+                            }),
+                            Box::new(|ui: &mut Ui| {
+                                crate::gui::style::column(ui, |ui| {
+                                    ui.spacing_mut().item_spacing.y = 1.0;
+                                    ui.spacing_mut().interact_size.y = 18.0;
+                                    let new = uninst::is_new(prog, cx.settings.new_program_days);
+                                    crate::gui::style::row(ui, |ui| {
+                                        // Room for the badge first: a long name is cut, not the badge.
+                                        let badge =
+                                            if new { ui.painter().layout_no_wrap(style::vstr(tr("New")), egui::FontId::proportional(11.0), p.text).size().x + 24.0 } else { 0.0 };
+                                        ui.scope(|ui| {
+                                            ui.set_max_width((ui.available_width() - badge).max(40.0));
                                             ui.add(style::Label::new(style::strong(&prog.name)).truncate());
-                                            if uninst::is_new(prog, cx.settings.new_program_days) {
-                                                style::badge(ui, "New", p.success);
-                                            }
                                         });
-                                        let sub = match &prog.comment {
-                                            Some(c) if !prog.publisher.is_empty() => {
-                                                crate::tf!("{} · {c}", prog.publisher)
-                                            }
-                                            Some(c) => c.clone(),
-                                            None => prog.publisher.clone(),
-                                        };
-                                        ui.add(style::Label::new(style::rich(sub).size(12.0).color(p.muted)).truncate());
+                                        if new {
+                                            style::badge(ui, "New", p.success);
+                                        }
                                     });
-                                }),
-                                Box::new(|ui: &mut Ui| {
-                                    ui.add(style::Label::new(style::rich(&prog.version).color(p.muted)).truncate());
-                                }),
-                                Box::new(|ui: &mut Ui| {
-                                    ui.add(style::Label::new(style::rich(prog.size.map(crate::backup::human_size).unwrap_or_default()).color(p.muted)));
-                                }),
-                                Box::new(|ui: &mut Ui| {
-                                    ui.add(style::Label::new(style::rich(prog.install_date.map(|d| d.format("%d %b %Y").to_string()).unwrap_or_default()).color(p.muted)));
-                                }),
-                                Box::new(|ui: &mut Ui| {
-                                    style::badge(ui, prog.kind.label(), if prog.system { p.warning } else { p.accent });
-                                }),
-                            ],
-                        );
+                                    let sub = match &prog.comment {
+                                        Some(c) if !prog.publisher.is_empty() => {
+                                            crate::tf!("{} · {c}", prog.publisher)
+                                        }
+                                        Some(c) => c.clone(),
+                                        None => prog.publisher.clone(),
+                                    };
+                                    ui.add(style::Label::new(style::rich(sub).size(12.0).color(p.muted)).truncate());
+                                });
+                            }),
+                            Box::new(|ui: &mut Ui| {
+                                ui.add(style::Label::new(style::rich(&prog.version).color(p.muted)).truncate());
+                            }),
+                            Box::new(|ui: &mut Ui| {
+                                ui.add(style::Label::new(style::rich(prog.size.map(crate::backup::human_size).unwrap_or_default()).color(p.muted)));
+                            }),
+                            Box::new(|ui: &mut Ui| {
+                                ui.add(style::Label::new(style::rich(prog.install_date.map(|d| d.format("%d %b %Y").to_string()).unwrap_or_default()).color(p.muted)));
+                            }),
+                            Box::new(|ui: &mut Ui| {
+                                style::badge(ui, prog.kind.label(), if prog.system { p.warning } else { p.accent });
+                            }),
+                        ];
+                        crate::gui::style::cells_in_order(&mut row, only(cells, show));
                         // Clicking a row selects nothing: only its checkbox does.
                         row.response().context_menu(|ui| {
                             if let Some(a) = context_menu(ui, prog, ticked, &self.meta, &mut self.new_group) {
@@ -885,22 +1001,47 @@ impl UninstallerView {
         // Poll background work
         if let Some(r) = take(&mut w.run) {
             match r {
-                Ok((notes, run)) => {
-                    w.run_info = notes;
-                    match run {
-                        Some(r) => w.run_info.push(match r.exit_code {
-                            Some(0) => crate::tf!("The uninstaller finished successfully ({})", r.command),
-                            Some(c) => crate::tf!("The uninstaller ended with exit code {c} ({})", r.command),
-                            None => crate::tf!("The uninstaller ended without an exit code ({})", r.command),
-                        }),
-                        None => w.run_info.push("No built-in uninstaller: CleanCore removes the program's files and leftovers itself.".into()),
-                    }
+                Ok(Ran::RestorePointFailed(why)) => {
+                    w.restore_failed = why;
+                    w.step = Step::RestorePoint;
                 }
-                Err(e) => w.run_info.push(crate::tf!("The built-in uninstaller could not run: {e}")),
+                Ok(Ran::Done(notes, run, still)) => {
+                    w.run_info = notes;
+                    w.still_installed = still;
+                    match run {
+                        Some(r) => {
+                            let tone = if still {
+                                Tone::Problem
+                            } else if r.exit_code == Some(0) {
+                                Tone::Done
+                            } else {
+                                Tone::Info
+                            };
+                            let text = match r.exit_code {
+                                Some(0) => tr("The uninstaller finished successfully.").to_string(),
+                                Some(c) => crate::tf!("The uninstaller ended with exit code {c}."),
+                                None => tr("The uninstaller ended without an exit code.").to_string(),
+                            };
+                            w.run_info.push(Note::new(tone, text).with_detail(r.command));
+                        }
+                        None => w.run_info.push(Note::new(Tone::Info, tr("No built-in uninstaller: CleanCore removes the program's files and leftovers itself."))),
+                    }
+                    if still {
+                        w.run_info.push(Note::new(
+                            Tone::Problem,
+                            crate::tf!("{} is still installed: its uninstaller did not remove it. A leftover scan now would list files it still uses.", w.label),
+                        ));
+                    }
+                    w.step = Step::ChooseMode;
+                }
+                Err(e) => {
+                    w.run_info.push(Note::new(Tone::Problem, crate::tf!("The built-in uninstaller could not run: {e}")));
+                    w.step = Step::ChooseMode;
+                }
             }
-            w.step = Step::ChooseMode;
             // Settings › "Only run the built-in uninstaller": record it and finish.
-            if cx.settings.uninstall_builtin_only && w.op == Operation::Uninstall && w.program.as_ref().is_some_and(|p| p.uninstall_string.is_some()) {
+            if w.step == Step::ChooseMode && cx.settings.uninstall_builtin_only && w.op == Operation::Uninstall && w.program.as_ref().is_some_and(|p| p.uninstall_string.is_some())
+            {
                 let (s, name, ver) = (cx.settings.clone(), w.label.clone(), w.program.as_ref().map(|p| p.version.clone()).unwrap_or_default());
                 w.removing = Some(Pending::spawn(ui.ctx(), "Finishing", move || uninst::remove(&s, &name, &ver, Operation::Uninstall, &[]).map_err(|e| crate::tf!("{e:#}"))));
                 w.step = Step::Removing;
@@ -937,7 +1078,7 @@ impl UninstallerView {
             _ => "Run the program's uninstaller, then remove what it leaves behind",
         };
         style::page_header(ui, w.op.label(), subtitle, |ui| {
-            if matches!(w.step, Step::ChooseMode | Step::Leftovers) && style::secondary(ui, icon::X, "Cancel").clicked() {
+            if matches!(w.step, Step::RestorePoint | Step::ChooseMode | Step::Leftovers) && style::secondary(ui, icon::X, "Cancel").clicked() {
                 close = true;
             }
         });
@@ -977,160 +1118,178 @@ impl UninstallerView {
         });
         ui.add_space(14.0);
 
-        match w.step {
-            Step::Running => {
-                let secs = w.run.as_ref().map_or(0.0, |r| r.elapsed());
-                style::card(ui, |ui| {
-                    crate::gui::style::row(ui, |ui| {
-                        style::progress_ring(ui, egui::Id::unique("uninstall-run"), 84.0, None, icon::TRASH);
-                        ui.add_space(10.0);
-                        crate::gui::style::column(ui, |ui| {
-                            ui.spacing_mut().item_spacing.y = 5.0;
-                            ui.add_space(6.0);
-                            ui.add(style::Label::new(style::strong(tr("Running the program's uninstaller")).size(16.0)));
-                            ui.add(style::Label::new(style::muted(ui, tr("Follow its window. When it closes, CleanCore looks for what it left behind."))));
-                            if let Some(cmd) = w.program.as_ref().and_then(|p| p.uninstall_string.as_ref()) {
-                                ui.add(style::Label::new(style::rich(cmd).monospace().size(12.0).color(p.faint)).truncate());
-                            }
-                            ui.add(style::Label::new(style::rich(crate::tf!("{secs:.0}s")).size(12.0).color(p.faint)));
+        let mut keep = true;
+        if w.step == Step::Leftovers {
+            self.leftovers_review(ui, cx, w, p);
+        } else {
+            // The other steps scroll as a page, so their buttons stay reachable in a small
+            // window (the leftovers review scrolls its own list).
+            egui::ScrollArea::vertical().auto_shrink([false, false]).show(ui, |ui| {
+                match w.step {
+                    Step::Running => {
+                        let secs = w.run.as_ref().map_or(0.0, |r| r.elapsed());
+                        style::card(ui, |ui| {
+                            crate::gui::style::row(ui, |ui| {
+                                style::progress_ring(ui, egui::Id::unique("uninstall-run"), 84.0, None, icon::TRASH);
+                                ui.add_space(10.0);
+                                crate::gui::style::column(ui, |ui| {
+                                    ui.spacing_mut().item_spacing.y = 5.0;
+                                    ui.add_space(6.0);
+                                    ui.add(style::Label::new(style::strong(tr("Running the program's uninstaller")).size(16.0)));
+                                    ui.add(style::Label::new(style::muted(ui, tr("Follow its window. When it closes, CleanCore looks for what it left behind."))));
+                                    if let Some(cmd) = w.program.as_ref().and_then(|p| p.uninstall_string.as_ref()) {
+                                        ui.add(style::Label::new(style::rich(cmd).monospace().size(12.0).color(p.faint)).truncate());
+                                    }
+                                    ui.add(style::Label::new(style::rich(crate::tf!("{secs:.0}s")).size(12.0).color(p.faint)));
+                                });
+                            });
+                            ui.add_space(8.0);
+                            // Some uninstallers hand off to a copy of themselves: let the user move on.
+                            crate::gui::style::row(ui, |ui| {
+                                if style::secondary(ui, crate::gui::style::icon_forward(), "It's done, continue").clicked() {
+                                    w.run = None;
+                                    w.run_info.push(Note::new(Tone::Info, tr("Continued before the uninstaller reported back.")));
+                                    w.step = Step::ChooseMode;
+                                }
+                                ui.add(style::Label::new(style::muted(ui, tr("Use this if the uninstaller's window is gone but this screen is still waiting.")).size(12.0)));
+                            });
                         });
-                    });
-                    ui.add_space(8.0);
-                    // Some uninstallers hand off to a copy of themselves: let the user move on.
-                    crate::gui::style::row(ui, |ui| {
-                        if style::secondary(ui, crate::gui::style::icon_forward(), "It's done, continue").clicked() {
-                            w.run = None;
-                            w.run_info.push("Continued before the uninstaller reported back.".into());
-                            w.step = Step::ChooseMode;
-                        }
-                        ui.add(style::Label::new(style::muted(ui, tr("Use this if the uninstaller's window is gone but this screen is still waiting.")).size(12.0)));
-                    });
-                });
-            }
-            Step::ChooseMode => {
-                if !w.run_info.is_empty() {
-                    style::card(ui, |ui| {
-                        style::section_title(ui, "What happened so far");
-                        for line in &w.run_info {
-                            report_line(ui, line, p);
-                        }
-                    });
-                    ui.add_space(14.0);
-                }
-                style::eyebrow(ui, "How deep to look for leftovers");
-                let gap = 12.0;
-                let cw = ((ui.available_width() - gap * 2.0) / 3.0).max(200.0);
-                crate::gui::style::row(ui, |ui| {
-                    ui.spacing_mut().item_spacing.x = gap;
-                    for (m, ic, title, desc) in [
-                        (ScanMode::Safe, icon::SHIELD_CHECK, "Safe", "The usual places in settings and on disk. Fastest."),
-                        (ScanMode::Moderate, icon::GAUGE, "Moderate", "Safe, plus everything that points to the program. Recommended."),
-                        (ScanMode::Advanced, icon::ROCKET, "Advanced", "Moderate, plus a deep name search. Review the results."),
-                    ] {
-                        if choice_card(ui, cw, w.mode == m, ic, title, desc, p).clicked() {
-                            w.mode = m;
-                        }
                     }
-                });
-                ui.add_space(12.0);
-                crate::gui::style::row(ui, |ui| {
-                    style::toggle(ui, &mut w.all_users, "Scan all user accounts");
-                    ui.add(style::Label::new(tr("Also look in other user accounts")));
-                    ui.with_layout(crate::gui::style::far_layout(egui::Align::Center), |ui| {
-                        if style::primary(ui, icon::SEARCH, "Scan for leftovers").clicked() {
-                            let (s, t, m, all) = (cx.settings.clone(), w.target.clone(), w.mode, w.all_users);
-                            w.scan = Some(Pending::spawn(ui.ctx(), "Scanning for leftovers", move || uninst::scan(&s, &t, m, all)));
-                            w.step = Step::Scanning;
+                    Step::RestorePoint => match restore_point_card(ui, &w.restore_failed, p) {
+                        Some(RestoreChoice::Cancel) => keep = false,
+                        Some(RestoreChoice::WithoutIt) => w.start_first_stage(ui.ctx(), cx.settings, false, false),
+                        Some(RestoreChoice::TurnOnAndRetry) => w.start_first_stage(ui.ctx(), cx.settings, true, true),
+                        None => {}
+                    },
+                    Step::ChooseMode => {
+                        if !w.run_info.is_empty() {
+                            style::card(ui, |ui| {
+                                style::section_title(ui, "What happened so far");
+                                for line in &w.run_info {
+                                    report_line(ui, line, p);
+                                }
+                            });
+                            ui.add_space(14.0);
                         }
-                    });
-                });
-            }
-            Step::Scanning => {
-                let secs = w.scan.as_ref().map_or(0.0, |r| r.elapsed());
-                let mode = match w.mode {
-                    ScanMode::Safe => tr("Safe"),
-                    ScanMode::Moderate => tr("Moderate"),
-                    ScanMode::Advanced => tr("Advanced"),
-                };
-                busy_card(ui, icon::SEARCH, "Looking for leftovers…", &crate::tf!("{mode} scan · {secs:.0}s"), p);
-            }
-            Step::Leftovers => self.leftovers_review(ui, cx, w, p),
-            Step::Removing => {
-                let n = w.checked.iter().filter(|c| **c).count();
-                let secs = w.removing.as_ref().map_or(0.0, |r| r.elapsed());
-                busy_card(ui, icon::BROOM, &crate::tf!("Backing up and removing {n} item(s)…"), &crate::tf!("Everything is backed up first · {secs:.0}s"), p);
-            }
-            Step::Done => {
-                let mut back = false;
-                if let Some((n, backup, failed)) = &w.summary {
-                    style::card(ui, |ui| {
+                        style::eyebrow(ui, "How deep to look for leftovers");
+                        let gap = 12.0;
+                        let cw = ((ui.available_width() - gap * 2.0) / 3.0).max(200.0);
                         crate::gui::style::row(ui, |ui| {
-                            let (glyph, col) = if failed.is_empty() { (icon::CHECK_CIRCLE, p.success) } else { (icon::WARNING, p.warning) };
-                            let (rect, _) = ui.allocate_exact_size(Vec2::splat(52.0), egui::Sense::hover());
-                            ui.painter().circle_filled(rect.center(), 26.0, col.gamma_multiply(0.16));
-                            ui.painter().text(rect.center(), egui::Align2::CENTER_CENTER, style::vstr(glyph), egui::FontId::new(26.0, style::icon_fill()), col);
-                            ui.add_space(6.0);
-                            crate::gui::style::column(ui, |ui| {
-                                ui.add_space(4.0);
-                                ui.add(style::Label::new(style::strong(crate::tf!("{} is uninstalled", w.label)).size(18.0)));
-                                let text = if failed.is_empty() { tr("Nothing was left behind.") } else { tr("Most of it is gone; a few items could not be removed.") };
-                                ui.add(style::Label::new(style::muted(ui, text)));
-                            });
+                            ui.spacing_mut().item_spacing.x = gap;
+                            for (m, ic, title, desc) in [
+                                (ScanMode::Safe, icon::SHIELD_CHECK, "Safe", "The usual places in settings and on disk. Fastest."),
+                                (ScanMode::Moderate, icon::GAUGE, "Moderate", "Safe, plus everything that points to the program. Recommended."),
+                                (ScanMode::Advanced, icon::ROCKET, "Advanced", "Moderate, plus a deep name search. Review the results."),
+                            ] {
+                                if choice_card(ui, cw, w.mode == m, ic, title, desc, p).clicked() {
+                                    w.mode = m;
+                                }
+                            }
+                        });
+                        ui.add_space(12.0);
+                        crate::gui::style::row(ui, |ui| {
+                            style::toggle(ui, &mut w.all_users, "Scan all user accounts");
+                            ui.add(style::Label::new(tr("Also look in other user accounts")));
                             ui.with_layout(crate::gui::style::far_layout(egui::Align::Center), |ui| {
-                                back = style::primary(ui, crate::gui::style::icon_back(), "Back to programs").clicked();
+                                if style::primary(ui, icon::SEARCH, if w.still_installed { "Scan anyway" } else { "Scan for leftovers" }).clicked() {
+                                    let (s, t, m, all) = (cx.settings.clone(), w.target.clone(), w.mode, w.all_users);
+                                    w.scan = Some(Pending::spawn(ui.ctx(), "Scanning for leftovers", move || uninst::scan(&s, &t, m, all)));
+                                    w.step = Step::Scanning;
+                                }
                             });
                         });
-                        ui.add_space(14.0);
-                        let tw = ((ui.available_width() - 20.0) / 3.0).max(140.0);
-                        crate::gui::style::row(ui, |ui| {
-                            ui.spacing_mut().item_spacing.x = 10.0;
-                            style::stat_tile(ui, tw, icon::BROOM, &n.to_string(), "Leftovers removed", p.success);
-                            style::stat_tile(ui, tw, icon::X_CIRCLE, &failed.len().to_string(), "Could not be removed", if failed.is_empty() { p.muted } else { p.danger });
-                            let b = if backup.is_empty() { tr("None").to_string() } else { backup.clone() };
-                            style::stat_tile(ui, tw, icon::ARCHIVE, &b, "Backup (restore it in Backups)", p.accent);
-                        });
-                        if !failed.is_empty() {
-                            ui.add_space(12.0);
-                            ui.add(style::Label::new(style::rich(crate::tf!("{} item(s) could not be removed", failed.len())).color(p.danger).family(style::semibold())));
-                            for (l, why) in failed.iter().take(12) {
+                    }
+                    Step::Scanning => {
+                        let secs = w.scan.as_ref().map_or(0.0, |r| r.elapsed());
+                        let mode = match w.mode {
+                            ScanMode::Safe => tr("Safe"),
+                            ScanMode::Moderate => tr("Moderate"),
+                            ScanMode::Advanced => tr("Advanced"),
+                        };
+                        busy_card(ui, icon::SEARCH, "Looking for leftovers…", &crate::tf!("{mode} scan · {secs:.0}s"), p);
+                    }
+                    Step::Leftovers => {}
+                    Step::Removing => {
+                        let n = w.checked.iter().filter(|c| **c).count();
+                        let secs = w.removing.as_ref().map_or(0.0, |r| r.elapsed());
+                        busy_card(ui, icon::BROOM, &crate::tf!("Backing up and removing {n} item(s)…"), &crate::tf!("Everything is backed up first · {secs:.0}s"), p);
+                    }
+                    Step::Done => {
+                        let mut back = false;
+                        if let Some((n, backup, failed)) = &w.summary {
+                            style::card(ui, |ui| {
                                 crate::gui::style::row(ui, |ui| {
-                                    ui.add(style::Label::new(style::rich(icon::X).color(p.danger)));
+                                    let (glyph, col) = if failed.is_empty() { (icon::CHECK_CIRCLE, p.success) } else { (icon::WARNING, p.warning) };
+                                    let (rect, _) = ui.allocate_exact_size(Vec2::splat(52.0), egui::Sense::hover());
+                                    ui.painter().circle_filled(rect.center(), 26.0, col.gamma_multiply(0.16));
+                                    ui.painter().text(rect.center(), egui::Align2::CENTER_CENTER, style::vstr(glyph), egui::FontId::new(26.0, style::icon_fill()), col);
+                                    ui.add_space(6.0);
                                     crate::gui::style::column(ui, |ui| {
-                                        ui.add(style::Label::new(style::rich(l).monospace().size(12.0)).truncate());
-                                        ui.add(style::Label::new(style::rich(why).size(12.0).color(p.muted)));
+                                        ui.add_space(4.0);
+                                        ui.add(style::Label::new(style::strong(crate::tf!("{} is uninstalled", w.label)).size(18.0)));
+                                        let text = if failed.is_empty() { tr("Nothing was left behind.") } else { tr("Most of it is gone; a few items could not be removed.") };
+                                        ui.add(style::Label::new(style::muted(ui, text)));
+                                    });
+                                    ui.with_layout(crate::gui::style::far_layout(egui::Align::Center), |ui| {
+                                        back = style::primary(ui, crate::gui::style::icon_back(), "Back to programs").clicked();
+                                    });
+                                });
+                                ui.add_space(14.0);
+                                let tw = ((ui.available_width() - 20.0) / 3.0).max(140.0);
+                                crate::gui::style::row(ui, |ui| {
+                                    ui.spacing_mut().item_spacing.x = 10.0;
+                                    style::stat_tile(ui, tw, icon::BROOM, &n.to_string(), "Leftovers removed", p.success);
+                                    style::stat_tile(ui, tw, icon::X_CIRCLE, &failed.len().to_string(), "Could not be removed", if failed.is_empty() { p.muted } else { p.danger });
+                                    let b = if backup.is_empty() { tr("None").to_string() } else { backup.clone() };
+                                    style::stat_tile(ui, tw, icon::ARCHIVE, &b, "Backup (restore it in Backups)", p.accent);
+                                });
+                                if !failed.is_empty() {
+                                    ui.add_space(12.0);
+                                    ui.add(style::Label::new(style::rich(crate::tf!("{} item(s) could not be removed", failed.len())).color(p.danger).family(style::semibold())));
+                                    for (l, why) in failed.iter().take(12) {
+                                        crate::gui::style::row(ui, |ui| {
+                                            ui.add(style::Label::new(style::rich(icon::X).color(p.danger)));
+                                            crate::gui::style::column(ui, |ui| {
+                                                ui.add(style::Label::new(style::rich(l).monospace().size(12.0)).truncate());
+                                                ui.add(style::Label::new(style::rich(why).size(12.0).color(p.muted)));
+                                            });
+                                        });
+                                    }
+                                    if failed.len() > 12 {
+                                        ui.add(style::Label::new(style::muted(ui, crate::tf!("…and {} more", failed.len() - 12)).size(12.0)));
+                                    }
+                                }
+                            });
+                            if w.op == Operation::TracedUninstall && !w.advanced_done {
+                                ui.add_space(10.0);
+                                style::card(ui, |ui| {
+                                    crate::gui::style::row(ui, |ui| {
+                                        crate::gui::style::column(ui, |ui| {
+                                            ui.add(style::Label::new(style::strong(tr("Advanced uninstall"))));
+                                            ui.add(style::Label::new(style::muted(
+                                                ui,
+                                                tr("Look for related data the log didn't capture, such as settings the program created later."),
+                                            )));
+                                        });
+                                        ui.with_layout(crate::gui::style::far_layout(egui::Align::Center), |ui| {
+                                            if style::secondary(ui, icon::SEARCH, "Scan for related leftovers").clicked() {
+                                                w.advanced_done = true;
+                                                w.mode = ScanMode::Moderate;
+                                                w.step = Step::ChooseMode;
+                                            }
+                                        });
                                     });
                                 });
                             }
-                            if failed.len() > 12 {
-                                ui.add(style::Label::new(style::muted(ui, crate::tf!("…and {} more", failed.len() - 12)).size(12.0)));
-                            }
                         }
-                    });
-                    if w.op == Operation::TracedUninstall && !w.advanced_done {
-                        ui.add_space(10.0);
-                        style::card(ui, |ui| {
-                            crate::gui::style::row(ui, |ui| {
-                                crate::gui::style::column(ui, |ui| {
-                                    ui.add(style::Label::new(style::strong(tr("Advanced uninstall"))));
-                                    ui.add(style::Label::new(style::muted(ui, tr("Look for related data the log didn't capture, such as settings the program created later."))));
-                                });
-                                ui.with_layout(crate::gui::style::far_layout(egui::Align::Center), |ui| {
-                                    if style::secondary(ui, icon::SEARCH, "Scan for related leftovers").clicked() {
-                                        w.advanced_done = true;
-                                        w.mode = ScanMode::Moderate;
-                                        w.step = Step::ChooseMode;
-                                    }
-                                });
-                            });
-                        });
+                        if back {
+                            keep = false;
+                        }
                     }
                 }
-                if back {
-                    return false;
-                }
-            }
+            });
         }
-        true
+        keep
     }
 
     /// Leftovers found after an uninstall: counts, a filter, and the items grouped by where
@@ -1243,8 +1402,10 @@ impl UninstallerView {
 
     fn queue_page(&mut self, ui: &mut Ui, cx: &mut Cx, q: &mut Queue) -> bool {
         let p = Palette::get(ui.ctx());
-        if let Some(notes) = take(&mut q.prepared) {
-            q.notes = notes;
+        match take(&mut q.prepared) {
+            Some(Ok(notes)) => q.notes = notes,
+            Some(Err(failed)) => q.restore_failed = Some(failed.0),
+            None => {}
         }
         let secs = q.job.as_ref().map_or(0.0, |j| j.elapsed());
         if let Some(r) = take(&mut q.job) {
@@ -1256,7 +1417,7 @@ impl UninstallerView {
                 };
             }
         }
-        if q.prepared.is_none() && q.job.is_none() {
+        if q.prepared.is_none() && q.restore_failed.is_none() && q.job.is_none() {
             if let Some(item) = q.items.iter_mut().find(|it| matches!(it.state, QState::Waiting)) {
                 item.state = QState::Running;
                 let (s, prog) = (cx.settings.clone(), item.prog.clone());
@@ -1336,6 +1497,27 @@ impl UninstallerView {
             });
         });
         ui.add_space(12.0);
+        if let Some(why) = q.restore_failed.clone() {
+            let label = crate::tf!("{} program(s)", q.items.len());
+            match restore_point_card(ui, &why, p) {
+                Some(RestoreChoice::Cancel) => return false,
+                Some(RestoreChoice::WithoutIt) => {
+                    let s = cx.settings.clone();
+                    q.prepared = Some(Pending::spawn(ui.ctx(), "Creating backup", move || Ok(uninst::prepare_without_restore_point(&s, &label))));
+                    q.restore_failed = None;
+                }
+                Some(RestoreChoice::TurnOnAndRetry) => {
+                    let s = cx.settings.clone();
+                    q.prepared = Some(Pending::spawn(ui.ctx(), "Creating restore point and backup", move || {
+                        crate::platform::enable_system_restore().map_err(|e| uninst::RestorePointFailed(crate::tf!("Turning on System Restore failed: {e:#}")))?;
+                        uninst::prepare(&s, &label)
+                    }));
+                    q.restore_failed = None;
+                }
+                None => {}
+            }
+            ui.add_space(12.0);
+        }
         if !q.notes.is_empty() {
             style::card(ui, |ui| {
                 style::section_title(ui, "Before starting");
@@ -1541,8 +1723,11 @@ impl UninstallerView {
                             target: Target { names, paths, ..Default::default() },
                             op: Operation::ForcedUninstall,
                             step: Step::Running,
-                            run: Some(Pending::spawn(ui.ctx(), "Preparing", move || Ok((uninst::prepare(&settings, &l2), None)))),
+                            run: Some(Pending::spawn(ui.ctx(), "Preparing", move || first_stage(&settings, &l2, None, RunMode::Normal, true, false))),
                             run_info: Vec::new(),
+                            run_mode: RunMode::Normal,
+                            restore_failed: String::new(),
+                            still_installed: false,
                             mode: ScanMode::Advanced,
                             all_users: false,
                             scan: None,
@@ -1840,9 +2025,14 @@ fn kind_icon(k: ProgramKind) -> &'static str {
     }
 }
 
+/// The items whose flag in `show` is set.
+fn only<T, const N: usize>(items: Vec<T>, show: [bool; N]) -> Vec<T> {
+    items.into_iter().zip(show).filter_map(|(item, on)| on.then_some(item)).collect()
+}
+
 fn steps_bar(ui: &mut Ui, step: Step, p: Palette) {
     let idx = match step {
-        Step::Running => 0,
+        Step::Running | Step::RestorePoint => 0,
         Step::ChooseMode | Step::Scanning => 1,
         Step::Leftovers | Step::Removing => 2,
         Step::Done => 3,
@@ -1910,19 +2100,23 @@ fn program_facts(prog: Option<&Program>, items: usize, op: Operation) -> String 
     v.join(" · ")
 }
 
-/// One line of a progress report, with an icon that says whether it went well.
-fn report_line(ui: &mut Ui, line: &str, p: Palette) {
-    let l = line.to_lowercase();
-    let (ic, col) = if l.contains("fail") || l.contains("could not") || l.contains("error") {
-        (icon::WARNING, p.warning)
-    } else if l.contains("exit code") || l.contains("without an exit code") || l.contains("continued before") {
-        (icon::INFO, p.accent)
-    } else {
-        (icon::CHECK_CIRCLE, p.success)
+/// One line of a progress report, with an icon that says whether it went well, and its detail
+/// (a command or a path) on a line of its own.
+fn report_line(ui: &mut Ui, note: &Note, p: Palette) {
+    let (ic, col) = match note.tone {
+        Tone::Problem => (icon::WARNING, p.warning),
+        Tone::Info => (icon::INFO, p.accent),
+        Tone::Done => (icon::CHECK_CIRCLE, p.success),
     };
     crate::gui::style::row_top(ui, |ui| {
         ui.add(style::Label::new(style::rich(ic).color(col)));
-        ui.add(style::Label::new(style::rich(line).size(13.0)).wrap());
+        crate::gui::style::column(ui, |ui| {
+            ui.spacing_mut().item_spacing.y = 2.0;
+            ui.add(style::Label::new(style::rich(&note.text).size(13.0)).wrap());
+            if !note.detail.is_empty() {
+                ui.add(style::Label::new(style::rich(&note.detail).monospace().size(12.0).color(p.faint)).truncate()).on_hover_text(style::vis(note.detail.as_str()));
+            }
+        });
     });
 }
 

@@ -116,3 +116,17 @@ pub use self::windows_sched::*;
 mod linux_sched;
 #[cfg(not(windows))]
 pub use self::linux_sched::*;
+
+/// A command for a tool CleanCore runs in the background (curl, PowerShell, reg, schtasks, …):
+/// on Windows no console window flashes up, and its output and errors come back to CleanCore.
+/// Programs the user is meant to see (an uninstaller, Explorer) use `Command::new`.
+pub fn hidden(program: impl AsRef<std::ffi::OsStr>) -> std::process::Command {
+    #[allow(unused_mut)]
+    let mut c = std::process::Command::new(program);
+    #[cfg(windows)]
+    {
+        use std::os::windows::process::CommandExt;
+        c.creation_flags(0x0800_0000);
+    }
+    c
+}

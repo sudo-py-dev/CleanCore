@@ -737,6 +737,11 @@ pub fn create_restore_point(description: &str) -> Result<()> {
     bail!("no snapshot tool (snapper/timeshift) available or it failed")
 }
 
+/// Windows only: snapshots on Linux come from snapper or Timeshift, set up outside CleanCore.
+pub fn enable_system_restore() -> Result<()> {
+    bail!("System Restore is a Windows feature")
+}
+
 /// Show the item in the file manager.
 pub fn open_in_editor(location: &str) -> Result<()> {
     let p = Path::new(location.split(" | ").next().unwrap_or(location));

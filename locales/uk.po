@@ -1405,23 +1405,62 @@ msgstr "Виберіть розділ для резервування."
 msgid "Reading scheduled tasks failed: {e:#}"
 msgstr "Не вдалося прочитати завдання: {e:#}"
 
+msgid "Task ran: {s}"
+msgstr "Завдання виконано: {s}"
+
+msgid "Task failed: {e}"
+msgstr "Завдання не виконано: {e}"
+
 msgid "Scheduled cleans"
 msgstr "Очищення за розкладом"
 
-msgid "New task"
-msgstr "Нове завдання"
+msgid "New schedule"
+msgstr "Новий розклад"
 
-msgid "No tasks yet. Fill in the form and save."
-msgstr "Завдань ще немає. Заповніть форму й збережіть."
+msgid "No scheduled cleans yet"
+msgstr "Запланованих очищень поки немає"
 
-msgid "Deleted task {id}"
-msgstr "Завдання {id} видалено"
+msgid "CleanCore can scan and clean on its own every day, week or month. Every clean is backed up first."
+msgstr "CleanCore може сам шукати й очищати щодня, щотижня або щомісяця. Перед кожним очищенням створюється резервна копія."
+
+msgid "No scheduled backups yet"
+msgstr "Запланованих резервних копій поки немає"
+
+msgid "CleanCore can make backups on its own every day, week or month."
+msgstr "CleanCore може сам створювати резервні копії щодня, щотижня або щомісяця."
+
+msgid "Editing"
+msgstr "Редагується"
+
+msgid "Edit"
+msgstr "Змінити"
+
+msgid "Running {}"
+msgstr "Виконується {}"
+
+msgid "Next run {}"
+msgstr "Наступний запуск {}"
+
+msgid "Last run {}: {}"
+msgstr "Останній запуск {}: {}"
+
+msgid "Hasn't run yet"
+msgstr "Ще не запускалося"
+
+msgid "The system scheduler doesn't have this task, so it won't run on its own. Edit it and save to set it up again."
+msgstr "Планувальник системи не знає про це завдання, тому воно не запуститься саме. Відкрийте його й збережіть, щоб налаштувати знову."
+
+msgid "Delete \"{}\"? It stops running on its schedule."
+msgstr "Видалити «{}»? Воно перестане запускатися за розкладом."
+
+msgid "Schedule deleted"
+msgstr "Розклад видалено"
 
 msgid "Deleting task failed: {e:#}"
 msgstr "Не вдалося видалити завдання: {e:#}"
 
-msgid "Edit task"
-msgstr "Змінити завдання"
+msgid "Edit schedule"
+msgstr "Змінити розклад"
 
 msgid "Repeat"
 msgstr "Повтор"
@@ -1434,6 +1473,27 @@ msgstr "Щотижня"
 
 msgid "Monthly"
 msgstr "Щомісяця"
+
+msgid "Mon"
+msgstr "Пн"
+
+msgid "Tue"
+msgstr "Вт"
+
+msgid "Wed"
+msgstr "Ср"
+
+msgid "Thu"
+msgstr "Чт"
+
+msgid "Fri"
+msgstr "Пт"
+
+msgid "Sat"
+msgstr "Сб"
+
+msgid "Sun"
+msgstr "Нд"
 
 msgid "Day"
 msgstr "День"
@@ -1453,38 +1513,17 @@ msgstr "Розташування"
 msgid "Pick below or type a path"
 msgstr "Виберіть нижче або введіть шлях"
 
-msgid "Next run {}"
-msgstr "Наступний запуск {}"
-
-msgid "System scheduler: {}"
-msgstr "Планувальник системи: {}"
-
-msgid "Last run {}: {}"
-msgstr "Останній запуск {}: {}"
-
 msgid "Save"
 msgstr "Зберегти"
-
-msgid "Running {id}"
-msgstr "Виконується {id}"
-
-msgid "Task ran: {s}"
-msgstr "Завдання виконано: {s}"
-
-msgid "Task failed: {e}"
-msgstr "Завдання не виконано: {e}"
 
 msgid "A task with the same parameters already exists!"
 msgstr "Завдання з такими параметрами вже існує!"
 
-msgid "Saved task {id}"
-msgstr "Завдання {id} збережено"
+msgid "Saved \"{name}\""
+msgstr "«{name}» збережено"
 
 msgid "Saving task failed: {e:#}"
 msgstr "Не вдалося зберегти завдання: {e:#}"
-
-msgid "{} · last run failed"
-msgstr "{} · останній запуск не вдався"
 
 msgid "Overwrite passes"
 msgstr "Проходи перезапису"
@@ -2056,9 +2095,6 @@ msgstr "Додано до бази журналів: {}"
 msgid "Export (.cptrace to share, .html / .txt to read)"
 msgstr "Експорт (.cptrace для обміну, .html / .txt для читання)"
 
-msgid "Edit"
-msgstr "Змінити"
-
 msgid "No traced programs"
 msgstr "Немає відстежених програм"
 
@@ -2182,6 +2218,24 @@ msgstr "Ви впевнені?"
 msgid "Apply anyway"
 msgstr "Усе одно застосувати"
 
+msgid "Turning on System Restore failed: {e:#}"
+msgstr "Не вдалося увімкнути відновлення системи: {e:#}"
+
+msgid "Uninstalling {}"
+msgstr "Видалення {}"
+
+msgid "The restore point could not be created"
+msgstr "Не вдалося створити точку відновлення"
+
+msgid "Nothing has been changed yet. Without a restore point, the uninstall can't be undone with System Restore."
+msgstr "Поки нічого не змінено. Без точки відновлення видалення не можна буде скасувати за допомогою відновлення системи."
+
+msgid "Turn on System Restore and try again"
+msgstr "Увімкнути відновлення системи й повторити"
+
+msgid "Uninstall without a restore point"
+msgstr "Видалити без точки відновлення"
+
 msgid "Uninstall with CleanCore"
 msgstr "Видалити з CleanCore"
 
@@ -2191,11 +2245,11 @@ msgstr "Читання встановлених програм"
 msgid "New"
 msgstr "Нове"
 
-msgid "Uninstalling {}"
-msgstr "Видалення {}"
-
 msgid "Removing"
 msgstr "Видалення"
+
+msgid "The restore point could not be created, so nothing was removed: {}"
+msgstr "Не вдалося створити точку відновлення, тому нічого не видалено: {}"
 
 msgid "{} program(s)"
 msgstr "Програм: {}"
@@ -2365,17 +2419,20 @@ msgstr "Копіювати як текст"
 msgid "Select an entry to see what was removed."
 msgstr "Виберіть запис, щоб побачити, що було видалено."
 
-msgid "The uninstaller finished successfully ({})"
-msgstr "Деінсталятор успішно завершився ({})"
+msgid "The uninstaller finished successfully."
+msgstr "Деінсталятор успішно завершив роботу."
 
-msgid "The uninstaller ended with exit code {c} ({})"
-msgstr "Деінсталятор завершився з кодом {c} ({})"
+msgid "The uninstaller ended with exit code {c}."
+msgstr "Деінсталятор завершився з кодом {c}."
 
-msgid "The uninstaller ended without an exit code ({})"
-msgstr "Деінсталятор завершився без коду виходу ({})"
+msgid "The uninstaller ended without an exit code."
+msgstr "Деінсталятор завершився без коду виходу."
 
 msgid "No built-in uninstaller: CleanCore removes the program's files and leftovers itself."
 msgstr "Вбудованого деінсталятора немає: CleanCore сам видалить файли й залишки програми."
+
+msgid "{} is still installed: its uninstaller did not remove it. A leftover scan now would list files it still uses."
+msgstr "{} досі встановлено: його деінсталятор не видалив його. Пошук залишків зараз покаже файли, які він ще використовує."
 
 msgid "The built-in uninstaller could not run: {e}"
 msgstr "Не вдалося запустити вбудований деінсталятор: {e}"
@@ -2430,6 +2487,9 @@ msgstr "Сканувати всі облікові записи"
 
 msgid "Also look in other user accounts"
 msgstr "Шукати й в інших облікових записах"
+
+msgid "Scan anyway"
+msgstr "Однаково шукати"
 
 msgid "Scanning for leftovers"
 msgstr "Пошук залишків"
@@ -2553,6 +2613,9 @@ msgstr "Очікують: {waiting}"
 
 msgid "{removed} leftovers removed"
 msgstr "Видалено залишків: {removed}"
+
+msgid "Creating backup"
+msgstr "Створення резервної копії"
 
 msgid "Before starting"
 msgstr "Перед початком"
@@ -4135,6 +4198,12 @@ msgstr "Текст, введений у форми (автозаповнення
 msgid "Run CleanCore as administrator to remove it for every user and keep it away."
 msgstr "Запустіть CleanCore від імені адміністратора, щоб видалити його для всіх користувачів і заблокувати."
 
+msgid "Run CleanCore as administrator to uninstall Microsoft Edge."
+msgstr "Запустіть CleanCore від імені адміністратора, щоб видалити Microsoft Edge."
+
+msgid "{}'s uninstaller did not remove it."
+msgstr "Деінсталятор {} не видалив його."
+
 msgid "{}'s uninstaller did not remove it. It stays blocked, and the daily check tries again."
 msgstr "Деінсталятор {} не видалив його. Блокування залишається, щоденна перевірка спробує знову."
 
@@ -4146,6 +4215,90 @@ msgstr "{} знову дозволено й установлено заново.
 
 msgid "{} is allowed again. Reinstall it from microsoft.com or the Microsoft Store."
 msgstr "{} знову дозволено. Установіть його заново з microsoft.com або з Microsoft Store."
+
+msgid "System Restore is turned off on this PC: System Protection for the system drive, or the Volume Shadow Copy service, is disabled."
+msgstr "Відновлення системи на цьому ПК вимкнено: захист системного диска або служба тіньового копіювання томів вимкнені."
+
+msgid "Every day at {}"
+msgstr "Щодня о {}"
+
+msgid "Every {} at {}"
+msgstr "Щотижня: {}, о {}"
+
+msgid "On day {d} of every month at {}"
+msgstr "{d}-го числа щомісяця о {}"
+
+msgid "On the last day of every month at {}"
+msgstr "В останній день щомісяця о {}"
+
+msgid "Monday"
+msgstr "понеділок"
+
+msgid "Tuesday"
+msgstr "вівторок"
+
+msgid "Wednesday"
+msgstr "середа"
+
+msgid "Thursday"
+msgstr "четвер"
+
+msgid "Friday"
+msgstr "пʼятниця"
+
+msgid "Saturday"
+msgstr "субота"
+
+msgid "Sunday"
+msgstr "неділя"
+
+msgid "Failed: {e:#}"
+msgstr "Помилка: {e:#}"
+
+msgid "Auto Clean Completed"
+msgstr "Автоочищення завершено"
+
+msgid "Auto Clean Failed"
+msgstr "Автоочищення не вдалося"
+
+msgid "Auto Backup Completed"
+msgstr "Авторезервування завершено"
+
+msgid "Auto Backup Failed"
+msgstr "Авторезервування не вдалося"
+
+msgid "Automatic App Removal Completed"
+msgstr "Автовидалення застосунків завершено"
+
+msgid "Automatic App Removal Failed"
+msgstr "Автовидалення застосунків не вдалося"
+
+msgid "Removed {} item(s), backup {}"
+msgstr "Видалено елементів: {}, резервна копія {}"
+
+msgid "Removed {} item(s), backup {}, {} could not be removed"
+msgstr "Видалено елементів: {}, резервна копія {}, не вдалося видалити: {}"
+
+msgid "Created backup {} ({} entries), deleted {} old backup(s)"
+msgstr "Створено резервну копію {} (записів: {}), видалено старих копій: {}"
+
+msgid "Restore point created"
+msgstr "Точку відновлення створено"
+
+msgid "Full backup {id}"
+msgstr "Повна резервна копія {id}"
+
+msgid "Full backup failed: {e:#}"
+msgstr "Не вдалося створити повну резервну копію: {e:#}"
+
+msgid "Continued without a restore point"
+msgstr "Продовжено без точки відновлення"
+
+msgid "Closed the running program first"
+msgstr "Спершу закрито запущену програму"
+
+msgid "The uninstaller asks for a restart. You can scan for leftovers now, or restart: CleanCore then continues where it stopped."
+msgstr "Деінсталятор просить перезавантаження. Можна шукати залишки зараз або перезавантажити: CleanCore продовжить з того місця, де зупинився."
 
 msgid "{name} does not match its signed checksum, so it was not installed."
 msgstr "{name} не збігається з підписаною контрольною сумою, тому не встановлено."
