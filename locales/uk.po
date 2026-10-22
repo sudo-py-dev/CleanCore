@@ -1591,6 +1591,63 @@ msgstr "Видалено застосунків: {}"
 msgid "Removed {}; {} failed: {}"
 msgstr "Видалено: {}; помилок: {}: {}"
 
+msgid "Edge and OneDrive"
+msgstr "Edge і OneDrive"
+
+msgid "Windows reinstalls these on its own. CleanCore removes them, sets Windows' own blocks against reinstalling them, and checks every day that they stay away."
+msgstr "Windows сама встановлює їх знову. CleanCore видаляє їх, вмикає власні блокування Windows проти перевстановлення і щодня перевіряє, що вони не повернулися."
+
+msgid "{}  Run CleanCore as administrator to remove them."
+msgstr "{}  Запустіть CleanCore від імені адміністратора, щоб видалити їх."
+
+msgid "Removed and kept away"
+msgstr "Видалено й заблоковано"
+
+msgid "Came back: removed again at the next daily check"
+msgstr "Повернулося: буде знову видалено під час наступної щоденної перевірки"
+
+msgid "Installed"
+msgstr "Встановлено"
+
+msgid "Not installed"
+msgstr "Не встановлено"
+
+msgid "Allow again"
+msgstr "Дозволити знову"
+
+msgid "Undo the blocks and reinstall it"
+msgstr "Зняти блокування й установити знову"
+
+msgid "Reinstalling {}"
+msgstr "Повторне встановлення {}"
+
+msgid "Remove and keep away"
+msgstr "Видалити й заблокувати"
+
+msgid "Keep away"
+msgstr "Заблокувати"
+
+msgid "Links and Windows features that open Edge use your default browser instead. WebView2, which other apps need, stays."
+msgstr "Посилання й функції Windows, що відкривають Edge, використовуватимуть типовий браузер. WebView2, потрібний іншим застосункам, залишається."
+
+msgid "Files in your OneDrive folder stay on this PC; they just stop syncing."
+msgstr "Файли в теці OneDrive залишаються на цьому комп'ютері; вони просто перестають синхронізуватися."
+
+msgid "Remove {} and keep it away?"
+msgstr "Видалити {} і заблокувати?"
+
+msgid "Edge is uninstalled for every user, and Edge Update is told not to install it again. Links and Windows features that open Edge use your default browser instead. WebView2 stays."
+msgstr "Edge видаляється для всіх користувачів, а Edge Update отримує заборону встановлювати його знову. Посилання й функції Windows, що відкривають Edge, використовуватимуть типовий браузер. WebView2 залишається."
+
+msgid "OneDrive is uninstalled for every user and stopped from running or installing for new accounts. Files in your OneDrive folder stay on this PC; they just stop syncing."
+msgstr "OneDrive видаляється для всіх користувачів, йому заборонено запускатися й встановлюватися для нових облікових записів. Файли в теці OneDrive залишаються на цьому комп'ютері; вони просто перестають синхронізуватися."
+
+msgid "You can undo this any time with Allow again."
+msgstr "Це можна скасувати будь-коли кнопкою «Дозволити знову»."
+
+msgid "Removing {}"
+msgstr "Видалення {}"
+
 msgid "Preinstalled and promoted apps"
 msgstr "Попередньо встановлені й рекламовані застосунки"
 
@@ -2250,9 +2307,6 @@ msgstr "Спробуйте інший запит або групу."
 
 msgid "Version"
 msgstr "Версія"
-
-msgid "Installed"
-msgstr "Встановлено"
 
 msgid "Change/Repair is a Windows feature ({cmd})"
 msgstr "Змінення/відновлення доступне лише у Windows ({cmd})"

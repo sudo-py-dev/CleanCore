@@ -1591,6 +1591,63 @@ msgstr "Se quitaron {} app(s)"
 msgid "Removed {}; {} failed: {}"
 msgstr "Se quitaron {}; {} fallaron: {}"
 
+msgid "Edge and OneDrive"
+msgstr "Edge y OneDrive"
+
+msgid "Windows reinstalls these on its own. CleanCore removes them, sets Windows' own blocks against reinstalling them, and checks every day that they stay away."
+msgstr "Windows las vuelve a instalar por su cuenta. CleanCore las quita, activa los bloqueos del propio Windows contra su reinstalación y comprueba cada día que no vuelvan."
+
+msgid "{}  Run CleanCore as administrator to remove them."
+msgstr "{}  Ejecuta CleanCore como administrador para quitarlas."
+
+msgid "Removed and kept away"
+msgstr "Quitada y bloqueada"
+
+msgid "Came back: removed again at the next daily check"
+msgstr "Ha vuelto: se quitará de nuevo en la próxima comprobación diaria"
+
+msgid "Installed"
+msgstr "Instalado"
+
+msgid "Not installed"
+msgstr "No instalada"
+
+msgid "Allow again"
+msgstr "Permitir de nuevo"
+
+msgid "Undo the blocks and reinstall it"
+msgstr "Deshacer los bloqueos y reinstalarla"
+
+msgid "Reinstalling {}"
+msgstr "Reinstalando {}"
+
+msgid "Remove and keep away"
+msgstr "Quitar y bloquear"
+
+msgid "Keep away"
+msgstr "Bloquear"
+
+msgid "Links and Windows features that open Edge use your default browser instead. WebView2, which other apps need, stays."
+msgstr "Los enlaces y funciones de Windows que abren Edge usarán tu navegador predeterminado. WebView2, que otras aplicaciones necesitan, se mantiene."
+
+msgid "Files in your OneDrive folder stay on this PC; they just stop syncing."
+msgstr "Los archivos de tu carpeta de OneDrive se quedan en este equipo; solo dejan de sincronizarse."
+
+msgid "Remove {} and keep it away?"
+msgstr "¿Quitar {} y bloquearla?"
+
+msgid "Edge is uninstalled for every user, and Edge Update is told not to install it again. Links and Windows features that open Edge use your default browser instead. WebView2 stays."
+msgstr "Edge se desinstala para todos los usuarios y se indica a Edge Update que no lo vuelva a instalar. Los enlaces y funciones de Windows que abren Edge usarán tu navegador predeterminado. WebView2 se mantiene."
+
+msgid "OneDrive is uninstalled for every user and stopped from running or installing for new accounts. Files in your OneDrive folder stay on this PC; they just stop syncing."
+msgstr "OneDrive se desinstala para todos los usuarios y se le impide ejecutarse o instalarse en cuentas nuevas. Los archivos de tu carpeta de OneDrive se quedan en este equipo; solo dejan de sincronizarse."
+
+msgid "You can undo this any time with Allow again."
+msgstr "Puedes deshacerlo en cualquier momento con Permitir de nuevo."
+
+msgid "Removing {}"
+msgstr "Quitando {}"
+
 msgid "Preinstalled and promoted apps"
 msgstr "Apps preinstaladas y promocionadas"
 
@@ -2250,9 +2307,6 @@ msgstr "Prueba otra búsqueda u otro grupo."
 
 msgid "Version"
 msgstr "Versión"
-
-msgid "Installed"
-msgstr "Instalado"
 
 msgid "Change/Repair is a Windows feature ({cmd})"
 msgstr "Cambiar/Reparar es una función de Windows ({cmd})"

@@ -1592,6 +1592,63 @@ msgstr "הוסרו {} אפליקציות"
 msgid "Removed {}; {} failed: {}"
 msgstr "הוסרו {}; {} נכשלו: {}"
 
+msgid "Edge and OneDrive"
+msgstr "Edge ו־OneDrive"
+
+msgid "Windows reinstalls these on its own. CleanCore removes them, sets Windows' own blocks against reinstalling them, and checks every day that they stay away."
+msgstr "Windows מתקינה אותן מחדש מעצמה. CleanCore מסיר אותן, מפעיל את החסימות של Windows עצמה נגד התקנה מחדש, ובודק כל יום שהן לא חזרו."
+
+msgid "{}  Run CleanCore as administrator to remove them."
+msgstr "{}  הפעל את CleanCore כמנהל מערכת כדי להסיר אותן."
+
+msgid "Removed and kept away"
+msgstr "הוסרה ונחסמה"
+
+msgid "Came back: removed again at the next daily check"
+msgstr "חזרה: תוסר שוב בבדיקה היומית הבאה"
+
+msgid "Installed"
+msgstr "הותקן"
+
+msgid "Not installed"
+msgstr "לא מותקנת"
+
+msgid "Allow again"
+msgstr "אפשר שוב"
+
+msgid "Undo the blocks and reinstall it"
+msgstr "בטל את החסימות והתקן מחדש"
+
+msgid "Reinstalling {}"
+msgstr "מתקין מחדש את {}"
+
+msgid "Remove and keep away"
+msgstr "הסר וחסום"
+
+msgid "Keep away"
+msgstr "חסום"
+
+msgid "Links and Windows features that open Edge use your default browser instead. WebView2, which other apps need, stays."
+msgstr "קישורים ותכונות של Windows שפותחים את Edge ישתמשו בדפדפן ברירת המחדל שלך. WebView2, שאפליקציות אחרות צריכות, נשאר."
+
+msgid "Files in your OneDrive folder stay on this PC; they just stop syncing."
+msgstr "הקבצים בתיקיית OneDrive נשארים במחשב; הם רק מפסיקים להסתנכרן."
+
+msgid "Remove {} and keep it away?"
+msgstr "להסיר את {} ולחסום אותה?"
+
+msgid "Edge is uninstalled for every user, and Edge Update is told not to install it again. Links and Windows features that open Edge use your default browser instead. WebView2 stays."
+msgstr "Edge יוסר לכל המשתמשים, ו־Edge Update יונחה לא להתקין אותו שוב. קישורים ותכונות של Windows שפותחים את Edge ישתמשו בדפדפן ברירת המחדל שלך. WebView2 נשאר."
+
+msgid "OneDrive is uninstalled for every user and stopped from running or installing for new accounts. Files in your OneDrive folder stay on this PC; they just stop syncing."
+msgstr "OneDrive יוסר לכל המשתמשים וייחסם מלפעול או להתקין את עצמו בחשבונות חדשים. הקבצים בתיקיית OneDrive נשארים במחשב; הם רק מפסיקים להסתנכרן."
+
+msgid "You can undo this any time with Allow again."
+msgstr "אפשר לבטל זאת בכל עת עם „אפשר שוב”."
+
+msgid "Removing {}"
+msgstr "מסיר את {}"
+
 msgid "Preinstalled and promoted apps"
 msgstr "אפליקציות מותקנות מראש ומקודמות"
 
@@ -2251,9 +2308,6 @@ msgstr "נסה חיפוש או קבוצה אחרים."
 
 msgid "Version"
 msgstr "גרסה"
-
-msgid "Installed"
-msgstr "הותקן"
 
 msgid "Change/Repair is a Windows feature ({cmd})"
 msgstr "שינוי/תיקון זמין רק ב־Windows ({cmd})"

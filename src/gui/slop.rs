@@ -4,6 +4,7 @@
 use super::style::{self, icon, Palette};
 use super::{take, Cx, Pending};
 use crate::i18n::tr;
+use crate::keepaway::{self, App};
 use crate::scheduler::{self, Action, Schedule, Task};
 use crate::slop::{self, Found, RemoveReport, Scan};
 use crate::tuner::{self, Requires, State, Status, Tweak};
@@ -26,6 +27,11 @@ pub struct SlopView {
     /// Automatic removal: the daily task that removes these apps again when Windows brings
     /// them back. `None` until read from the task list.
     auto: Option<Auto>,
+    /// Edge and OneDrive: what is kept away (read once), the one awaiting confirmation, and
+    /// the removal or reinstall running.
+    kept: Option<keepaway::Kept>,
+    keep_confirm: Option<App>,
+    keep_busy: Option<Pending<Result<String, String>>>,
 }
 
 /// Automatic removal as set up: on (the task exists) and which catalog apps it removes.
@@ -54,6 +60,9 @@ impl SlopView {
             tweaks_loaded: false,
             pending: BTreeSet::new(),
             auto: None,
+            kept: None,
+            keep_confirm: None,
+            keep_busy: None,
         }
     }
 
@@ -159,11 +168,100 @@ impl SlopView {
         egui::ScrollArea::vertical().auto_shrink([false, false]).show(ui, |ui| {
             self.apps_card(ui, cx, p);
             ui.add_space(12.0);
+            self.keep_away_card(ui, cx, p);
+            ui.add_space(12.0);
             self.auto_card(ui, cx, p);
             ui.add_space(12.0);
             self.settings_card(ui, cx, p);
         });
         self.confirm_dialog(ui.ctx(), cx);
+        self.keep_away_dialog(ui.ctx());
+    }
+
+    /// Edge and OneDrive: removed and kept away, or allowed again.
+    fn keep_away_card(&mut self, ui: &mut Ui, cx: &mut Cx, p: Palette) {
+        if let Some(r) = take(&mut self.keep_busy) {
+            match r {
+                Ok(m) => cx.info(m),
+                Err(e) => cx.error(e),
+            }
+            self.kept = None;
+        }
+        let kept = self.kept.get_or_insert_with(keepaway::load).clone();
+        let admin = crate::slop::is_admin();
+        style::card(ui, |ui| {
+            style::section_title(ui, "Edge and OneDrive");
+            ui.add(style::Label::new(
+                style::muted(ui, tr("Windows reinstalls these on its own. CleanCore removes them, sets Windows' own blocks against reinstalling them, and checks every day that they stay away.")).size(12.5),
+            ));
+            if !admin {
+                ui.add(style::Label::new(style::rich(crate::tf!("{}  Run CleanCore as administrator to remove them.", icon::INFO)).size(12.5).color(p.warning)));
+            }
+            if let Some(b) = &self.keep_busy {
+                b.show_progress(ui);
+                return;
+            }
+            for app in App::ALL {
+                ui.add_space(8.0);
+                crate::gui::style::row(ui, |ui| {
+                    ui.add(style::Label::new(style::strong(app.name())));
+                    let (state, col) = match (kept.get(app).is_some(), keepaway::installed(app)) {
+                        (true, false) => (tr("Removed and kept away"), p.success),
+                        (true, true) => (tr("Came back: removed again at the next daily check"), p.warning),
+                        (false, true) => (tr("Installed"), p.muted),
+                        (false, false) => (tr("Not installed"), p.muted),
+                    };
+                    style::badge(ui, state, col);
+                    ui.with_layout(crate::gui::style::far_layout(egui::Align::Center), |ui| {
+                        ui.add_enabled_ui(admin, |ui| {
+                            if kept.get(app).is_some() {
+                                if style::secondary(ui, icon::UNDO, "Allow again").on_hover_text(style::vis(tr("Undo the blocks and reinstall it"))).clicked() {
+                                    self.keep_busy =
+                                        Some(Pending::spawn(ui.ctx(), crate::tf!("Reinstalling {}", app.name()), move || keepaway::allow(app).map_err(|e| crate::tf!("{e:#}"))));
+                                }
+                            } else if style::danger(ui, icon::TRASH, if keepaway::installed(app) { "Remove and keep away" } else { "Keep away" }).clicked() {
+                                self.keep_confirm = Some(app);
+                            }
+                        });
+                    });
+                });
+                let note = match app {
+                    App::Edge => tr("Links and Windows features that open Edge use your default browser instead. WebView2, which other apps need, stays."),
+                    App::OneDrive => tr("Files in your OneDrive folder stay on this PC; they just stop syncing."),
+                };
+                ui.add(style::Label::new(style::muted(ui, note).size(12.0)));
+            }
+        });
+    }
+
+    fn keep_away_dialog(&mut self, ctx: &egui::Context) {
+        let Some(app) = self.keep_confirm else { return };
+        let mut close = false;
+        egui::Modal::new(egui::Id::unique("keep-away-confirm")).show(ctx, |ui| {
+            ui.set_width(460.0);
+            ui.add(style::Label::new(style::strong(crate::tf!("Remove {} and keep it away?", app.name())).size(18.0)));
+            ui.add_space(6.0);
+            let what = match app {
+                App::Edge => tr("Edge is uninstalled for every user, and Edge Update is told not to install it again. Links and Windows features that open Edge use your default browser instead. WebView2 stays."),
+                App::OneDrive => tr("OneDrive is uninstalled for every user and stopped from running or installing for new accounts. Files in your OneDrive folder stay on this PC; they just stop syncing."),
+            };
+            ui.add(style::Label::new(what).wrap());
+            ui.add_space(4.0);
+            ui.add(style::Label::new(style::muted(ui, tr("You can undo this any time with Allow again."))));
+            ui.add_space(12.0);
+            crate::gui::style::row(ui, |ui| {
+                if style::danger(ui, icon::TRASH, "Remove").clicked() {
+                    self.keep_busy = Some(Pending::spawn(ui.ctx(), crate::tf!("Removing {}", app.name()), move || keepaway::remove(app).map_err(|e| crate::tf!("{e:#}"))));
+                    close = true;
+                }
+                if style::secondary(ui, "", "Cancel").clicked() {
+                    close = true;
+                }
+            });
+        });
+        if close {
+            self.keep_confirm = None;
+        }
     }
 
     fn apps_card(&mut self, ui: &mut Ui, cx: &mut Cx, p: Palette) {

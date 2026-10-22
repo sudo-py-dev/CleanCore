@@ -93,7 +93,7 @@ impl Form {
                 f.key = key.clone().unwrap_or_default();
             }
             // Managed on Tools › Microsoft slop, not here.
-            Action::RemoveSlop { .. } => {}
+            Action::RemoveSlop { .. } | Action::KeepAway => {}
         }
         f
     }

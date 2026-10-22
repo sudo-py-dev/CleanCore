@@ -2291,7 +2291,7 @@ fn run_schedule(settings: &Settings, cmd: ScheduleCmd) -> Result<()> {
                         *k = Some(nk);
                     }
                 }
-                Action::RemoveSlop { .. } => {
+                Action::RemoveSlop { .. } | Action::KeepAway => {
                     if mode.is_some() || all_users.is_some() || key.is_some() || whole {
                         bail!("the automatic app removal is set up on Tools › Microsoft slop");
                     }

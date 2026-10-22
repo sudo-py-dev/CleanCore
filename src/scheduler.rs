@@ -47,6 +47,9 @@ pub enum Action {
     RemoveSlop {
         apps: Vec<String>,
     },
+    /// Windows: remove Edge and OneDrive again if they came back after being removed and
+    /// blocked (`keepaway`).
+    KeepAway,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -124,6 +127,7 @@ impl std::fmt::Display for Action {
             Self::AutoBackup { key: None } => write!(f, "Auto Backup, whole {}", if cfg!(windows) { "registry" } else { "config store" }),
             Self::AutoBackup { key: Some(k) } => write!(f, "Auto Backup of {k}"),
             Self::RemoveSlop { apps } => write!(f, "Remove Microsoft slop ({} app(s))", apps.len()),
+            Self::KeepAway => write!(f, "Keep Edge and OneDrive away"),
         }
     }
 }
@@ -299,7 +303,7 @@ pub fn execute(settings: &Settings, id: &str) -> Result<String> {
     let (title, wanted) = match task.action {
         Action::AutoClean { .. } => (if ok { "Auto Clean Completed" } else { "Auto Clean Failed" }, settings.notify_auto_clean),
         Action::AutoBackup { .. } => (if ok { "Auto Backup Completed" } else { "Auto Backup Failed" }, settings.notify_auto_backup),
-        Action::RemoveSlop { .. } => (if ok { "Automatic App Removal Completed" } else { "Automatic App Removal Failed" }, settings.notify_auto_clean),
+        Action::RemoveSlop { .. } | Action::KeepAway => (if ok { "Automatic App Removal Completed" } else { "Automatic App Removal Failed" }, settings.notify_auto_clean),
     };
     // Failures are always shown: a silent failing schedule is worse than an extra popup.
     if wanted || !ok {
@@ -325,6 +329,7 @@ fn run_action(settings: &Settings, task: &Task) -> Result<String> {
             }
             Ok(s)
         }
+        Action::KeepAway => crate::keepaway::enforce(),
         Action::RemoveSlop { apps } => {
             let scan = crate::slop::scan()?;
             let back: Vec<crate::slop::Found> = scan.found.into_iter().filter(|f| apps.iter().any(|a| a == f.app.name)).collect();

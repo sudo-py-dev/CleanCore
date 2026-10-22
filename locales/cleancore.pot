@@ -1590,6 +1590,63 @@ msgstr ""
 msgid "Removed {}; {} failed: {}"
 msgstr ""
 
+msgid "Edge and OneDrive"
+msgstr ""
+
+msgid "Windows reinstalls these on its own. CleanCore removes them, sets Windows' own blocks against reinstalling them, and checks every day that they stay away."
+msgstr ""
+
+msgid "{}  Run CleanCore as administrator to remove them."
+msgstr ""
+
+msgid "Removed and kept away"
+msgstr ""
+
+msgid "Came back: removed again at the next daily check"
+msgstr ""
+
+msgid "Installed"
+msgstr ""
+
+msgid "Not installed"
+msgstr ""
+
+msgid "Allow again"
+msgstr ""
+
+msgid "Undo the blocks and reinstall it"
+msgstr ""
+
+msgid "Reinstalling {}"
+msgstr ""
+
+msgid "Remove and keep away"
+msgstr ""
+
+msgid "Keep away"
+msgstr ""
+
+msgid "Links and Windows features that open Edge use your default browser instead. WebView2, which other apps need, stays."
+msgstr ""
+
+msgid "Files in your OneDrive folder stay on this PC; they just stop syncing."
+msgstr ""
+
+msgid "Remove {} and keep it away?"
+msgstr ""
+
+msgid "Edge is uninstalled for every user, and Edge Update is told not to install it again. Links and Windows features that open Edge use your default browser instead. WebView2 stays."
+msgstr ""
+
+msgid "OneDrive is uninstalled for every user and stopped from running or installing for new accounts. Files in your OneDrive folder stay on this PC; they just stop syncing."
+msgstr ""
+
+msgid "You can undo this any time with Allow again."
+msgstr ""
+
+msgid "Removing {}"
+msgstr ""
+
 msgid "Preinstalled and promoted apps"
 msgstr ""
 
@@ -2248,9 +2305,6 @@ msgid "Try another search or group."
 msgstr ""
 
 msgid "Version"
-msgstr ""
-
-msgid "Installed"
 msgstr ""
 
 msgid "Change/Repair is a Windows feature ({cmd})"
