@@ -1,6 +1,6 @@
 [package]
 name = "cleancore"
-version = "0.2.6"
+version = "0.2.7"
 edition = "2021"
 description = "Fast cross-platform system cleaner: registry (Windows) and config-store (Linux) scanner, backups, tuner"
 license = "Apache-2.0"
