@@ -13,6 +13,8 @@ jobs:
     name: Linux packages
     # The oldest supported Ubuntu, so the binaries run on older systems too (glibc).
     runs-on: ubuntu-22.04
+    # A stuck step (a package mirror not answering) fails within minutes, not after 6 hours.
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
       - name: System packages
@@ -41,6 +43,7 @@ jobs:
   windows:
     name: Windows package
     runs-on: windows-latest
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable
@@ -73,6 +76,7 @@ jobs:
     name: Sign and publish
     needs: [linux, windows]
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     permissions:
       contents: write
     steps:
@@ -94,15 +98,21 @@ jobs:
         env:
           MINISIGN_SECRET_KEY: ${{ secrets.MINISIGN_SECRET_KEY }}
         run: |
-          sudo apt-get update && sudo apt-get install -y minisign
+          # minisign from its own release, pinned by hash, rather than apt: refreshing the package
+          # lists can hang on a mirror (it held the 0.2.7 release for over 10 minutes).
+          url=https://github.com/jedisct1/minisign/releases/download/0.12/minisign-0.12-linux.tar.gz
+          curl -fsSL --retry 3 --max-time 60 -o "$RUNNER_TEMP/minisign.tar.gz" "$url"
+          echo "9a599b48ba6eb7b1e80f12f36b94ceca7c00b7a5173c95c3efc88d9822957e73  $RUNNER_TEMP/minisign.tar.gz" | sha256sum -c -
+          tar -xzf "$RUNNER_TEMP/minisign.tar.gz" -C "$RUNNER_TEMP"
+          minisign="$RUNNER_TEMP/minisign-linux/x86_64/minisign"
           test -n "$MINISIGN_SECRET_KEY" || { echo "the MINISIGN_SECRET_KEY secret is not set"; exit 1; }
           key="$(mktemp)"
           printf '%s\n' "$MINISIGN_SECRET_KEY" > "$key"
-          minisign -S -s "$key" -m SHA256SUMS.txt -t "CleanCore $GITHUB_REF_NAME"
+          "$minisign" -S -s "$key" -m SHA256SUMS.txt -t "CleanCore $GITHUB_REF_NAME"
           rm -f "$key"
           # Check it with the public key built into the app, so a wrong key never ships.
           pub="$(sed -n 's/^pub const PUBLIC_KEY: &str = "\(.*\)";/\1/p' ../src/update.rs)"
-          minisign -V -P "$pub" -m SHA256SUMS.txt
+          "$minisign" -V -P "$pub" -m SHA256SUMS.txt
       - name: Publish
         env:
           GH_TOKEN: ${{ github.token }}
