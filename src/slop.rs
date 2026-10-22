@@ -199,6 +199,8 @@ pub fn remove(settings: &crate::config::Settings, apps: &[Found], all_users: boo
     r
 }
 
+// Only Windows removes apps; elsewhere this is just tested.
+#[cfg_attr(not(windows), allow(dead_code))]
 #[derive(Debug)]
 enum Outcome {
     Removed,
@@ -246,6 +248,7 @@ foreach ($p in $prov) {
 
 /// What the removal script printed: removed, already gone, or what failed (only what is
 /// actually still there counts; a step that failed on something now gone did no harm).
+#[cfg_attr(not(windows), allow(dead_code))]
 fn outcome(output: &str) -> Result<Outcome> {
     let lines = |tag: &str| output.lines().filter_map(|l| l.strip_prefix(tag).map(str::to_string)).collect::<Vec<_>>();
     let (ok, fail, left) = (lines("OK\t"), lines("FAIL\t"), lines("LEFT\t"));
