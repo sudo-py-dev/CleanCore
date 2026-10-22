@@ -22,7 +22,7 @@ path = "src/bin/cleancore-gui.rs"
 
 [features]
 default = ["gui"]
-gui = ["dep:eframe", "dep:egui_extras", "dep:ksni", "dep:tray-icon", "dep:image", "dep:resvg", "dep:rfd", "dep:winit"]
+gui = ["dep:eframe", "dep:egui_extras", "dep:ksni", "dep:tray-icon", "dep:image", "dep:resvg", "dep:rfd", "dep:winit", "dep:wgpu"]
 
 [dependencies]
 anyhow = "1"
@@ -31,7 +31,8 @@ blake3 = "1.8.7"
 chrono = { version = "0.4", features = ["serde"] }
 clap = { version = "4", features = ["derive"] }
 dirs = "6"
-# glow (OpenGL) renderer: far smaller than the default wgpu one, and plenty for a 2D app
+# glow (OpenGL) renderer: far smaller than the default wgpu one, and plenty for a 2D app (Windows also
+# has Direct3D 12, below)
 eframe = { version = "0.37", optional = true, default-features = false, features = ["glow", "accesskit", "default_fonts", "wayland", "x11", "clipboard", "links"] }
 egui_extras = { version = "0.37", optional = true }
 # Program icons in the GUI: PNG/ICO/BMP and SVG (no text rendering needed)
@@ -57,6 +58,11 @@ windows-sys = { version = "0.61.2", features = ["Win32_Foundation", "Win32_Syste
 winreg = "0.55"
 # Hunter Mode tray icon
 tray-icon = { version = "0.26", optional = true }
+# The window draws with Direct3D 12 on Windows: OpenGL there may be only version 1.1 (a
+# virtual machine without 3D acceleration, no graphics driver), where D3D12 still has WARP,
+# Windows' own software renderer. OpenGL (glow) stays the fallback. Only the D3D12 backend.
+eframe = { version = "0.37", optional = true, default-features = false, features = ["wgpu_no_default_features"] }
+wgpu = { version = "30", optional = true, default-features = false, features = ["std", "dx12", "wgsl"] }
 
 [target.'cfg(target_os = "linux")'.dependencies]
 inotify = "0.11.5"

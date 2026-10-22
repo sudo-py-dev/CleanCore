@@ -34,17 +34,40 @@ use std::time::{Duration, Instant};
 use style::{icon, Palette};
 
 pub fn run() -> eframe::Result {
-    let options = eframe::NativeOptions {
-        viewport: {
-            let v = egui::ViewportBuilder::default().with_inner_size([1200.0, 780.0]).with_min_inner_size([960.0, 600.0]).with_title("CleanCore").with_app_id("cleancore");
-            match appicons::window_icon() {
-                Some(icon) => v.with_icon(icon),
-                None => v,
-            }
-        },
-        ..Default::default()
-    };
-    eframe::run_native("CleanCore", options, Box::new(|cc| Ok(Box::new(App::new(cc)))))
+    // Windows: Direct3D 12 first (see Cargo.toml), OpenGL if it can't start. Elsewhere OpenGL.
+    #[cfg(windows)]
+    let renderers = [eframe::Renderer::Wgpu, eframe::Renderer::Glow];
+    #[cfg(not(windows))]
+    let renderers = [eframe::Renderer::Glow];
+    let started = std::sync::Arc::new(std::sync::atomic::AtomicBool::new(false));
+    let mut result = Ok(());
+    for renderer in renderers {
+        let options = eframe::NativeOptions {
+            viewport: {
+                let v = egui::ViewportBuilder::default().with_inner_size([1200.0, 780.0]).with_min_inner_size([960.0, 600.0]).with_title("CleanCore").with_app_id("cleancore");
+                match appicons::window_icon() {
+                    Some(icon) => v.with_icon(icon),
+                    None => v,
+                }
+            },
+            renderer,
+            ..Default::default()
+        };
+        let s = started.clone();
+        result = eframe::run_native(
+            "CleanCore",
+            options,
+            Box::new(move |cc| {
+                s.store(true, std::sync::atomic::Ordering::Relaxed);
+                Ok(Box::new(App::new(cc)))
+            }),
+        );
+        // Try the next renderer only when this one couldn't draw at all: never open the app twice.
+        if result.is_ok() || started.load(std::sync::atomic::Ordering::Relaxed) {
+            break;
+        }
+    }
+    result
 }
 
 // ---------------------------------------------------------------- background work

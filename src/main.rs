@@ -912,7 +912,20 @@ fn run_window() {
     cleancore::migrate::from_gui_program();
     cleancore::update::cleanup_after_update();
     if let Err(e) = cleancore::gui::run() {
-        eprintln!("error: {e}");
+        // A windowed program has no console: also say it in the log and, on Windows, a message.
+        let text = format!("CleanCore could not open its window: {e}");
+        eprintln!("error: {text}");
+        let dir = cleancore::config::data_dir();
+        let _ = std::fs::create_dir_all(&dir);
+        let line = format!("[{}] {text}\n\n", chrono::Local::now().format("%Y-%m-%d %H:%M:%S"));
+        let _ = std::fs::OpenOptions::new().create(true).append(true).open(dir.join("gui-crash.log")).and_then(|mut f| f.write_all(line.as_bytes()));
+        #[cfg(windows)]
+        {
+            use windows_sys::Win32::UI::WindowsAndMessaging::{MessageBoxW, MB_ICONERROR, MB_OK};
+            let wide = |s: &str| s.encode_utf16().chain(Some(0)).collect::<Vec<u16>>();
+            // SAFETY: NUL-terminated wide strings that outlive the call.
+            unsafe { MessageBoxW(std::ptr::null_mut(), wide(&text).as_ptr(), wide("CleanCore").as_ptr(), MB_OK | MB_ICONERROR) };
+        }
         std::process::exit(1);
     }
 }
