@@ -1574,6 +1574,9 @@ msgstr "מחק"
 msgid "Wiping"
 msgstr "מוחק"
 
+msgid "Remove Microsoft slop"
+msgstr "הסרת תוכנות זבל של מיקרוסופט"
+
 msgid "Windows only"
 msgstr "ל־Windows בלבד"
 
@@ -1621,6 +1624,24 @@ msgstr "מותקנת מראש למשתמשים חדשים"
 
 msgid "Only the preinstalled copy"
 msgstr "רק העותק המותקן מראש"
+
+msgid "Automatic removal"
+msgstr "הסרה אוטומטית"
+
+msgid "Windows often brings these apps back with updates. Tick the ones you never want, and CleanCore checks every day and removes them again."
+msgstr "Windows מחזירה לעיתים קרובות את האפליקציות האלה עם עדכונים. סמן את אלה שאינך רוצה לעולם, ו־CleanCore יבדוק כל יום ויסיר אותן שוב."
+
+msgid "Remove the ticked apps automatically"
+msgstr "הסר אוטומטית את האפליקציות המסומנות"
+
+msgid "Last check {}: {}"
+msgstr "בדיקה אחרונה {}: {}"
+
+msgid "Automatic removal is on: CleanCore checks every day."
+msgstr "ההסרה האוטומטית פועלת: CleanCore בודק כל יום."
+
+msgid "Setting up automatic removal failed: {e:#}"
+msgstr "הגדרת ההסרה האוטומטית נכשלה: {e:#}"
 
 msgid "AI, ads and suggestions"
 msgstr "בינה מלאכותית, פרסומות והצעות"

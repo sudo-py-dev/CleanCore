@@ -1573,6 +1573,9 @@ msgstr "Очистити"
 msgid "Wiping"
 msgstr "Очищення"
 
+msgid "Remove Microsoft slop"
+msgstr "Видалити мотлох Microsoft"
+
 msgid "Windows only"
 msgstr "Лише Windows"
 
@@ -1620,6 +1623,24 @@ msgstr "Попередньо встановлено для нових корис
 
 msgid "Only the preinstalled copy"
 msgstr "Лише попередньо встановлена копія"
+
+msgid "Automatic removal"
+msgstr "Автоматичне видалення"
+
+msgid "Windows often brings these apps back with updates. Tick the ones you never want, and CleanCore checks every day and removes them again."
+msgstr "Windows часто повертає ці застосунки з оновленнями. Позначте ті, які вам не потрібні, і CleanCore щодня перевірятиме та знову видалятиме їх."
+
+msgid "Remove the ticked apps automatically"
+msgstr "Автоматично видаляти позначені застосунки"
+
+msgid "Last check {}: {}"
+msgstr "Остання перевірка {}: {}"
+
+msgid "Automatic removal is on: CleanCore checks every day."
+msgstr "Автоматичне видалення увімкнено: CleanCore перевіряє щодня."
+
+msgid "Setting up automatic removal failed: {e:#}"
+msgstr "Не вдалося налаштувати автоматичне видалення: {e:#}"
 
 msgid "AI, ads and suggestions"
 msgstr "ШІ, реклама й підказки"

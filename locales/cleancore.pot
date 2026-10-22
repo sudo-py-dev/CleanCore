@@ -1572,6 +1572,9 @@ msgstr ""
 msgid "Wiping"
 msgstr ""
 
+msgid "Remove Microsoft slop"
+msgstr ""
+
 msgid "Windows only"
 msgstr ""
 
@@ -1618,6 +1621,24 @@ msgid "Preinstalled for new users"
 msgstr ""
 
 msgid "Only the preinstalled copy"
+msgstr ""
+
+msgid "Automatic removal"
+msgstr ""
+
+msgid "Windows often brings these apps back with updates. Tick the ones you never want, and CleanCore checks every day and removes them again."
+msgstr ""
+
+msgid "Remove the ticked apps automatically"
+msgstr ""
+
+msgid "Last check {}: {}"
+msgstr ""
+
+msgid "Automatic removal is on: CleanCore checks every day."
+msgstr ""
+
+msgid "Setting up automatic removal failed: {e:#}"
 msgstr ""
 
 msgid "AI, ads and suggestions"

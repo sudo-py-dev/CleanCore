@@ -1573,6 +1573,9 @@ msgstr "Borrar"
 msgid "Wiping"
 msgstr "Borrando"
 
+msgid "Remove Microsoft slop"
+msgstr "Quitar la basura de Microsoft"
+
 msgid "Windows only"
 msgstr "Solo Windows"
 
@@ -1620,6 +1623,24 @@ msgstr "Preinstalada para usuarios nuevos"
 
 msgid "Only the preinstalled copy"
 msgstr "Solo la copia preinstalada"
+
+msgid "Automatic removal"
+msgstr "Eliminación automática"
+
+msgid "Windows often brings these apps back with updates. Tick the ones you never want, and CleanCore checks every day and removes them again."
+msgstr "Windows suele reinstalar estas aplicaciones con las actualizaciones. Marca las que nunca quieras y CleanCore comprobará cada día y volverá a quitarlas."
+
+msgid "Remove the ticked apps automatically"
+msgstr "Quitar automáticamente las aplicaciones marcadas"
+
+msgid "Last check {}: {}"
+msgstr "Última comprobación {}: {}"
+
+msgid "Automatic removal is on: CleanCore checks every day."
+msgstr "La eliminación automática está activada: CleanCore comprueba cada día."
+
+msgid "Setting up automatic removal failed: {e:#}"
+msgstr "No se pudo configurar la eliminación automática: {e:#}"
 
 msgid "AI, ads and suggestions"
 msgstr "IA, anuncios y sugerencias"

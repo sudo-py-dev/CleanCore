@@ -389,10 +389,18 @@ impl WatcherView {
             crate::gui::style::row(ui, |ui| {
                 ui.add(style::Label::new(style::strong(tr("Changes"))));
                 style::badge(ui, &self.events.len().to_string(), p.accent);
+                // The view switch and filter at the far end keep their room (their width from the
+                // previous frame): the watched place's name is cut short instead.
+                let key = egui::Id::unique("watch-results-tools");
+                let tools_w = ui.ctx().data(|d| d.get_temp::<f32>(key)).unwrap_or(160.0);
                 if let Some(w) = self.selected_watch() {
-                    ui.add(style::Label::new(style::rich(crate::tf!("in {}", watch_name(&w.path))).size(12.5).color(p.muted)).truncate());
+                    let room = (ui.available_width() - tools_w - 12.0).max(0.0);
+                    ui.scope(|ui| {
+                        ui.set_max_width(room);
+                        ui.add(style::Label::new(style::rich(crate::tf!("in {}", watch_name(&w.path))).size(12.5).color(p.muted)).truncate());
+                    });
                 }
-                ui.with_layout(crate::gui::style::far_layout(egui::Align::Center), |ui| {
+                let tools = ui.with_layout(crate::gui::style::far_layout(egui::Align::Center), |ui| {
                     if style::segment(ui, self.table_view, "Details").on_hover_text(style::vis(tr("Every field, as a table"))).clicked() {
                         self.table_view = true;
                     }
@@ -403,7 +411,12 @@ impl WatcherView {
                         ui.add_space(6.0);
                         style::search_field(ui, &mut self.filter, "Filter", 120.0);
                     }
+                    ui.min_rect().width()
                 });
+                if (tools.inner - tools_w).abs() > 0.5 {
+                    ui.ctx().data_mut(|d| d.insert_temp(key, tools.inner));
+                    ui.ctx().request_repaint();
+                }
             });
             if narrow {
                 style::search_field(ui, &mut self.filter, "Filter changes", ui.available_width() - 48.0);
@@ -638,52 +651,79 @@ fn change_row(ui: &mut Ui, e: &WatchEvent, p: Palette) -> bool {
         None => watch_name(&e.key),
     };
     let mut open = false;
-    let r = ui
-        .horizontal_top(|ui| {
-            let (rect, _) = ui.allocate_exact_size(egui::vec2(30.0, 30.0), egui::Sense::hover());
-            ui.painter().rect_filled(rect, 9.0, col.gamma_multiply(0.14));
-            ui.painter().text(rect.center(), egui::Align2::CENTER_CENTER, style::vstr(ic), egui::FontId::proportional(15.0), col);
-            crate::gui::style::column(ui, |ui| {
-                ui.spacing_mut().item_spacing.y = 2.0;
-                ui.set_width((ui.available_width() - 110.0).max(140.0));
-                crate::gui::style::row(ui, |ui| {
-                    ui.spacing_mut().item_spacing.x = 5.0;
+    // In reading order: the icon, what changed (a fixed share of the width), and the time at the
+    // far end, which keeps its own column so it never wraps.
+    const TIME_W: f32 = 78.0;
+    let rtl = crate::gui::style::rtl();
+    let near = if rtl { egui::Align::Max } else { egui::Align::Min };
+    let far = if rtl { egui::Align::Min } else { egui::Align::Max };
+    let r = crate::gui::style::row_top(ui, |ui| {
+        ui.spacing_mut().item_spacing.x = 10.0;
+        let (rect, _) = ui.allocate_exact_size(egui::vec2(30.0, 30.0), egui::Sense::hover());
+        ui.painter().rect_filled(rect, 9.0, col.gamma_multiply(0.14));
+        ui.painter().text(rect.center(), egui::Align2::CENTER_CENTER, style::vstr(ic), egui::FontId::proportional(15.0), col);
+        let text_w = (ui.available_width() - TIME_W - 10.0).max(120.0);
+        ui.allocate_ui_with_layout(egui::vec2(text_w, 0.0), egui::Layout::top_down(near), |ui| {
+            ui.set_width(text_w);
+            ui.spacing_mut().item_spacing.y = 2.0;
+            crate::gui::style::row(ui, |ui| {
+                ui.spacing_mut().item_spacing.x = 5.0;
+                // The name is cut short before the verb is: the verb always shows.
+                let verb = tr(verb);
+                let verb_w = ui.painter().layout_no_wrap(style::vstr(verb), egui::FontId::proportional(14.0), p.muted).size().x;
+                let name_w = (ui.available_width() - verb_w - 5.0).max(40.0);
+                ui.scope(|ui| {
+                    ui.set_max_width(name_w);
                     ui.add(style::Label::new(style::strong(&what)).truncate());
-                    ui.add(style::Label::new(style::rich(tr(verb)).color(p.muted)));
                 });
-                // Old and new values, when the change has them.
-                let short = |s: &str| if s.chars().count() > 60 { s.chars().take(59).collect::<String>() + "…" } else { s.to_string() };
-                match (e.old_data.as_deref(), e.new_data.as_deref()) {
-                    (Some(old), Some(new)) => {
+                ui.add(style::Label::new(style::rich(verb).color(p.muted)).extend());
+            });
+            // Old and new values, when the change has them: on one line when they fit, else the
+            // new one under the old one, each wrapping within the column.
+            let short = |s: &str| if s.chars().count() > 120 { s.chars().take(119).collect::<String>() + "…" } else { s.to_string() };
+            let mono = egui::FontId::monospace(12.0);
+            let width_of = |s: &str| ui.painter().layout_no_wrap(s.to_string(), mono.clone(), p.text).size().x;
+            match (e.old_data.as_deref(), e.new_data.as_deref()) {
+                (Some(old), Some(new)) => {
+                    let (old, new) = (short(old), short(new));
+                    let one_line = width_of(&old) + width_of(&new) + 40.0 <= text_w;
+                    let old_label = style::Label::new(style::rich(&old).monospace().size(12.0).color(p.danger).strikethrough());
+                    let new_label = style::Label::new(style::rich(&new).monospace().size(12.0).color(p.success));
+                    let arrow = style::Label::new(style::rich(crate::gui::style::icon_forward()).size(12.0).color(p.faint));
+                    if one_line {
                         crate::gui::style::row(ui, |ui| {
                             ui.spacing_mut().item_spacing.x = 6.0;
-                            ui.add(style::Label::new(style::rich(short(old)).monospace().size(12.0).color(p.danger).strikethrough()));
-                            ui.add(style::Label::new(style::rich(crate::gui::style::icon_forward()).size(12.0).color(p.faint)));
-                            ui.add(style::Label::new(style::rich(short(new)).monospace().size(12.0).color(p.success)));
+                            ui.add(old_label.extend());
+                            ui.add(arrow.extend());
+                            ui.add(new_label.extend());
+                        });
+                    } else {
+                        ui.add(old_label.wrap());
+                        crate::gui::style::row_top(ui, |ui| {
+                            ui.spacing_mut().item_spacing.x = 6.0;
+                            ui.add(arrow.extend());
+                            ui.add(new_label.wrap());
                         });
                     }
-                    (None, Some(new)) if !new.is_empty() => {
-                        ui.add(style::Label::new(style::rich(short(new)).monospace().size(12.0).color(p.success)));
-                    }
-                    (Some(old), None) if !old.is_empty() => {
-                        ui.add(style::Label::new(style::rich(short(old)).monospace().size(12.0).color(p.danger).strikethrough()));
-                    }
-                    _ => {}
                 }
-                ui.add(style::Label::new(style::rich(friendly_path(&e.key)).size(11.5).color(p.faint)).truncate()).on_hover_text(style::vis(&e.key));
-            });
-            ui.with_layout(crate::gui::style::far_layout(egui::Align::Min), |ui| {
-                crate::gui::style::column(ui, |ui| {
-                    ui.with_layout(egui::Layout::top_down(egui::Align::Max), |ui| {
-                        ui.add(style::Label::new(style::rich(e.time.format("%H:%M:%S").to_string()).size(12.0).color(p.muted)));
-                        if !e.process.is_empty() {
-                            style::badge(ui, &e.process, p.accent);
-                        }
-                    });
-                });
-            });
-        })
-        .response;
+                (None, Some(new)) if !new.is_empty() => {
+                    ui.add(style::Label::new(style::rich(short(new)).monospace().size(12.0).color(p.success)).wrap());
+                }
+                (Some(old), None) if !old.is_empty() => {
+                    ui.add(style::Label::new(style::rich(short(old)).monospace().size(12.0).color(p.danger).strikethrough()).wrap());
+                }
+                _ => {}
+            }
+            ui.add(style::Label::new(style::rich(friendly_path(&e.key)).size(11.5).color(p.faint)).truncate()).on_hover_text(style::vis(&e.key));
+        });
+        ui.allocate_ui_with_layout(egui::vec2(ui.available_width().max(TIME_W), 0.0), egui::Layout::top_down(far), |ui| {
+            ui.add(style::Label::new(style::rich(e.time.format("%H:%M:%S").to_string()).size(12.0).color(p.muted)).extend());
+            if !e.process.is_empty() {
+                style::badge(ui, &e.process, p.accent);
+            }
+        });
+    })
+    .response;
     r.interact(egui::Sense::click()).context_menu(|ui| {
         if style::ghost(ui, icon::FOLDER_OPEN, if cfg!(windows) { tr("Open in Registry Editor") } else { tr("Open containing folder") }).clicked() {
             open = true;

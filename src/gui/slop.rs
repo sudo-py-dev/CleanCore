@@ -4,6 +4,7 @@
 use super::style::{self, icon, Palette};
 use super::{take, Cx, Pending};
 use crate::i18n::tr;
+use crate::scheduler::{self, Action, Schedule, Task};
 use crate::slop::{self, Found, RemoveReport, Scan};
 use crate::tuner::{self, Requires, State, Status, Tweak};
 use eframe::egui::{self, Ui};
@@ -22,7 +23,20 @@ pub struct SlopView {
     state: State,
     tweaks_loaded: bool,
     pending: BTreeSet<Requires>,
+    /// Automatic removal: the daily task that removes these apps again when Windows brings
+    /// them back. `None` until read from the task list.
+    auto: Option<Auto>,
 }
+
+/// Automatic removal as set up: on (the task exists) and which catalog apps it removes.
+struct Auto {
+    on: bool,
+    apps: BTreeSet<&'static str>,
+    last_run: Option<scheduler::LastRun>,
+}
+
+/// The scheduled task behind automatic removal.
+const AUTO_TASK: &str = "remove-microsoft-slop";
 
 impl SlopView {
     pub fn new() -> Self {
@@ -39,7 +53,48 @@ impl SlopView {
             state: State::default(),
             tweaks_loaded: false,
             pending: BTreeSet::new(),
+            auto: None,
         }
+    }
+
+    /// Automatic removal as the task list has it; recommended apps when it is off.
+    fn load_auto() -> Auto {
+        let task = scheduler::load_tasks().unwrap_or_default().into_iter().find(|t| t.id == AUTO_TASK);
+        match task {
+            Some(Task { action: Action::RemoveSlop { apps }, last_run, .. }) => {
+                Auto { on: true, apps: slop::CATALOG.iter().map(|a| a.name).filter(|n| apps.iter().any(|x| x == n)).collect(), last_run }
+            }
+            _ => Auto { on: false, apps: slop::CATALOG.iter().filter(|a| a.recommended).map(|a| a.name).collect(), last_run: None },
+        }
+    }
+
+    /// Create, update or remove the daily task to match `auto`.
+    fn save_auto(auto: &Auto) -> anyhow::Result<()> {
+        let mut all = scheduler::load_tasks()?;
+        let pos = all.iter().position(|t| t.id == AUTO_TASK);
+        let action = Action::RemoveSlop { apps: auto.apps.iter().map(|s| s.to_string()).collect() };
+        match (auto.on, pos) {
+            (true, Some(i)) => all[i].action = action,
+            (true, None) => {
+                let task = Task {
+                    id: AUTO_TASK.into(),
+                    name: "Remove Microsoft slop".into(),
+                    note: String::new(),
+                    schedule: Schedule::Daily { time: chrono::NaiveTime::from_hms_opt(12, 0, 0).unwrap() },
+                    action,
+                    created: chrono::Local::now(),
+                    last_run: None,
+                };
+                scheduler::register(&task)?;
+                all.push(task);
+            }
+            (false, Some(i)) => {
+                scheduler::unregister(AUTO_TASK)?;
+                all.remove(i);
+            }
+            (false, None) => return Ok(()),
+        }
+        scheduler::save_tasks(&all)
     }
 
     pub fn refresh(&mut self) {
@@ -103,6 +158,8 @@ impl SlopView {
         let p = Palette::get(ui.ctx());
         egui::ScrollArea::vertical().auto_shrink([false, false]).show(ui, |ui| {
             self.apps_card(ui, cx, p);
+            ui.add_space(12.0);
+            self.auto_card(ui, cx, p);
             ui.add_space(12.0);
             self.settings_card(ui, cx, p);
         });
@@ -204,6 +261,80 @@ impl SlopView {
             }
             let _ = cx;
         });
+    }
+
+    /// Automatic removal: pick from every known app, installed now or not, and CleanCore removes
+    /// them again each day if Windows brought them back.
+    fn auto_card(&mut self, ui: &mut Ui, cx: &mut Cx, p: Palette) {
+        let auto = self.auto.get_or_insert_with(Self::load_auto);
+        let (mut changed, mut switched) = (false, false);
+        style::card(ui, |ui| {
+            crate::gui::style::row(ui, |ui| {
+                style::section_title(ui, "Automatic removal");
+                ui.with_layout(crate::gui::style::far_layout(egui::Align::Center), |ui| {
+                    if style::ghost(ui, "", "None").clicked() {
+                        auto.apps.clear();
+                        changed = true;
+                    }
+                    if style::ghost(ui, icon::CHECK, "Recommended").clicked() {
+                        auto.apps = slop::CATALOG.iter().filter(|a| a.recommended).map(|a| a.name).collect();
+                        changed = true;
+                    }
+                });
+            });
+            ui.add(style::Label::new(
+                style::muted(ui, tr("Windows often brings these apps back with updates. Tick the ones you never want, and CleanCore checks every day and removes them again."))
+                    .size(12.5),
+            ));
+            ui.add_space(6.0);
+            crate::gui::style::row(ui, |ui| {
+                if style::toggle(ui, &mut auto.on, "Remove the ticked apps automatically").changed() {
+                    changed = true;
+                    switched = true;
+                }
+                ui.add(style::Label::new(tr("Remove the ticked apps automatically")));
+            });
+            if let (true, Some(r)) = (auto.on, &auto.last_run) {
+                let col = if r.ok { p.muted } else { p.danger };
+                ui.add(style::Label::new(style::rich(crate::tf!("Last check {}: {}", r.time.format("%d %b %H:%M"), r.summary)).size(12.0).color(col)).truncate());
+            }
+            let mut last = "";
+            for a in slop::CATALOG {
+                if a.group != last {
+                    ui.add_space(6.0);
+                    ui.add(style::Label::new(style::strong(a.group).size(13.5)));
+                    last = a.group;
+                }
+                crate::gui::style::row(ui, |ui| {
+                    let mut on = auto.apps.contains(a.name);
+                    if ui.checkbox(&mut on, style::vis(a.name)).changed() {
+                        if on {
+                            auto.apps.insert(a.name);
+                        } else {
+                            auto.apps.remove(a.name);
+                        }
+                        changed = true;
+                    }
+                    if !a.note.is_empty() {
+                        ui.add(style::Label::new(style::muted(ui, a.note).size(12.0)));
+                    }
+                });
+            }
+        });
+        if changed {
+            let now_on = auto.on;
+            match Self::save_auto(auto) {
+                Ok(()) => {
+                    if switched && now_on {
+                        cx.info(tr("Automatic removal is on: CleanCore checks every day."));
+                    }
+                }
+                Err(e) => {
+                    cx.error(crate::tf!("Setting up automatic removal failed: {e:#}"));
+                    self.auto = None;
+                }
+            }
+        }
     }
 
     fn settings_card(&mut self, ui: &mut Ui, cx: &mut Cx, p: Palette) {

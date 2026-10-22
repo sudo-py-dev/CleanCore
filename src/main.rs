@@ -2291,6 +2291,11 @@ fn run_schedule(settings: &Settings, cmd: ScheduleCmd) -> Result<()> {
                         *k = Some(nk);
                     }
                 }
+                Action::RemoveSlop { .. } => {
+                    if mode.is_some() || all_users.is_some() || key.is_some() || whole {
+                        bail!("the automatic app removal is set up on Tools › Microsoft slop");
+                    }
+                }
             }
             if let Some(dup) = tasks.iter().find(|o| o.id != t.id && o.same_params(&t)) {
                 bail!("A task with the same parameters already exists: '{}' ({})", dup.name, dup.id);

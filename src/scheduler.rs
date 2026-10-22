@@ -42,6 +42,11 @@ pub enum Action {
     AutoBackup {
         key: Option<String>,
     },
+    /// Windows: remove these Microsoft slop apps (catalog names, `slop::CATALOG`) whenever
+    /// Windows has brought them back.
+    RemoveSlop {
+        apps: Vec<String>,
+    },
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -118,6 +123,7 @@ impl std::fmt::Display for Action {
             }
             Self::AutoBackup { key: None } => write!(f, "Auto Backup, whole {}", if cfg!(windows) { "registry" } else { "config store" }),
             Self::AutoBackup { key: Some(k) } => write!(f, "Auto Backup of {k}"),
+            Self::RemoveSlop { apps } => write!(f, "Remove Microsoft slop ({} app(s))", apps.len()),
         }
     }
 }
@@ -293,6 +299,7 @@ pub fn execute(settings: &Settings, id: &str) -> Result<String> {
     let (title, wanted) = match task.action {
         Action::AutoClean { .. } => (if ok { "Auto Clean Completed" } else { "Auto Clean Failed" }, settings.notify_auto_clean),
         Action::AutoBackup { .. } => (if ok { "Auto Backup Completed" } else { "Auto Backup Failed" }, settings.notify_auto_backup),
+        Action::RemoveSlop { .. } => (if ok { "Automatic App Removal Completed" } else { "Automatic App Removal Failed" }, settings.notify_auto_clean),
     };
     // Failures are always shown: a silent failing schedule is worse than an extra popup.
     if wanted || !ok {
@@ -315,6 +322,22 @@ fn run_action(settings: &Settings, task: &Task) -> Result<String> {
             let mut s = format!("removed {} item(s), backup {}", r.cleaned, r.backup_id);
             if !r.failed.is_empty() {
                 s.push_str(&format!(", {} failed", r.failed.len()));
+            }
+            Ok(s)
+        }
+        Action::RemoveSlop { apps } => {
+            let scan = crate::slop::scan()?;
+            let back: Vec<crate::slop::Found> = scan.found.into_iter().filter(|f| apps.iter().any(|a| a == f.app.name)).collect();
+            if back.is_empty() {
+                return Ok("none of the apps came back".into());
+            }
+            // As administrator (the task runs with the highest rights it can): for every user,
+            // and the preinstalled copies too, so they stay away.
+            let r = crate::slop::remove(settings, &back, scan.admin, scan.admin);
+            let mut s = format!("removed {}", if r.removed.is_empty() { "nothing".to_string() } else { r.removed.join(", ") });
+            if !r.failed.is_empty() {
+                s.push_str(&format!("; failed: {}", r.failed.iter().map(|(n, e)| format!("{n} ({e})")).collect::<Vec<_>>().join("; ")));
+                anyhow::bail!(s);
             }
             Ok(s)
         }
@@ -346,6 +369,15 @@ fn run_action(settings: &Settings, task: &Task) -> Result<String> {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn slop_removal_task_round_trips() {
+        let a = Action::RemoveSlop { apps: vec!["News".into(), "Xbox".into()] };
+        let json = serde_json::to_string(&a).unwrap();
+        assert_eq!(json, r#"{"kind":"remove_slop","apps":["News","Xbox"]}"#);
+        assert_eq!(serde_json::from_str::<Action>(&json).unwrap(), a);
+        assert_eq!(a.to_string(), "Remove Microsoft slop (2 app(s))");
+    }
 
     fn t(h: u32, m: u32) -> NaiveTime {
         NaiveTime::from_hms_opt(h, m, 0).unwrap()

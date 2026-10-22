@@ -38,6 +38,24 @@ fn every_page_fits_a_small_window() {
     std::env::set_var("XDG_CONFIG_HOME", home.join(".config"));
     std::env::set_var("XDG_DATA_HOME", home.join(".local/share"));
 
+    // A watched place with recorded changes, long values included, for the Watcher page.
+    let watch = cleancore::watcher::Watch { path: "dconf:/org/gnome/desktop/input-sources/".into(), active: true, include_reads: false, created: chrono::Local::now() };
+    cleancore::watcher::save_watches(std::slice::from_ref(&watch)).unwrap();
+    std::fs::create_dir_all(watch.log_file().parent().unwrap()).unwrap();
+    let sources = ["[('xkb', 'us'), ('xkb', 'il+lyx')]", "[('xkb', 'il+lyx'), ('xkb', 'us')]"];
+    let log: String = (0..4)
+        .map(|i| {
+            let e = cleancore::watcher::WatchEvent::new(cleancore::watcher::Op::ValueSet, "dconf:/org/gnome/desktop/input-sources/mru-sources").value(
+                "mru-sources",
+                None,
+                Some(sources[i % 2]),
+                Some(sources[(i + 1) % 2]),
+            );
+            serde_json::to_string(&e).unwrap() + "\n"
+        })
+        .collect();
+    std::fs::write(watch.log_file(), log).unwrap();
+
     let mut h = Harness::builder().with_size(egui::Vec2::new(960.0, 600.0)).wgpu().build_eframe(|cc| App::new(cc));
     h.run_steps(10);
     // Wait for the program list.
