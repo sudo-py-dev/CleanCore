@@ -1003,7 +1003,7 @@ fn run(cli: Cli) -> Result<()> {
         }
         Cmd::Categories => {
             for c in engine::all_checks() {
-                println!("{:<22} {:<9} {} — {}", c.id, format!("{:?}", c.min_mode).to_lowercase(), c.name, c.description);
+                println!("{:<22} {:<9} {}: {}", c.id, format!("{:?}", c.min_mode).to_lowercase(), c.name, c.description);
             }
         }
         Cmd::Backup(b) => run_backup(&settings, b)?,
@@ -1060,7 +1060,7 @@ fn run(cli: Cli) -> Result<()> {
                         p.name,
                         if p.version.is_empty() { String::new() } else { format!("  {}", p.version) },
                         p.kind.label(),
-                        if p.publisher.is_empty() { String::new() } else { format!("  — {}", p.publisher) }
+                        if p.publisher.is_empty() { String::new() } else { format!("  · {}", p.publisher) }
                     );
                     if location {
                         if let Some(l) = &p.install_location {
@@ -1349,7 +1349,7 @@ fn run_autorun(settings: &Settings, cmd: AutorunCmd) -> Result<()> {
                         e.name,
                         e.source.label(),
                         if flags.is_empty() { String::new() } else { format!("  ({flags})") },
-                        e.publisher.as_deref().map(|p| format!("  — {p}")).unwrap_or_default()
+                        e.publisher.as_deref().map(|p| format!("  · {p}")).unwrap_or_default()
                     );
                     println!("    {}", e.command);
                 }
@@ -1398,7 +1398,7 @@ fn run_autorun(settings: &Settings, cmd: AutorunCmd) -> Result<()> {
                 return Ok(());
             }
             for e in &picked {
-                println!("  {} — {}", e.name, e.command);
+                println!("  {}: {}", e.name, e.command);
             }
             if !yes && !confirm(&format!("Remove {} entr(ies)?", picked.len()))? {
                 return Ok(());
@@ -1555,7 +1555,7 @@ fn run_junk(settings: &Settings, cmd: JunkCmd) -> Result<()> {
                     println!("{:>10}  {}", human(f.size), f.path.display());
                 }
             }
-            println!("{} junk file(s), {} — {:.1}s", files.len(), human(total), started.elapsed().as_secs_f32());
+            println!("{} junk file(s), {} in {:.1}s", files.len(), human(total), started.elapsed().as_secs_f32());
         }
         JunkCmd::Clean { permanent, yes, .. } => {
             if files.is_empty() {
@@ -2011,7 +2011,7 @@ fn run_trace(settings: &Settings, cmd: TraceCmd) -> Result<()> {
             if !only.is_empty() {
                 issues.retain(|i| only.iter().any(|o| i.location.to_lowercase().contains(&o.to_lowercase())));
             }
-            println!("{} — {} item(s) to remove", l.name, issues.len());
+            println!("{}: {} item(s) to remove", l.name, issues.len());
             show_leftovers(&issues);
             if !issues.is_empty() {
                 if !yes && !confirm("Remove them? Everything is backed up first.")? {
@@ -2313,14 +2313,14 @@ fn run_schedule(settings: &Settings, cmd: ScheduleCmd) -> Result<()> {
             }
             let now = chrono::Local::now();
             for t in &tasks {
-                println!("{} — {}", t.id, t.name);
+                println!("{}: {}", t.id, t.name);
                 println!("    {}  |  {}", t.action, t.schedule);
                 if !t.note.is_empty() {
                     println!("    note: {}", t.note);
                 }
                 println!("    next: {}   os: {}", scheduler::next_run(&t.schedule, now).format("%a %Y-%m-%d %H:%M"), platform::sched_status(&t.id));
                 if let Some(r) = &t.last_run {
-                    println!("    last: {} {} — {}", r.time.format("%Y-%m-%d %H:%M"), if r.ok { "ok" } else { "FAILED" }, r.summary);
+                    println!("    last: {} {}: {}", r.time.format("%Y-%m-%d %H:%M"), if r.ok { "ok" } else { "FAILED" }, r.summary);
                 }
             }
             println!("recorder: {}", platform::recorder_status());
@@ -2642,7 +2642,7 @@ fn run_tune(cmd: TuneCmd) -> Result<()> {
                 println!("  changed by CleanCore on {} (option '{}')", a.applied_at.format("%Y-%m-%d %H:%M"), a.option);
             }
             for o in &t.options {
-                println!("\n  option '{}'{}", o.id, if o.label.is_empty() { String::new() } else { format!(" — {}", o.label) });
+                println!("\n  option '{}'{}", o.id, if o.label.is_empty() { String::new() } else { format!(": {}", o.label) });
                 for s in &o.set {
                     match s {
                         tuner::Setting::Reg { key, name, data } => println!("    set    {key} | {} = {data:?}", if name.is_empty() { "(Default)" } else { name }),

@@ -52,9 +52,9 @@ fn job_progress(ui: &mut Ui, ctl: &Control, label: &str, p: Palette) {
             }
             let pass = ctl.pass.load(Ordering::Relaxed);
             ui.add(style::Label::new(style::strong(if paused {
-                crate::tf!("{label} — paused")
+                crate::tf!("{label}: paused")
             } else if pass > 0 {
-                crate::tf!("{label} — pass {pass}")
+                crate::tf!("{label}: pass {pass}")
             } else {
                 label.to_string()
             })));
@@ -197,7 +197,7 @@ impl ShredView {
                 ui.add(style::Label::new(style::muted(
                     ui,
                     crate::tf!(
-                        "They are overwritten {} time(s) and deleted. Nothing is backed up and they can't be recovered — not from the Trash, not by CleanCore.",
+                        "They are overwritten {} time(s) and deleted. Nothing is backed up and they can't be recovered: not from the Trash, not by CleanCore.",
                         cx.settings.shred_passes
                     ),
                 )));
@@ -326,7 +326,7 @@ impl EvidenceView {
                     ui.add(style::Label::new(style::strong(crate::tf!("Wipe the free space of {}?", d.label)).size(18.0)));
                     ui.add_space(6.0);
                     let passes = cx.settings.shred_passes.min(7);
-                    ui.add(style::Label::new(style::muted(ui, crate::tf!("{} of random data is written {passes} time(s). This can take a long time, and the drive is briefly full — programs saving files meanwhile may fail. Your files are not touched.", super::human(d.free)))));
+                    ui.add(style::Label::new(style::muted(ui, crate::tf!("{} of random data is written {passes} time(s). This can take a long time, and the drive is briefly full: programs saving files meanwhile may fail. Your files are not touched.", super::human(d.free)))));
                     ui.add_space(12.0);
                     crate::gui::style::row(ui, |ui| {
                         if style::primary(ui, icon::DRIVES, "Wipe").clicked() {

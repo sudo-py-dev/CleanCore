@@ -313,11 +313,7 @@ impl TaskPanel {
                     crate::gui::style::row(ui, |ui| {
                         let (ic, col) = if r.ok { (icon::CHECK_CIRCLE, p.success) } else { (icon::WARNING, p.danger) };
                         ui.add(style::Label::new(style::rich(ic).color(col)));
-                        ui.add(style::Label::new(style::rich(crate::tf!("Last run {} — {}", r.time.format("%d %b %H:%M"), r.summary)).color(if r.ok {
-                            p.muted
-                        } else {
-                            p.danger
-                        })));
+                        ui.add(style::Label::new(style::rich(crate::tf!("Last run {}: {}", r.time.format("%d %b %H:%M"), r.summary)).color(if r.ok { p.muted } else { p.danger })));
                     });
                 }
             }

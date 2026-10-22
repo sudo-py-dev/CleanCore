@@ -21,7 +21,7 @@ pub struct Proc {
     /// Has a visible window (Windows) / runs in the graphical session (Linux).
     pub gui: bool,
     /// The main process of a desktop application: has a window (Windows) / is the first
-    /// process of an app launched from the desktop (Linux) — what Hunter Mode lists.
+    /// process of an app launched from the desktop (Linux): what Hunter Mode lists.
     pub app: bool,
     pub title: Option<String>,
 }

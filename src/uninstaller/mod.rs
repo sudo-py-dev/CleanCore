@@ -836,7 +836,7 @@ pub fn history() -> Vec<HistoryEntry> {
 }
 
 pub fn history_text(e: &HistoryEntry) -> String {
-    let mut s = format!("{} — {} {}\n{}\n", e.operation.label(), e.program, e.version, e.time.format("%Y-%m-%d %H:%M:%S"));
+    let mut s = format!("{}: {} {}\n{}\n", e.operation.label(), e.program, e.version, e.time.format("%Y-%m-%d %H:%M:%S"));
     if let Some(b) = &e.backup_id {
         s += &format!("Backup: {b}\n");
     }
@@ -847,7 +847,7 @@ pub fn history_text(e: &HistoryEntry) -> String {
     if !e.failed.is_empty() {
         s += &format!("\nNot removed ({}):\n", e.failed.len());
         for (l, why) in &e.failed {
-            s += &format!("  {l}  — {why}\n");
+            s += &format!("  {l}: {why}\n");
         }
     }
     s

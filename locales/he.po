@@ -95,8 +95,8 @@ msgstr "לכל המשתמשים"
 msgid "Remove (backed up)"
 msgstr "הסר (עם גיבוי)"
 
-msgid "Can't be deleted — disable it instead"
-msgstr "לא ניתן למחוק — השבת במקום זאת"
+msgid "Can't be deleted: disable it instead"
+msgstr "לא ניתן למחוק: השבת במקום זאת"
 
 msgid "Run now"
 msgstr "הפעל עכשיו"
@@ -632,8 +632,8 @@ msgstr "לא נמצאו הרחבות ב־Chrome, ‏Edge, ‏Brave, ‏Opera, �
 msgid "Nothing matches the search."
 msgstr "אין תוצאות לחיפוש."
 
-msgid "Running — close it before removing"
-msgstr "פועל — סגור אותו לפני ההסרה"
+msgid "Running: close it before removing"
+msgstr "פועל: סגור אותו לפני ההסרה"
 
 msgid "Theme"
 msgstr "ערכת נושא"
@@ -689,8 +689,8 @@ msgstr "לא נמצאו פרופילי דפדפן, רשימות קבצים אח�
 msgid "Office"
 msgstr "Office"
 
-msgid "Open — close it to clean"
-msgstr "פתוח — סגור כדי לנקות"
+msgid "Open: close it to clean"
+msgstr "פתוח: סגור כדי לנקות"
 
 msgid "None"
 msgstr "אין"
@@ -1451,8 +1451,8 @@ msgstr "ההפעלה הבאה {}"
 msgid "System scheduler: {}"
 msgstr "מתזמן המערכת: {}"
 
-msgid "Last run {} — {}"
-msgstr "הפעלה אחרונה {} — {}"
+msgid "Last run {}: {}"
+msgstr "הפעלה אחרונה {}: {}"
 
 msgid "Save"
 msgstr "שמור"
@@ -1493,11 +1493,11 @@ msgstr "שבעה מעברים; איטי"
 msgid "On SSDs, flash drives and copy-on-write filesystems (btrfs, ZFS) the drive may keep old copies of data in places software can't reach. Overwriting is most reliable on hard disks; full-disk encryption protects SSDs best."
 msgstr "בכונני SSD, בכונני הבזק ובמערכות קבצים מסוג copy-on-write ‏(btrfs, ZFS) הכונן עשוי לשמור עותקים ישנים של מידע במקומות שתוכנה לא יכולה להגיע אליהם. דריסה אמינה ביותר בכוננים קשיחים; הצפנת דיסק מלאה מגינה הכי טוב על SSD."
 
-msgid "{label} — paused"
-msgstr "{label} — מושהה"
+msgid "{label}: paused"
+msgstr "{label}: מושהה"
 
-msgid "{label} — pass {pass}"
-msgstr "{label} — מעבר {pass}"
+msgid "{label}: pass {pass}"
+msgstr "{label}: מעבר {pass}"
 
 msgid "Resume"
 msgstr "המשך"
@@ -1538,8 +1538,8 @@ msgstr "הסר מהרשימה"
 msgid "Destroy {} item(s)?"
 msgstr "להשמיד {} פריטים?"
 
-msgid "They are overwritten {} time(s) and deleted. Nothing is backed up and they can't be recovered — not from the Trash, not by CleanCore."
-msgstr "הם נדרסים {} פעמים ונמחקים. שום דבר לא מגובה ואי אפשר לשחזר אותם — לא מהאשפה ולא דרך CleanCore."
+msgid "They are overwritten {} time(s) and deleted. Nothing is backed up and they can't be recovered: not from the Trash, not by CleanCore."
+msgstr "הם נדרסים {} פעמים ונמחקים. שום דבר לא מגובה ואי אפשר לשחזר אותם: לא מהאשפה ולא דרך CleanCore."
 
 msgid "Destroy"
 msgstr "השמד"
@@ -1565,8 +1565,8 @@ msgstr "{} פנויים מתוך {}"
 msgid "Wipe the free space of {}?"
 msgstr "למחוק את המקום הפנוי של {}?"
 
-msgid "{} of random data is written {passes} time(s). This can take a long time, and the drive is briefly full — programs saving files meanwhile may fail. Your files are not touched."
-msgstr "{} של נתונים אקראיים נכתבים {passes} פעמים. זה עלול לקחת זמן רב, והכונן מתמלא לזמן קצר — תוכנות ששומרות קבצים בזמן זה עלולות להיכשל. הקבצים שלך לא נפגעים."
+msgid "{} of random data is written {passes} time(s). This can take a long time, and the drive is briefly full: programs saving files meanwhile may fail. Your files are not touched."
+msgstr "{} של נתונים אקראיים נכתבים {passes} פעמים. זה עלול לקחת זמן רב, והכונן מתמלא לזמן קצר: תוכנות ששומרות קבצים בזמן זה עלולות להיכשל. הקבצים שלך לא נפגעים."
 
 msgid "Wipe"
 msgstr "מחק"

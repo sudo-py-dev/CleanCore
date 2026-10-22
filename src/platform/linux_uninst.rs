@@ -751,7 +751,7 @@ pub fn scan_leftovers(target: &Target, mode: ScanMode, scope: Scope, others: &[P
         }
     }
 
-    // GNOME settings (dconf) — per current user only
+    // GNOME settings (dconf), per current user only
     if mode >= ScanMode::Moderate && has("dconf") {
         if let Some(dump) = run("dconf", &["dump", "/"]) {
             let mut dirs_found: Vec<String> = Vec::new();
@@ -761,7 +761,7 @@ pub fn scan_leftovers(target: &Target, mode: ScanMode, scope: Scope, others: &[P
                 };
                 let segs: Vec<&str> = sec.split('/').filter(|x| !x.is_empty() && *x != "/").collect();
                 for (i, seg) in segs.iter().enumerate() {
-                    // Skip vendor prefixes (org/gnome/…, com/…) — they are generic.
+                    // Skip vendor prefixes (org/gnome/…, com/…): they are generic.
                     if s.hit(seg) {
                         let dir = format!("/{}/", segs[..=i].join("/"));
                         if !dirs_found.iter().any(|d| dir.starts_with(d.as_str())) {
@@ -792,7 +792,7 @@ pub fn scan_leftovers(target: &Target, mode: ScanMode, scope: Scope, others: &[P
         }
     }
     if mode == ScanMode::Advanced {
-        // Unpackaged system-wide copies (/opt/<app>, /usr/local/share/<app>) — only if no package owns them.
+        // Unpackaged system-wide copies (/opt/<app>, /usr/local/share/<app>), only if no package owns them.
         let mut cand = Vec::new();
         for root in ["/opt", "/usr/local/share", "/usr/local/lib"] {
             if let Ok(rd) = fs::read_dir(root) {

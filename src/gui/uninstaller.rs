@@ -859,7 +859,7 @@ impl UninstallerView {
                             for (l, why) in &e.failed {
                                 crate::gui::style::row(ui, |ui| {
                                     ui.add(style::Label::new(style::rich(icon::X_CIRCLE).color(p.danger)));
-                                    ui.add(style::Label::new(style::rich(crate::tf!("{l} — {why}")).monospace().size(12.0)).truncate());
+                                    ui.add(style::Label::new(style::rich(crate::tf!("{l}: {why}")).monospace().size(12.0)).truncate());
                                 });
                             }
                         });

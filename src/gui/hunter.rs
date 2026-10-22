@@ -1,5 +1,5 @@
-//! Hunter Mode (Revo: Hunter Mode): drag the crosshair onto any window — or pick from the
-//! running programs — to see what it is and uninstall it, stop it from auto-starting, kill it,
+//! Hunter Mode (Revo: Hunter Mode): drag the crosshair onto any window (or pick from the
+//! running programs) to see what it is and uninstall it, stop it from auto-starting, kill it,
 //! kill and delete it, or open its folder.
 
 use super::style::{self, icon, Palette};
@@ -362,7 +362,7 @@ impl HunterView {
                 row(ui, "Autorun", "Doesn't start automatically");
             }
             for a in &t.autoruns {
-                row(ui, "Autorun", &crate::tf!("{} — {}{}", a.name, a.source.label(), if a.enabled { "" } else { tr(" (disabled)") }));
+                row(ui, "Autorun", &crate::tf!("{} · {}{}", a.name, a.source.label(), if a.enabled { "" } else { tr(" (disabled)") }));
             }
         });
         ui.add_space(10.0);

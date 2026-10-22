@@ -94,7 +94,7 @@ msgstr "Para todos los usuarios"
 msgid "Remove (backed up)"
 msgstr "Quitar (con copia de seguridad)"
 
-msgid "Can't be deleted — disable it instead"
+msgid "Can't be deleted: disable it instead"
 msgstr "No se puede eliminar; desactívalo en su lugar"
 
 msgid "Run now"
@@ -631,7 +631,7 @@ msgstr "No se encontraron extensiones en Chrome, Edge, Brave, Opera, Vivaldi, Ch
 msgid "Nothing matches the search."
 msgstr "Nada coincide con la búsqueda."
 
-msgid "Running — close it before removing"
+msgid "Running: close it before removing"
 msgstr "En ejecución: ciérralo antes de quitar"
 
 msgid "Theme"
@@ -688,7 +688,7 @@ msgstr "No se encontraron perfiles de navegador, listas de archivos recientes ni
 msgid "Office"
 msgstr "Office"
 
-msgid "Open — close it to clean"
+msgid "Open: close it to clean"
 msgstr "Abierto: ciérralo para limpiar"
 
 msgid "None"
@@ -1450,7 +1450,7 @@ msgstr "Próxima ejecución {}"
 msgid "System scheduler: {}"
 msgstr "Programador del sistema: {}"
 
-msgid "Last run {} — {}"
+msgid "Last run {}: {}"
 msgstr "Última ejecución {}: {}"
 
 msgid "Save"
@@ -1492,10 +1492,10 @@ msgstr "Siete pasadas; lento"
 msgid "On SSDs, flash drives and copy-on-write filesystems (btrfs, ZFS) the drive may keep old copies of data in places software can't reach. Overwriting is most reliable on hard disks; full-disk encryption protects SSDs best."
 msgstr "En SSD, memorias USB y sistemas de archivos copy-on-write (btrfs, ZFS), la unidad puede conservar copias antiguas en lugares a los que el software no llega. Sobrescribir es más fiable en discos duros; el cifrado de disco completo protege mejor los SSD."
 
-msgid "{label} — paused"
+msgid "{label}: paused"
 msgstr "{label}: en pausa"
 
-msgid "{label} — pass {pass}"
+msgid "{label}: pass {pass}"
 msgstr "{label}: pasada {pass}"
 
 msgid "Resume"
@@ -1537,7 +1537,7 @@ msgstr "Quitar de la lista"
 msgid "Destroy {} item(s)?"
 msgstr "¿Destruir {} elemento(s)?"
 
-msgid "They are overwritten {} time(s) and deleted. Nothing is backed up and they can't be recovered — not from the Trash, not by CleanCore."
+msgid "They are overwritten {} time(s) and deleted. Nothing is backed up and they can't be recovered: not from the Trash, not by CleanCore."
 msgstr "Se sobrescriben {} vez/veces y se eliminan. No hay copia y no se pueden recuperar: ni desde la Papelera ni con CleanCore."
 
 msgid "Destroy"
@@ -1564,7 +1564,7 @@ msgstr "{} libres de {}"
 msgid "Wipe the free space of {}?"
 msgstr "¿Borrar el espacio libre de {}?"
 
-msgid "{} of random data is written {passes} time(s). This can take a long time, and the drive is briefly full — programs saving files meanwhile may fail. Your files are not touched."
+msgid "{} of random data is written {passes} time(s). This can take a long time, and the drive is briefly full: programs saving files meanwhile may fail. Your files are not touched."
 msgstr "Se escriben {} de datos aleatorios {passes} vez/veces. Puede tardar mucho y la unidad se llena brevemente: los programas que guarden archivos mientras tanto pueden fallar. Tus archivos no se tocan."
 
 msgid "Wipe"

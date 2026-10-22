@@ -160,7 +160,7 @@ impl ExtensionsTab {
                         ui.add(style::Label::new(style::rich(icon::GLOBE).size(16.0).color(p.accent)));
                         ui.add(style::Label::new(style::strong(crate::tf!("{}  ›  {}", e.browser.label(), e.profile))));
                         if self.running.contains(&e.browser) {
-                            style::badge(ui, "Running — close it before removing", p.warning);
+                            style::badge(ui, "Running: close it before removing", p.warning);
                         }
                     });
                     ui.add_space(4.0);

@@ -94,8 +94,8 @@ msgstr "Для всех пользователей"
 msgid "Remove (backed up)"
 msgstr "Удалить (с резервной копией)"
 
-msgid "Can't be deleted — disable it instead"
-msgstr "Нельзя удалить — отключите вместо этого"
+msgid "Can't be deleted: disable it instead"
+msgstr "Нельзя удалить: отключите вместо этого"
 
 msgid "Run now"
 msgstr "Запустить сейчас"
@@ -631,8 +631,8 @@ msgstr "Расширения не найдены в Chrome, Edge, Brave, Opera, 
 msgid "Nothing matches the search."
 msgstr "Ничего не найдено."
 
-msgid "Running — close it before removing"
-msgstr "Запущен — закройте перед удалением"
+msgid "Running: close it before removing"
+msgstr "Запущен: закройте перед удалением"
 
 msgid "Theme"
 msgstr "Тема"
@@ -688,8 +688,8 @@ msgstr "Профили браузеров, списки недавних фай�
 msgid "Office"
 msgstr "Office"
 
-msgid "Open — close it to clean"
-msgstr "Открыт — закройте для очистки"
+msgid "Open: close it to clean"
+msgstr "Открыт: закройте для очистки"
 
 msgid "None"
 msgstr "Нет"
@@ -926,10 +926,10 @@ msgid "Reset to defaults"
 msgstr "Сбросить по умолчанию"
 
 msgid "File name patterns: * matches anything, ? one character. Click a pattern to switch it off."
-msgstr "Шаблоны имён файлов: * — что угодно, ? — один символ. Щёлкните по шаблону, чтобы выключить его."
+msgstr "Шаблоны имён файлов: * означает что угодно, ? означает один символ. Щёлкните по шаблону, чтобы выключить его."
 
 msgid "Click to switch on/off · right-click to remove"
-msgstr "Щелчок — вкл./выкл. · правый щелчок — удалить"
+msgstr "Щелчок: вкл./выкл. · правый щелчок: удалить"
 
 msgid "Add pattern"
 msgstr "Добавить шаблон"
@@ -1157,7 +1157,7 @@ msgid "Maximum log folder size"
 msgstr "Максимальный размер папки журналов"
 
 msgid "When the logs reach this size, all watches pause. 0 means no limit."
-msgstr "Когда журналы достигают этого размера, все наблюдения приостанавливаются. 0 — без ограничений."
+msgstr "Когда журналы достигают этого размера, все наблюдения приостанавливаются. Значение 0 снимает ограничение."
 
 msgid " MB"
 msgstr " МБ"
@@ -1450,8 +1450,8 @@ msgstr "Следующий запуск {}"
 msgid "System scheduler: {}"
 msgstr "Планировщик системы: {}"
 
-msgid "Last run {} — {}"
-msgstr "Последний запуск {} — {}"
+msgid "Last run {}: {}"
+msgstr "Последний запуск {}: {}"
 
 msgid "Save"
 msgstr "Сохранить"
@@ -1492,11 +1492,11 @@ msgstr "Семь проходов; медленно"
 msgid "On SSDs, flash drives and copy-on-write filesystems (btrfs, ZFS) the drive may keep old copies of data in places software can't reach. Overwriting is most reliable on hard disks; full-disk encryption protects SSDs best."
 msgstr "На SSD, флешках и файловых системах copy-on-write (btrfs, ZFS) накопитель может хранить старые копии данных там, куда программы не добираются. Перезапись надёжнее всего на жёстких дисках; SSD лучше защищает полное шифрование диска."
 
-msgid "{label} — paused"
-msgstr "{label} — на паузе"
+msgid "{label}: paused"
+msgstr "{label}: на паузе"
 
-msgid "{label} — pass {pass}"
-msgstr "{label} — проход {pass}"
+msgid "{label}: pass {pass}"
+msgstr "{label}: проход {pass}"
 
 msgid "Resume"
 msgstr "Продолжить"
@@ -1537,8 +1537,8 @@ msgstr "Убрать из списка"
 msgid "Destroy {} item(s)?"
 msgstr "Уничтожить элементов: {}?"
 
-msgid "They are overwritten {} time(s) and deleted. Nothing is backed up and they can't be recovered — not from the Trash, not by CleanCore."
-msgstr "Они перезаписываются {} раз(а) и удаляются. Резервной копии нет, восстановить их нельзя — ни из корзины, ни через CleanCore."
+msgid "They are overwritten {} time(s) and deleted. Nothing is backed up and they can't be recovered: not from the Trash, not by CleanCore."
+msgstr "Они перезаписываются {} раз(а) и удаляются. Резервной копии нет, восстановить их нельзя: ни из корзины, ни через CleanCore."
 
 msgid "Destroy"
 msgstr "Уничтожить"
@@ -1564,8 +1564,8 @@ msgstr "Свободно {} из {}"
 msgid "Wipe the free space of {}?"
 msgstr "Очистить свободное место на {}?"
 
-msgid "{} of random data is written {passes} time(s). This can take a long time, and the drive is briefly full — programs saving files meanwhile may fail. Your files are not touched."
-msgstr "{} случайных данных записываются {passes} раз(а). Это может занять много времени, и диск ненадолго заполнится — программы, сохраняющие файлы в это время, могут выдать ошибку. Ваши файлы не затрагиваются."
+msgid "{} of random data is written {passes} time(s). This can take a long time, and the drive is briefly full: programs saving files meanwhile may fail. Your files are not touched."
+msgstr "{} случайных данных записываются {passes} раз(а). Это может занять много времени, и диск ненадолго заполнится: программы, сохраняющие файлы в это время, могут выдать ошибку. Ваши файлы не затрагиваются."
 
 msgid "Wipe"
 msgstr "Очистить"
@@ -2513,13 +2513,13 @@ msgid "Program name"
 msgstr "Название программы"
 
 msgid "Exact name; several separated by ;"
-msgstr "Точное имя; несколько — через ;"
+msgstr "Точное имя; несколько разделяйте ;"
 
 msgid "Folder or main file"
 msgstr "Папка или главный файл"
 
 msgid "Pick below or type; several separated by ;"
-msgstr "Выберите ниже или введите; несколько — через ;"
+msgstr "Выберите ниже или введите; несколько разделяйте ;"
 
 msgid "Next"
 msgstr "Далее"

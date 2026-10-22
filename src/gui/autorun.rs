@@ -235,7 +235,7 @@ impl AutorunView {
                             }),
                             Box::new(|ui: &mut Ui| {
                                 crate::gui::style::row(ui, |ui| {
-                                    let tip = if e.removable { tr("Remove (backed up)") } else { tr("Can't be deleted — disable it instead") };
+                                    let tip = if e.removable { tr("Remove (backed up)") } else { tr("Can't be deleted: disable it instead") };
                                     ui.add_enabled_ui(e.removable, |ui| {
                                         if style::icon_button(ui, icon::TRASH, tip).clicked() {
                                             remove = Some(e.clone());
@@ -310,7 +310,7 @@ impl AutorunView {
                 ui.add(style::Label::new(style::strong(title).size(18.0)));
                 ui.add_space(6.0);
                 for e in list.iter().take(8) {
-                    ui.add(style::Label::new(style::rich(crate::tf!("• {}  —  {}", e.name, e.command)).size(12.5)).truncate());
+                    ui.add(style::Label::new(style::rich(crate::tf!("• {}: {}", e.name, e.command)).size(12.5)).truncate());
                 }
                 if list.len() > 8 {
                     ui.add(style::Label::new(style::muted(ui, crate::tf!("and {} more", list.len() - 8))));

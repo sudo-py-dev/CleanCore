@@ -93,7 +93,7 @@ msgstr ""
 msgid "Remove (backed up)"
 msgstr ""
 
-msgid "Can't be deleted — disable it instead"
+msgid "Can't be deleted: disable it instead"
 msgstr ""
 
 msgid "Run now"
@@ -630,7 +630,7 @@ msgstr ""
 msgid "Nothing matches the search."
 msgstr ""
 
-msgid "Running — close it before removing"
+msgid "Running: close it before removing"
 msgstr ""
 
 msgid "Theme"
@@ -687,7 +687,7 @@ msgstr ""
 msgid "Office"
 msgstr ""
 
-msgid "Open — close it to clean"
+msgid "Open: close it to clean"
 msgstr ""
 
 msgid "None"
@@ -1449,7 +1449,7 @@ msgstr ""
 msgid "System scheduler: {}"
 msgstr ""
 
-msgid "Last run {} — {}"
+msgid "Last run {}: {}"
 msgstr ""
 
 msgid "Save"
@@ -1491,10 +1491,10 @@ msgstr ""
 msgid "On SSDs, flash drives and copy-on-write filesystems (btrfs, ZFS) the drive may keep old copies of data in places software can't reach. Overwriting is most reliable on hard disks; full-disk encryption protects SSDs best."
 msgstr ""
 
-msgid "{label} — paused"
+msgid "{label}: paused"
 msgstr ""
 
-msgid "{label} — pass {pass}"
+msgid "{label}: pass {pass}"
 msgstr ""
 
 msgid "Resume"
@@ -1536,7 +1536,7 @@ msgstr ""
 msgid "Destroy {} item(s)?"
 msgstr ""
 
-msgid "They are overwritten {} time(s) and deleted. Nothing is backed up and they can't be recovered — not from the Trash, not by CleanCore."
+msgid "They are overwritten {} time(s) and deleted. Nothing is backed up and they can't be recovered: not from the Trash, not by CleanCore."
 msgstr ""
 
 msgid "Destroy"
@@ -1563,7 +1563,7 @@ msgstr ""
 msgid "Wipe the free space of {}?"
 msgstr ""
 
-msgid "{} of random data is written {passes} time(s). This can take a long time, and the drive is briefly full — programs saving files meanwhile may fail. Your files are not touched."
+msgid "{} of random data is written {passes} time(s). This can take a long time, and the drive is briefly full: programs saving files meanwhile may fail. Your files are not touched."
 msgstr ""
 
 msgid "Wipe"

@@ -109,7 +109,7 @@ impl HistoryView {
                         ui.add(style::Label::new(style::rich(ic).size(17.0).color(p.accent)));
                         ui.add(style::Label::new(style::strong(&g)));
                         if browser.is_some_and(|b| self.running.contains(&b)) {
-                            style::badge(ui, "Open — close it to clean", p.warning);
+                            style::badge(ui, "Open: close it to clean", p.warning);
                         }
                         ui.with_layout(crate::gui::style::far_layout(egui::Align::Center), |ui| {
                             let all = in_group.iter().all(|i| self.checked.contains(&i.id));

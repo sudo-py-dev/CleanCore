@@ -94,8 +94,8 @@ msgstr "Для всіх користувачів"
 msgid "Remove (backed up)"
 msgstr "Видалити (з резервною копією)"
 
-msgid "Can't be deleted — disable it instead"
-msgstr "Не можна видалити — вимкніть натомість"
+msgid "Can't be deleted: disable it instead"
+msgstr "Не можна видалити: вимкніть натомість"
 
 msgid "Run now"
 msgstr "Запустити зараз"
@@ -631,8 +631,8 @@ msgstr "Розширень не знайдено в Chrome, Edge, Brave, Opera, 
 msgid "Nothing matches the search."
 msgstr "Нічого не знайдено."
 
-msgid "Running — close it before removing"
-msgstr "Запущено — закрийте перед видаленням"
+msgid "Running: close it before removing"
+msgstr "Запущено: закрийте перед видаленням"
 
 msgid "Theme"
 msgstr "Тема"
@@ -688,8 +688,8 @@ msgstr "Профілів браузерів, списків нещодавніх
 msgid "Office"
 msgstr "Office"
 
-msgid "Open — close it to clean"
-msgstr "Відкрито — закрийте для очищення"
+msgid "Open: close it to clean"
+msgstr "Відкрито: закрийте для очищення"
 
 msgid "None"
 msgstr "Немає"
@@ -926,10 +926,10 @@ msgid "Reset to defaults"
 msgstr "Скинути до типових"
 
 msgid "File name patterns: * matches anything, ? one character. Click a pattern to switch it off."
-msgstr "Шаблони назв файлів: * — будь-що, ? — один символ. Клацніть шаблон, щоб вимкнути його."
+msgstr "Шаблони назв файлів: * означає будь-що, ? означає один символ. Клацніть шаблон, щоб вимкнути його."
 
 msgid "Click to switch on/off · right-click to remove"
-msgstr "Клацання — увімк./вимк. · правий клік — видалити"
+msgstr "Клацання: увімк./вимк. · правий клік: видалити"
 
 msgid "Add pattern"
 msgstr "Додати шаблон"
@@ -1157,7 +1157,7 @@ msgid "Maximum log folder size"
 msgstr "Максимальний розмір теки журналів"
 
 msgid "When the logs reach this size, all watches pause. 0 means no limit."
-msgstr "Коли журнали досягають цього розміру, усі спостереження призупиняються. 0 — без обмежень."
+msgstr "Коли журнали досягають цього розміру, усі спостереження призупиняються. Значення 0 знімає обмеження."
 
 msgid " MB"
 msgstr " МБ"
@@ -1450,8 +1450,8 @@ msgstr "Наступний запуск {}"
 msgid "System scheduler: {}"
 msgstr "Планувальник системи: {}"
 
-msgid "Last run {} — {}"
-msgstr "Останній запуск {} — {}"
+msgid "Last run {}: {}"
+msgstr "Останній запуск {}: {}"
 
 msgid "Save"
 msgstr "Зберегти"
@@ -1492,11 +1492,11 @@ msgstr "Сім проходів; повільно"
 msgid "On SSDs, flash drives and copy-on-write filesystems (btrfs, ZFS) the drive may keep old copies of data in places software can't reach. Overwriting is most reliable on hard disks; full-disk encryption protects SSDs best."
 msgstr "На SSD, флешках і файлових системах copy-on-write (btrfs, ZFS) накопичувач може зберігати старі копії даних там, куди програми не дістаються. Перезапис найнадійніший на жорстких дисках; SSD найкраще захищає повне шифрування диска."
 
-msgid "{label} — paused"
-msgstr "{label} — на паузі"
+msgid "{label}: paused"
+msgstr "{label}: на паузі"
 
-msgid "{label} — pass {pass}"
-msgstr "{label} — прохід {pass}"
+msgid "{label}: pass {pass}"
+msgstr "{label}: прохід {pass}"
 
 msgid "Resume"
 msgstr "Продовжити"
@@ -1537,8 +1537,8 @@ msgstr "Прибрати зі списку"
 msgid "Destroy {} item(s)?"
 msgstr "Знищити елементів: {}?"
 
-msgid "They are overwritten {} time(s) and deleted. Nothing is backed up and they can't be recovered — not from the Trash, not by CleanCore."
-msgstr "Вони перезаписуються {} раз(и) і видаляються. Резервної копії немає, відновити їх не можна — ні з кошика, ні через CleanCore."
+msgid "They are overwritten {} time(s) and deleted. Nothing is backed up and they can't be recovered: not from the Trash, not by CleanCore."
+msgstr "Вони перезаписуються {} раз(и) і видаляються. Резервної копії немає, відновити їх не можна: ні з кошика, ні через CleanCore."
 
 msgid "Destroy"
 msgstr "Знищити"
@@ -1564,8 +1564,8 @@ msgstr "Вільно {} з {}"
 msgid "Wipe the free space of {}?"
 msgstr "Очистити вільне місце на {}?"
 
-msgid "{} of random data is written {passes} time(s). This can take a long time, and the drive is briefly full — programs saving files meanwhile may fail. Your files are not touched."
-msgstr "{} випадкових даних записуються {passes} раз(и). Це може тривати довго, і диск ненадовго заповниться — програми, що зберігають файли в цей час, можуть видати помилку. Ваші файли не зачіпаються."
+msgid "{} of random data is written {passes} time(s). This can take a long time, and the drive is briefly full: programs saving files meanwhile may fail. Your files are not touched."
+msgstr "{} випадкових даних записуються {passes} раз(и). Це може тривати довго, і диск ненадовго заповниться: програми, що зберігають файли в цей час, можуть видати помилку. Ваші файли не зачіпаються."
 
 msgid "Wipe"
 msgstr "Очистити"
@@ -2513,13 +2513,13 @@ msgid "Program name"
 msgstr "Назва програми"
 
 msgid "Exact name; several separated by ;"
-msgstr "Точна назва; кілька — через ;"
+msgstr "Точна назва; кілька розділяйте ;"
 
 msgid "Folder or main file"
 msgstr "Тека або головний файл"
 
 msgid "Pick below or type; several separated by ;"
-msgstr "Виберіть нижче або введіть; кілька — через ;"
+msgstr "Виберіть нижче або введіть; кілька розділяйте ;"
 
 msgid "Next"
 msgstr "Далі"

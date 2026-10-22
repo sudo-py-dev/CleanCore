@@ -56,7 +56,7 @@ impl Control {
     }
 }
 
-/// xorshift64* — fast, and good enough for overwrite data (this isn't cryptography).
+/// xorshift64*: fast, and good enough for overwrite data (this isn't cryptography).
 struct Rng(u64);
 
 impl Rng {
