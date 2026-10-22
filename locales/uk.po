@@ -4297,6 +4297,9 @@ msgstr "Запустіть CleanCore від імені адміністрато�
 msgid "{}'s uninstaller did not remove it."
 msgstr "Деінсталятор {} не видалив його."
 
+msgid "{} is removed and won't come back. Some of its files were in use: they are deleted when Windows restarts."
+msgstr "{} видалено, і воно не повернеться. Деякі його файли були зайняті: їх буде видалено під час перезапуску Windows."
+
 msgid "{}'s uninstaller did not remove it. It stays blocked, and the daily check tries again."
 msgstr "Деінсталятор {} не видалив його. Блокування залишається, щоденна перевірка спробує знову."
 

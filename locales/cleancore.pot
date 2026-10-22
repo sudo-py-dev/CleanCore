@@ -4296,6 +4296,9 @@ msgstr ""
 msgid "{}'s uninstaller did not remove it."
 msgstr ""
 
+msgid "{} is removed and won't come back. Some of its files were in use: they are deleted when Windows restarts."
+msgstr ""
+
 msgid "{}'s uninstaller did not remove it. It stays blocked, and the daily check tries again."
 msgstr ""
 

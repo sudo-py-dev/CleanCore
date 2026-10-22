@@ -4298,6 +4298,9 @@ msgstr "הפעל את CleanCore כמנהל מערכת כדי להסיר את Mic
 msgid "{}'s uninstaller did not remove it."
 msgstr "מסיר ההתקנה של {} לא הסיר אותה."
 
+msgid "{} is removed and won't come back. Some of its files were in use: they are deleted when Windows restarts."
+msgstr "{} הוסרה ולא תחזור. חלק מהקבצים שלה היו בשימוש: הם יימחקו כש-Windows יופעל מחדש."
+
 msgid "{}'s uninstaller did not remove it. It stays blocked, and the daily check tries again."
 msgstr "מסיר ההתקנה של {} לא הסיר אותה. היא נשארת חסומה, והבדיקה היומית תנסה שוב."
 

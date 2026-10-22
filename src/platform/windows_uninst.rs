@@ -184,8 +184,9 @@ pub fn run_uninstaller(p: &Program, mode: RunMode) -> Result<RunResult> {
         return Ok(RunResult { command: script, exit_code: Some(if r.is_ok() { 0 } else { 1 }) });
     }
     if mode != RunMode::ForcedMsi && crate::keepaway::is_edge(p) {
-        crate::keepaway::uninstall_edge()?;
-        return Ok(RunResult { command: "setup.exe --uninstall --msedge --system-level --force-uninstall".into(), exit_code: Some(0) });
+        // Files still in use go at the next restart: 3010, as an MSI asking for one.
+        let reboot = crate::keepaway::uninstall_edge()?;
+        return Ok(RunResult { command: "setup.exe --uninstall --msedge --system-level --force-uninstall".into(), exit_code: Some(if reboot { 3010 } else { 0 }) });
     }
     let cmd = match mode {
         RunMode::Normal => p.uninstall_string.clone(),

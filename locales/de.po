@@ -4297,6 +4297,9 @@ msgstr "Starten Sie CleanCore als Administrator, um Microsoft Edge zu deinstalli
 msgid "{}'s uninstaller did not remove it."
 msgstr "Das Deinstallationsprogramm von {} hat es nicht entfernt."
 
+msgid "{} is removed and won't come back. Some of its files were in use: they are deleted when Windows restarts."
+msgstr "{} ist entfernt und kommt nicht zurück. Einige Dateien waren in Gebrauch: Sie werden beim Neustart von Windows gelöscht."
+
 msgid "{}'s uninstaller did not remove it. It stays blocked, and the daily check tries again."
 msgstr "Das Deinstallationsprogramm von {} hat es nicht entfernt. Es bleibt gesperrt, und die tägliche Prüfung versucht es erneut."
 

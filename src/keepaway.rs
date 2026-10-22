@@ -161,25 +161,69 @@ if ($old -and (Test-Path $hive)) {
 }
 "#;
 
-/// Edge: its own uninstaller. Microsoft lets it run outside the EEA only with Edge Update's
-/// developer switch set and the legacy Edge file present, so both are set for the run.
+/// Edge: its own uninstaller, then its folder. Microsoft lets the uninstaller run outside the
+/// EEA only with Edge Update's developer switch set and the legacy Edge file present, so both
+/// are set for the run. What it leaves of the program folder (it often does, while Edge Update
+/// or Edge's elevation service still run from it) is taken over by Administrators and deleted;
+/// files still in use are deleted when Windows restarts. Prints `REBOOT` in that case.
+///
+/// Only a folder named Edge is touched: EdgeWebView, EdgeUpdate and EdgeCore next to it are
+/// WebView2's, which other programs need (see `uninstaller::shared_runtime`). Edge Update is
+/// paused, not removed, for the same reason: Windows starts it again when WebView2 needs it.
 const EDGE_REMOVE: &str = r#"
 $ErrorActionPreference = 'SilentlyContinue'
-Get-Process msedge, identity_helper, MicrosoftEdgeUpdate | Stop-Process -Force
-Start-Sleep -Seconds 1
+# Where Edge is: the usual folders, and wherever its uninstall entry says (…\Edge\Application).
+$roots = @("${env:ProgramFiles(x86)}\Microsoft\Edge", "$env:ProgramFiles\Microsoft\Edge")
+foreach ($k in 'HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall\Microsoft Edge', 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Microsoft Edge') {
+  $l = (Get-ItemProperty $k).InstallLocation
+  if ($l) { $roots += Split-Path ($l.Trim('"').TrimEnd('\')) -Parent }
+}
+$roots = @($roots | Where-Object { $_ -and (Split-Path $_ -Leaf) -eq 'Edge' -and (Test-Path -LiteralPath $_) } | ForEach-Object { (Get-Item -LiteralPath $_).FullName.TrimEnd('\') } | Sort-Object -Unique)
+
+# Everything that runs from Edge's folder, and Edge Update, which starts Edge's processes again.
+function Stop-Edge {
+  Stop-Service edgeupdate, edgeupdatem, MicrosoftEdgeElevationService -Force
+  Get-Process msedge, msedge_proxy, identity_helper, elevation_service, notification_helper, pwahelper, cookie_exporter, ie_to_edge_stub, 'MicrosoftEdgeUpdate*' | Stop-Process -Force
+  Get-Process | Where-Object { $p = $_.Path; $p -and @($roots | Where-Object { $p.StartsWith("$_\", 'OrdinalIgnoreCase') }).Count } | Stop-Process -Force
+  Start-Sleep -Seconds 2
+}
+Stop-Edge
+
 $dev = 'HKLM:\SOFTWARE\WOW6432Node\Microsoft\EdgeUpdateDev'
 New-Item $dev -Force | Out-Null
 Set-ItemProperty $dev -Name AllowUninstall -Value 1 -Type DWord
 $legacy = "$env:SystemRoot\SystemApps\Microsoft.MicrosoftEdge_8wekyb3d8bbwe"
 $made = -not (Test-Path "$legacy\MicrosoftEdge.exe")
 if ($made) { New-Item $legacy -ItemType Directory -Force | Out-Null; New-Item "$legacy\MicrosoftEdge.exe" -ItemType File -Force | Out-Null }
-foreach ($d in ${env:ProgramFiles(x86)}, $env:ProgramFiles) {
-  Get-ChildItem "$d\Microsoft\Edge\Application\*\Installer\setup.exe" | ForEach-Object {
+foreach ($r in $roots) {
+  Get-ChildItem "$r\Application\*\Installer\setup.exe" | ForEach-Object {
     Start-Process $_.FullName '--uninstall --msedge --system-level --verbose-logging --force-uninstall' -Wait
   }
 }
 if ($made) { Remove-Item "$legacy\MicrosoftEdge.exe" -Force }
 Remove-ItemProperty $dev -Name AllowUninstall
+
+# What the uninstaller left of the program folder.
+Stop-Edge
+$svc = Get-CimInstance Win32_Service -Filter "Name='MicrosoftEdgeElevationService'"
+if ($svc -and @($roots | Where-Object { $svc.PathName.Trim('"').StartsWith("$_\", 'OrdinalIgnoreCase') }).Count) { sc.exe delete MicrosoftEdgeElevationService | Out-Null }
+Add-Type -Namespace CleanCore -Name Kernel32 -MemberDefinition '[DllImport("kernel32.dll", CharSet = CharSet.Unicode)] public static extern bool MoveFileEx(string from, string to, int flags);'
+foreach ($r in $roots) {
+  if (-not (Test-Path -LiteralPath $r)) { continue }
+  # Ownership to Administrators, then full control for them. takeown's prompt (for folders it
+  # can't list) gets no answer, so it skips them: icacls sets the owner of those, in any language.
+  cmd.exe /c "takeown /F `"$r`" /A /R <nul" | Out-Null
+  icacls.exe $r /setowner '*S-1-5-32-544' /T /C /Q | Out-Null
+  icacls.exe $r /grant '*S-1-5-32-544:(OI)(CI)F' /T /C /Q | Out-Null
+  Get-ChildItem -LiteralPath $r -Recurse -Force -File | ForEach-Object { $_.Attributes = 'Normal' }
+  Remove-Item -LiteralPath $r -Recurse -Force
+  if (Test-Path -LiteralPath $r) {
+    # Still in use: deleted when Windows restarts, deepest first so each folder is empty by then.
+    @(Get-ChildItem -LiteralPath $r -Recurse -Force) + @(Get-Item -LiteralPath $r) | Sort-Object { $_.FullName.Length } -Descending | ForEach-Object { [CleanCore.Kernel32]::MoveFileEx($_.FullName, [NullString]::Value, 4) | Out-Null }
+    'REBOOT'
+  }
+}
+
 # Its Store placeholder and shortcuts.
 Get-AppxPackage -AllUsers 'Microsoft.MicrosoftEdge.Stable' | Remove-AppxPackage -AllUsers
 Remove-Item "$env:PUBLIC\Desktop\Microsoft Edge.lnk", "$env:USERPROFILE\Desktop\Microsoft Edge.lnk", "$env:ProgramData\Microsoft\Windows\Start Menu\Programs\Microsoft Edge.lnk" -Force
@@ -234,16 +278,21 @@ pub fn is_edge(p: &crate::uninstaller::Program) -> bool {
 
 /// Uninstall Edge without blocking it: what the Uninstaller runs for it. Edge's registered
 /// uninstall command is refused outside the EEA (exit code 93); this sets Microsoft's switches
-/// for the run, as `remove` does.
-pub fn uninstall_edge() -> Result<()> {
+/// for the run, as `remove` does. Says whether files in use are left for the next restart.
+pub fn uninstall_edge() -> Result<bool> {
     if !crate::slop::is_admin() {
         bail!("{}", crate::i18n::tr("Run CleanCore as administrator to uninstall Microsoft Edge."));
     }
-    ps(EDGE_REMOVE)?;
-    if installed(App::Edge) {
+    let reboot = remove_edge()?;
+    if !reboot && installed(App::Edge) {
         bail!("{}", crate::tf!("{}'s uninstaller did not remove it.", App::Edge.name()));
     }
-    Ok(())
+    Ok(reboot)
+}
+
+/// Run `EDGE_REMOVE`; true when some files are deleted at the next restart.
+fn remove_edge() -> Result<bool> {
+    Ok(ps(EDGE_REMOVE)?.lines().any(|l| l.trim() == "REBOOT"))
 }
 
 /// Remove the app and block it from coming back. Keeps the daily check running.
@@ -252,8 +301,14 @@ pub fn remove(app: App) -> Result<String> {
     let mut k = load();
     let default_run = match app {
         App::Edge => {
-            ps(EDGE_REMOVE)?;
+            let reboot = remove_edge()?;
             ps(EDGE_BLOCK)?;
+            if reboot {
+                k.set(app, Some(Removed { time: Local::now(), default_run: None }));
+                save(&k)?;
+                ensure_daily_check(&k)?;
+                return Ok(crate::tf!("{} is removed and won't come back. Some of its files were in use: they are deleted when Windows restarts.", app.name()));
+            }
             None
         }
         App::OneDrive => {
@@ -364,5 +419,20 @@ mod tests {
         }
         // Edge's uninstaller is told to remove Edge only.
         assert!(EDGE_REMOVE.contains("--msedge"));
+        // The folders deleted afterwards are only ever named Edge (not EdgeUpdate, EdgeCore…),
+        // and Edge Update is stopped, never deleted.
+        assert!(EDGE_REMOVE.contains("(Split-Path $_ -Leaf) -eq 'Edge'"));
+        assert!(!EDGE_REMOVE.contains("sc.exe delete edgeupdate"));
+    }
+
+    /// The scripts parse (PowerShell's own parser: nothing runs).
+    #[test]
+    #[cfg(windows)]
+    fn scripts_parse() {
+        for s in [EDGE_REMOVE, EDGE_BLOCK, EDGE_ALLOW, ONEDRIVE_REMOVE, ONEDRIVE_BLOCK, ONEDRIVE_ALLOW] {
+            let check = "$e = $null; [void][System.Management.Automation.Language.Parser]::ParseInput($env:CLEANCORE_SCRIPT, [ref]$null, [ref]$e); if ($e) { $e | ForEach-Object { $_.Message }; exit 1 }";
+            let o = std::process::Command::new("powershell").args(["-NoProfile", "-NonInteractive", "-Command", check]).env("CLEANCORE_SCRIPT", s).output().unwrap();
+            assert!(o.status.success(), "{}\n{s}", String::from_utf8_lossy(&o.stdout));
+        }
     }
 }

@@ -4297,6 +4297,9 @@ msgstr "Lancez CleanCore en tant qu'administrateur pour désinstaller Microsoft 
 msgid "{}'s uninstaller did not remove it."
 msgstr "Le désinstallateur de {} ne l'a pas supprimé."
 
+msgid "{} is removed and won't come back. Some of its files were in use: they are deleted when Windows restarts."
+msgstr "{} est supprimée et ne reviendra pas. Certains de ses fichiers étaient utilisés : ils seront supprimés au redémarrage de Windows."
+
 msgid "{}'s uninstaller did not remove it. It stays blocked, and the daily check tries again."
 msgstr "Le programme de désinstallation de {} ne l'a pas supprimée. Elle reste bloquée et la vérification quotidienne réessaiera."
 
