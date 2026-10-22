@@ -590,7 +590,9 @@ impl CleanerView {
                             let n_sel = idx.iter().filter(|i| checked[**i]).count();
                             let mut all = n_sel == idx.len();
                             let cb = egui::Checkbox::new(&mut all, style::vis("")).indeterminate(n_sel > 0 && n_sel < idx.len());
-                            if ui.add(cb).changed() {
+                            let r = ui.add(cb);
+                            r.widget_info(|| egui::WidgetInfo::selected(egui::Role::CheckBox, ui.is_enabled(), all, &name));
+                            if r.changed() {
                                 idx.iter().for_each(|i| checked[*i] = all);
                             }
                             style::icon_tile(ui, style::category_icon(cat), p.accent, 28.0);
@@ -609,7 +611,8 @@ impl CleanerView {
                                 let bg = ui.painter().add(egui::Shape::Noop);
                                 let row = crate::gui::style::row_top(ui, |ui| {
                                     ui.add_space(4.0);
-                                    ui.checkbox(&mut self.checked[i], style::vis(""));
+                                    let r = ui.checkbox(&mut self.checked[i], style::vis(""));
+                                    r.widget_info(|| egui::WidgetInfo::selected(egui::Role::CheckBox, ui.is_enabled(), self.checked[i], friendly(&issue.location)));
                                     crate::gui::style::column(ui, |ui| {
                                         ui.spacing_mut().item_spacing.y = 1.0;
                                         let r = ui.add(style::Label::new(style::rich(friendly(&issue.location)).monospace().size(12.5)).sense(egui::Sense::click()).truncate());

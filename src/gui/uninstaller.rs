@@ -609,7 +609,7 @@ impl UninstallerView {
                 ui.add_space(24.0);
                 ui.vertical_centered(|ui| {
                     ui.add(egui::Spinner::new().size(32.0).color(p.accent));
-                    ui.add(style::Label::new(style::muted(ui, &pend.label)));
+                    ui.add(style::Label::new(style::muted(ui, tr(&pend.label))));
                 });
                 ui.add_space(24.0);
             });
@@ -654,7 +654,9 @@ impl UninstallerView {
                             vec![
                                 Box::new(|ui: &mut Ui| {
                                     let mut c = self.checked.contains(&prog.id);
-                                    if ui.checkbox(&mut c, style::vis("")).changed() {
+                                    let r = ui.checkbox(&mut c, style::vis(""));
+                                    r.widget_info(|| egui::WidgetInfo::selected(egui::Role::CheckBox, ui.is_enabled(), c, &prog.name));
+                                    if r.changed() {
                                         if c {
                                             self.checked.insert(prog.id.clone());
                                         } else {
@@ -1198,7 +1200,9 @@ impl UninstallerView {
                 style::card(ui, |ui| {
                     crate::gui::style::row(ui, |ui| {
                         let mut all = idx.iter().all(|i| w.checked[*i]);
-                        if ui.checkbox(&mut all, style::vis("")).on_hover_text(style::vis(tr("Select the whole group"))).changed() {
+                        let r = ui.checkbox(&mut all, style::vis(""));
+                        r.widget_info(|| egui::WidgetInfo::selected(egui::Role::CheckBox, ui.is_enabled(), all, tr("Select the whole group")));
+                        if r.on_hover_text(style::vis(tr("Select the whole group"))).changed() {
                             idx.iter().for_each(|i| w.checked[*i] = all);
                         }
                         style::icon_tile(ui, ic, p.accent, 28.0);
@@ -1213,7 +1217,8 @@ impl UninstallerView {
                         }
                         let (kind_ic, kind) = fix_kind(&w.leftovers[i].fix);
                         crate::gui::style::row(ui, |ui| {
-                            ui.checkbox(&mut w.checked[i], style::vis(""));
+                            let r = ui.checkbox(&mut w.checked[i], style::vis(""));
+                            r.widget_info(|| egui::WidgetInfo::selected(egui::Role::CheckBox, ui.is_enabled(), w.checked[i], &w.leftovers[i].location));
                             ui.add(style::Label::new(style::rich(kind_ic).size(16.0).color(if w.checked[i] { p.accent } else { p.faint })));
                             crate::gui::style::column(ui, |ui| {
                                 ui.spacing_mut().item_spacing.y = 2.0;

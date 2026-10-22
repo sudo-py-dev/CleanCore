@@ -86,6 +86,9 @@ const NAMES: &[&str] = &[
     "Video",
 ];
 
+/// Product names that stay in English but are made of everyday words.
+const PRODUCTS: &[&str] = &["Dev Home", "Microsoft To Do", "Power Automate", "Xbox Console Companion", "Xbox Game Bar", "Xbox Game Overlay"];
+
 /// Text of the sandbox itself (names the test made up), not interface text.
 const SANDBOX: &[&str] = &["Fake App", "Keep Me", "Zapp", "myapp", "Gone", "daemon"];
 
@@ -104,6 +107,9 @@ fn untranslated(text: &str) -> bool {
     let t = text.trim();
     // Any letter of another alphabet: translated (English names inside it are fine).
     if t.chars().any(|c| c.is_alphabetic() && !c.is_ascii()) {
+        return false;
+    }
+    if PRODUCTS.contains(&t) {
         return false;
     }
     if t.is_empty() || t.contains('/') || t.contains('\\') || t.contains("::") || SANDBOX.iter().any(|s| t.contains(s)) {

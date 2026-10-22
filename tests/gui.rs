@@ -130,7 +130,7 @@ fn walk_through_every_tool() {
     h.run_steps(3);
     // Clicking a program's row doesn't select it for uninstalling; only its checkbox does.
     let uninstall = format!("{}  Uninstall", cleancore::gui::style::icon::TRASH);
-    h.get_by_label("Fake App").click();
+    h.query_all_by_label("Fake App").find(|n| n.accesskit_node().role() != Role::CheckBox).unwrap().click();
     h.run_steps(3);
     assert!(h.get_by_role_and_label(Role::Button, &uninstall).accesskit_node().is_disabled());
     h.get_by_role(Role::CheckBox).click();

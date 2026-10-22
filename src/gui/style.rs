@@ -1299,7 +1299,10 @@ pub fn dropdown<R>(ui: &mut Ui, id: &str, selected: &str, width: f32, contents: 
         let w = &mut ui.visuals_mut().widgets;
         w.inactive.weak_bg_fill = p.surface;
         w.inactive.bg_stroke = Stroke::new(1.0, p.border);
-        egui::ComboBox::from_id_salt(id).selected_text(vis(selected)).width(width).height(420.0).show_ui(ui, contents).inner
+        let r = egui::ComboBox::from_id_salt(id).selected_text(vis(selected)).width(width).height(420.0).show_ui(ui, contents);
+        // No label beside it: what it shows is its name for screen readers.
+        r.response.widget_info(|| egui::WidgetInfo::labeled(egui::Role::ComboBox, ui.is_enabled(), selected));
+        r.inner
     })
     .inner
 }

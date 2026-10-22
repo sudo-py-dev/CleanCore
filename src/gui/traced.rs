@@ -219,8 +219,8 @@ fn busy(ui: &mut Ui, p: Palette, title: &str, sub: &str) {
         ui.vertical_centered(|ui| {
             ui.add(egui::Spinner::new().size(36.0).color(p.accent));
             ui.add_space(6.0);
-            ui.add(style::Label::new(style::strong(title)));
-            ui.add(style::Label::new(style::muted(ui, sub)));
+            ui.add(style::Label::new(style::strong(tr(title))));
+            ui.add(style::Label::new(style::muted(ui, tr(sub))));
         });
         ui.add_space(20.0);
     });
