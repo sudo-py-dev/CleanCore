@@ -4,7 +4,7 @@
 use super::style::{self, icon, Palette};
 use super::{take, Cx, Pending};
 use crate::update::{self, Release};
-use eframe::egui::{self, RichText, Ui};
+use eframe::egui::{self, Ui};
 
 pub struct Updates {
     check: Option<Pending<Result<Option<Release>, String>>>,
@@ -76,7 +76,7 @@ impl Updates {
             style::section_title(ui, "Updates");
             crate::gui::style::row(ui, |ui| {
                 crate::gui::style::column(ui, |ui| {
-                    ui.label(crate::tf!("CleanCore {}", update::CURRENT));
+                    ui.add(style::Label::new(crate::tf!("CleanCore {}", update::CURRENT)));
                     let (text, col) = if self.installed {
                         ("Update installed. Restart CleanCore to use it.".to_string(), p.success)
                     } else if let Some(r) = &self.available {
@@ -86,7 +86,7 @@ impl Updates {
                     } else {
                         ("Updates come from the project's GitHub releases.".to_string(), p.muted)
                     };
-                    ui.label(RichText::new(text).size(12.5).color(col));
+                    ui.add(style::Label::new(style::rich(text).size(12.5).color(col)));
                 });
                 ui.with_layout(crate::gui::style::far_layout(egui::Align::Center), |ui| {
                     let busy = self.check.is_some() || self.install.is_some();
@@ -118,11 +118,11 @@ impl Updates {
             style::setting_row(ui, "Check for updates automatically", "Once a day, when CleanCore starts. Updates are installed only when you choose to.", |ui| {
                 style::toggle(ui, check_updates, "Check for updates automatically");
             });
-            ui.label(
-                RichText::new(crate::tf!("{}  Every update is checked against the CleanCore release signature and its checksum before it is installed.", icon::SHIELD_CHECK))
+            ui.add(style::Label::new(
+                style::rich(crate::tf!("{}  Every update is checked against the CleanCore release signature and its checksum before it is installed.", icon::SHIELD_CHECK))
                     .size(12.0)
                     .color(p.muted),
-            );
+            ));
         });
     }
 }

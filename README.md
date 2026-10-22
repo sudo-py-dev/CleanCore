@@ -38,6 +38,19 @@ Translations are standard gettext catalogs in [`locales/`](locales). To add or f
 the `.po` file with any PO editor (Poedit, Weblate, Lokalize). After changing interface text
 in the code, run `python3 locales/extract.py` to update the catalogs.
 
+**Adding a language** needs only its catalog; no code changes:
+
+1. Copy `locales/cleancore.pot` to `locales/<code>.po`, using the language's code (`ar`, `it`,
+   `pt_BR`, `zh_CN`, …), and set `"Language: <code>\n"` in its header.
+2. Optionally add `"X-Language-Name: Italiano\n"` to the header, which is the name shown in
+   Settings. Common languages already have their usual name. Right-to-left languages (Arabic,
+   Persian, Urdu, Hebrew, Yiddish, …) are recognized by their code; for any other language,
+   `"X-Text-Direction: rtl\n"` sets the direction.
+3. Translate, then rebuild. The language appears in Settings and is picked up from the desktop
+   language. Right-to-left languages mirror the whole interface and their text is laid out in
+   correct reading order. Scripts the bundled fonts don't cover (Arabic, Chinese, Japanese,
+   Korean, Thai, Hindi, …) use a font from the system. Untranslated entries show in English.
+
 ## Build
 
 You need a recent [Rust toolchain](https://rustup.rs).

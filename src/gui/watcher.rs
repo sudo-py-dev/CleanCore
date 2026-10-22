@@ -6,7 +6,7 @@ use super::{tree::Browser, Cx};
 use crate::gui::style::ColumnsInOrder;
 use crate::i18n::tr;
 use crate::watcher::{self, Watch, WatchEvent};
-use eframe::egui::{self, Color32, RichText, Ui};
+use eframe::egui::{self, Color32, Ui};
 use egui_extras::{Column, TableBuilder};
 use std::time::{Duration, Instant};
 
@@ -144,15 +144,16 @@ impl WatcherView {
                     .corner_radius(8)
                     .inner_margin(egui::Margin::symmetric(12, 8))
                     .show(ui, |ui| {
-                        ui.label(RichText::new(crate::tf!("{}  Recording", icon::RECORD)).color(p.success).family(style::semibold()));
+                        ui.add(style::Label::new(style::rich(crate::tf!("{}  Recording", icon::RECORD)).color(p.success).family(style::semibold())));
                     });
             } else {
-                start = style::primary(ui, icon::PLAY, "Start recording").on_hover_text(tr("Record changes while CleanCore is open")).clicked();
+                start = style::primary(ui, icon::PLAY, "Start recording").on_hover_text(style::vis(tr("Record changes while CleanCore is open"))).clicked();
             }
             ui.add_space(6.0);
-            login_changed =
-                style::toggle(ui, &mut at_login, "Start recorder at login").on_hover_text(tr("Keep recording in the background, even when CleanCore is closed")).changed();
-            ui.label(tr("Record in the background"));
+            login_changed = style::toggle(ui, &mut at_login, "Start recorder at login")
+                .on_hover_text(style::vis(tr("Keep recording in the background, even when CleanCore is closed")))
+                .changed();
+            ui.add(style::Label::new(tr("Record in the background")));
         });
         if start {
             let settings = cx.settings.clone();
@@ -233,11 +234,11 @@ impl WatcherView {
     /// Left side: quick picks, a path field, the full browser on demand, and what is watched.
     fn watch_panel(&mut self, ui: &mut Ui, cx: &mut Cx, p: Palette) -> Option<RowAction> {
         style::section_title(ui, "What to watch");
-        ui.label(style::muted(ui, tr("Pick a place a program is likely to change, or choose your own.")).size(12.5));
+        ui.add(style::Label::new(style::muted(ui, tr("Pick a place a program is likely to change, or choose your own.")).size(12.5)));
         ui.add_space(6.0);
         crate::gui::style::row_wrapped(ui, |ui| {
             for (ic, label, path) in quick_picks() {
-                if style::secondary(ui, ic, label).on_hover_text(&path).clicked() {
+                if style::secondary(ui, ic, label).on_hover_text(style::vis(&path)).clicked() {
                     self.add_path = path;
                     self.add(cx);
                 }
@@ -270,7 +271,7 @@ impl WatcherView {
             }
         });
         if cfg!(windows) {
-            ui.checkbox(&mut self.add_reads, tr("Also record reads (very noisy)"));
+            ui.checkbox(&mut self.add_reads, style::vis(tr("Also record reads (very noisy)")));
         }
         let label = if self.show_browser { tr("Hide all locations") } else { tr("Browse all locations") };
         crate::gui::style::row(ui, |ui| {
@@ -295,12 +296,12 @@ impl WatcherView {
         style::divider(ui);
         ui.add_space(8.0);
         crate::gui::style::row(ui, |ui| {
-            ui.label(style::strong(tr("Watching")));
+            ui.add(style::Label::new(style::strong(tr("Watching"))));
             style::badge(ui, &self.watches.len().to_string(), p.accent);
             ui.with_layout(crate::gui::style::far_layout(egui::Align::Center), |ui| {
                 let r = style::icon_button(ui, icon::EXPORT, "Export all");
                 egui::Popup::menu(&r).width(360.0).show(|ui| {
-                    ui.label(style::muted(ui, tr("Folder (one CSV per watched place)")));
+                    ui.add(style::Label::new(style::muted(ui, tr("Folder (one CSV per watched place)"))));
                     style::path_input(ui, "watch-export-dir", &mut self.export_dir, "", 340.0, style::Pick::Folder);
                     if style::primary(ui, icon::EXPORT, "Export all").clicked() {
                         let dir = std::path::PathBuf::from(&self.export_dir);
@@ -322,7 +323,7 @@ impl WatcherView {
         egui::ScrollArea::vertical().id_salt("watched").auto_shrink([false, false]).show(ui, |ui| {
             if self.watches.is_empty() {
                 ui.add_space(10.0);
-                ui.label(style::muted(ui, tr("Nothing yet. Use a quick pick above to start.")));
+                ui.add(style::Label::new(style::muted(ui, tr("Nothing yet. Use a quick pick above to start."))));
             }
             for w in self.watches.clone() {
                 let sel = self.selected.as_deref() == Some(w.path.as_str());
@@ -341,12 +342,12 @@ impl WatcherView {
             ui.set_width(ui.available_width());
             crate::gui::style::row(ui, |ui| {
                 let (dot, col, state) = if w.active { (icon::RECORD, p.success, "watching") } else { (icon::PAUSE, p.faint, "paused") };
-                ui.label(RichText::new(dot).color(col)).on_hover_text(state);
+                ui.add(style::Label::new(style::rich(dot).color(col))).on_hover_text(style::vis(state));
                 crate::gui::style::column(ui, |ui| {
                     // Leave room for the action icons of the selected row.
                     ui.set_max_width((ui.available_width() - if sel { 150.0 } else { 0.0 }).max(60.0));
-                    ui.add(egui::Label::new(RichText::new(watch_name(&w.path)).color(if sel { p.accent } else { p.text })).truncate());
-                    ui.add(egui::Label::new(RichText::new(friendly_path(&w.path)).size(11.5).color(p.muted)).truncate());
+                    ui.add(style::Label::new(style::rich(watch_name(&w.path)).color(if sel { p.accent } else { p.text })).truncate());
+                    ui.add(style::Label::new(style::rich(friendly_path(&w.path)).size(11.5).color(p.muted)).truncate());
                 });
                 if sel {
                     ui.with_layout(crate::gui::style::far_layout(egui::Align::Center), |ui| {
@@ -384,13 +385,13 @@ impl WatcherView {
             // Narrow: the filter goes on its own line under the title.
             let narrow = ui.available_width() < 470.0;
             crate::gui::style::row(ui, |ui| {
-                ui.label(style::strong(tr("Changes")));
+                ui.add(style::Label::new(style::strong(tr("Changes"))));
                 style::badge(ui, &self.events.len().to_string(), p.accent);
                 if let Some(w) = self.selected_watch() {
-                    ui.add(egui::Label::new(RichText::new(crate::tf!("in {}", watch_name(&w.path))).size(12.5).color(p.muted)).truncate());
+                    ui.add(style::Label::new(style::rich(crate::tf!("in {}", watch_name(&w.path))).size(12.5).color(p.muted)).truncate());
                 }
                 ui.with_layout(crate::gui::style::far_layout(egui::Align::Center), |ui| {
-                    if style::segment(ui, self.table_view, "Details").on_hover_text(tr("Every field, as a table")).clicked() {
+                    if style::segment(ui, self.table_view, "Details").on_hover_text(style::vis(tr("Every field, as a table"))).clicked() {
                         self.table_view = true;
                     }
                     if style::segment(ui, !self.table_view, "Simple").clicked() {
@@ -479,7 +480,7 @@ impl WatcherView {
                     .header(26.0, |mut hd| {
                         for t in crate::gui::style::ordered(vec!["Time", "Process", "PID", "Operation", "Key", "Value", "New data", "Old data", "Type"]) {
                             hd.col(|ui| {
-                                ui.label(RichText::new(tr(t)).size(12.5).color(p.muted));
+                                ui.add(style::Label::new(style::rich(tr(t)).size(12.5).color(p.muted)));
                             });
                         }
                     })
@@ -510,7 +511,7 @@ impl WatcherView {
                                         if lit {
                                             ui.painter().rect_filled(ui.max_rect(), 0.0, hl);
                                         }
-                                        ui.add(egui::Label::new(RichText::new(c).color(col)).truncate()).on_hover_text(&e.key);
+                                        ui.add(style::Label::new(style::rich(c).color(col)).truncate()).on_hover_text(style::vis(&e.key));
                                     })],
                                 );
                             }
@@ -553,14 +554,14 @@ fn step_tile(ui: &mut Ui, width: f32, n: usize, title: &str, text: &str, done: b
     let c = mr.pos(26.0, rect.center().y);
     if done {
         ui.painter().circle_filled(c, 12.0, p.success);
-        ui.painter().text(c, egui::Align2::CENTER_CENTER, icon::CHECK, egui::FontId::proportional(13.0), Color32::WHITE);
+        ui.painter().text(c, egui::Align2::CENTER_CENTER, style::vstr(icon::CHECK), egui::FontId::proportional(13.0), Color32::WHITE);
     } else {
         ui.painter().circle_stroke(c, 11.0, egui::Stroke::new(1.5, p.accent));
-        ui.painter().text(c, egui::Align2::CENTER_CENTER, n.to_string(), egui::FontId::new(12.5, style::semibold()), p.accent);
+        ui.painter().text(c, egui::Align2::CENTER_CENTER, style::vstr(n.to_string()), egui::FontId::new(12.5, style::semibold()), p.accent);
     }
     let painter = ui.painter().with_clip_rect(rect.shrink(4.0));
-    painter.text(mr.pos(48.0, rect.center().y - 9.0), mr.start(egui::Align::Center), title, egui::FontId::new(14.0, style::semibold()), p.text);
-    painter.text(mr.pos(48.0, rect.center().y + 10.0), mr.start(egui::Align::Center), text, egui::FontId::proportional(12.0), p.muted);
+    painter.text(mr.pos(48.0, rect.center().y - 9.0), mr.start(egui::Align::Center), style::vstr(title), egui::FontId::new(14.0, style::semibold()), p.text);
+    painter.text(mr.pos(48.0, rect.center().y + 10.0), mr.start(egui::Align::Center), style::vstr(text), egui::FontId::proportional(12.0), p.muted);
 }
 
 /// The usual places programs keep their settings, for one-click watching.
@@ -632,14 +633,14 @@ fn change_row(ui: &mut Ui, e: &WatchEvent, p: Palette) -> bool {
         .horizontal_top(|ui| {
             let (rect, _) = ui.allocate_exact_size(egui::vec2(30.0, 30.0), egui::Sense::hover());
             ui.painter().rect_filled(rect, 9.0, col.gamma_multiply(0.14));
-            ui.painter().text(rect.center(), egui::Align2::CENTER_CENTER, ic, egui::FontId::proportional(15.0), col);
+            ui.painter().text(rect.center(), egui::Align2::CENTER_CENTER, style::vstr(ic), egui::FontId::proportional(15.0), col);
             crate::gui::style::column(ui, |ui| {
                 ui.spacing_mut().item_spacing.y = 2.0;
                 ui.set_width((ui.available_width() - 110.0).max(140.0));
                 crate::gui::style::row(ui, |ui| {
                     ui.spacing_mut().item_spacing.x = 5.0;
-                    ui.add(egui::Label::new(style::strong(&what)).truncate());
-                    ui.label(RichText::new(tr(verb)).color(p.muted));
+                    ui.add(style::Label::new(style::strong(&what)).truncate());
+                    ui.add(style::Label::new(style::rich(tr(verb)).color(p.muted)));
                 });
                 // Old and new values, when the change has them.
                 let short = |s: &str| if s.chars().count() > 60 { s.chars().take(59).collect::<String>() + "…" } else { s.to_string() };
@@ -647,25 +648,25 @@ fn change_row(ui: &mut Ui, e: &WatchEvent, p: Palette) -> bool {
                     (Some(old), Some(new)) => {
                         crate::gui::style::row(ui, |ui| {
                             ui.spacing_mut().item_spacing.x = 6.0;
-                            ui.label(RichText::new(short(old)).monospace().size(12.0).color(p.danger).strikethrough());
-                            ui.label(RichText::new(crate::gui::style::icon_forward()).size(12.0).color(p.faint));
-                            ui.label(RichText::new(short(new)).monospace().size(12.0).color(p.success));
+                            ui.add(style::Label::new(style::rich(short(old)).monospace().size(12.0).color(p.danger).strikethrough()));
+                            ui.add(style::Label::new(style::rich(crate::gui::style::icon_forward()).size(12.0).color(p.faint)));
+                            ui.add(style::Label::new(style::rich(short(new)).monospace().size(12.0).color(p.success)));
                         });
                     }
                     (None, Some(new)) if !new.is_empty() => {
-                        ui.label(RichText::new(short(new)).monospace().size(12.0).color(p.success));
+                        ui.add(style::Label::new(style::rich(short(new)).monospace().size(12.0).color(p.success)));
                     }
                     (Some(old), None) if !old.is_empty() => {
-                        ui.label(RichText::new(short(old)).monospace().size(12.0).color(p.danger).strikethrough());
+                        ui.add(style::Label::new(style::rich(short(old)).monospace().size(12.0).color(p.danger).strikethrough()));
                     }
                     _ => {}
                 }
-                ui.add(egui::Label::new(RichText::new(friendly_path(&e.key)).size(11.5).color(p.faint)).truncate()).on_hover_text(&e.key);
+                ui.add(style::Label::new(style::rich(friendly_path(&e.key)).size(11.5).color(p.faint)).truncate()).on_hover_text(style::vis(&e.key));
             });
             ui.with_layout(crate::gui::style::far_layout(egui::Align::Min), |ui| {
                 crate::gui::style::column(ui, |ui| {
                     ui.with_layout(egui::Layout::top_down(egui::Align::Max), |ui| {
-                        ui.label(RichText::new(e.time.format("%H:%M:%S").to_string()).size(12.0).color(p.muted));
+                        ui.add(style::Label::new(style::rich(e.time.format("%H:%M:%S").to_string()).size(12.0).color(p.muted)));
                         if !e.process.is_empty() {
                             style::badge(ui, &e.process, p.accent);
                         }

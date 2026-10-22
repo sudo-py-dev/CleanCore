@@ -2,6 +2,7 @@ msgid ""
 msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: ru\n"
+"X-Language-Name: Русский\n"
 
 msgid "Reading startup entries, including system ones"
 msgstr "Чтение элементов автозапуска, включая системные"
@@ -1134,17 +1135,8 @@ msgstr "Светлая"
 msgid "Dark"
 msgstr "Тёмная"
 
-msgid "Save changes"
-msgstr "Сохранить изменения"
-
 msgid "Appearance, safety options, lists and storage"
 msgstr "Оформление, безопасность, списки и хранилище"
-
-msgid "Discard"
-msgstr "Отменить изменения"
-
-msgid "Settings saved"
-msgstr "Настройки сохранены"
 
 msgid "Exclude list"
 msgstr "Список исключений"

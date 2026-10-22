@@ -2,6 +2,7 @@ msgid ""
 msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: fr\n"
+"X-Language-Name: Français\n"
 
 msgid "Reading startup entries, including system ones"
 msgstr "Lecture des entrées de démarrage, y compris celles du système"
@@ -1134,17 +1135,8 @@ msgstr "Clair"
 msgid "Dark"
 msgstr "Sombre"
 
-msgid "Save changes"
-msgstr "Enregistrer les modifications"
-
 msgid "Appearance, safety options, lists and storage"
 msgstr "Apparence, options de sécurité, listes et stockage"
-
-msgid "Discard"
-msgstr "Annuler les modifications"
-
-msgid "Settings saved"
-msgstr "Paramètres enregistrés"
 
 msgid "Exclude list"
 msgstr "Liste d'exclusion"

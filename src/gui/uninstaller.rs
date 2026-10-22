@@ -10,7 +10,7 @@ use crate::gui::style::ColumnsInOrder;
 use crate::i18n::tr;
 use crate::model::{Issue, ScanMode};
 use crate::uninstaller::{self as uninst, HistoryEntry, Meta, Operation, Program, ProgramKind, RunMode, RunResult, Target};
-use eframe::egui::{self, Color32, RichText, Ui, Vec2};
+use eframe::egui::{self, Color32, Ui, Vec2};
 use egui_extras::{Column, TableBuilder};
 use std::collections::BTreeSet;
 
@@ -115,7 +115,6 @@ pub struct UninstallerView {
     search: String,
     group: Option<String>,
     checked: BTreeSet<String>,
-    focus: Option<String>,
     history: Vec<HistoryEntry>,
     history_sel: Option<usize>,
     export_path: String,
@@ -146,7 +145,6 @@ impl UninstallerView {
             search: String::new(),
             group: None,
             checked: BTreeSet::new(),
-            focus: None,
             history: Vec::new(),
             history_sel: None,
             export_path: super::export_dir().join("installed-programs.html").display().to_string(),
@@ -394,8 +392,8 @@ impl UninstallerView {
         };
         let (mut forced, mut refresh, mut trace) = (false, false, false);
         style::page_header(ui, "Uninstaller", &subtitle, |ui| {
-            forced = style::secondary(ui, icon::CROSSHAIR, "Forced Uninstall").on_hover_text(tr("Remove a program that isn't listed or was partly removed")).clicked();
-            if style::secondary(ui, icon::RECORD, "Install & trace").on_hover_text(tr("Record an installation so it can be undone exactly")).clicked() {
+            forced = style::secondary(ui, icon::CROSSHAIR, "Forced Uninstall").on_hover_text(style::vis(tr("Remove a program that isn't listed or was partly removed"))).clicked();
+            if style::secondary(ui, icon::RECORD, "Install & trace").on_hover_text(style::vis(tr("Record an installation so it can be undone exactly"))).clicked() {
                 trace = true;
             }
             refresh = style::icon_button(ui, icon::REFRESH, "Refresh").clicked();
@@ -435,11 +433,13 @@ impl UninstallerView {
             egui::Frame::new().fill(p.accent_soft).corner_radius(10).inner_margin(egui::Margin::symmetric(14, 10)).show(ui, |ui| {
                 ui.set_width(ui.available_width());
                 crate::gui::style::row(ui, |ui| {
-                    ui.label(RichText::new(icon::INFO).size(18.0).color(p.accent));
+                    ui.add(style::Label::new(style::rich(icon::INFO).size(18.0).color(p.accent)));
                     crate::gui::style::column(ui, |ui| {
-                        ui.label(style::strong(crate::tf!("Finish uninstalling {}", pend.label)));
+                        ui.add(style::Label::new(style::strong(crate::tf!("Finish uninstalling {}", pend.label))));
                         let why = if pend.reboot_needed { tr("Its uninstaller asked for a restart") } else { tr("The uninstall was interrupted") };
-                        ui.label(style::muted(ui, crate::tf!("{why} ({}). Scan for the leftovers it left behind.", pend.started.format("%d %b %H:%M"))).size(12.5));
+                        ui.add(style::Label::new(
+                            style::muted(ui, crate::tf!("{why} ({}). Scan for the leftovers it left behind.", pend.started.format("%d %b %H:%M"))).size(12.5),
+                        ));
                     });
                     ui.with_layout(crate::gui::style::far_layout(egui::Align::Center), |ui| {
                         dismiss = style::ghost(ui, icon::X, "Dismiss").clicked();
@@ -522,7 +522,12 @@ impl UninstallerView {
         // Toolbar: search, group and filters on the left; actions for the selection on the right.
         let visible: Vec<usize> = self.visible(cx);
         let n_checked = self.checked.len();
-        let focus = self.focus.as_ref().and_then(|id| visible.iter().map(|i| &self.programs[*i]).find(|x| &x.id == id)).cloned();
+        // Only ticked programs are ever uninstalled: the single-program actions apply to the one
+        // ticked program, and are off when none is.
+        let ticked_one = match n_checked {
+            1 => self.programs.iter().find(|x| self.checked.contains(&x.id)).cloned(),
+            _ => None,
+        };
         let mut start: Option<(Program, RunMode)> = None;
         let mut queue: Option<Vec<Program>> = None;
         // Narrow windows: shorter search and group fields, Quick uninstall as an icon.
@@ -537,13 +542,13 @@ impl UninstallerView {
             };
             let mut manage = false;
             style::dropdown(ui, "program-group", &crate::tf!("{}  {current}", icon::TAG), if narrow { 130.0 } else { 170.0 }, |ui| {
-                ui.selectable_value(&mut self.group, None, tr("All groups"));
-                ui.selectable_value(&mut self.group, Some("New".into()), crate::tf!("New ({new_n})"));
+                ui.selectable_value(&mut self.group, None, style::vis(tr("All groups")));
+                ui.selectable_value(&mut self.group, Some("New".into()), style::vis(crate::tf!("New ({new_n})")));
                 for (g, ids) in self.meta.groups.clone() {
-                    ui.selectable_value(&mut self.group, Some(g.clone()), crate::tf!("{g} ({})", ids.len()));
+                    ui.selectable_value(&mut self.group, Some(g.clone()), style::vis(crate::tf!("{g} ({})", ids.len())));
                 }
                 ui.separator();
-                manage = ui.button(crate::tf!("{}  Manage groups…", icon::GEAR)).clicked();
+                manage = ui.button(style::vis(crate::tf!("{}  Manage groups…", icon::GEAR))).clicked();
             });
             if manage {
                 self.groups_dlg = Some(GroupsDialog::default());
@@ -555,9 +560,11 @@ impl UninstallerView {
                         cx.save_settings();
                         self.loaded = false;
                     }
-                    ui.label(tr("Show system components"));
+                    ui.add(style::Label::new(tr("Show system components")));
                 });
-                ui.label(style::muted(ui, if cfg!(windows) { tr("Updates, runtimes and Windows parts.") } else { tr("Libraries and packages without an app.") }).size(12.0));
+                ui.add(style::Label::new(
+                    style::muted(ui, if cfg!(windows) { tr("Updates, runtimes and Windows parts.") } else { tr("Libraries and packages without an app.") }).size(12.0),
+                ));
             });
             ui.with_layout(crate::gui::style::far_layout(egui::Align::Center), |ui| {
                 if n_checked > 1 {
@@ -568,9 +575,9 @@ impl UninstallerView {
                         self.checked.clear();
                     }
                 } else {
-                    ui.add_enabled_ui(focus.is_some(), |ui| {
-                        if style::primary(ui, icon::TRASH, "Uninstall").on_hover_text(tr("Run its uninstaller, then scan for leftovers")).clicked() {
-                            start = focus.clone().map(|f| (f, RunMode::Normal));
+                    ui.add_enabled_ui(ticked_one.is_some(), |ui| {
+                        if style::primary(ui, icon::TRASH, "Uninstall").on_hover_text(style::vis(tr("Run its uninstaller, then scan for leftovers"))).clicked() {
+                            start = ticked_one.clone().map(|f| (f, RunMode::Normal));
                         }
                         let r = if narrow {
                             let r = style::secondary(ui, icon::LIGHTNING, "");
@@ -579,8 +586,8 @@ impl UninstallerView {
                         } else {
                             style::secondary(ui, icon::LIGHTNING, "Quick uninstall")
                         };
-                        if r.on_hover_text(tr("Quick uninstall: silent uninstall and automatic leftover removal")).clicked() {
-                            queue = focus.clone().map(|f| vec![f]);
+                        if r.on_hover_text(style::vis(tr("Quick uninstall: silent uninstall and automatic leftover removal"))).clicked() {
+                            queue = ticked_one.clone().map(|f| vec![f]);
                         }
                     });
                 }
@@ -588,12 +595,21 @@ impl UninstallerView {
         });
         ui.add_space(10.0);
 
+        // Before the list (which may still be loading): toolbar clicks are never lost.
+        if let Some((prog, mode)) = start {
+            self.start_wizard(ui.ctx(), cx, prog, mode);
+            return;
+        }
+        if let Some(items) = queue {
+            self.start_queue(ui.ctx(), cx, items);
+            return;
+        }
         if let Some(pend) = &self.loading {
             style::card(ui, |ui| {
                 ui.add_space(24.0);
                 ui.vertical_centered(|ui| {
                     ui.add(egui::Spinner::new().size(32.0).color(p.accent));
-                    ui.label(style::muted(ui, &pend.label));
+                    ui.add(style::Label::new(style::muted(ui, &pend.label)));
                 });
                 ui.add_space(24.0);
             });
@@ -624,21 +640,21 @@ impl UninstallerView {
                 .header(26.0, |mut h| {
                     for t in crate::gui::style::ordered(vec!["", "", "Name", "Version", "Size", "Installed", "Type"]) {
                         h.col(|ui| {
-                            ui.label(RichText::new(tr(t)).size(12.5).color(p.muted));
+                            ui.add(style::Label::new(style::rich(tr(t)).size(12.5).color(p.muted)));
                         });
                     }
                 })
                 .body(|body| {
                     body.rows(44.0, visible.len(), |mut row| {
                         let prog = &self.programs[visible[row.index()]];
-                        let selected = self.focus.as_deref() == Some(prog.id.as_str());
-                        row.set_selected(selected);
+                        let ticked = self.checked.contains(&prog.id);
+                        row.set_selected(ticked);
                         crate::gui::style::cells_in_order(
                             &mut row,
                             vec![
                                 Box::new(|ui: &mut Ui| {
                                     let mut c = self.checked.contains(&prog.id);
-                                    if ui.checkbox(&mut c, "").changed() {
+                                    if ui.checkbox(&mut c, style::vis("")).changed() {
                                         if c {
                                             self.checked.insert(prog.id.clone());
                                         } else {
@@ -654,7 +670,7 @@ impl UninstallerView {
                                         ui.spacing_mut().item_spacing.y = 1.0;
                                         ui.spacing_mut().interact_size.y = 18.0;
                                         crate::gui::style::row(ui, |ui| {
-                                            ui.add(egui::Label::new(style::strong(&prog.name)).truncate());
+                                            ui.add(style::Label::new(style::strong(&prog.name)).truncate());
                                             if uninst::is_new(prog, cx.settings.new_program_days) {
                                                 style::badge(ui, "New", p.success);
                                             }
@@ -666,46 +682,32 @@ impl UninstallerView {
                                             Some(c) => c.clone(),
                                             None => prog.publisher.clone(),
                                         };
-                                        ui.add(egui::Label::new(RichText::new(sub).size(12.0).color(p.muted)).truncate());
+                                        ui.add(style::Label::new(style::rich(sub).size(12.0).color(p.muted)).truncate());
                                     });
                                 }),
                                 Box::new(|ui: &mut Ui| {
-                                    ui.add(egui::Label::new(RichText::new(&prog.version).color(p.muted)).truncate());
+                                    ui.add(style::Label::new(style::rich(&prog.version).color(p.muted)).truncate());
                                 }),
                                 Box::new(|ui: &mut Ui| {
-                                    ui.label(RichText::new(prog.size.map(crate::backup::human_size).unwrap_or_default()).color(p.muted));
+                                    ui.add(style::Label::new(style::rich(prog.size.map(crate::backup::human_size).unwrap_or_default()).color(p.muted)));
                                 }),
                                 Box::new(|ui: &mut Ui| {
-                                    ui.label(RichText::new(prog.install_date.map(|d| d.format("%d %b %Y").to_string()).unwrap_or_default()).color(p.muted));
+                                    ui.add(style::Label::new(style::rich(prog.install_date.map(|d| d.format("%d %b %Y").to_string()).unwrap_or_default()).color(p.muted)));
                                 }),
                                 Box::new(|ui: &mut Ui| {
                                     style::badge(ui, prog.kind.label(), if prog.system { p.warning } else { p.accent });
                                 }),
                             ],
                         );
-                        let r = row.response();
-                        if r.clicked() {
-                            action = Some(RowAction::Focus(prog.id.clone()));
-                        }
-                        if r.double_clicked() {
-                            action = Some(RowAction::Uninstall(prog.clone(), RunMode::Normal));
-                        }
-                        r.context_menu(|ui| {
-                            if let Some(a) = context_menu(ui, prog, &self.meta, &mut self.new_group) {
+                        // Clicking a row selects nothing: only its checkbox does.
+                        row.response().context_menu(|ui| {
+                            if let Some(a) = context_menu(ui, prog, ticked, &self.meta, &mut self.new_group) {
                                 action = Some(a);
                             }
                         });
                     });
                 });
         });
-        if let Some((prog, mode)) = start {
-            self.start_wizard(ui.ctx(), cx, prog, mode);
-            return;
-        }
-        if let Some(items) = queue {
-            self.start_queue(ui.ctx(), cx, items);
-            return;
-        }
         if let Some(a) = action {
             self.apply(ui.ctx(), cx, a);
         }
@@ -715,7 +717,6 @@ impl UninstallerView {
 
     fn apply(&mut self, ctx: &egui::Context, cx: &mut Cx, a: RowAction) {
         match a {
-            RowAction::Focus(id) => self.focus = Some(id),
             RowAction::Uninstall(p, mode) => self.start_wizard(ctx, cx, p, mode),
             RowAction::Quick(p) => self.start_queue(ctx, cx, vec![p]),
             RowAction::Open(target) => Self::open_url(cx, &target),
@@ -787,7 +788,7 @@ impl UninstallerView {
         let mut done = None;
         egui::Modal::new(egui::Id::unique("comment")).show(ctx, |ui| {
             ui.set_width(420.0);
-            ui.label(style::strong(tr("Comment")).size(18.0));
+            ui.add(style::Label::new(style::strong(tr("Comment")).size(18.0)));
             style::text_input(ui, text, "Shown under the program name", 400.0);
             ui.add_space(10.0);
             crate::gui::style::row(ui, |ui| {
@@ -828,7 +829,7 @@ impl UninstallerView {
                             let day = e.time.format("%A, %d %B %Y").to_string();
                             if day != last_day {
                                 ui.add_space(6.0);
-                                ui.label(RichText::new(&day).size(12.0).color(p.muted));
+                                ui.add(style::Label::new(style::rich(&day).size(12.0).color(p.muted)));
                                 last_day = day;
                             }
                             let sel = self.history_sel == Some(i);
@@ -842,23 +843,23 @@ impl UninstallerView {
                 ui.separator();
                 crate::gui::style::column(ui, |ui| match self.history_sel.and_then(|i| self.history.get(i)) {
                     Some(e) => {
-                        ui.label(style::strong(crate::tf!("{} {}", e.program, e.version)).size(17.0));
-                        ui.label(style::muted(ui, crate::tf!("{} · {}", e.operation.label(), e.time.format("%d %b %Y, %H:%M"))));
+                        ui.add(style::Label::new(style::strong(crate::tf!("{} {}", e.program, e.version)).size(17.0)));
+                        ui.add(style::Label::new(style::muted(ui, crate::tf!("{} · {}", e.operation.label(), e.time.format("%d %b %Y, %H:%M")))));
                         if let Some(b) = &e.backup_id {
-                            ui.label(style::muted(ui, crate::tf!("Backup {b} (restore it from Backups)")));
+                            ui.add(style::Label::new(style::muted(ui, crate::tf!("Backup {b} (restore it from Backups)"))));
                         }
                         ui.add_space(6.0);
                         egui::ScrollArea::vertical().id_salt("hist-detail").show(ui, |ui| {
                             for r in &e.removed {
                                 crate::gui::style::row(ui, |ui| {
-                                    ui.label(RichText::new(icon::CHECK).color(p.success));
-                                    ui.add(egui::Label::new(RichText::new(r).monospace().size(12.0)).truncate());
+                                    ui.add(style::Label::new(style::rich(icon::CHECK).color(p.success)));
+                                    ui.add(style::Label::new(style::rich(r).monospace().size(12.0)).truncate());
                                 });
                             }
                             for (l, why) in &e.failed {
                                 crate::gui::style::row(ui, |ui| {
-                                    ui.label(RichText::new(icon::X_CIRCLE).color(p.danger));
-                                    ui.add(egui::Label::new(RichText::new(crate::tf!("{l} — {why}")).monospace().size(12.0)).truncate());
+                                    ui.add(style::Label::new(style::rich(icon::X_CIRCLE).color(p.danger)));
+                                    ui.add(style::Label::new(style::rich(crate::tf!("{l} — {why}")).monospace().size(12.0)).truncate());
                                 });
                             }
                         });
@@ -867,7 +868,7 @@ impl UninstallerView {
                         }
                     }
                     None => {
-                        ui.label(style::muted(ui, tr("Select an entry to see what was removed.")));
+                        ui.add(style::Label::new(style::muted(ui, tr("Select an entry to see what was removed."))));
                     }
                 });
             });
@@ -940,6 +941,11 @@ impl UninstallerView {
             }
         });
         if close {
+            // Cancelled: the uninstall is not to be continued, so forget it (else the programs
+            // page offers to finish it).
+            if uninst::pending().is_some_and(|pend| pend.label == w.label) {
+                uninst::clear_pending();
+            }
             return false;
         }
         style::hero(ui, |ui| {
@@ -953,13 +959,13 @@ impl UninstallerView {
                 ui.add_space(6.0);
                 crate::gui::style::column(ui, |ui| {
                     ui.spacing_mut().item_spacing.y = 4.0;
-                    ui.label(style::strong(&w.label).size(20.0));
-                    ui.label(style::muted(ui, program_facts(w.program.as_ref(), w.leftovers.len(), w.op)));
+                    ui.add(style::Label::new(style::strong(&w.label).size(20.0)));
+                    ui.add(style::Label::new(style::muted(ui, program_facts(w.program.as_ref(), w.leftovers.len(), w.op))));
                     if let Some(prog) = &w.program {
                         crate::gui::style::row(ui, |ui| {
                             style::badge(ui, prog.kind.label(), p.accent);
                             if let Some(l) = &prog.install_location {
-                                ui.add(egui::Label::new(RichText::new(crate::tf!("{}  {l}", icon::FOLDER)).size(12.0).color(p.faint)).truncate());
+                                ui.add(style::Label::new(style::rich(crate::tf!("{}  {l}", icon::FOLDER)).size(12.0).color(p.faint)).truncate());
                             }
                         });
                     }
@@ -980,12 +986,12 @@ impl UninstallerView {
                         crate::gui::style::column(ui, |ui| {
                             ui.spacing_mut().item_spacing.y = 5.0;
                             ui.add_space(6.0);
-                            ui.label(style::strong(tr("Running the program's uninstaller")).size(16.0));
-                            ui.label(style::muted(ui, tr("Follow its window. When it closes, CleanCore looks for what it left behind.")));
+                            ui.add(style::Label::new(style::strong(tr("Running the program's uninstaller")).size(16.0)));
+                            ui.add(style::Label::new(style::muted(ui, tr("Follow its window. When it closes, CleanCore looks for what it left behind."))));
                             if let Some(cmd) = w.program.as_ref().and_then(|p| p.uninstall_string.as_ref()) {
-                                ui.add(egui::Label::new(RichText::new(cmd).monospace().size(12.0).color(p.faint)).truncate());
+                                ui.add(style::Label::new(style::rich(cmd).monospace().size(12.0).color(p.faint)).truncate());
                             }
-                            ui.label(RichText::new(crate::tf!("{secs:.0}s")).size(12.0).color(p.faint));
+                            ui.add(style::Label::new(style::rich(crate::tf!("{secs:.0}s")).size(12.0).color(p.faint)));
                         });
                     });
                     ui.add_space(8.0);
@@ -996,7 +1002,7 @@ impl UninstallerView {
                             w.run_info.push("Continued before the uninstaller reported back.".into());
                             w.step = Step::ChooseMode;
                         }
-                        ui.label(style::muted(ui, tr("Use this if the uninstaller's window is gone but this screen is still waiting.")).size(12.0));
+                        ui.add(style::Label::new(style::muted(ui, tr("Use this if the uninstaller's window is gone but this screen is still waiting.")).size(12.0)));
                     });
                 });
             }
@@ -1028,7 +1034,7 @@ impl UninstallerView {
                 ui.add_space(12.0);
                 crate::gui::style::row(ui, |ui| {
                     style::toggle(ui, &mut w.all_users, "Scan all user accounts");
-                    ui.label(tr("Also look in other user accounts"));
+                    ui.add(style::Label::new(tr("Also look in other user accounts")));
                     ui.with_layout(crate::gui::style::far_layout(egui::Align::Center), |ui| {
                         if style::primary(ui, icon::SEARCH, "Scan for leftovers").clicked() {
                             let (s, t, m, all) = (cx.settings.clone(), w.target.clone(), w.mode, w.all_users);
@@ -1061,13 +1067,13 @@ impl UninstallerView {
                             let (glyph, col) = if failed.is_empty() { (icon::CHECK_CIRCLE, p.success) } else { (icon::WARNING, p.warning) };
                             let (rect, _) = ui.allocate_exact_size(Vec2::splat(52.0), egui::Sense::hover());
                             ui.painter().circle_filled(rect.center(), 26.0, col.gamma_multiply(0.16));
-                            ui.painter().text(rect.center(), egui::Align2::CENTER_CENTER, glyph, egui::FontId::new(26.0, style::icon_fill()), col);
+                            ui.painter().text(rect.center(), egui::Align2::CENTER_CENTER, style::vstr(glyph), egui::FontId::new(26.0, style::icon_fill()), col);
                             ui.add_space(6.0);
                             crate::gui::style::column(ui, |ui| {
                                 ui.add_space(4.0);
-                                ui.label(style::strong(crate::tf!("{} is uninstalled", w.label)).size(18.0));
+                                ui.add(style::Label::new(style::strong(crate::tf!("{} is uninstalled", w.label)).size(18.0)));
                                 let text = if failed.is_empty() { tr("Nothing was left behind.") } else { tr("Most of it is gone; a few items could not be removed.") };
-                                ui.label(style::muted(ui, text));
+                                ui.add(style::Label::new(style::muted(ui, text)));
                             });
                             ui.with_layout(crate::gui::style::far_layout(egui::Align::Center), |ui| {
                                 back = style::primary(ui, crate::gui::style::icon_back(), "Back to programs").clicked();
@@ -1084,18 +1090,18 @@ impl UninstallerView {
                         });
                         if !failed.is_empty() {
                             ui.add_space(12.0);
-                            ui.label(RichText::new(crate::tf!("{} item(s) could not be removed", failed.len())).color(p.danger).family(style::semibold()));
+                            ui.add(style::Label::new(style::rich(crate::tf!("{} item(s) could not be removed", failed.len())).color(p.danger).family(style::semibold())));
                             for (l, why) in failed.iter().take(12) {
                                 crate::gui::style::row(ui, |ui| {
-                                    ui.label(RichText::new(icon::X).color(p.danger));
+                                    ui.add(style::Label::new(style::rich(icon::X).color(p.danger)));
                                     crate::gui::style::column(ui, |ui| {
-                                        ui.add(egui::Label::new(RichText::new(l).monospace().size(12.0)).truncate());
-                                        ui.label(RichText::new(why).size(12.0).color(p.muted));
+                                        ui.add(style::Label::new(style::rich(l).monospace().size(12.0)).truncate());
+                                        ui.add(style::Label::new(style::rich(why).size(12.0).color(p.muted)));
                                     });
                                 });
                             }
                             if failed.len() > 12 {
-                                ui.label(style::muted(ui, crate::tf!("…and {} more", failed.len() - 12)).size(12.0));
+                                ui.add(style::Label::new(style::muted(ui, crate::tf!("…and {} more", failed.len() - 12)).size(12.0)));
                             }
                         }
                     });
@@ -1104,8 +1110,8 @@ impl UninstallerView {
                         style::card(ui, |ui| {
                             crate::gui::style::row(ui, |ui| {
                                 crate::gui::style::column(ui, |ui| {
-                                    ui.label(style::strong(tr("Advanced uninstall")));
-                                    ui.label(style::muted(ui, tr("Look for related data the log didn't capture, such as settings the program created later.")));
+                                    ui.add(style::Label::new(style::strong(tr("Advanced uninstall"))));
+                                    ui.add(style::Label::new(style::muted(ui, tr("Look for related data the log didn't capture, such as settings the program created later."))));
                                 });
                                 ui.with_layout(crate::gui::style::far_layout(egui::Align::Center), |ui| {
                                     if style::secondary(ui, icon::SEARCH, "Scan for related leftovers").clicked() {
@@ -1174,7 +1180,7 @@ impl UninstallerView {
                     let chosen: Vec<Issue> = w.leftovers.iter().zip(&w.checked).filter(|(_, c)| **c).map(|(i, _)| i.clone()).collect();
                     finish(w, ui.ctx(), cx, chosen);
                 }
-                ui.label(style::muted(ui, tr("Backed up before deleting")).size(12.0));
+                ui.add(style::Label::new(style::muted(ui, tr("Backed up before deleting")).size(12.0)));
             });
         });
         ui.add_space(8.0);
@@ -1192,11 +1198,11 @@ impl UninstallerView {
                 style::card(ui, |ui| {
                     crate::gui::style::row(ui, |ui| {
                         let mut all = idx.iter().all(|i| w.checked[*i]);
-                        if ui.checkbox(&mut all, "").on_hover_text(tr("Select the whole group")).changed() {
+                        if ui.checkbox(&mut all, style::vis("")).on_hover_text(style::vis(tr("Select the whole group"))).changed() {
                             idx.iter().for_each(|i| w.checked[*i] = all);
                         }
                         style::icon_tile(ui, ic, p.accent, 28.0);
-                        ui.label(style::strong(label));
+                        ui.add(style::Label::new(style::strong(label)));
                         let sel = idx.iter().filter(|i| w.checked[**i]).count();
                         style::badge(ui, &crate::tf!("{sel} / {}", idx.len()), p.accent);
                     });
@@ -1207,17 +1213,17 @@ impl UninstallerView {
                         }
                         let (kind_ic, kind) = fix_kind(&w.leftovers[i].fix);
                         crate::gui::style::row(ui, |ui| {
-                            ui.checkbox(&mut w.checked[i], "");
-                            ui.label(RichText::new(kind_ic).size(16.0).color(if w.checked[i] { p.accent } else { p.faint }));
+                            ui.checkbox(&mut w.checked[i], style::vis(""));
+                            ui.add(style::Label::new(style::rich(kind_ic).size(16.0).color(if w.checked[i] { p.accent } else { p.faint })));
                             crate::gui::style::column(ui, |ui| {
                                 ui.spacing_mut().item_spacing.y = 2.0;
                                 ui.set_width((ui.available_width() - 90.0).max(120.0));
                                 let loc = &w.leftovers[i].location;
-                                ui.add(egui::Label::new(RichText::new(loc).monospace().size(12.5)).truncate()).on_hover_text(loc);
+                                ui.add(style::Label::new(style::rich(loc).monospace().size(12.5)).truncate()).on_hover_text(style::vis(loc));
                                 let d = &w.leftovers[i].detail;
                                 if !d.is_empty() {
                                     let col = if d.contains("needs administrator") { p.warning } else { p.muted };
-                                    ui.add(egui::Label::new(RichText::new(d).size(12.0).color(col)).truncate());
+                                    ui.add(style::Label::new(style::rich(d).size(12.0).color(col)).truncate());
                                 }
                             });
                             ui.with_layout(crate::gui::style::far_layout(egui::Align::Center), |ui| style::badge(ui, kind, p.muted));
@@ -1307,7 +1313,7 @@ impl UninstallerView {
                         let current = q.items.iter().find(|it| matches!(it.state, QState::Running)).map(|it| it.prog.name.as_str()).unwrap_or("");
                         crate::tf!("Uninstalling {} of {total}: {current}", ok + failed + 1)
                     };
-                    ui.label(style::strong(title).size(19.0));
+                    ui.add(style::Label::new(style::strong(title).size(19.0)));
                     crate::gui::style::row(ui, |ui| {
                         ui.spacing_mut().item_spacing.x = 14.0;
                         stat_inline(ui, icon::CHECK_CIRCLE, &crate::tf!("{ok} done"), p.success);
@@ -1350,17 +1356,23 @@ impl UninstallerView {
                         match &it.state {
                             QState::Waiting => {
                                 ui.painter().circle_stroke(rect.center(), 11.0, egui::Stroke::new(1.5, p.border));
-                                ui.painter().text(rect.center(), egui::Align2::CENTER_CENTER, (i + 1).to_string(), egui::FontId::new(11.5, style::semibold()), p.muted);
+                                ui.painter().text(
+                                    rect.center(),
+                                    egui::Align2::CENTER_CENTER,
+                                    style::vstr((i + 1).to_string()),
+                                    egui::FontId::new(11.5, style::semibold()),
+                                    p.muted,
+                                );
                             }
                             QState::Running => {
                                 ui.put(rect, egui::Spinner::new().size(20.0).color(p.accent));
                             }
                             QState::Done(r) => {
                                 let col = if r.still_installed || r.leftovers_failed > 0 { p.warning } else { p.success };
-                                ui.painter().text(rect.center(), egui::Align2::CENTER_CENTER, icon::CHECK_CIRCLE, egui::FontId::new(22.0, style::icon_fill()), col);
+                                ui.painter().text(rect.center(), egui::Align2::CENTER_CENTER, style::vstr(icon::CHECK_CIRCLE), egui::FontId::new(22.0, style::icon_fill()), col);
                             }
                             QState::Failed(_) => {
-                                ui.painter().text(rect.center(), egui::Align2::CENTER_CENTER, icon::X_CIRCLE, egui::FontId::new(22.0, style::icon_fill()), p.danger);
+                                ui.painter().text(rect.center(), egui::Align2::CENTER_CENTER, style::vstr(icon::X_CIRCLE), egui::FontId::new(22.0, style::icon_fill()), p.danger);
                             }
                         }
                         program_tile(ui, &self.app_icons, &self.meta, &it.prog, 36.0, p.accent);
@@ -1368,16 +1380,16 @@ impl UninstallerView {
                             ui.spacing_mut().item_spacing.y = 2.0;
                             ui.set_width((ui.available_width() - 150.0).max(160.0));
                             crate::gui::style::row(ui, |ui| {
-                                ui.label(style::strong(&it.prog.name));
+                                ui.add(style::Label::new(style::strong(&it.prog.name)));
                                 let facts = [it.prog.version.as_str(), it.prog.publisher.as_str()].iter().filter(|s| !s.is_empty()).copied().collect::<Vec<_>>().join(" · ");
-                                ui.add(egui::Label::new(RichText::new(facts).size(12.0).color(p.faint)).truncate());
+                                ui.add(style::Label::new(style::rich(facts).size(12.0).color(p.faint)).truncate());
                             });
                             match &it.state {
                                 QState::Waiting => {
-                                    ui.label(RichText::new(tr("Waiting its turn")).size(12.5).color(p.muted));
+                                    ui.add(style::Label::new(style::rich(tr("Waiting its turn")).size(12.5).color(p.muted)));
                                 }
                                 QState::Running => {
-                                    ui.label(RichText::new(crate::tf!("Running the silent uninstaller, then scanning · {secs:.0}s")).size(12.5).color(p.accent));
+                                    ui.add(style::Label::new(style::rich(crate::tf!("Running the silent uninstaller, then scanning · {secs:.0}s")).size(12.5).color(p.accent)));
                                     style::busy_bar(ui, ui.available_width().min(320.0));
                                 }
                                 QState::Done(r) => {
@@ -1389,13 +1401,15 @@ impl UninstallerView {
                                     if let Some(c) = r.exit_code.filter(|c| *c != 0) {
                                         parts.push(crate::tf!("uninstaller exit code {c}"));
                                     }
-                                    ui.label(RichText::new(parts.join(" · ")).size(12.5).color(p.muted));
+                                    ui.add(style::Label::new(style::rich(parts.join(" · ")).size(12.5).color(p.muted)));
                                     if r.still_installed {
-                                        ui.label(RichText::new(crate::tf!("{}  Still appears to be installed: try a normal Uninstall", icon::WARNING)).size(12.5).color(p.warning));
+                                        ui.add(style::Label::new(
+                                            style::rich(crate::tf!("{}  Still appears to be installed: try a normal Uninstall", icon::WARNING)).size(12.5).color(p.warning),
+                                        ));
                                     }
                                 }
                                 QState::Failed(e) => {
-                                    ui.add(egui::Label::new(RichText::new(e).size(12.5).color(p.danger)).wrap());
+                                    ui.add(style::Label::new(style::rich(e).size(12.5).color(p.danger)).wrap());
                                 }
                             }
                         });
@@ -1409,7 +1423,7 @@ impl UninstallerView {
                             };
                             style::badge(ui, text, col);
                             if it.secs > 0.0 {
-                                ui.label(RichText::new(format_secs(it.secs)).size(12.0).color(p.faint));
+                                ui.add(style::Label::new(style::rich(format_secs(it.secs)).size(12.0).color(p.faint)));
                             }
                         });
                     });
@@ -1428,10 +1442,10 @@ impl UninstallerView {
         }
         style::card(ui, |ui| {
             egui::Grid::new("forced-grid").num_columns(2).spacing([16.0, 12.0]).show(ui, |ui| {
-                ui.label(style::muted(ui, tr("Program name")));
+                ui.add(style::Label::new(style::muted(ui, tr("Program name"))));
                 style::text_input(ui, &mut f.names, "Exact name; several separated by ;", 520.0);
                 ui.end_row();
-                ui.label(style::muted(ui, tr("Folder or main file")));
+                ui.add(style::Label::new(style::muted(ui, tr("Folder or main file"))));
                 crate::gui::style::row(ui, |ui| {
                     ui.spacing_mut().item_spacing.x = 6.0;
                     style::text_input(ui, &mut f.paths, "Pick below or type; several separated by ;", 520.0 - 2.0 * (style::CONTROL_H + 6.0));
@@ -1546,27 +1560,27 @@ impl UninstallerView {
         if let Some(found) = &f.found {
             ui.add_space(10.0);
             style::card(ui, |ui| {
-                ui.label(style::strong(crate::tf!("Found {} program(s) with an uninstaller", found.len())));
+                ui.add(style::Label::new(style::strong(crate::tf!("Found {} program(s) with an uninstaller", found.len()))));
                 if found.is_empty() {
-                    ui.label(style::muted(ui, tr("None: Next scans for leftovers by name and path.")));
+                    ui.add(style::Label::new(style::muted(ui, tr("None: Next scans for leftovers by name and path."))));
                 }
                 let mut none = f.use_uninstaller.is_none();
-                if ui.radio(none, "Don't run an uninstaller, only remove leftovers").clicked() {
+                if ui.radio(none, style::vis("Don't run an uninstaller, only remove leftovers")).clicked() {
                     none = true;
                     f.use_uninstaller = None;
                 }
                 let _ = none;
                 for (i, prog) in found.iter().enumerate() {
-                    if ui.radio(f.use_uninstaller == Some(i), crate::tf!("Run the uninstaller of {} {}", prog.name, prog.version)).clicked() {
+                    if ui.radio(f.use_uninstaller == Some(i), style::vis(crate::tf!("Run the uninstaller of {} {}", prog.name, prog.version))).clicked() {
                         f.use_uninstaller = Some(i);
                     }
                 }
                 if !f.logs.is_empty() {
                     ui.add_space(8.0);
-                    ui.label(style::strong(crate::tf!("Found {} trace log(s)", f.logs.len())));
+                    ui.add(style::Label::new(style::strong(crate::tf!("Found {} trace log(s)", f.logs.len()))));
                     for (i, l) in f.logs.iter().enumerate() {
                         let from = if f.log_files.get(i).is_some_and(|x| x.is_some()) { tr(" from the logs database") } else { "" };
-                        if ui.radio(f.use_log == Some(i), crate::tf!("Use the log \"{}\"{from} ({})", l.name, l.created.format("%d %b %Y"))).clicked() {
+                        if ui.radio(f.use_log == Some(i), style::vis(crate::tf!("Use the log \"{}\"{from} ({})", l.name, l.created.format("%d %b %Y")))).clicked() {
                             f.use_log = Some(i);
                             f.use_uninstaller = None;
                         }
@@ -1597,13 +1611,13 @@ impl UninstallerView {
         let mut err: Option<String> = None;
         egui::Modal::new(egui::Id::unique("groups-manager")).show(ctx, |ui| {
             ui.set_width(460.0);
-            ui.label(style::strong(tr("Groups")).size(18.0));
-            ui.label(style::muted(ui, tr("Programs are added to a group from their right-click menu.")).size(12.5));
+            ui.add(style::Label::new(style::strong(tr("Groups")).size(18.0)));
+            ui.add(style::Label::new(style::muted(ui, tr("Programs are added to a group from their right-click menu.")).size(12.5)));
             ui.add_space(8.0);
             let groups = self.meta.groups.clone();
             for (i, (g, ids)) in groups.iter().enumerate() {
                 crate::gui::style::row(ui, |ui| {
-                    ui.label(RichText::new(icon::TAG).color(p.accent));
+                    ui.add(style::Label::new(style::rich(icon::TAG).color(p.accent)));
                     match &mut d.rename {
                         Some((old, text)) if old == g => {
                             let r = style::text_input(ui, text, "Name", 200.0);
@@ -1622,8 +1636,8 @@ impl UninstallerView {
                             }
                         }
                         _ => {
-                            ui.label(g);
-                            ui.label(style::muted(ui, crate::tf!("{} program(s)", ids.len())).size(12.5));
+                            ui.add(style::Label::new(g));
+                            ui.add(style::Label::new(style::muted(ui, crate::tf!("{} program(s)", ids.len())).size(12.5)));
                         }
                     }
                     ui.with_layout(crate::gui::style::far_layout(egui::Align::Center), |ui| {
@@ -1686,7 +1700,6 @@ impl UninstallerView {
 }
 
 enum RowAction {
-    Focus(String),
     Uninstall(Program, RunMode),
     Quick(Program),
     Open(String),
@@ -1706,7 +1719,8 @@ enum RowAction {
     Reset(Program),
 }
 
-fn context_menu(ui: &mut Ui, prog: &Program, meta: &Meta, new_group: &mut String) -> Option<RowAction> {
+/// The right-click menu of a program. Uninstalling is offered only for a ticked program.
+fn context_menu(ui: &mut Ui, prog: &Program, ticked: bool, meta: &Meta, new_group: &mut String) -> Option<RowAction> {
     let mut out = None;
     let mut item = |ui: &mut Ui, ic: &str, label: &str, a: RowAction| {
         if style::ghost(ui, ic, label).clicked() {
@@ -1714,14 +1728,19 @@ fn context_menu(ui: &mut Ui, prog: &Program, meta: &Meta, new_group: &mut String
             ui.close();
         }
     };
-    item(ui, icon::TRASH, "Uninstall", RowAction::Uninstall(prog.clone(), RunMode::Normal));
-    item(ui, icon::LIGHTNING, "Quick Uninstall", RowAction::Quick(prog.clone()));
-    if prog.msi_product_code().is_some() && prog.kind != ProgramKind::WindowsApp {
-        item(ui, icon::WRENCH, "Forced MSI Uninstall", RowAction::Uninstall(prog.clone(), RunMode::ForcedMsi));
+    if ticked {
+        item(ui, icon::TRASH, "Uninstall", RowAction::Uninstall(prog.clone(), RunMode::Normal));
+        item(ui, icon::LIGHTNING, "Quick Uninstall", RowAction::Quick(prog.clone()));
+        if prog.msi_product_code().is_some() && prog.kind != ProgramKind::WindowsApp {
+            item(ui, icon::WRENCH, "Forced MSI Uninstall", RowAction::Uninstall(prog.clone(), RunMode::ForcedMsi));
+        }
+        #[cfg(windows)]
+        if prog.kind == ProgramKind::WindowsApp {
+            item(ui, icon::USERS, "Uninstall for all users", RowAction::AllUsers(prog.clone()));
+        }
     }
     #[cfg(windows)]
     if prog.kind == ProgramKind::WindowsApp {
-        item(ui, icon::USERS, "Uninstall for all users", RowAction::AllUsers(prog.clone()));
         item(ui, icon::UNDO, "Reset the app", RowAction::Reset(prog.clone()));
     }
     if prog.kind.is_store_app() {
@@ -1750,9 +1769,9 @@ fn context_menu(ui: &mut Ui, prog: &Program, meta: &Meta, new_group: &mut String
     }
     ui.separator();
     item(ui, icon::CHAT, "Add / edit comment", RowAction::Comment(prog.id.clone(), prog.comment.clone().unwrap_or_default()));
-    ui.menu_button(crate::tf!("{}  Add to group", icon::TAG), |ui| {
+    ui.menu_button(style::vis(crate::tf!("{}  Add to group", icon::TAG)), |ui| {
         for (g, _) in &meta.groups {
-            if ui.button(g).clicked() {
+            if ui.button(style::vis(g)).clicked() {
                 out = Some(RowAction::Group(prog.id.clone(), g.clone()));
                 ui.close();
             }
@@ -1760,7 +1779,7 @@ fn context_menu(ui: &mut Ui, prog: &Program, meta: &Meta, new_group: &mut String
         ui.separator();
         crate::gui::style::row(ui, |ui| {
             style::text_input(ui, new_group, "New group", 140.0);
-            if ui.button(tr("Add")).clicked() && !new_group.trim().is_empty() {
+            if ui.button(style::vis(tr("Add"))).clicked() && !new_group.trim().is_empty() {
                 out = Some(RowAction::Group(prog.id.clone(), new_group.trim().to_string()));
                 new_group.clear();
                 ui.close();
@@ -1771,7 +1790,7 @@ fn context_menu(ui: &mut Ui, prog: &Program, meta: &Meta, new_group: &mut String
         out = Some(RowAction::Ungroup(prog.id.clone()));
         ui.close();
     }
-    ui.menu_button(crate::tf!("{}  Change icon", icon::PALETTE), |ui| {
+    ui.menu_button(style::vis(crate::tf!("{}  Change icon", icon::PALETTE)), |ui| {
         if let Some(choice) = style::icon_picker(ui, meta.icons.get(&prog.id).map(String::as_str)) {
             out = Some(RowAction::Icon(prog.id.clone(), choice));
             ui.close();
@@ -1787,7 +1806,7 @@ fn program_icon(ui: &mut Ui, icons: &super::appicons::IconCache, meta: &Meta, p:
             ui.add(egui::Image::new(t).fit_to_exact_size(Vec2::splat(size)));
         }
         None => {
-            ui.label(RichText::new(prog_icon(meta, p)).size(size * 0.9).color(glyph_color));
+            ui.add(style::Label::new(style::rich(prog_icon(meta, p)).size(size * 0.9).color(glyph_color)));
         }
     }
 }
@@ -1837,8 +1856,8 @@ fn steps_bar(ui: &mut Ui, step: Step, p: Palette) {
             let (rect, _) = ui.allocate_exact_size(Vec2::splat(24.0), egui::Sense::hover());
             ui.painter().circle_filled(rect.center(), 12.0, bg);
             let mark = if i < idx { icon::CHECK.to_string() } else { (i + 1).to_string() };
-            ui.painter().text(rect.center(), egui::Align2::CENTER_CENTER, mark, egui::FontId::new(12.5, style::semibold()), fg);
-            ui.label(RichText::new(tr(label)).color(if i <= idx { p.text } else { p.muted }));
+            ui.painter().text(rect.center(), egui::Align2::CENTER_CENTER, style::vstr(mark), egui::FontId::new(12.5, style::semibold()), fg);
+            ui.add(style::Label::new(style::rich(tr(label)).color(if i <= idx { p.text } else { p.muted })));
             if i < 3 {
                 let (r, _) = ui.allocate_exact_size(Vec2::new(36.0, 2.0), egui::Sense::hover());
                 ui.painter().rect_filled(r, 1.0, if i < idx { p.success } else { p.border });
@@ -1858,11 +1877,11 @@ fn choice_card(ui: &mut Ui, width: f32, selected: bool, ic: &str, title: &str, d
     painter.text(
         mr.pos(16.0, rect.top() + 22.0),
         mr.start(egui::Align::Center),
-        ic,
+        style::vstr(ic),
         egui::FontId::new(18.0, if selected { style::icon_fill() } else { egui::FontFamily::Proportional }),
         p.accent,
     );
-    painter.text(mr.pos(42.0, rect.top() + 22.0), mr.start(egui::Align::Center), title, egui::FontId::new(15.0, style::semibold()), p.text);
+    painter.text(mr.pos(42.0, rect.top() + 22.0), mr.start(egui::Align::Center), style::vstr(title), egui::FontId::new(15.0, style::semibold()), p.text);
     painter.galley(egui::pos2(mr.x(16.0), rect.top() + 42.0), g, p.muted);
     resp
 }
@@ -1899,8 +1918,8 @@ fn report_line(ui: &mut Ui, line: &str, p: Palette) {
         (icon::CHECK_CIRCLE, p.success)
     };
     crate::gui::style::row_top(ui, |ui| {
-        ui.label(RichText::new(ic).color(col));
-        ui.add(egui::Label::new(RichText::new(line).size(13.0)).wrap());
+        ui.add(style::Label::new(style::rich(ic).color(col)));
+        ui.add(style::Label::new(style::rich(line).size(13.0)).wrap());
     });
 }
 
@@ -1913,8 +1932,8 @@ fn busy_card(ui: &mut Ui, glyph: &str, title: &str, status: &str, p: Palette) {
             crate::gui::style::column(ui, |ui| {
                 ui.spacing_mut().item_spacing.y = 6.0;
                 ui.add_space(14.0);
-                ui.label(style::strong(title).size(16.0));
-                ui.label(RichText::new(status).color(p.muted));
+                ui.add(style::Label::new(style::strong(title).size(16.0)));
+                ui.add(style::Label::new(style::rich(status).color(p.muted)));
                 style::busy_bar(ui, ui.available_width().min(420.0));
             });
         });
@@ -1923,7 +1942,7 @@ fn busy_card(ui: &mut Ui, glyph: &str, title: &str, status: &str, p: Palette) {
 
 /// Icon and coloured text in a row of figures.
 fn stat_inline(ui: &mut Ui, ic: &str, text: &str, col: Color32) {
-    ui.label(RichText::new(crate::tf!("{ic}  {text}")).size(13.0).color(col));
+    ui.add(style::Label::new(style::rich(crate::tf!("{ic}  {text}")).size(13.0).color(col)));
 }
 
 fn format_secs(s: f32) -> String {

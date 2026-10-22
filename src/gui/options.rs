@@ -1,11 +1,11 @@
-//! Settings page. Appearance applies instantly; everything else is saved with "Save changes".
+//! Settings page. Every change is saved as it is made.
 
 use super::style::{self, icon, Palette, ACCENTS};
 use super::{apply_theme, Cx};
 use crate::config::{ListEntry, Settings};
 use crate::i18n::tr;
 use crate::model::ScanMode;
-use eframe::egui::{self, RichText, Ui, Vec2};
+use eframe::egui::{self, Ui, Vec2};
 
 pub struct SettingsView {
     draft: Settings,
@@ -18,6 +18,8 @@ pub struct SettingsView {
     larger_mb: u64,
     db_folder: String,
     db_url: String,
+    /// The settings the form was last in step with, to notice changes made on other pages.
+    synced: String,
 }
 
 impl SettingsView {
@@ -33,6 +35,7 @@ impl SettingsView {
             larger_mb: s.auto_delete_backups_over_mb.unwrap_or(1024),
             db_folder: crate::tracer::db_folder(s).display().to_string(),
             db_url: s.logs_db_url.clone().unwrap_or_default(),
+            synced: serde_json::to_string(s).unwrap_or_default(),
         }
     }
 
@@ -50,22 +53,14 @@ impl SettingsView {
     }
 
     pub fn main(&mut self, ui: &mut Ui, cx: &mut Cx, updates: &mut super::updates::Updates) {
-        let dirty = serde_json::to_string(&self.finished()).ok() != serde_json::to_string(&*cx.settings).ok();
-        let (mut save, mut discard) = (false, false);
-        style::page_header(ui, "Settings", "Appearance, safety options, lists and storage", |ui| {
-            ui.add_enabled_ui(dirty, |ui| {
-                save = style::primary(ui, icon::FLOPPY, "Save changes").clicked();
-                discard = style::secondary(ui, "", "Discard").clicked();
-            });
-        });
-        if save {
-            *cx.settings = self.finished();
-            cx.save_settings();
-            cx.info(tr("Settings saved"));
+        // Settings changed elsewhere (another page, a newer copy) are taken in first, so the form
+        // never writes back stale values.
+        if serde_json::to_string(&*cx.settings).unwrap_or_default() != self.synced {
+            let (new_exclude, new_include) = (std::mem::take(&mut self.new_exclude), std::mem::take(&mut self.new_include));
+            *self = SettingsView { new_exclude, new_include, ..SettingsView::new(cx.settings) };
         }
-        if discard {
-            *self = SettingsView::new(cx.settings);
-        }
+        let before = serde_json::to_string(&self.finished()).ok();
+        style::page_header(ui, "Settings", "Appearance, safety options, lists and storage", |_| {});
 
         egui::ScrollArea::vertical().auto_shrink([false, false]).show(ui, |ui| {
             self.appearance(ui, cx);
@@ -109,8 +104,14 @@ impl SettingsView {
                 });
             });
             ui.add_space(10.0);
-            ui.label(style::muted(ui, crate::tf!("Data folder: {}", crate::config::data_dir().display())).size(12.0));
+            ui.add(style::Label::new(style::muted(ui, crate::tf!("Data folder: {}", crate::config::data_dir().display())).size(12.0)));
         });
+        let after = self.finished();
+        if serde_json::to_string(&after).ok() != before {
+            *cx.settings = after;
+            cx.save_settings();
+        }
+        self.synced = serde_json::to_string(&*cx.settings).unwrap_or_default();
     }
 
     fn appearance(&mut self, ui: &mut Ui, cx: &mut Cx) {
@@ -140,7 +141,7 @@ impl SettingsView {
                 let names = |code: &str| -> String {
                     if code == "system" {
                         let sys = crate::i18n::system_language();
-                        let n = crate::i18n::LANGUAGES.iter().find(|l| l.code == sys).map_or("English", |l| l.name);
+                        let n = crate::i18n::LANGUAGES.iter().find(|l| l.code == sys).map_or("English", |l| l.name.as_str());
                         crate::tf!("System ({n})")
                     } else {
                         crate::i18n::LANGUAGES.iter().find(|l| l.code == code).map_or(code.to_string(), |l| l.name.to_string())
@@ -150,7 +151,7 @@ impl SettingsView {
                 let mut pick = None;
                 style::dropdown(ui, "language", &tf_icon(icon::GLOBE, &names(&cur)), 200.0, |ui| {
                     for code in std::iter::once("system").chain(crate::i18n::LANGUAGES.iter().map(|l| l.code)) {
-                        if ui.selectable_label(cur == code, names(code)).clicked() {
+                        if ui.selectable_label(cur == code, style::vis(names(code))).clicked() {
                             pick = Some(code.to_string());
                         }
                     }
@@ -173,9 +174,9 @@ impl SettingsView {
                     ui.painter().circle_filled(rect.center(), 11.0, shown);
                     if cur == *id {
                         ui.painter().circle_stroke(rect.center(), 13.5, egui::Stroke::new(2.0, shown));
-                        ui.painter().text(rect.center(), egui::Align2::CENTER_CENTER, icon::CHECK, egui::FontId::proportional(13.0), egui::Color32::WHITE);
+                        ui.painter().text(rect.center(), egui::Align2::CENTER_CENTER, style::vstr(icon::CHECK), egui::FontId::proportional(13.0), egui::Color32::WHITE);
                     }
-                    let r = r.on_hover_text(tr(label));
+                    let r = r.on_hover_text(style::vis(tr(label)));
                     if r.clicked() {
                         cx.settings.gui_accent = Some(id.to_string());
                         self.draft.gui_accent = Some(id.to_string());
@@ -263,10 +264,10 @@ impl SettingsView {
                 },
             );
             style::divider(ui);
-            ui.label(style::muted(ui, tr("Logs database folder (a shared or network folder works too)")));
+            ui.add(style::Label::new(style::muted(ui, tr("Logs database folder (a shared or network folder works too)"))));
             style::path_input(ui, "logsdb-folder", &mut self.db_folder, "", ui.available_width(), style::Pick::Folder);
             ui.add_space(4.0);
-            ui.label(style::muted(ui, tr("Logs database URL (serves index.json and the .cptrace files; optional)")));
+            ui.add(style::Label::new(style::muted(ui, tr("Logs database URL (serves index.json and the .cptrace files; optional)"))));
             style::text_input(ui, &mut self.db_url, "https://example.org/cleancore-logs", ui.available_width());
         });
     }
@@ -317,7 +318,7 @@ impl SettingsView {
     fn backups(&mut self, ui: &mut Ui) {
         style::card(ui, |ui| {
             style::section_title(ui, "Backups");
-            ui.label(style::muted(ui, tr("Backup folder")));
+            ui.add(style::Label::new(style::muted(ui, tr("Backup folder"))));
             style::path_input(ui, "backup-dir", &mut self.backup_dir, "", ui.available_width(), style::Pick::Folder);
             ui.add_space(6.0);
             style::divider(ui);
@@ -349,21 +350,21 @@ impl SettingsView {
 fn list_editor(ui: &mut Ui, list: &mut Vec<ListEntry>, new: &mut String, title: &str, help: &str) {
     let p = Palette::get(ui.ctx());
     style::section_title(ui, title);
-    ui.label(style::muted(ui, help).size(12.5));
+    ui.add(style::Label::new(style::muted(ui, help).size(12.5)));
     ui.add_space(6.0);
     let mut remove = None;
     if list.is_empty() {
-        ui.label(RichText::new(tr("Empty")).color(p.faint));
+        ui.add(style::Label::new(style::rich(tr("Empty")).color(p.faint)));
     }
     for (i, e) in list.iter_mut().enumerate() {
         crate::gui::style::row(ui, |ui| {
             style::toggle(ui, &mut e.enabled, &e.path.clone());
-            ui.add(egui::Label::new(RichText::new(&e.path).monospace().color(if e.enabled { p.text } else { p.faint })).truncate());
+            ui.add(style::Label::new(style::rich(&e.path).monospace().color(if e.enabled { p.text } else { p.faint })).truncate());
             ui.with_layout(crate::gui::style::far_layout(egui::Align::Center), |ui| {
                 if style::icon_button(ui, icon::TRASH, "Remove").clicked() {
                     remove = Some(i);
                 }
-                ui.checkbox(&mut e.include_subkeys, tr("Subkeys"));
+                ui.checkbox(&mut e.include_subkeys, style::vis(tr("Subkeys")));
             });
         });
     }

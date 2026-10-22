@@ -6,7 +6,7 @@ use super::{take, Cx, Pending};
 use crate::cleaner::CleanReport;
 use crate::extensions::{self as ext, Browser, Extension};
 use crate::i18n::tr;
-use eframe::egui::{self, RichText, Ui};
+use eframe::egui::{self, Ui};
 use std::collections::BTreeSet;
 
 pub struct ExtensionsTab {
@@ -120,7 +120,7 @@ impl ExtensionsTab {
                 if style::toggle(ui, &mut self.show_builtin, "Show built-in extensions").changed() {
                     self.loaded = false;
                 }
-                ui.label(style::muted(ui, tr("Built-in")));
+                ui.add(style::Label::new(style::muted(ui, tr("Built-in"))));
             });
         });
         ui.add_space(8.0);
@@ -157,8 +157,8 @@ impl ExtensionsTab {
                         ui.add_space(10.0);
                     }
                     crate::gui::style::row(ui, |ui| {
-                        ui.label(RichText::new(icon::GLOBE).size(16.0).color(p.accent));
-                        ui.label(style::strong(crate::tf!("{}  ›  {}", e.browser.label(), e.profile)));
+                        ui.add(style::Label::new(style::rich(icon::GLOBE).size(16.0).color(p.accent)));
+                        ui.add(style::Label::new(style::strong(crate::tf!("{}  ›  {}", e.browser.label(), e.profile))));
                         if self.running.contains(&e.browser) {
                             style::badge(ui, "Running — close it before removing", p.warning);
                         }
@@ -171,7 +171,7 @@ impl ExtensionsTab {
                         let k = key(e);
                         let mut on = self.checked.contains(&k);
                         ui.add_enabled_ui(!e.builtin, |ui| {
-                            if ui.checkbox(&mut on, "").changed() {
+                            if ui.checkbox(&mut on, style::vis("")).changed() {
                                 if on {
                                     self.checked.insert(k.clone());
                                 } else {
@@ -182,8 +182,8 @@ impl ExtensionsTab {
                         style::icon_tile(ui, if e.kind == "Theme" { icon::PALETTE } else { icon::CUBE }, if e.enabled { p.accent } else { p.faint }, 32.0);
                         crate::gui::style::column(ui, |ui| {
                             crate::gui::style::row(ui, |ui| {
-                                ui.label(style::strong(&e.name));
-                                ui.label(style::muted(ui, &e.version).size(12.5));
+                                ui.add(style::Label::new(style::strong(&e.name)));
+                                ui.add(style::Label::new(style::muted(ui, &e.version).size(12.5)));
                                 if e.kind != "Extension" {
                                     style::badge(ui, &e.kind, p.accent);
                                 }
@@ -195,7 +195,7 @@ impl ExtensionsTab {
                                 }
                             });
                             let sub = if e.description.is_empty() { e.id.clone() } else { e.description.clone() };
-                            ui.add(egui::Label::new(style::muted(ui, sub).size(12.5)).truncate());
+                            ui.add(style::Label::new(style::muted(ui, sub).size(12.5)).truncate());
                         });
                         ui.with_layout(crate::gui::style::far_layout(egui::Align::Center), |ui| {
                             if let Some(path) = &e.path {
@@ -218,19 +218,19 @@ impl ExtensionsTab {
             let (mut close, mut recheck) = (false, false);
             egui::Modal::new(egui::Id::unique("ext-confirm")).show(ui.ctx(), |ui| {
                 ui.set_width(440.0);
-                ui.label(style::strong(crate::tf!("Remove {} extension(s)?", selected.len())).size(18.0));
+                ui.add(style::Label::new(style::strong(crate::tf!("Remove {} extension(s)?", selected.len())).size(18.0)));
                 ui.add_space(6.0);
                 for e in selected.iter().take(8) {
-                    ui.label(crate::tf!("• {} ({} › {})", e.name, e.browser.label(), e.profile));
+                    ui.add(style::Label::new(crate::tf!("• {} ({} › {})", e.name, e.browser.label(), e.profile)));
                 }
                 if selected.len() > 8 {
-                    ui.label(style::muted(ui, crate::tf!("and {} more", selected.len() - 8)));
+                    ui.add(style::Label::new(style::muted(ui, crate::tf!("and {} more", selected.len() - 8))));
                 }
                 ui.add_space(6.0);
-                ui.label(style::muted(ui, tr("Their files, stored data and browser settings entries are removed. Everything is backed up first.")));
+                ui.add(style::Label::new(style::muted(ui, tr("Their files, stored data and browser settings entries are removed. Everything is backed up first."))));
                 if !running.is_empty() {
                     ui.add_space(6.0);
-                    ui.label(RichText::new(crate::tf!("{}  Close {} first.", icon::WARNING, running.join(", "))).color(p.warning));
+                    ui.add(style::Label::new(style::rich(crate::tf!("{}  Close {} first.", icon::WARNING, running.join(", "))).color(p.warning)));
                 }
                 ui.add_space(12.0);
                 crate::gui::style::row(ui, |ui| {

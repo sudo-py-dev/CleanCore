@@ -6,7 +6,7 @@ use super::{human, take, tree::Browser, Cx, Pending};
 use crate::backup::{self, Backup, BackupKind, Manifest};
 use crate::gui::style::ColumnsInOrder;
 use crate::i18n::tr;
-use eframe::egui::{self, RichText, Ui};
+use eframe::egui::{self, Ui};
 use egui_extras::{Column, TableBuilder};
 
 struct CreateForm {
@@ -114,13 +114,15 @@ impl BackupView {
         style::page_header(ui, "Backups", &subtitle, |ui| {
             ui.add_enabled_ui(!busy, |ui| {
                 create = style::primary(ui, icon::PLUS, "Create backup").clicked();
-                auto = style::secondary(ui, icon::CALENDAR, "Auto Backup").on_hover_text(tr("Scheduled backups")).clicked();
+                auto = style::secondary(ui, icon::CALENDAR, "Auto Backup").on_hover_text(style::vis(tr("Scheduled backups"))).clicked();
             });
             folder = style::icon_button(ui, icon::FOLDER_OPEN, "Open backup folder").clicked();
             let r = style::icon_button(ui, icon::CALENDAR, "Delete by time range");
             egui::Popup::menu(&r).width(320.0).show(|ui| {
-                ui.label(style::strong(tr("Delete backups made between")));
-                ui.label(style::muted(ui, tr("Dates like 2026-10-01, or 2026-10-01 14:30. An end date includes that whole day; leave it empty for \"now\".")).size(12.0));
+                ui.add(style::Label::new(style::strong(tr("Delete backups made between"))));
+                ui.add(style::Label::new(
+                    style::muted(ui, tr("Dates like 2026-10-01, or 2026-10-01 14:30. An end date includes that whole day; leave it empty for \"now\".")).size(12.0),
+                ));
                 ui.add_space(4.0);
                 style::text_input(ui, &mut self.range.0, "From", 300.0);
                 style::text_input(ui, &mut self.range.1, "To (optional)", 300.0);
@@ -143,7 +145,7 @@ impl BackupView {
                         });
                     }
                     Err(e) if !self.range.0.trim().is_empty() => {
-                        ui.label(egui::RichText::new(crate::tf!("{e:#}")).size(12.0).color(Palette::get(ui.ctx()).danger));
+                        ui.add(style::Label::new(style::rich(crate::tf!("{e:#}")).size(12.0).color(Palette::get(ui.ctx()).danger)));
                     }
                     Err(_) => {}
                 }
@@ -178,11 +180,11 @@ impl BackupView {
             crate::gui::style::row(ui, |ui| {
                 match self.list.iter().find(|m| Some(&m.id) == sel.as_ref()) {
                     Some(m) => {
-                        ui.label(style::strong(&m.name));
-                        ui.label(style::muted(ui, m.created.format("%d %b %Y, %H:%M").to_string()));
+                        ui.add(style::Label::new(style::strong(&m.name)));
+                        ui.add(style::Label::new(style::muted(ui, m.created.format("%d %b %Y, %H:%M").to_string())));
                     }
                     None => {
-                        ui.label(style::muted(ui, tr("Select a backup to restore or delete it.")));
+                        ui.add(style::Label::new(style::muted(ui, tr("Select a backup to restore or delete it."))));
                     }
                 }
                 ui.with_layout(crate::gui::style::far_layout(egui::Align::Center), |ui| {
@@ -233,7 +235,7 @@ impl BackupView {
             .header(28.0, |mut h| {
                 for t in crate::gui::style::ordered(vec!["", "Name", "Type", "Date", "Entries", "Size", "Note"]) {
                     h.col(|ui| {
-                        ui.label(RichText::new(tr(t)).size(12.5).color(p.muted));
+                        ui.add(style::Label::new(style::rich(tr(t)).size(12.5).color(p.muted)));
                     });
                 }
             })
@@ -246,25 +248,25 @@ impl BackupView {
                         &mut row,
                         vec![
                             Box::new(|ui: &mut Ui| {
-                                ui.label(RichText::new(ic).size(18.0).color(col));
+                                ui.add(style::Label::new(style::rich(ic).size(18.0).color(col)));
                             }),
                             Box::new(|ui: &mut Ui| {
-                                ui.add(egui::Label::new(&m.name).truncate());
+                                ui.add(style::Label::new(&m.name).truncate());
                             }),
                             Box::new(|ui: &mut Ui| {
                                 style::badge(ui, kind_label(m.kind), col);
                             }),
                             Box::new(|ui: &mut Ui| {
-                                ui.label(RichText::new(m.created.format("%d %b %Y, %H:%M").to_string()).color(p.muted));
+                                ui.add(style::Label::new(style::rich(m.created.format("%d %b %Y, %H:%M").to_string()).color(p.muted)));
                             }),
                             Box::new(|ui: &mut Ui| {
-                                ui.label(m.entries.len().to_string());
+                                ui.add(style::Label::new(m.entries.len().to_string()));
                             }),
                             Box::new(|ui: &mut Ui| {
-                                ui.label(RichText::new(human(m.size_bytes)).color(p.muted));
+                                ui.add(style::Label::new(style::rich(human(m.size_bytes)).color(p.muted)));
                             }),
                             Box::new(|ui: &mut Ui| {
-                                ui.add(egui::Label::new(RichText::new(&m.note).color(p.muted)).truncate());
+                                ui.add(style::Label::new(style::rich(&m.note).color(p.muted)).truncate());
                             }),
                         ],
                     );
@@ -319,7 +321,7 @@ impl BackupView {
                 let restore = text.starts_with("Restore");
                 style::icon_tile(ui, if restore { icon::UNDO } else { icon::TRASH }, if restore { p.accent } else { p.danger }, 44.0);
                 ui.add_space(8.0);
-                ui.label(style::strong(text).size(17.0));
+                ui.add(style::Label::new(style::strong(text).size(17.0)));
                 ui.add_space(14.0);
                 crate::gui::style::row(ui, |ui| {
                     if style::primary(ui, "", if restore { tr("Restore") } else { tr("Delete") }).clicked() {
@@ -361,8 +363,8 @@ impl BackupView {
         if let Some(c) = &mut self.custom {
             let mut done = None;
             egui::Modal::new(egui::Id::unique("custom-restore")).show(ctx, |ui| {
-                ui.label(style::strong(tr("Custom restore")).size(19.0));
-                ui.label(style::muted(ui, crate::tf!("Choose what to restore from {}", c.id)));
+                ui.add(style::Label::new(style::strong(tr("Custom restore")).size(19.0)));
+                ui.add(style::Label::new(style::muted(ui, crate::tf!("Choose what to restore from {}", c.id))));
                 crate::gui::style::row(ui, |ui| {
                     if style::ghost(ui, icon::CHECK, "Select all").clicked() {
                         c.checked.iter_mut().for_each(|x| *x = true);
@@ -373,7 +375,7 @@ impl BackupView {
                 });
                 egui::ScrollArea::vertical().max_height(360.0).min_scrolled_width(600.0).show(ui, |ui| {
                     for (l, ch) in c.labels.iter().zip(c.checked.iter_mut()) {
-                        ui.checkbox(ch, RichText::new(l).monospace());
+                        ui.checkbox(ch, style::vis(style::rich(l).monospace()));
                     }
                 });
                 ui.add_space(6.0);
@@ -402,16 +404,16 @@ impl BackupView {
             egui::Modal::new(egui::Id::unique("create-backup")).show(ctx, |ui| {
                 ui.set_width(620.0);
                 let p = Palette::get(ui.ctx());
-                ui.label(style::strong(tr("Create backup")).size(19.0));
+                ui.add(style::Label::new(style::strong(tr("Create backup")).size(19.0)));
                 ui.add_space(8.0);
                 egui::Grid::new("create-grid").num_columns(2).spacing([16.0, 10.0]).show(ui, |ui| {
-                    ui.label(style::muted(ui, tr("Name")));
+                    ui.add(style::Label::new(style::muted(ui, tr("Name"))));
                     style::text_input(ui, &mut f.name, "", 460.0);
                     ui.end_row();
-                    ui.label(style::muted(ui, tr("Note")));
+                    ui.add(style::Label::new(style::muted(ui, tr("Note"))));
                     style::text_input(ui, &mut f.note, "Optional", 460.0);
                     ui.end_row();
-                    ui.label(style::muted(ui, tr("Back up")));
+                    ui.add(style::Label::new(style::muted(ui, tr("Back up"))));
                     crate::gui::style::row(ui, |ui| {
                         if style::segment(ui, f.whole, if cfg!(windows) { tr("Whole registry") } else { tr("Whole config store") }).clicked() {
                             f.whole = true;

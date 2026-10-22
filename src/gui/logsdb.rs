@@ -61,15 +61,15 @@ impl LogsDbTab {
             style::search_field(ui, &mut self.search, "Search logs", 220.0);
             ui.add_space(6.0);
             style::toggle(ui, &mut self.compatible_only, "Only logs for this system");
-            ui.label(style::muted(ui, crate::tf!("Only {} {}", std::env::consts::OS, std::env::consts::ARCH)));
+            ui.add(style::Label::new(style::muted(ui, crate::tf!("Only {} {}", std::env::consts::OS, std::env::consts::ARCH))));
             ui.with_layout(crate::gui::style::far_layout(egui::Align::Center), |ui| {
                 let has_url = cx.settings.logs_db_url.as_deref().is_some_and(|u| !u.trim().is_empty());
                 ui.add_enabled_ui(self.updating.is_none(), |ui| {
-                    let r = style::secondary(ui, icon::DOWNLOAD, "Update").on_hover_text(if has_url {
+                    let r = style::secondary(ui, icon::DOWNLOAD, "Update").on_hover_text(style::vis(if has_url {
                         tr("Download new logs from the database URL")
                     } else {
                         tr("Set a database URL in Settings › Uninstaller first")
-                    });
+                    }));
                     if r.clicked() {
                         if has_url {
                             let s = cx.settings.clone();
@@ -114,14 +114,14 @@ impl LogsDbTab {
                 Some(d) => {
                     style::icon_tile(ui, icon::DATABASE, p.accent, 34.0);
                     crate::gui::style::column(ui, |ui| {
-                        ui.label(style::strong(&d.log.name));
-                        ui.label(
+                        ui.add(style::Label::new(style::strong(&d.log.name)));
+                        ui.add(style::Label::new(
                             style::muted(
                                 ui,
                                 crate::tf!("{} {} · {} settings · {} files · {}", d.log.os, d.log.arch, d.log.count(true), d.log.count(false), d.log.created.format("%d %b %Y")),
                             )
                             .size(12.5),
-                        );
+                        ));
                     });
                     ui.with_layout(crate::gui::style::far_layout(egui::Align::Center), |ui| {
                         ui.add_enabled_ui(d.compatible(), |ui| {
@@ -132,7 +132,10 @@ impl LogsDbTab {
                                     None
                                 }
                             };
-                            if style::primary(ui, icon::TRASH, "Uninstall").on_hover_text(tr("Imports the log into Traced programs and removes what it recorded")).clicked() {
+                            if style::primary(ui, icon::TRASH, "Uninstall")
+                                .on_hover_text(style::vis(tr("Imports the log into Traced programs and removes what it recorded")))
+                                .clicked()
+                            {
                                 action = import(cx).map(TracedAction::Uninstall);
                             }
                             if style::secondary(ui, icon::LIST_CHECKS, "Custom uninstall").clicked() {
@@ -145,7 +148,7 @@ impl LogsDbTab {
                     });
                 }
                 None => {
-                    ui.label(style::muted(ui, tr("Select a log. Uninstalling with it imports it into Traced programs first.")));
+                    ui.add(style::Label::new(style::muted(ui, tr("Select a log. Uninstalling with it imports it into Traced programs first."))));
                 }
             });
         });
@@ -161,7 +164,7 @@ impl LogsDbTab {
             .header(26.0, |mut h| {
                 for t in crate::gui::style::ordered(vec!["Name", "System", "Settings", "Files", "Recorded"]) {
                     h.col(|ui| {
-                        ui.label(style::muted(ui, tr(t)).size(12.5));
+                        ui.add(style::Label::new(style::muted(ui, tr(t)).size(12.5)));
                     });
                 }
             })
@@ -176,20 +179,20 @@ impl LogsDbTab {
                         &mut row,
                         vec![
                             Box::new(|ui: &mut Ui| {
-                                ui.label(egui::RichText::new(icon::DATABASE).color(if d.compatible() { p.accent } else { p.faint }));
-                                ui.add(egui::Label::new(style::strong(&d.log.name)).truncate());
+                                ui.add(style::Label::new(style::rich(icon::DATABASE).color(if d.compatible() { p.accent } else { p.faint })));
+                                ui.add(style::Label::new(style::strong(&d.log.name)).truncate());
                             }),
                             Box::new(|ui: &mut Ui| {
-                                ui.label(soft(ui, crate::tf!("{} {}", d.log.os, d.log.arch)));
+                                ui.add(style::Label::new(soft(ui, crate::tf!("{} {}", d.log.os, d.log.arch))));
                             }),
                             Box::new(|ui: &mut Ui| {
-                                ui.label(d.log.count(true).to_string());
+                                ui.add(style::Label::new(d.log.count(true).to_string()));
                             }),
                             Box::new(|ui: &mut Ui| {
-                                ui.label(d.log.count(false).to_string());
+                                ui.add(style::Label::new(d.log.count(false).to_string()));
                             }),
                             Box::new(|ui: &mut Ui| {
-                                ui.label(soft(ui, d.log.created.format("%d %b %Y").to_string()));
+                                ui.add(style::Label::new(soft(ui, d.log.created.format("%d %b %Y").to_string())));
                             }),
                         ],
                     );

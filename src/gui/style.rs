@@ -123,7 +123,7 @@ pub fn icon_picker(ui: &mut Ui, current: Option<&str>) -> Option<Option<String>>
         for (i, (key, glyph)) in ICON_CHOICES.iter().enumerate() {
             let sel = current == Some(*key);
             let r = ui.add(
-                egui::Button::new(RichText::new(*glyph).size(18.0).color(if sel { p.accent } else { p.text }))
+                egui::Button::new(vis(rich(*glyph).size(18.0).color(if sel { p.accent } else { p.text })))
                     .fill(if sel { p.accent_soft } else { Color32::TRANSPARENT })
                     .min_size(Vec2::splat(34.0)),
             );
@@ -353,7 +353,7 @@ pub fn install_fonts(ctx: &egui::Context) {
         "phosphor".into(),
         Arc::new(FontData::from_static(include_bytes!("../../assets/fonts/Phosphor.ttf")).tweak(egui::FontTweak { y_offset_factor: 0.07, ..Default::default() })),
     );
-    // Hebrew (Noto Sans Hebrew): Inter has no Hebrew letters.
+    // Hebrew (Noto Sans Hebrew): Inter has no Hebrew letters. Other scripts: `system_fonts`.
     fonts.font_data.insert("hebrew".into(), Arc::new(FontData::from_static(include_bytes!("../../assets/fonts/NotoSansHebrew-Regular.ttf"))));
     fonts.font_data.insert("hebrew-bold".into(), Arc::new(FontData::from_static(include_bytes!("../../assets/fonts/NotoSansHebrew-Bold.ttf"))));
     fonts.font_data.insert(
@@ -365,8 +365,13 @@ pub fn install_fonts(ctx: &egui::Context) {
     // Phosphor has only private-use glyphs. egui's own fonts stay last as fallback for other scripts.
     let defaults = fonts.families.get(&FontFamily::Proportional).cloned().unwrap_or_default();
     let mut prop = vec!["inter".to_string(), "phosphor".to_string(), "hebrew".to_string()];
-    prop.extend(defaults.iter().cloned());
     let mut bold = vec!["inter-semibold".to_string(), "phosphor".to_string(), "hebrew-bold".to_string(), "inter".to_string()];
+    for (name, data) in system_fonts() {
+        fonts.font_data.insert(name.clone(), Arc::new(data));
+        prop.push(name.clone());
+        bold.push(name);
+    }
+    prop.extend(defaults.iter().cloned());
     bold.extend(defaults);
     fonts.families.insert(FontFamily::Proportional, prop);
     fonts.families.insert(semibold(), bold);
@@ -374,14 +379,77 @@ pub fn install_fonts(ctx: &egui::Context) {
     ctx.set_fonts(fonts);
 }
 
+/// The bundled fonts draw this character: Inter (Latin, Greek, Cyrillic, symbols), Noto Sans
+/// Hebrew, Phosphor icons (private use).
+fn bundled(c: char) -> bool {
+    matches!(c,
+        '\0'..='\u{052F}'
+        | '\u{0590}'..='\u{05FF}'
+        | '\u{1E00}'..='\u{2BFF}'
+        | '\u{E000}'..='\u{F8FF}'
+        | '\u{FB1D}'..='\u{FB4F}'
+        | '\u{FE00}'..='\u{FE0F}'
+        | '\u{FEFF}'..='\u{FFFF}')
+}
+
+/// System fonts for the languages in `locales/` whose script the bundled fonts don't have
+/// (Arabic, Persian, Chinese, Japanese, Thai, Hindi, …), so a new catalog needs no new font.
+fn system_fonts() -> Vec<(String, FontData)> {
+    let mut out: Vec<(String, FontData)> = Vec::new();
+    let mut seen = std::collections::HashSet::new();
+    for lang in crate::i18n::LANGUAGES.iter() {
+        let Some(letter) = lang.catalog_text().chars().find(|c| !bundled(*c)) else { continue };
+        let Some((path, index)) = system_font_file(lang.code, letter) else { continue };
+        if !seen.insert((path.clone(), index)) {
+            continue;
+        }
+        if let Ok(bytes) = std::fs::read(&path) {
+            let mut data = FontData::from_owned(bytes);
+            data.index = index;
+            out.push((format!("system-{}", lang.code), data));
+        }
+    }
+    out
+}
+
+/// A font file (and face index) for the language, from fontconfig.
+#[cfg(not(windows))]
+fn system_font_file(code: &str, _letter: char) -> Option<(std::path::PathBuf, u32)> {
+    let out = std::process::Command::new("fc-match").args(["-f", "%{file}\n%{index}", &format!(":lang={}", code.replace('_', "-").to_lowercase())]).output().ok()?;
+    let text = String::from_utf8(out.stdout).ok()?;
+    let (file, index) = text.split_once('\n')?;
+    Some((file.into(), index.trim().parse().unwrap_or(0)))
+}
+
+/// A font file (and face index) for the language, from the fonts Windows ships.
+#[cfg(windows)]
+fn system_font_file(code: &str, letter: char) -> Option<(std::path::PathBuf, u32)> {
+    let base = code.split(['_', '-']).next().unwrap_or(code);
+    let candidates: &[&str] = match (base, letter as u32) {
+        ("zh", _) if code.to_ascii_uppercase().ends_with("TW") || code.to_ascii_uppercase().ends_with("HK") => &["msjh.ttc"],
+        ("zh", _) => &["msyh.ttc", "simsun.ttc"],
+        ("ja", _) => &["yugothr.ttc", "meiryo.ttc", "msgothic.ttc"],
+        ("ko", _) => &["malgun.ttf", "gulim.ttc"],
+        (_, 0x0E00..=0x0EFF) => &["leelawui.ttf", "tahoma.ttf"],
+        (_, 0x0900..=0x0DFF) => &["nirmala.ttf"],
+        (_, 0x1200..=0x139F) => &["ebrima.ttf"],
+        (_, 0x1000..=0x109F) => &["mmrtext.ttf"],
+        (_, 0x1780..=0x17FF) => &["leeluisl.ttf", "leelawui.ttf"],
+        // (File names in lower case: Windows matches them in any case.)
+        _ => &["segoeui.ttf", "tahoma.ttf", "arial.ttf"],
+    };
+    let dir = std::path::PathBuf::from(std::env::var("WINDIR").unwrap_or_else(|_| r"C:\Windows".into())).join("Fonts");
+    candidates.iter().map(|f| dir.join(f)).find(|p| p.exists()).map(|p| (p, 0))
+}
+
 // ---------------------------------------------------------------- widgets
 
 pub fn strong(text: impl Into<String>) -> RichText {
-    RichText::new(text).family(semibold())
+    rich(text).family(semibold())
 }
 
 pub fn muted(ui: &Ui, text: impl Into<String>) -> RichText {
-    RichText::new(text).color(Palette::get(ui.ctx()).muted)
+    rich(text).color(Palette::get(ui.ctx()).muted)
 }
 
 fn with_icon(icon: &str, text: &str) -> String {
@@ -561,10 +629,163 @@ pub fn cells_in_order<'a>(row: &mut egui_extras::TableRow<'_, '_>, cells: Vec<Bo
     }
 }
 
+// ---------------------------------------------------------------- right-to-left text
+//
+// egui places text left to right and has no bidirectional layout (it only shapes the letters of
+// each Hebrew word right to left). So text with Hebrew in it is handed to egui in display order
+// (`i18n::visual`), exactly once, where it becomes drawable: `rich` instead of `RichText::new`,
+// `vis` for plain-text widget arguments, `vstr` for painter text, and `Label` instead of
+// `egui::Label` (it also wraps right-to-left text from the right and truncates it on the left).
+
+/// Text in display order, for the painter.
+pub fn vstr(text: impl ToString) -> String {
+    let text = text.to_string();
+    match crate::i18n::visual(&text) {
+        std::borrow::Cow::Borrowed(_) => text,
+        std::borrow::Cow::Owned(v) => v,
+    }
+}
+
+/// `RichText::new` with the text in display order.
+pub fn rich(text: impl Into<String>) -> RichText {
+    RichText::new(vstr(text.into()))
+}
+
+/// Widget text in display order. Rich text already is (it is made with `rich`).
+pub fn vis(text: impl Into<egui::WidgetText>) -> egui::WidgetText {
+    match text.into() {
+        egui::WidgetText::Text(s) => egui::WidgetText::Text(vstr(s)),
+        t => t,
+    }
+}
+
+/// Display-order right-to-left text broken into lines no wider than `width`: a line reads from
+/// the right, so each one takes the words at the right end of what is left. `None` when every
+/// line fits already.
+fn rtl_lines(text: &str, width: f32, measure: impl Fn(&str) -> f32) -> Option<String> {
+    if text.split('\n').all(|l| measure(l) <= width) {
+        return None;
+    }
+    let space = measure(" ");
+    let mut lines = Vec::new();
+    for para in text.split('\n') {
+        let words: Vec<&str> = para.split(' ').collect();
+        let widths: Vec<f32> = words.iter().map(|w| measure(w)).collect();
+        let mut end = words.len();
+        while end > 0 {
+            let mut start = end - 1;
+            let mut w = widths[start];
+            while start > 0 && w + space + widths[start - 1] <= width {
+                start -= 1;
+                w += space + widths[start];
+            }
+            lines.push(words[start..end].join(" "));
+            end = start;
+        }
+    }
+    Some(lines.join("\n"))
+}
+
+/// Display-order right-to-left text cut on the left, where it ends, to fit `width`. `None`
+/// when it fits, or when not even its first word does.
+fn rtl_truncated(text: &str, width: f32, measure: impl Fn(&str) -> f32) -> Option<String> {
+    let text = text.split('\n').next().unwrap_or_default();
+    if measure(text) <= width {
+        return None;
+    }
+    let words: Vec<&str> = text.split(' ').collect();
+    (1..words.len()).map(|i| format!("…{}", words[i..].join(" "))).find(|t| measure(t) <= width)
+}
+
+/// `egui::Label` for text that may read right to left (see above).
+pub struct Label {
+    text: egui::WidgetText,
+    wrap_mode: Option<egui::TextWrapMode>,
+    sense: Option<egui::Sense>,
+}
+
+impl Label {
+    pub fn new(text: impl Into<egui::WidgetText>) -> Self {
+        Self { text: vis(text), wrap_mode: None, sense: None }
+    }
+
+    pub fn wrap(mut self) -> Self {
+        self.wrap_mode = Some(egui::TextWrapMode::Wrap);
+        self
+    }
+
+    pub fn truncate(mut self) -> Self {
+        self.wrap_mode = Some(egui::TextWrapMode::Truncate);
+        self
+    }
+
+    pub fn extend(mut self) -> Self {
+        self.wrap_mode = Some(egui::TextWrapMode::Extend);
+        self
+    }
+
+    pub fn sense(mut self, sense: egui::Sense) -> Self {
+        self.sense = Some(sense);
+        self
+    }
+
+    fn egui(&self, text: impl Into<egui::WidgetText>) -> egui::Label {
+        let label = egui::Label::new(text);
+        let label = match self.wrap_mode {
+            Some(mode) => label.wrap_mode(mode),
+            None => label,
+        };
+        match self.sense {
+            Some(sense) => label.sense(sense),
+            None => label,
+        }
+    }
+
+    /// The text laid out by hand when it reads right to left and does not fit.
+    fn fitted(&self, ui: &Ui) -> Option<egui::text::LayoutJob> {
+        let mode = self.wrap_mode.unwrap_or_else(|| ui.wrap_mode());
+        if !rtl() || mode == egui::TextWrapMode::Extend || !crate::i18n::has_rtl(self.text.text()) {
+            return None;
+        }
+        let mut job = Arc::unwrap_or_clone(self.text.clone().into_layout_job(ui.style(), egui::FontSelection::Default, ui.text_valign()));
+        let [section] = &mut job.sections[..] else { return None };
+        let font = section.format.font_id.clone();
+        let painter = ui.painter();
+        let measure = |s: &str| painter.layout_no_wrap(s.to_string(), font.clone(), Color32::PLACEHOLDER).size().x;
+        let width = ui.available_width();
+        let text = if mode == egui::TextWrapMode::Wrap { rtl_lines(&job.text, width, measure) } else { rtl_truncated(&job.text, width, measure) }?;
+        section.byte_range = egui::text::ByteIndex(0)..egui::text::ByteIndex(text.len());
+        job.text = text;
+        Some(job)
+    }
+}
+
+impl egui::Widget for Label {
+    fn ui(self, ui: &mut Ui) -> egui::Response {
+        match self.fitted(ui) {
+            Some(job) => {
+                let truncated = self.wrap_mode.unwrap_or_else(|| ui.wrap_mode()) == egui::TextWrapMode::Truncate;
+                let r = ui.add(self.egui(job).extend().halign(egui::Align::RIGHT));
+                if truncated {
+                    r.on_hover_text(self.text)
+                } else {
+                    r
+                }
+            }
+            None => ui.add(self.egui(self.text.clone())),
+        }
+    }
+}
+
 /// Text laid out from the reading-direction edge: paint it at `Mirror::x(d)` (right-aligned
 /// for right-to-left). `wrap` is the wrap width (`f32::INFINITY` for one line).
 pub fn text_galley(ui: &Ui, text: impl Into<String>, font: FontId, color: Color32, wrap: f32) -> Arc<egui::Galley> {
-    let mut job = egui::text::LayoutJob::simple(text.into(), font, color, wrap);
+    let mut text = vstr(text.into());
+    if rtl() && wrap.is_finite() && crate::i18n::has_rtl(&text) {
+        let measure = |s: &str| ui.painter().layout_no_wrap(s.to_string(), font.clone(), color).size().x;
+        text = rtl_lines(&text, wrap, measure).unwrap_or(text);
+    }
+    let mut job = egui::text::LayoutJob::simple(text, font, color, wrap);
     if rtl() {
         job.halign = egui::Align::RIGHT;
     }
@@ -629,7 +850,7 @@ pub fn primary(ui: &mut Ui, icon: &str, text: &str) -> egui::Response {
     }
     let glow = ui.painter().add(egui::Shape::Noop);
     let r = ui.add(
-        egui::Button::new(RichText::new(button_text(icon, text)).color(p.on_accent).family(semibold()))
+        egui::Button::new(vis(rich(button_text(icon, text)).color(p.on_accent).family(semibold())))
             .fill(fill)
             .stroke(Stroke::NONE)
             .corner_radius(8)
@@ -649,7 +870,7 @@ pub fn secondary(ui: &mut Ui, icon: &str, text: &str) -> egui::Response {
     let (t, pressed) = interaction(ui, ui.next_auto_id());
     let fill = if pressed { p.hover.lerp_to_gamma(p.border, 0.5) } else { p.surface.lerp_to_gamma(p.hover, t) };
     let stroke = p.border.lerp_to_gamma(p.faint, t * 0.6);
-    ui.add(egui::Button::new(button_text(icon, text)).fill(fill).stroke(Stroke::new(1.0, stroke)).corner_radius(8).min_size(Vec2::new(0.0, CONTROL_H)))
+    ui.add(egui::Button::new(vis(button_text(icon, text))).fill(fill).stroke(Stroke::new(1.0, stroke)).corner_radius(8).min_size(Vec2::new(0.0, CONTROL_H)))
 }
 
 /// Destructive outlined button; tints red on hover.
@@ -658,7 +879,7 @@ pub fn danger(ui: &mut Ui, icon: &str, text: &str) -> egui::Response {
     let (t, pressed) = interaction(ui, ui.next_auto_id());
     let fill = p.surface.lerp_to_gamma(p.danger, if pressed { 0.16 } else { 0.08 * t });
     ui.add(
-        egui::Button::new(RichText::new(button_text(icon, text)).color(p.danger))
+        egui::Button::new(vis(rich(button_text(icon, text)).color(p.danger)))
             .fill(fill)
             .stroke(Stroke::new(1.0, p.border.lerp_to_gamma(p.danger, t * 0.55)))
             .corner_radius(8)
@@ -679,7 +900,7 @@ fn hover_fill(p: &Palette, t: f32, pressed: bool) -> Color32 {
 pub fn ghost(ui: &mut Ui, icon: &str, text: &str) -> egui::Response {
     let p = Palette::get(ui.ctx());
     let (t, pressed) = interaction(ui, ui.next_auto_id());
-    ui.add(egui::Button::new(button_text(icon, text)).fill(hover_fill(&p, t, pressed)).stroke(Stroke::NONE).corner_radius(8).min_size(Vec2::new(30.0, CONTROL_H)))
+    ui.add(egui::Button::new(vis(button_text(icon, text))).fill(hover_fill(&p, t, pressed)).stroke(Stroke::NONE).corner_radius(8).min_size(Vec2::new(30.0, CONTROL_H)))
 }
 
 /// Icon-only borderless button with a tooltip (the tooltip text is also its accessible name).
@@ -688,10 +909,10 @@ pub fn icon_button(ui: &mut Ui, icon: &str, tip: &str) -> egui::Response {
     let p = Palette::get(ui.ctx());
     let (t, pressed) = interaction(ui, ui.next_auto_id());
     let color = p.muted.lerp_to_gamma(p.text, t);
-    let r = ui
-        .add(egui::Button::new(RichText::new(icon).size(17.0).color(color)).fill(hover_fill(&p, t, pressed)).stroke(Stroke::NONE).corner_radius(8).min_size(Vec2::new(32.0, 32.0)));
+    let r =
+        ui.add(egui::Button::new(vis(rich(icon).size(17.0).color(color))).fill(hover_fill(&p, t, pressed)).stroke(Stroke::NONE).corner_radius(8).min_size(Vec2::new(32.0, 32.0)));
     r.widget_info(|| egui::WidgetInfo::labeled(egui::Role::Button, true, tip));
-    r.on_hover_text(tip)
+    r.on_hover_text(vis(tip))
 }
 
 /// Background of a clickable tile (a card-sized button): lifts a little with a soft shadow on
@@ -751,20 +972,20 @@ pub fn stat_tile(ui: &mut Ui, width: f32, glyph: &str, value: &str, label: &str,
     let m = Mirror::new(rect);
     let tile = m.rect(14.0, rect.top() + 17.0, Vec2::splat(40.0));
     ui.painter().rect_filled(tile, 11.0, soft(color, if p.dark { 44 } else { 26 }));
-    ui.painter().text(tile.center(), egui::Align2::CENTER_CENTER, glyph, FontId::new(19.0, icon_fill()), color);
+    ui.painter().text(tile.center(), egui::Align2::CENTER_CENTER, vstr(glyph), FontId::new(19.0, icon_fill()), color);
     let d = 14.0 + 40.0 + 12.0;
     let max_w = rect.width() - d - 10.0;
-    let vg = ui.painter().layout(value.to_string(), FontId::new(20.0, semibold()), p.text, max_w);
+    let vg = ui.painter().layout(vstr(value.to_string()), FontId::new(20.0, semibold()), p.text, max_w);
     let (vg_h, vg_w) = (vg.size().y.min(26.0), vg.size().x);
     ui.painter().with_clip_rect(rect).galley(egui::pos2(m.galley_x(d, vg_w), rect.top() + 14.0), vg, p.text);
-    ui.painter().with_clip_rect(rect).text(m.pos(d, rect.top() + 18.0 + vg_h), m.start(egui::Align::Min), label, FontId::proportional(12.0), p.muted);
+    ui.painter().with_clip_rect(rect).text(m.pos(d, rect.top() + 18.0 + vg_h), m.start(egui::Align::Min), vstr(label), FontId::proportional(12.0), p.muted);
 }
 
 /// Small uppercase label above a group of cards.
 pub fn eyebrow(ui: &mut Ui, text: &str) {
     let text = tr(text);
     let p = Palette::get(ui.ctx());
-    ui.label(RichText::new(text.to_uppercase()).size(11.5).family(semibold()).color(p.faint));
+    ui.add(Label::new(rich(text.to_uppercase()).size(11.5).family(semibold()).color(p.faint)));
     ui.add_space(2.0);
 }
 
@@ -820,7 +1041,7 @@ pub fn progress_ring(ui: &mut Ui, id: egui::Id, size: f32, frac: Option<f32>, gl
     // A soft breathing halo behind the glyph.
     let breathe = 0.5 + 0.5 * (time * 2.4).sin();
     ui.painter().circle_filled(c, radius * (0.56 + 0.04 * breathe), soft(p.accent, if p.dark { 40 } else { 26 }));
-    ui.painter().text(c, egui::Align2::CENTER_CENTER, glyph, FontId::new(size * 0.3, icon_fill()), p.accent);
+    ui.painter().text(c, egui::Align2::CENTER_CENTER, vstr(glyph), FontId::new(size * 0.3, icon_fill()), p.accent);
     ui.ctx().request_repaint();
 }
 
@@ -844,7 +1065,7 @@ pub fn logo(ui: &mut Ui, glyph: &str, size: f32) -> egui::Response {
     let tex = accent_gradient(ui.ctx(), &p);
     let uv = egui::Rect::from_min_max(egui::pos2(0.25, 0.25), egui::pos2(0.75, 0.75));
     ui.painter().add(egui::epaint::RectShape::filled(rect, radius, Color32::WHITE).with_texture(tex.id(), uv));
-    ui.painter().text(rect.center(), egui::Align2::CENTER_CENTER, glyph, FontId::new(size * 0.52, icon_fill()), Color32::WHITE);
+    ui.painter().text(rect.center(), egui::Align2::CENTER_CENTER, vstr(glyph), FontId::new(size * 0.52, icon_fill()), Color32::WHITE);
     r
 }
 
@@ -867,7 +1088,7 @@ pub fn card<R>(ui: &mut Ui, add: impl FnOnce(&mut Ui) -> R) -> R {
 pub fn badge(ui: &mut Ui, text: &str, color: Color32) {
     let text = tr(text);
     // Painted at its natural size so it never stretches inside table cells.
-    let galley = ui.painter().layout_no_wrap(text.to_string(), FontId::new(12.0, semibold()), color);
+    let galley = ui.painter().layout_no_wrap(vstr(text.to_string()), FontId::new(12.0, semibold()), color);
     let size = galley.size() + Vec2::new(16.0, 4.0);
     let (rect, resp) = ui.allocate_exact_size(size, egui::Sense::hover());
     resp.widget_info(|| egui::WidgetInfo::labeled(egui::Role::Label, true, text));
@@ -880,7 +1101,7 @@ pub fn badge(ui: &mut Ui, text: &str, color: Color32) {
 pub fn icon_tile(ui: &mut Ui, icon: &str, color: Color32, size: f32) {
     let (rect, _) = ui.allocate_exact_size(Vec2::splat(size), egui::Sense::hover());
     ui.painter().rect_filled(rect, size * 0.28, soft(color, if Palette::get(ui.ctx()).dark { 52 } else { 28 }));
-    ui.painter().text(rect.center(), egui::Align2::CENTER_CENTER, icon, FontId::new(size * 0.5, icon_fill()), color);
+    ui.painter().text(rect.center(), egui::Align2::CENTER_CENTER, vstr(icon), FontId::new(size * 0.5, icon_fill()), color);
 }
 
 /// Page title row: title, subtitle and right-aligned actions.
@@ -905,9 +1126,9 @@ fn header_row(ui: &mut Ui, title: &str, subtitle: &str, lead: impl FnOnce(&mut U
         column(ui, |ui| {
             ui.set_max_width(title_w);
             ui.spacing_mut().item_spacing.y = 2.0;
-            ui.add(egui::Label::new(RichText::new(title).size(24.0).family(semibold())).truncate());
+            ui.add(Label::new(rich(title).size(24.0).family(semibold())).truncate());
             if !subtitle.is_empty() {
-                ui.add(egui::Label::new(muted(ui, subtitle)).truncate());
+                ui.add(Label::new(muted(ui, subtitle)).truncate());
             }
         });
         let r = ui.with_layout(far_layout(egui::Align::Center), |ui| {
@@ -932,9 +1153,9 @@ pub fn page_header_back(ui: &mut Ui, title: &str, subtitle: &str, actions: impl 
         title,
         subtitle,
         |ui| {
-            let r = ui.add(egui::Button::new(RichText::new(icon_back()).size(17.0)).frame_when_inactive(false).corner_radius(8).min_size(Vec2::splat(CONTROL_H)));
+            let r = ui.add(egui::Button::new(vis(rich(icon_back()).size(17.0))).frame_when_inactive(false).corner_radius(8).min_size(Vec2::splat(CONTROL_H)));
             r.widget_info(|| egui::WidgetInfo::labeled(egui::Role::Button, true, "Back"));
-            back = r.on_hover_text("Back").clicked();
+            back = r.on_hover_text(vis("Back")).clicked();
             ui.add_space(2.0);
         },
         actions,
@@ -958,7 +1179,7 @@ pub fn tabs<T: PartialEq + Copy>(ui: &mut Ui, current: &mut T, items: &[(T, &str
             .iter()
             .map(|(_, ic, label, count)| {
                 let t = if icons { with_icon(ic, label) } else { label.to_string() };
-                let w = ui.painter().layout_no_wrap(t, FontId::new(14.0, semibold()), p.text).size().x;
+                let w = ui.painter().layout_no_wrap(vstr(t), FontId::new(14.0, semibold()), p.text).size().x;
                 let c = if counts { count.map_or(0.0, |c| c.to_string().len() as f32 * 7.0 + 20.0) } else { 0.0 };
                 w + c + pad + 4.0
             })
@@ -984,9 +1205,9 @@ pub fn tabs<T: PartialEq + Copy>(ui: &mut Ui, current: &mut T, items: &[(T, &str
                 let count = count.filter(|_| show_counts);
                 let text = if show_icons { with_icon(ic, label) } else { label.to_string() };
                 let font = FontId::new(14.0, if sel { semibold() } else { FontFamily::Proportional });
-                let count_galley = count.map(|c| ui.painter().layout_no_wrap(c.to_string(), FontId::new(11.5, semibold()), if sel { p.accent } else { p.muted }));
+                let count_galley = count.map(|c| ui.painter().layout_no_wrap(vstr(c.to_string()), FontId::new(11.5, semibold()), if sel { p.accent } else { p.muted }));
                 let count_w = count_galley.as_ref().map_or(0.0, |g| g.size().x + 14.0 + 6.0);
-                let probe = ui.painter().layout_no_wrap(text.clone(), font.clone(), p.text);
+                let probe = ui.painter().layout_no_wrap(vstr(text.clone()), font.clone(), p.text);
                 let (rect, r) = ui.allocate_exact_size(Vec2::new(probe.size().x + count_w + pad, 40.0), egui::Sense::click());
                 let name = with_icon(ic, label);
                 r.widget_info(|| egui::WidgetInfo::selected(egui::Role::Tab, true, sel, &name));
@@ -998,7 +1219,7 @@ pub fn tabs<T: PartialEq + Copy>(ui: &mut Ui, current: &mut T, items: &[(T, &str
                     ui.painter().rect_filled(rect.shrink2(Vec2::new(2.0, 5.0)), 8.0, p.hover.gamma_multiply(t));
                 }
                 let color = if sel { p.accent } else { p.muted.lerp_to_gamma(p.text, t) };
-                let galley = ui.painter().layout_no_wrap(text.clone(), font, color);
+                let galley = ui.painter().layout_no_wrap(vstr(text.clone()), font, color);
                 let text_pos = egui::pos2(rect.left() + pad / 2.0 + 1.0, rect.center().y - galley.size().y / 2.0);
                 let text_w = galley.size().x;
                 ui.painter().galley(text_pos, galley, color);
@@ -1044,7 +1265,7 @@ pub fn dropdown<R>(ui: &mut Ui, id: &str, selected: &str, width: f32, contents: 
         let w = &mut ui.visuals_mut().widgets;
         w.inactive.weak_bg_fill = p.surface;
         w.inactive.bg_stroke = Stroke::new(1.0, p.border);
-        egui::ComboBox::from_id_salt(id).selected_text(selected).width(width).height(420.0).show_ui(ui, contents).inner
+        egui::ComboBox::from_id_salt(id).selected_text(vis(selected)).width(width).height(420.0).show_ui(ui, contents).inner
     })
     .inner
 }
@@ -1059,17 +1280,17 @@ pub fn empty_state(ui: &mut Ui, icon: &str, title: &str, text: &str) {
         let (rect, _) = ui.allocate_exact_size(Vec2::splat(88.0), egui::Sense::hover());
         ui.painter().circle_filled(rect.center(), 44.0, soft(p.accent, if p.dark { 22 } else { 14 }));
         ui.painter().circle_filled(rect.center(), 32.0, soft(p.accent, if p.dark { 44 } else { 28 }));
-        ui.painter().text(rect.center(), egui::Align2::CENTER_CENTER, icon, FontId::new(30.0, icon_fill()), p.accent);
+        ui.painter().text(rect.center(), egui::Align2::CENTER_CENTER, vstr(icon), FontId::new(30.0, icon_fill()), p.accent);
         ui.add_space(12.0);
-        ui.label(strong(title).size(18.0));
-        ui.label(muted(ui, text));
+        ui.add(Label::new(strong(title).size(18.0)));
+        ui.add(Label::new(muted(ui, text)));
     });
 }
 
 /// Label above a group of settings.
 pub fn section_title(ui: &mut Ui, text: &str) {
     let text = tr(text);
-    ui.label(strong(text).size(15.0));
+    ui.add(Label::new(strong(text).size(15.0)));
     ui.add_space(2.0);
 }
 
@@ -1093,8 +1314,8 @@ pub fn nav_item(ui: &mut Ui, icon: &str, label: &str, selected: bool) -> egui::R
     let m = Mirror::new(rect);
     let cy = rect.center().y;
     let family = if selected { icon_fill() } else { FontFamily::Proportional };
-    ui.painter().text(m.pos(14.0 + 2.0 * t, cy), m.start(egui::Align::Center), icon, FontId::new(18.0, family), icon_color);
-    ui.painter().text(m.pos(44.0 + 2.0 * t, cy), m.start(egui::Align::Center), label, FontId::new(14.5, if selected { semibold() } else { FontFamily::Proportional }), fg);
+    ui.painter().text(m.pos(14.0 + 2.0 * t, cy), m.start(egui::Align::Center), vstr(icon), FontId::new(18.0, family), icon_color);
+    ui.painter().text(m.pos(44.0 + 2.0 * t, cy), m.start(egui::Align::Center), vstr(label), FontId::new(14.5, if selected { semibold() } else { FontFamily::Proportional }), fg);
     if resp.hovered() {
         ui.ctx().set_cursor_icon(egui::CursorIcon::PointingHand);
     }
@@ -1124,9 +1345,9 @@ pub fn segment(ui: &mut Ui, selected: bool, text: &str) -> egui::Response {
     let text = tr(text);
     let p = Palette::get(ui.ctx());
     let (t, _) = interaction(ui, ui.next_auto_id());
-    let text = if selected { RichText::new(text).color(p.accent).family(semibold()) } else { RichText::new(text).color(p.muted.lerp_to_gamma(p.text, t)) };
+    let text = if selected { rich(text).color(p.accent).family(semibold()) } else { rich(text).color(p.muted.lerp_to_gamma(p.text, t)) };
     let fill = if selected { p.accent_soft } else { p.hover.gamma_multiply(t) };
-    let r = ui.add(egui::Button::new(text).fill(fill).stroke(Stroke::NONE).corner_radius(16).min_size(Vec2::new(0.0, 30.0)));
+    let r = ui.add(egui::Button::new(vis(text)).fill(fill).stroke(Stroke::NONE).corner_radius(16).min_size(Vec2::new(0.0, 30.0)));
     r.widget_info(|| egui::WidgetInfo::selected(egui::Role::Button, true, selected, ""));
     r
 }
@@ -1178,19 +1399,18 @@ fn field(ui: &mut Ui, text: &mut String, hint: &str, width: f32, lead: Option<&s
     let mut child = ui.new_child(egui::UiBuilder::new().max_rect(rect.shrink2(Vec2::new(10.0, 0.0))).layout(near_layout(egui::Align::Center)));
     child.spacing_mut().item_spacing.x = 6.0;
     if let Some(ic) = lead {
-        child.label(RichText::new(ic).color(p.faint));
+        child.label(rich(ic).color(p.faint));
     }
     let clear_w = if clearable && !text.is_empty() { 26.0 } else { 0.0 };
     let edit_w = (child.available_width() - clear_w).max(20.0);
-    let r = child.add(
-        egui::TextEdit::singleline(text).hint_text(RichText::new(hint).color(p.faint)).frame(egui::Frame::NONE).margin(Margin::ZERO).desired_width(edit_w).align(if rtl() {
+    let r =
+        child.add(egui::TextEdit::singleline(text).hint_text(vis(rich(hint).color(p.faint))).frame(egui::Frame::NONE).margin(Margin::ZERO).desired_width(edit_w).align(if rtl() {
             egui::Align2::RIGHT_CENTER
         } else {
             egui::Align2::LEFT_CENTER
-        }),
-    );
+        }));
     if clear_w > 0.0 {
-        let c = child.add(egui::Button::new(RichText::new(icon::X).size(12.0).color(p.muted)).frame_when_inactive(false).min_size(Vec2::splat(20.0)));
+        let c = child.add(egui::Button::new(vis(rich(icon::X).size(12.0).color(p.muted))).frame_when_inactive(false).min_size(Vec2::splat(20.0)));
         c.widget_info(|| egui::WidgetInfo::labeled(egui::Role::Button, true, "Clear"));
         if c.clicked() {
             text.clear();
@@ -1297,7 +1517,7 @@ pub fn browse_button(ui: &mut Ui, salt: &str, pick: Pick, current: &str) -> Opti
         let open = dialog_open(ui.ctx(), id);
         let r = ui.add_enabled_ui(!open, |ui| secondary(ui, ic, "")).inner;
         r.widget_info(|| egui::WidgetInfo::labeled(egui::Role::Button, !open, tr(tip)));
-        if r.on_hover_text(tr(tip)).clicked() {
+        if r.on_hover_text(vis(tr(tip))).clicked() {
             open_dialog(ui.ctx(), id, *kind, current);
         }
         if let Some(p) = dialog_result(ui.ctx(), id) {
@@ -1357,9 +1577,9 @@ pub fn setting_row(ui: &mut Ui, title: &str, help: &str, control: impl FnOnce(&m
             if help.is_empty() {
                 ui.add_space(10.0); // centre a lone title in the row
             }
-            ui.label(title);
+            ui.add(Label::new(title));
             if !help.is_empty() {
-                ui.add(egui::Label::new(muted(ui, help).size(12.5)).wrap());
+                ui.add(Label::new(muted(ui, help).size(12.5)).wrap());
             }
         });
         ui.with_layout(far_layout(egui::Align::Center), control);

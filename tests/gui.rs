@@ -7,7 +7,7 @@
 
 use cleancore::gui::App;
 use eframe::egui::{self, Role};
-use egui_kittest::kittest::Queryable;
+use egui_kittest::kittest::{NodeT, Queryable};
 use egui_kittest::Harness;
 use std::path::{Path, PathBuf};
 use std::time::{Duration, Instant};
@@ -128,10 +128,28 @@ fn walk_through_every_tool() {
     h.get_by_role(Role::TextInput).click();
     h.get_by_role(Role::TextInput).type_text("Fake");
     h.run_steps(3);
+    // Clicking a program's row doesn't select it for uninstalling; only its checkbox does.
+    let uninstall = format!("{}  Uninstall", cleancore::gui::style::icon::TRASH);
     h.get_by_label("Fake App").click();
     h.run_steps(3);
+    assert!(h.get_by_role_and_label(Role::Button, &uninstall).accesskit_node().is_disabled());
+    h.get_by_role(Role::CheckBox).click();
+    h.run_steps(3);
+    assert!(!h.get_by_role_and_label(Role::Button, &uninstall).accesskit_node().is_disabled());
     shot(&mut h, "01b-uninstaller-selected");
-    h.get_by_role_and_label(Role::Button, &format!("{}  Uninstall", cleancore::gui::style::icon::TRASH)).click();
+    // Cancelling the wizard after the program's uninstaller ran (which marks the uninstall as
+    // unfinished) forgets it: no "Finish uninstalling" notice afterwards.
+    h.get_by_role_and_label(Role::Button, &uninstall).click();
+    wait_for(&mut h, "Scan for leftovers");
+    write(
+        &root.join("data/pending-uninstall.json"),
+        r#"{"program":null,"label":"Fake App","version":"","target":{"names":["Fake App"]},"op":"Uninstall","started":"2026-10-22T07:00:00+03:00"}"#,
+    );
+    h.get_by_role_and_label(Role::Button, &format!("{}  Cancel", cleancore::gui::style::icon::X)).click();
+    h.run_steps(3);
+    assert!(!root.join("data/pending-uninstall.json").exists());
+    assert!(h.query_all_by_label_contains("Finish uninstalling").next().is_none());
+    h.get_by_role_and_label(Role::Button, &uninstall).click();
     wait_for(&mut h, "Scan for leftovers");
     shot(&mut h, "01c-wizard-mode");
     h.get_by_role_and_label(Role::Button, "Moderate").click();

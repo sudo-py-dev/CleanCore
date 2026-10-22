@@ -2,6 +2,7 @@ msgid ""
 msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: uk\n"
+"X-Language-Name: Українська\n"
 
 msgid "Reading startup entries, including system ones"
 msgstr "Читання елементів автозапуску, включно із системними"
@@ -1134,17 +1135,8 @@ msgstr "Світла"
 msgid "Dark"
 msgstr "Темна"
 
-msgid "Save changes"
-msgstr "Зберегти зміни"
-
 msgid "Appearance, safety options, lists and storage"
 msgstr "Оформлення, безпека, списки та сховище"
-
-msgid "Discard"
-msgstr "Скасувати зміни"
-
-msgid "Settings saved"
-msgstr "Налаштування збережено"
 
 msgid "Exclude list"
 msgstr "Список винятків"

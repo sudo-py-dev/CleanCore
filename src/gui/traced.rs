@@ -5,7 +5,7 @@ use super::{Cx, Pending};
 use crate::gui::style::ColumnsInOrder;
 use crate::i18n::tr;
 use crate::tracer::{self, ItemKind, ItemStatus, Session, TraceItem, TraceLog};
-use eframe::egui::{self, RichText, Ui};
+use eframe::egui::{self, Ui};
 use egui_extras::{Column, TableBuilder};
 use std::collections::BTreeSet;
 use std::time::Duration;
@@ -111,13 +111,13 @@ impl TraceScreen {
                         let (r, _) = ui.allocate_exact_size(egui::vec2(12.0, 12.0), egui::Sense::hover());
                         ui.painter().circle_filled(r.center(), 6.0, p.danger);
                         let since = session.as_ref().map(|s| (chrono::Local::now() - s.started).num_seconds()).unwrap_or(0);
-                        ui.label(style::strong(crate::tf!("Tracing  {:02}:{:02}", since / 60, since % 60)).size(16.0));
+                        ui.add(style::Label::new(style::strong(crate::tf!("Tracing  {:02}:{:02}", since / 60, since % 60)).size(16.0)));
                     });
                     ui.add_space(6.0);
-                    ui.label(style::muted(
+                    ui.add(style::Label::new(style::muted(
                         ui,
                         tr("Install the program now: run its installer below, or start it any way you like. Install one program at a time and close other programs."),
-                    ));
+                    )));
                     ui.add_space(10.0);
                     crate::gui::style::row(ui, |ui| {
                         style::text_input(
@@ -146,7 +146,7 @@ impl TraceScreen {
                     });
                     if let Some(s) = &self.child_status {
                         ui.add_space(4.0);
-                        ui.label(RichText::new(s).color(p.accent));
+                        ui.add(style::Label::new(style::rich(s).color(p.accent)));
                     }
                     ui.add_space(12.0);
                     stop = style::primary(ui, icon::CHECK, "Stop & analyze").clicked();
@@ -168,26 +168,29 @@ impl TraceScreen {
                 }
                 let mut save = false;
                 if self.left_out > 0 {
-                    ui.label(
+                    ui.add(style::Label::new(
                         style::muted(
                             ui,
                             crate::tf!("{} change(s) made by other programs during the trace were left out (only the installer's own processes count).", self.left_out),
                         )
                         .size(12.5),
-                    );
+                    ));
                     ui.add_space(6.0);
                 }
                 style::card(ui, |ui| {
                     egui::Grid::new("trace-save").num_columns(2).spacing([16.0, 10.0]).show(ui, |ui| {
-                        ui.label(style::muted(ui, tr("Name")));
+                        ui.add(style::Label::new(style::muted(ui, tr("Name"))));
                         style::text_input(ui, &mut self.name, "", 420.0);
                         ui.end_row();
-                        ui.label(style::muted(ui, tr("Comment")));
+                        ui.add(style::Label::new(style::muted(ui, tr("Comment"))));
                         style::text_input(ui, &mut self.comment, "Optional", 420.0);
                         ui.end_row();
                     });
                     ui.add_space(6.0);
-                    ui.label(style::muted(ui, crate::tf!("{created} item(s) created, removable with this log · {modified} existing item(s) changed (kept on uninstall)")));
+                    ui.add(style::Label::new(style::muted(
+                        ui,
+                        crate::tf!("{created} item(s) created, removable with this log · {modified} existing item(s) changed (kept on uninstall)"),
+                    )));
                     ui.add_space(8.0);
                     save = ui.add_enabled_ui(!self.name.trim().is_empty(), |ui| style::primary(ui, icon::FLOPPY, "Save log")).inner.clicked();
                 });
@@ -216,8 +219,8 @@ fn busy(ui: &mut Ui, p: Palette, title: &str, sub: &str) {
         ui.vertical_centered(|ui| {
             ui.add(egui::Spinner::new().size(36.0).color(p.accent));
             ui.add_space(6.0);
-            ui.label(style::strong(title));
-            ui.label(style::muted(ui, sub));
+            ui.add(style::Label::new(style::strong(title)));
+            ui.add(style::Label::new(style::muted(ui, sub)));
         });
         ui.add_space(20.0);
     });
@@ -237,8 +240,8 @@ fn steps(ui: &mut Ui, idx: usize, labels: &[&str], p: Palette) {
             let (rect, _) = ui.allocate_exact_size(egui::vec2(24.0, 24.0), egui::Sense::hover());
             ui.painter().circle_filled(rect.center(), 12.0, bg);
             let mark = if i < idx { icon::CHECK.to_string() } else { (i + 1).to_string() };
-            ui.painter().text(rect.center(), egui::Align2::CENTER_CENTER, mark, egui::FontId::new(12.5, style::semibold()), fg);
-            ui.label(RichText::new(tr(label)).color(if i <= idx { p.text } else { p.muted }));
+            ui.painter().text(rect.center(), egui::Align2::CENTER_CENTER, style::vstr(mark), egui::FontId::new(12.5, style::semibold()), fg);
+            ui.add(style::Label::new(style::rich(tr(label)).color(if i <= idx { p.text } else { p.muted })));
             if i + 1 < labels.len() {
                 let (r, _) = ui.allocate_exact_size(egui::vec2(36.0, 2.0), egui::Sense::hover());
                 ui.painter().rect_filled(r, 1.0, if i < idx { p.success } else { p.border });
@@ -263,7 +266,7 @@ fn item_list(ui: &mut Ui, items: &[TraceItem], p: Palette, mut remove: Option<&m
             style::card(ui, |ui| {
                 crate::gui::style::row(ui, |ui| {
                     style::icon_tile(ui, ic, p.accent, 28.0);
-                    ui.label(style::strong(title));
+                    ui.add(style::Label::new(style::strong(title)));
                     style::badge(ui, &idx.len().to_string(), p.accent);
                 });
                 ui.add_space(4.0);
@@ -271,14 +274,12 @@ fn item_list(ui: &mut Ui, items: &[TraceItem], p: Palette, mut remove: Option<&m
                     let it = &items[*i];
                     crate::gui::style::row(ui, |ui| {
                         let (mark, col) = if it.status == ItemStatus::Created { (icon::PLUS, p.success) } else { (icon::DOTS, p.muted) };
-                        ui.label(RichText::new(mark).color(col)).on_hover_text(if it.status == ItemStatus::Created {
+                        ui.add(style::Label::new(style::rich(mark).color(col))).on_hover_text(style::vis(if it.status == ItemStatus::Created {
                             tr("Created: removed on uninstall")
                         } else {
                             tr("Existed before: kept on uninstall")
-                        });
-                        ui.add(
-                            egui::Label::new(RichText::new(it.label()).monospace().size(12.5).color(if it.status == ItemStatus::Created { p.text } else { p.muted })).truncate(),
-                        );
+                        }));
+                        ui.add(style::Label::new(style::rich(it.label()).monospace().size(12.5).color(if it.status == ItemStatus::Created { p.text } else { p.muted })).truncate());
                         if let Some(r) = remove.as_deref_mut() {
                             ui.with_layout(crate::gui::style::far_layout(egui::Align::Center), |ui| {
                                 if style::icon_button(ui, icon::TRASH, "Remove from log").clicked() {
@@ -289,7 +290,7 @@ fn item_list(ui: &mut Ui, items: &[TraceItem], p: Palette, mut remove: Option<&m
                     });
                 }
                 if idx.len() > 500 {
-                    ui.label(style::muted(ui, crate::tf!("… and {} more (export the log to see all)", idx.len() - 500)));
+                    ui.add(style::Label::new(style::muted(ui, crate::tf!("… and {} more (export the log to see all)", idx.len() - 500))));
                 }
             });
             ui.add_space(10.0);
@@ -379,7 +380,7 @@ impl TracedTab {
             ui.with_layout(crate::gui::style::far_layout(egui::Align::Center), |ui| {
                 let r = style::secondary(ui, icon::DOTS, "More");
                 egui::Popup::menu(&r).width(380.0).show(|ui| {
-                    ui.label(style::muted(ui, tr("Import a .cptrace log")));
+                    ui.add(style::Label::new(style::muted(ui, tr("Import a .cptrace log"))));
                     crate::gui::style::row(ui, |ui| {
                         style::text_input(ui, &mut self.import_path, "path/to/log.cptrace", 260.0 - style::CONTROL_H - 8.0);
                         if let Some(p) = style::browse_button(ui, "trace-import", style::Pick::File, &self.import_path) {
@@ -395,7 +396,7 @@ impl TracedTab {
                         }
                     });
                     ui.separator();
-                    ui.label(style::muted(ui, tr("Back up or restore every log (one file)")));
+                    ui.add(style::Label::new(style::muted(ui, tr("Back up or restore every log (one file)"))));
                     style::path_input(ui, "trace-backup", &mut self.export_path, "", 360.0, style::Pick::Save);
                     crate::gui::style::row(ui, |ui| {
                         if style::secondary(ui, icon::FLOPPY, "Back up all").clicked() {
@@ -436,7 +437,7 @@ impl TracedTab {
                 crate::gui::style::row(ui, |ui| {
                     let n = self.checked.len();
                     if n > 1 {
-                        ui.label(style::strong(crate::tf!("{n} logs selected")));
+                        ui.add(style::Label::new(style::strong(crate::tf!("{n} logs selected"))));
                         ui.with_layout(crate::gui::style::far_layout(egui::Align::Center), |ui| {
                             let ready = !self.merge_name.trim().is_empty();
                             if ui.add_enabled_ui(ready, |ui| style::primary(ui, icon::LIST_CHECKS, "Merge")).inner.clicked() {
@@ -454,8 +455,8 @@ impl TracedTab {
                     } else if let Some(l) = &focus {
                         style::icon_tile(ui, l.icon.as_deref().and_then(style::icon_for_key).unwrap_or(icon::RECORD), p.accent, 34.0);
                         crate::gui::style::column(ui, |ui| {
-                            ui.label(style::strong(&l.name));
-                            ui.label(
+                            ui.add(style::Label::new(style::strong(&l.name)));
+                            ui.add(style::Label::new(
                                 style::muted(
                                     ui,
                                     crate::tf!(
@@ -467,7 +468,7 @@ impl TracedTab {
                                     ),
                                 )
                                 .size(12.5),
-                            );
+                            ));
                         });
                         ui.with_layout(crate::gui::style::far_layout(egui::Align::Center), |ui| {
                             let r = style::icon_button(ui, icon::DOTS, "More");
@@ -476,19 +477,19 @@ impl TracedTab {
                                     self.rename = Some((l.id.clone(), l.name.clone()));
                                     ui.close();
                                 }
-                                ui.menu_button(crate::tf!("{}  Group", icon::TAG), |ui| {
+                                ui.menu_button(style::vis(crate::tf!("{}  Group", icon::TAG)), |ui| {
                                     let mut pick: Option<Option<String>> = None;
                                     let mut groups: Vec<String> = self.logs.iter().filter_map(|x| x.group.clone()).collect();
                                     groups.sort_by_key(|g| g.to_lowercase());
                                     groups.dedup();
                                     for g in groups {
-                                        if ui.button(&g).clicked() {
+                                        if ui.button(style::vis(&g)).clicked() {
                                             pick = Some(Some(g));
                                         }
                                     }
                                     crate::gui::style::row(ui, |ui| {
                                         style::text_input(ui, &mut self.new_group, "New group", 140.0);
-                                        if ui.button(tr("Add")).clicked() && !self.new_group.trim().is_empty() {
+                                        if ui.button(style::vis(tr("Add"))).clicked() && !self.new_group.trim().is_empty() {
                                             pick = Some(Some(self.new_group.trim().to_string()));
                                             self.new_group.clear();
                                         }
@@ -504,7 +505,7 @@ impl TracedTab {
                                         ui.close();
                                     }
                                 });
-                                ui.menu_button(crate::tf!("{}  Change icon", icon::PALETTE), |ui| {
+                                ui.menu_button(style::vis(crate::tf!("{}  Change icon", icon::PALETTE)), |ui| {
                                     if let Some(choice) = style::icon_picker(ui, l.icon.as_deref()) {
                                         if let Err(e) = tracer::set_icon(&l.id, choice.as_deref()) {
                                             cx.error(crate::tf!("{e:#}"));
@@ -517,7 +518,10 @@ impl TracedTab {
                                     self.confirm_delete = Some(l.id.clone());
                                     ui.close();
                                 }
-                                if style::ghost(ui, icon::DATABASE, "Add to logs database").on_hover_text(tr("Share this log through the logs database folder")).clicked() {
+                                if style::ghost(ui, icon::DATABASE, "Add to logs database")
+                                    .on_hover_text(style::vis(tr("Share this log through the logs database folder")))
+                                    .clicked()
+                                {
                                     match tracer::db_add(cx.settings, l) {
                                         Ok(p) => cx.info(crate::tf!("Added to the logs database: {}", p.display())),
                                         Err(e) => cx.error(crate::tf!("{e:#}")),
@@ -568,7 +572,7 @@ impl TracedTab {
                 .header(26.0, |mut h| {
                     for t in crate::gui::style::ordered(vec!["", "Name", "Created", if cfg!(windows) { tr("Registry") } else { tr("Settings") }, "Files", "Size"]) {
                         h.col(|ui| {
-                            ui.label(RichText::new(tr(t)).size(12.5).color(p.muted));
+                            ui.add(style::Label::new(style::rich(tr(t)).size(12.5).color(p.muted)));
                         });
                     }
                 })
@@ -581,7 +585,7 @@ impl TracedTab {
                             vec![
                                 Box::new(|ui: &mut Ui| {
                                     let mut c = self.checked.contains(&l.id);
-                                    if ui.checkbox(&mut c, "").changed() {
+                                    if ui.checkbox(&mut c, style::vis("")).changed() {
                                         if c {
                                             self.checked.insert(l.id.clone());
                                         } else {
@@ -594,8 +598,8 @@ impl TracedTab {
                                         ui.spacing_mut().item_spacing.y = 1.0;
                                         ui.spacing_mut().interact_size.y = 18.0;
                                         crate::gui::style::row(ui, |ui| {
-                                            ui.label(RichText::new(l.icon.as_deref().and_then(style::icon_for_key).unwrap_or(icon::RECORD)).color(p.accent));
-                                            ui.add(egui::Label::new(style::strong(&l.name)).truncate());
+                                            ui.add(style::Label::new(style::rich(l.icon.as_deref().and_then(style::icon_for_key).unwrap_or(icon::RECORD)).color(p.accent)));
+                                            ui.add(style::Label::new(style::strong(&l.name)).truncate());
                                             if let Some(g) = &l.group {
                                                 style::badge(ui, g, p.accent);
                                             }
@@ -604,20 +608,20 @@ impl TracedTab {
                                             }
                                         });
                                         let sub = if l.comment.is_empty() { l.installer.clone().unwrap_or_default() } else { l.comment.clone() };
-                                        ui.add(egui::Label::new(RichText::new(sub).size(12.0).color(p.muted)).truncate());
+                                        ui.add(style::Label::new(style::rich(sub).size(12.0).color(p.muted)).truncate());
                                     });
                                 }),
                                 Box::new(|ui: &mut Ui| {
-                                    ui.label(RichText::new(l.created.format("%d %b %Y %H:%M").to_string()).color(p.muted));
+                                    ui.add(style::Label::new(style::rich(l.created.format("%d %b %Y %H:%M").to_string()).color(p.muted)));
                                 }),
                                 Box::new(|ui: &mut Ui| {
-                                    ui.label(l.count(true).to_string());
+                                    ui.add(style::Label::new(l.count(true).to_string()));
                                 }),
                                 Box::new(|ui: &mut Ui| {
-                                    ui.label(l.count(false).to_string());
+                                    ui.add(style::Label::new(l.count(false).to_string()));
                                 }),
                                 Box::new(|ui: &mut Ui| {
-                                    ui.label(RichText::new(crate::backup::human_size(l.size())).color(p.muted));
+                                    ui.add(style::Label::new(style::rich(crate::backup::human_size(l.size())).color(p.muted)));
                                 }),
                             ],
                         );
@@ -644,7 +648,7 @@ impl TracedTab {
             let mut done = None;
             egui::Modal::new(egui::Id::unique("rename-log")).show(ctx, |ui| {
                 ui.set_width(400.0);
-                ui.label(style::strong(tr("Rename log")).size(18.0));
+                ui.add(style::Label::new(style::strong(tr("Rename log")).size(18.0)));
                 style::text_input(ui, name, "", 380.0);
                 ui.add_space(10.0);
                 crate::gui::style::row(ui, |ui| {
@@ -673,8 +677,8 @@ impl TracedTab {
                 ui.set_width(420.0);
                 style::icon_tile(ui, icon::TRASH, p.danger, 44.0);
                 ui.add_space(8.0);
-                ui.label(style::strong(tr("Delete this log?")).size(18.0));
-                ui.label(style::muted(ui, tr("The program stays installed; only the record of its installation is deleted.")));
+                ui.add(style::Label::new(style::strong(tr("Delete this log?")).size(18.0)));
+                ui.add(style::Label::new(style::muted(ui, tr("The program stays installed; only the record of its installation is deleted."))));
                 ui.add_space(12.0);
                 crate::gui::style::row(ui, |ui| {
                     if style::primary(ui, "", "Delete").clicked() {
@@ -703,18 +707,18 @@ impl TracedTab {
             egui::Modal::new(egui::Id::unique("edit-log")).show(ctx, |ui| {
                 ui.set_width(760.0);
                 ui.set_max_height(620.0);
-                ui.label(style::strong(tr("Edit log")).size(19.0));
+                ui.add(style::Label::new(style::strong(tr("Edit log")).size(19.0)));
                 egui::Grid::new("edit-props").num_columns(2).spacing([16.0, 8.0]).show(ui, |ui| {
-                    ui.label(style::muted(ui, tr("Name")));
+                    ui.add(style::Label::new(style::muted(ui, tr("Name"))));
                     style::text_input(ui, &mut ed.log.name, "", 420.0);
                     ui.end_row();
-                    ui.label(style::muted(ui, tr("Author")));
+                    ui.add(style::Label::new(style::muted(ui, tr("Author"))));
                     style::text_input(ui, &mut ed.log.author, "", 420.0);
                     ui.end_row();
-                    ui.label(style::muted(ui, tr("Comment")));
+                    ui.add(style::Label::new(style::muted(ui, tr("Comment"))));
                     style::text_input(ui, &mut ed.log.comment, "", 420.0);
                     ui.end_row();
-                    ui.label(style::muted(ui, tr("Add item")));
+                    ui.add(style::Label::new(style::muted(ui, tr("Add item"))));
                     crate::gui::style::row(ui, |ui| {
                         let kinds = [
                             (ItemKind::File, "File"),
@@ -722,14 +726,14 @@ impl TracedTab {
                             (ItemKind::SettingsKey, if cfg!(windows) { tr("Registry key") } else { tr("dconf folder") }),
                             (ItemKind::SettingsValue, if cfg!(windows) { tr("Registry value") } else { tr("dconf key") }),
                         ];
-                        egui::ComboBox::from_id_salt("new-kind").width(130.0).selected_text(kinds.iter().find(|k| k.0 == ed.new_kind).map(|k| k.1).unwrap_or("")).show_ui(
-                            ui,
-                            |ui| {
+                        egui::ComboBox::from_id_salt("new-kind")
+                            .width(130.0)
+                            .selected_text(style::vis(kinds.iter().find(|k| k.0 == ed.new_kind).map(|k| k.1).unwrap_or("")))
+                            .show_ui(ui, |ui| {
                                 for (k, l) in kinds {
-                                    ui.selectable_value(&mut ed.new_kind, k, l);
+                                    ui.selectable_value(&mut ed.new_kind, k, style::vis(l));
                                 }
-                            },
-                        );
+                            });
                         style::text_input(ui, &mut ed.new_path, "Path / key", 300.0);
                         if matches!(ed.new_kind, ItemKind::File | ItemKind::Folder) {
                             let pick = if ed.new_kind == ItemKind::Folder { style::Pick::Folder } else { style::Pick::File };

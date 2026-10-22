@@ -6,7 +6,7 @@ use super::{Cx, Pending};
 use crate::autorun::{self, AddMethod, AutorunEntry, Source};
 use crate::gui::style::ColumnsInOrder;
 use crate::i18n::tr;
-use eframe::egui::{self, RichText, Ui};
+use eframe::egui::{self, Ui};
 use egui_extras::{Column, TableBuilder};
 
 struct AddForm {
@@ -94,7 +94,10 @@ impl AutorunView {
             let r = style::secondary(ui, icon::DOTS, "More");
             egui::Popup::menu(&r).width(360.0).show(|ui| {
                 ui.add_enabled_ui(n_invalid > 0, |ui| {
-                    if style::ghost(ui, icon::WARNING, &crate::tf!("Remove invalid entries ({n_invalid})")).on_hover_text(tr("Entries whose program no longer exists")).clicked() {
+                    if style::ghost(ui, icon::WARNING, &crate::tf!("Remove invalid entries ({n_invalid})"))
+                        .on_hover_text(style::vis(tr("Entries whose program no longer exists")))
+                        .clicked()
+                    {
                         self.confirm = Some(self.list.iter().filter(is_invalid).cloned().collect());
                         ui.close();
                     }
@@ -145,7 +148,7 @@ impl AutorunView {
                     }
                     self.loaded = false;
                 }
-                ui.label(style::muted(ui, if cfg!(windows) { tr("Windows entries") } else { tr("System entries") }));
+                ui.add(style::Label::new(style::muted(ui, if cfg!(windows) { tr("Windows entries") } else { tr("System entries") })));
             });
         });
         ui.add_space(8.0);
@@ -186,7 +189,7 @@ impl AutorunView {
             .header(26.0, |mut h| {
                 for t in crate::gui::style::ordered(vec!["On", "Program", "Type", "Publisher", ""]) {
                     h.col(|ui| {
-                        ui.label(style::muted(ui, tr(t)).size(12.5));
+                        ui.add(style::Label::new(style::muted(ui, tr(t)).size(12.5)));
                     });
                 }
             })
@@ -210,7 +213,7 @@ impl AutorunView {
                                 crate::gui::style::column(ui, |ui| {
                                     ui.spacing_mut().item_spacing.y = 2.0;
                                     crate::gui::style::row(ui, |ui| {
-                                        ui.label(style::strong(&e.name).color(if e.enabled { p.text } else { p.faint }));
+                                        ui.add(style::Label::new(style::strong(&e.name).color(if e.enabled { p.text } else { p.faint })));
                                         if e.running {
                                             style::badge(ui, "Running", p.success);
                                         }
@@ -218,17 +221,17 @@ impl AutorunView {
                                             style::badge(ui, "Program missing", p.danger);
                                         }
                                         if e.all_users {
-                                            ui.label(RichText::new(icon::USERS).color(p.faint).size(13.0)).on_hover_text(tr("For all users"));
+                                            ui.add(style::Label::new(style::rich(icon::USERS).color(p.faint).size(13.0))).on_hover_text(style::vis(tr("For all users")));
                                         }
                                     });
-                                    ui.add(egui::Label::new(RichText::new(&e.command).monospace().size(11.5).color(p.muted)).truncate()).on_hover_text(&e.location);
+                                    ui.add(style::Label::new(style::rich(&e.command).monospace().size(11.5).color(p.muted)).truncate()).on_hover_text(style::vis(&e.location));
                                 });
                             }),
                             Box::new(|ui: &mut Ui| {
-                                ui.label(style::muted(ui, e.source.label()));
+                                ui.add(style::Label::new(style::muted(ui, e.source.label())));
                             }),
                             Box::new(|ui: &mut Ui| {
-                                ui.add(egui::Label::new(style::muted(ui, e.publisher.as_deref().unwrap_or(""))).truncate());
+                                ui.add(style::Label::new(style::muted(ui, e.publisher.as_deref().unwrap_or(""))).truncate());
                             }),
                             Box::new(|ui: &mut Ui| {
                                 crate::gui::style::row(ui, |ui| {
@@ -304,16 +307,16 @@ impl AutorunView {
             egui::Modal::new(egui::Id::unique("autorun-remove")).show(ctx, |ui| {
                 ui.set_width(460.0);
                 let title = if list.len() == 1 { crate::tf!("Remove \"{}\"?", list[0].name) } else { crate::tf!("Remove {} entries?", list.len()) };
-                ui.label(style::strong(title).size(18.0));
+                ui.add(style::Label::new(style::strong(title).size(18.0)));
                 ui.add_space(6.0);
                 for e in list.iter().take(8) {
-                    ui.add(egui::Label::new(RichText::new(crate::tf!("• {}  —  {}", e.name, e.command)).size(12.5)).truncate());
+                    ui.add(style::Label::new(style::rich(crate::tf!("• {}  —  {}", e.name, e.command)).size(12.5)).truncate());
                 }
                 if list.len() > 8 {
-                    ui.label(style::muted(ui, crate::tf!("and {} more", list.len() - 8)));
+                    ui.add(style::Label::new(style::muted(ui, crate::tf!("and {} more", list.len() - 8))));
                 }
                 ui.add_space(6.0);
-                ui.label(style::muted(ui, tr("The programs themselves stay installed; they just won't start automatically. Removed entries are backed up.")));
+                ui.add(style::Label::new(style::muted(ui, tr("The programs themselves stay installed; they just won't start automatically. Removed entries are backed up."))));
                 ui.add_space(12.0);
                 crate::gui::style::row(ui, |ui| {
                     if style::primary(ui, icon::TRASH, "Remove").clicked() {
@@ -338,12 +341,12 @@ impl AutorunView {
             let (mut close, mut done) = (false, false);
             egui::Modal::new(egui::Id::unique("autorun-add")).show(ctx, |ui| {
                 ui.set_width(480.0);
-                ui.label(style::strong(tr("Add a startup entry")).size(18.0));
+                ui.add(style::Label::new(style::strong(tr("Add a startup entry")).size(18.0)));
                 ui.add_space(8.0);
-                ui.label(style::muted(ui, tr("Name")));
+                ui.add(style::Label::new(style::muted(ui, tr("Name"))));
                 style::text_input(ui, &mut f.name, "My program", 460.0);
                 ui.add_space(4.0);
-                ui.label(style::muted(ui, tr("Command")));
+                ui.add(style::Label::new(style::muted(ui, tr("Command"))));
                 crate::gui::style::row(ui, |ui| {
                     ui.spacing_mut().item_spacing.x = 6.0;
                     style::text_input(
@@ -368,10 +371,10 @@ impl AutorunView {
                     ui.add_space(4.0);
                     crate::gui::style::row(ui, |ui| {
                         style::toggle(ui, &mut f.all_users, "For all users");
-                        ui.label(tr("For all users (needs administrator rights)"));
+                        ui.add(style::Label::new(tr("For all users (needs administrator rights)")));
                     });
                 } else {
-                    ui.label(style::muted(ui, tr("Added to your autostart folder (~/.config/autostart).")).size(12.5));
+                    ui.add(style::Label::new(style::muted(ui, tr("Added to your autostart folder (~/.config/autostart).")).size(12.5)));
                     f.method = AddMethod::StartupFolder;
                 }
                 ui.add_space(12.0);

@@ -5,7 +5,7 @@ use super::style::{self, icon, Palette};
 use super::{take, Cx, Pending};
 use crate::history::{self, CleanReport, HistoryItem};
 use crate::i18n::tr;
-use eframe::egui::{self, RichText, Ui};
+use eframe::egui::{self, Ui};
 use std::collections::BTreeSet;
 
 pub struct HistoryView {
@@ -67,7 +67,7 @@ impl HistoryView {
         let picked: Vec<HistoryItem> = self.items.iter().filter(|i| self.checked.contains(&i.id)).cloned().collect();
         let size: u64 = picked.iter().map(|i| i.size).sum();
         crate::gui::style::row(ui, |ui| {
-            ui.label(style::strong(crate::tf!("{} selected · {}", picked.len(), super::human(size))));
+            ui.add(style::Label::new(style::strong(crate::tf!("{} selected · {}", picked.len(), super::human(size)))));
             ui.with_layout(crate::gui::style::far_layout(egui::Align::Center), |ui| {
                 ui.add_enabled_ui(!picked.is_empty(), |ui| {
                     if style::primary(ui, icon::BROOM, "Clean").clicked() {
@@ -106,8 +106,8 @@ impl HistoryView {
                         } else {
                             icon::MONITOR
                         };
-                        ui.label(RichText::new(ic).size(17.0).color(p.accent));
-                        ui.label(style::strong(&g));
+                        ui.add(style::Label::new(style::rich(ic).size(17.0).color(p.accent)));
+                        ui.add(style::Label::new(style::strong(&g)));
                         if browser.is_some_and(|b| self.running.contains(&b)) {
                             style::badge(ui, "Open — close it to clean", p.warning);
                         }
@@ -128,7 +128,7 @@ impl HistoryView {
                     for i in &in_group {
                         crate::gui::style::row(ui, |ui| {
                             let mut on = self.checked.contains(&i.id);
-                            if ui.checkbox(&mut on, "").on_hover_text(&i.description).changed() {
+                            if ui.checkbox(&mut on, style::vis("")).on_hover_text(style::vis(&i.description)).changed() {
                                 if on {
                                     self.checked.insert(i.id.clone());
                                 } else {
@@ -137,12 +137,12 @@ impl HistoryView {
                             }
                             crate::gui::style::column(ui, |ui| {
                                 ui.spacing_mut().item_spacing.y = 1.0;
-                                ui.label(tr(&i.name));
-                                ui.label(style::muted(ui, &i.description).size(12.0));
+                                ui.add(style::Label::new(tr(&i.name)));
+                                ui.add(style::Label::new(style::muted(ui, &i.description).size(12.0)));
                             });
                             ui.with_layout(crate::gui::style::far_layout(egui::Align::Center), |ui| {
                                 if i.size > 0 {
-                                    ui.label(style::muted(ui, super::human(i.size)));
+                                    ui.add(style::Label::new(style::muted(ui, super::human(i.size))));
                                 }
                             });
                         });
@@ -157,14 +157,14 @@ impl HistoryView {
             let (mut close, mut recheck) = (false, false);
             egui::Modal::new(egui::Id::unique("history-confirm")).show(ui.ctx(), |ui| {
                 ui.set_width(440.0);
-                ui.label(style::strong(crate::tf!("Clean {} item(s)?", picked.len())).size(18.0));
+                ui.add(style::Label::new(style::strong(crate::tf!("Clean {} item(s)?", picked.len())).size(18.0)));
                 ui.add_space(6.0);
-                ui.label(style::muted(ui, tr("History, caches and recent lists are deleted for good; there is no backup of them.")));
+                ui.add(style::Label::new(style::muted(ui, tr("History, caches and recent lists are deleted for good; there is no backup of them."))));
                 if !open.is_empty() {
                     ui.add_space(6.0);
-                    ui.label(
-                        RichText::new(crate::tf!("{}  {} is open; its items will be skipped. Close it first to clean them.", icon::WARNING, open.join(", "))).color(p.warning),
-                    );
+                    ui.add(style::Label::new(
+                        style::rich(crate::tf!("{}  {} is open; its items will be skipped. Close it first to clean them.", icon::WARNING, open.join(", "))).color(p.warning),
+                    ));
                 }
                 ui.add_space(12.0);
                 crate::gui::style::row(ui, |ui| {

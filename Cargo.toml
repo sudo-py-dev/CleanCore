@@ -39,6 +39,9 @@ rusqlite = { version = "0.37", features = ["bundled"] }
 # Self-update: checking the signed checksum list of a release, and the downloads against it
 minisign-verify = "0.2"
 sha2 = "0.10"
+# Right-to-left text: egui shapes each Hebrew word right to left but places words left to
+# right, so text is handed to it already in display order (Unicode Bidirectional Algorithm).
+unicode-bidi = "0.3"
 toml = "1.1.8"
 
 [target.'cfg(windows)'.dependencies]

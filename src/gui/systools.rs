@@ -5,7 +5,7 @@ use super::style::{self, icon, Palette};
 use super::Cx;
 use crate::i18n::tr;
 use crate::systools::{self, Tool};
-use eframe::egui::{self, RichText, Ui};
+use eframe::egui::{self, Ui};
 
 pub struct SystemToolsView {
     search: String,
@@ -52,8 +52,8 @@ impl SystemToolsView {
             }
             for g in groups {
                 crate::gui::style::row(ui, |ui| {
-                    ui.label(RichText::new(group_icon(g)).color(p.accent));
-                    ui.label(style::strong(tr(g)));
+                    ui.add(style::Label::new(style::rich(group_icon(g)).color(p.accent)));
+                    ui.add(style::Label::new(style::strong(tr(g))));
                 });
                 ui.add_space(4.0);
                 crate::gui::style::row_wrapped(ui, |ui| {
@@ -66,7 +66,7 @@ impl SystemToolsView {
                         ui.painter().text(
                             mr.pos(14.0, top + 2.0),
                             mr.start(egui::Align::Min),
-                            if t.terminal { icon::DOTS } else { icon::APP_WINDOW },
+                            style::vstr(if t.terminal { icon::DOTS } else { icon::APP_WINDOW }),
                             egui::FontId::proportional(18.0),
                             p.accent,
                         );
@@ -74,11 +74,11 @@ impl SystemToolsView {
                         if t.admin {
                             name += "  \u{E2FA}"; // lock: needs administrator rights
                         }
-                        ui.painter().text(mr.pos(42.0, top), mr.start(egui::Align::Min), name, egui::FontId::new(14.0, style::semibold()), p.text);
+                        ui.painter().text(mr.pos(42.0, top), mr.start(egui::Align::Min), style::vstr(name), egui::FontId::new(14.0, style::semibold()), p.text);
                         let desc: String = if t.description.is_empty() { t.command.clone() } else { tr(&t.description).to_string() };
                         let desc = if desc.chars().count() > 38 { desc.chars().take(37).collect::<String>() + "…" } else { desc };
-                        ui.painter().text(mr.pos(42.0, top + 20.0), mr.start(egui::Align::Min), desc, egui::FontId::proportional(12.0), p.muted);
-                        let r = r.on_hover_text(crate::tf!("{}{}", t.command, if t.admin { tr(" (asks for administrator rights)") } else { "" }));
+                        ui.painter().text(mr.pos(42.0, top + 20.0), mr.start(egui::Align::Min), style::vstr(desc), egui::FontId::proportional(12.0), p.muted);
+                        let r = r.on_hover_text(style::vis(crate::tf!("{}{}", t.command, if t.admin { tr(" (asks for administrator rights)") } else { "" })));
                         if r.clicked() {
                             run = Some((*t).clone());
                         }
@@ -96,7 +96,7 @@ impl SystemToolsView {
             }
             style::card(ui, |ui| {
                 style::section_title(ui, "Add your own tool");
-                ui.label(style::muted(ui, tr("Any program or command line. Right-click one of your tools to remove it.")).size(12.5));
+                ui.add(style::Label::new(style::muted(ui, tr("Any program or command line. Right-click one of your tools to remove it.")).size(12.5)));
                 ui.add_space(4.0);
                 crate::gui::style::row(ui, |ui| {
                     style::text_input(ui, &mut self.new_name, "Name", 180.0);

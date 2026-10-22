@@ -14,7 +14,8 @@ import re
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-LANGS = ["he", "es", "fr", "de", "ru", "uk"]
+# Every catalog in locales/ (adding a language is adding its .po file).
+LANGS = sorted(p.stem for p in Path(__file__).parent.glob("*.po"))
 LIT = r'"((?:[^"\\]|\\.)*)"'
 
 
@@ -131,7 +132,10 @@ def main():
         path = ROOT / f"locales/{lang}.po"
         old = read_po(path)
         body = "".join(f"msgid {po_quote(m)}\nmsgstr {po_quote(old.get(m, ''))}\n\n" for m in msgs)
-        path.write_text(HEADER.format(lang=lang) + body)
+        # Keep the catalog's own header (it names the language and may set its direction).
+        text = path.read_text() if path.exists() else ""
+        header = text.split("\n\n", 1)[0] + "\n\n" if text.startswith('msgid ""') else HEADER.format(lang=lang)
+        path.write_text(header + body)
         missing = sum(1 for m in msgs if not old.get(m))
         print(f"{lang}: {len(msgs) - missing}/{len(msgs)} translated")
 

@@ -9,25 +9,107 @@
 
 use std::collections::HashMap;
 use std::sync::atomic::{AtomicUsize, Ordering};
-use std::sync::OnceLock;
+use std::sync::{LazyLock, OnceLock};
 
-/// A language CleanCore ships: code, name in that language, catalog.
+/// A language CleanCore ships: code, name in that language, direction, catalog.
 pub struct Language {
     pub code: &'static str,
-    pub name: &'static str,
+    pub name: String,
     pub rtl: bool,
     po: &'static str,
 }
 
-pub const LANGUAGES: &[Language] = &[
-    Language { code: "en", name: "English", rtl: false, po: "" },
-    Language { code: "he", name: "עברית", rtl: true, po: include_str!("../locales/he.po") },
-    Language { code: "es", name: "Español", rtl: false, po: include_str!("../locales/es.po") },
-    Language { code: "fr", name: "Français", rtl: false, po: include_str!("../locales/fr.po") },
-    Language { code: "de", name: "Deutsch", rtl: false, po: include_str!("../locales/de.po") },
-    Language { code: "ru", name: "Русский", rtl: false, po: include_str!("../locales/ru.po") },
-    Language { code: "uk", name: "Українська", rtl: false, po: include_str!("../locales/uk.po") },
+impl Language {
+    /// The catalog's text (`.po`), empty for English.
+    pub fn catalog_text(&self) -> &'static str {
+        self.po
+    }
+}
+
+/// `(code, catalog)` for every `locales/<code>.po` (see `build.rs`).
+const CATALOGS_PO: &[(&str, &str)] = include!(concat!(env!("OUT_DIR"), "/catalogs.rs"));
+
+/// Languages written right to left, by code, for catalogs that don't say
+/// (`X-Text-Direction: rtl` in the header does).
+const RTL_CODES: &[&str] = &["ar", "arc", "ckb", "dv", "fa", "he", "ks", "nqo", "ps", "sd", "syr", "ug", "ur", "yi"];
+
+/// Names of common languages in themselves, for catalogs without `X-Language-Name`.
+const NATIVE_NAMES: &[(&str, &str)] = &[
+    ("ar", "العربية"),
+    ("bg", "Български"),
+    ("bn", "বাংলা"),
+    ("ca", "Català"),
+    ("cs", "Čeština"),
+    ("da", "Dansk"),
+    ("de", "Deutsch"),
+    ("el", "Ελληνικά"),
+    ("es", "Español"),
+    ("et", "Eesti"),
+    ("fa", "فارسی"),
+    ("fi", "Suomi"),
+    ("fr", "Français"),
+    ("he", "עברית"),
+    ("hi", "हिन्दी"),
+    ("hr", "Hrvatski"),
+    ("hu", "Magyar"),
+    ("id", "Bahasa Indonesia"),
+    ("it", "Italiano"),
+    ("ja", "日本語"),
+    ("ko", "한국어"),
+    ("lt", "Lietuvių"),
+    ("lv", "Latviešu"),
+    ("nb", "Norsk bokmål"),
+    ("nl", "Nederlands"),
+    ("pl", "Polski"),
+    ("pt", "Português"),
+    ("pt_BR", "Português (Brasil)"),
+    ("ro", "Română"),
+    ("ru", "Русский"),
+    ("sk", "Slovenčina"),
+    ("sl", "Slovenščina"),
+    ("sr", "Српски"),
+    ("sv", "Svenska"),
+    ("th", "ไทย"),
+    ("tr", "Türkçe"),
+    ("uk", "Українська"),
+    ("ur", "اردو"),
+    ("vi", "Tiếng Việt"),
+    ("yi", "ייִדיש"),
+    ("zh_CN", "简体中文"),
+    ("zh_TW", "繁體中文"),
+    ("zh", "中文"),
 ];
+
+/// English first, then every catalog in `locales/`. A catalog's header names the language
+/// (`X-Language-Name: עברית`, else its usual name, else its code) and may set `X-Text-Direction: rtl` or `ltr`.
+pub static LANGUAGES: LazyLock<Vec<Language>> = LazyLock::new(|| {
+    let english = Language { code: "en", name: "English".into(), rtl: false, po: "" };
+    let others = CATALOGS_PO.iter().filter(|(code, _)| *code != "en").map(|&(code, po)| {
+        let base = code.split(['_', '-']).next().unwrap_or(code);
+        let rtl = match header(po, "X-Text-Direction").as_deref() {
+            Some(d) => d.eq_ignore_ascii_case("rtl"),
+            None => RTL_CODES.contains(&base),
+        };
+        let name = header(po, "X-Language-Name")
+            .or_else(|| [code, base].iter().find_map(|c| NATIVE_NAMES.iter().find(|(k, _)| k == c).map(|(_, n)| n.to_string())))
+            .unwrap_or_else(|| code.to_string());
+        Language { code, name, rtl, po }
+    });
+    std::iter::once(english).chain(others).collect()
+});
+
+/// A field of a catalog's header entry (`"Key: value\n"` lines before the first message).
+fn header(po: &str, key: &str) -> Option<String> {
+    po.lines()
+        .take_while(|l| !l.trim().is_empty())
+        .take(40)
+        .filter_map(|l| l.trim().strip_prefix('"')?.strip_suffix('"'))
+        .find_map(|l| {
+            let (k, v) = l.split_once(':')?;
+            (k.trim() == key).then(|| unescape(v.trim_end_matches("\\n")).trim().to_string())
+        })
+        .filter(|v| !v.is_empty())
+}
 
 /// Index into `LANGUAGES` of the language in use.
 static CURRENT: AtomicUsize = AtomicUsize::new(0);
@@ -59,17 +141,24 @@ pub fn is_rtl() -> bool {
     current().rtl
 }
 
-/// The two-letter code of the desktop's language, if CleanCore has it; "en" otherwise.
+/// The code of the desktop's language if CleanCore has it ("pt_BR", else "pt"); "en" otherwise.
 pub fn system_language() -> String {
     let raw = system_locale().unwrap_or_default();
-    let code = raw.split(['_', '-', '.', '@']).next().unwrap_or("").to_ascii_lowercase();
-    // Older systems still say "iw" for Hebrew.
-    let code = if code == "iw" { "he".to_string() } else { code };
-    if LANGUAGES.iter().any(|l| l.code == code) {
-        code
-    } else {
-        "en".into()
-    }
+    let full = raw.split(['.', '@']).next().unwrap_or("").replace('-', "_");
+    let (lang, region) = full.split_once('_').unwrap_or((&full, ""));
+    // Older systems still use the retired codes for Hebrew, Yiddish and Indonesian.
+    let lang = match lang.to_ascii_lowercase().as_str() {
+        "iw" => "he".to_string(),
+        "ji" => "yi".to_string(),
+        "in" => "id".to_string(),
+        l => l.to_string(),
+    };
+    let with_region = format!("{lang}_{}", region.to_ascii_uppercase());
+    [with_region, lang]
+        .into_iter()
+        .find(|c| LANGUAGES.iter().any(|l| l.code.eq_ignore_ascii_case(c)))
+        .and_then(|c| LANGUAGES.iter().find(|l| l.code.eq_ignore_ascii_case(&c)).map(|l| l.code.to_string()))
+        .unwrap_or_else(|| "en".into())
 }
 
 #[cfg(not(windows))]
@@ -99,6 +188,94 @@ pub fn tr(text: &str) -> &str {
         return text;
     }
     catalog(i).get(text).map(String::as_str).unwrap_or(text)
+}
+
+/// Letters of right-to-left scripts (Hebrew, Arabic, Syriac, Thaana, N'Ko, …). egui shapes
+/// each unbroken group of them right to left on its own.
+fn is_rtl_letter(c: char) -> bool {
+    matches!(c,
+        '\u{0590}'..='\u{08FF}'
+        | '\u{FB1D}'..='\u{FDFF}'
+        | '\u{FE70}'..='\u{FEFF}'
+        | '\u{10800}'..='\u{10FFF}'
+        | '\u{1E800}'..='\u{1EFFF}')
+}
+
+/// The text contains right-to-left letters.
+pub fn has_rtl(s: &str) -> bool {
+    s.chars().any(is_rtl_letter)
+}
+
+/// Mirror image of a bracket, as right-to-left text displays it.
+fn mirrored(c: char) -> char {
+    match c {
+        '(' => ')',
+        ')' => '(',
+        '[' => ']',
+        ']' => '[',
+        '{' => '}',
+        '}' => '{',
+        '<' => '>',
+        '>' => '<',
+        '«' => '»',
+        '»' => '«',
+        c => c,
+    }
+}
+
+/// Text in the order egui should draw it, left to right.
+///
+/// egui has no bidirectional layout: it places runs of text left to right and only reverses
+/// the letters inside each right-to-left word (when shaping). So each line is reordered with the
+/// Unicode Bidirectional Algorithm, and inside right-to-left runs the letter groups are
+/// put back in reading order, because egui reverses those itself. The paragraph direction is
+/// right to left when the interface is, and taken from the text otherwise.
+pub fn visual(s: &str) -> std::borrow::Cow<'_, str> {
+    visual_in(s, is_rtl())
+}
+
+fn visual_in(s: &str, rtl: bool) -> std::borrow::Cow<'_, str> {
+    if !has_rtl(s) {
+        return std::borrow::Cow::Borrowed(s);
+    }
+    let base = rtl.then_some(unicode_bidi::Level::rtl());
+    let lines: Vec<String> = s.split('\n').map(|line| visual_line(line, base)).collect();
+    std::borrow::Cow::Owned(lines.join("\n"))
+}
+
+fn visual_line(line: &str, base: Option<unicode_bidi::Level>) -> String {
+    if !has_rtl(line) {
+        return line.to_string();
+    }
+    let info = unicode_bidi::BidiInfo::new(line, base);
+    let Some(para) = info.paragraphs.first() else { return line.to_string() };
+    let chars: Vec<char> = line.chars().collect();
+    let mut levels = info.reordered_levels_per_char(para, para.range.clone());
+    // A number and the Latin word after it ("7.4 GB") stay one left-to-right group: the
+    // algorithm would give the space between them the sentence's direction and swap them.
+    for i in 1..chars.len().saturating_sub(1) {
+        let (l, r) = (levels[i - 1], levels[i + 1]);
+        if chars[i] == ' ' && chars[i - 1].is_ascii_digit() && chars[i + 1].is_alphabetic() && !is_rtl_letter(chars[i + 1]) && l.is_ltr() && r.is_ltr() && levels[i].is_rtl() {
+            levels[i] = l.min(r);
+        }
+    }
+    // Display order; right-to-left characters come out reversed, with brackets mirrored.
+    let order = unicode_bidi::BidiInfo::reorder_visual(&levels);
+    let mut out: Vec<char> = order.iter().map(|&i| if levels[i].is_rtl() { mirrored(chars[i]) } else { chars[i] }).collect();
+    // Each group of right-to-left letters back in reading order: egui's shaper reverses it again.
+    let mut i = 0;
+    while i < out.len() {
+        if is_rtl_letter(out[i]) && levels[order[i]].is_rtl() {
+            let start = i;
+            while i < out.len() && is_rtl_letter(out[i]) && levels[order[i]].is_rtl() {
+                i += 1;
+            }
+            out[start..i].reverse();
+        } else {
+            i += 1;
+        }
+    }
+    out.into_iter().collect()
 }
 
 /// `format!` with a translated template. Same arguments as `format!`.
@@ -366,6 +543,44 @@ msgstr "Zeile \"eins\"\n"
             }
         }
         assert!(missing.is_empty(), "not in locales/cleancore.pot (run python3 locales/extract.py): {missing:#?}");
+    }
+
+    #[test]
+    fn languages_come_from_the_catalogs() {
+        assert_eq!(LANGUAGES[0].code, "en");
+        let he = LANGUAGES.iter().find(|l| l.code == "he").unwrap();
+        assert_eq!((he.name.as_str(), he.rtl), ("עברית", true));
+        let de = LANGUAGES.iter().find(|l| l.code == "de").unwrap();
+        assert_eq!((de.name.as_str(), de.rtl), ("Deutsch", false));
+        // Without the optional fields: the code, and the direction known for it.
+        let po = "msgid \"\"\nmsgstr \"\"\n\"Language: fa\\n\"\n\nmsgid \"a\"\nmsgstr \"b\"\n";
+        assert_eq!(header(po, "Language").as_deref(), Some("fa"));
+        assert_eq!(header(po, "X-Language-Name"), None);
+    }
+
+    #[test]
+    fn hebrew_in_display_order() {
+        let visual = |s| visual_in(s, true);
+        // Words swap places; letters stay (egui reverses them while shaping).
+        assert_eq!(visual("הסרת התקנות"), "התקנות הסרת");
+        // Trailing punctuation ends up on the left.
+        assert_eq!(visual("הכול נקי."), ".נקי הכול");
+        // Numbers and Latin keep their own order, in the right place.
+        assert_eq!(visual("נמצאו 12 קבצים"), "קבצים 12 נמצאו");
+        assert_eq!(visual("התקן את CleanCore 0.2"), "CleanCore 0.2 את התקן");
+        // Numbers with units stay together, in their own order.
+        assert_eq!(visual("58 תוכנות · 7.4 GB"), "7.4 GB · תוכנות 58");
+        // Brackets are mirrored.
+        assert_eq!(visual("גיבוי (מלא)"), "(מלא) גיבוי");
+        // Arabic and Persian work the same way.
+        assert_eq!(visual("مرحبا بالعالم"), "بالعالم مرحبا");
+        assert_eq!(visual("حذف ۳ برنامه"), "برنامه ۳ حذف");
+        // Lines keep their order.
+        assert_eq!(visual("שורה אחת\nשורה שתיים"), "אחת שורה\nשתיים שורה");
+        // Text without Hebrew is untouched.
+        assert!(matches!(visual("Uninstall"), std::borrow::Cow::Borrowed(_)));
+        // A Hebrew program name in the English interface still reads right.
+        assert_eq!(visual_in("נגן וידאו", false), "וידאו נגן");
     }
 
     #[test]

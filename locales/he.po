@@ -2,6 +2,8 @@ msgid ""
 msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Language: he\n"
+"X-Language-Name: עברית\n"
+"X-Text-Direction: rtl\n"
 
 msgid "Reading startup entries, including system ones"
 msgstr "קורא רשומות הפעלה, כולל רשומות מערכת"
@@ -1134,17 +1136,8 @@ msgstr "בהיר"
 msgid "Dark"
 msgstr "כהה"
 
-msgid "Save changes"
-msgstr "שמור שינויים"
-
 msgid "Appearance, safety options, lists and storage"
 msgstr "מראה, אפשרויות בטיחות, רשימות ואחסון"
-
-msgid "Discard"
-msgstr "בטל שינויים"
-
-msgid "Settings saved"
-msgstr "ההגדרות נשמרו"
 
 msgid "Exclude list"
 msgstr "רשימת החרגות"

@@ -27,7 +27,7 @@ mod watcher;
 
 use crate::config::Settings;
 use crate::i18n::tr;
-use eframe::egui::{self, RichText, Ui, Vec2};
+use eframe::egui::{self, Ui, Vec2};
 use std::sync::mpsc::Receiver;
 use std::time::{Duration, Instant};
 use style::{icon, Palette};
@@ -82,8 +82,8 @@ impl<T: Send + 'static> Pending<T> {
             ui.spacing_mut().item_spacing.y = 6.0;
             crate::gui::style::row(ui, |ui| {
                 ui.add(egui::Spinner::new().size(16.0).color(p.accent));
-                ui.label(label);
-                ui.label(RichText::new(crate::tf!("{:.0}s", self.started.elapsed().as_secs_f32())).color(p.faint));
+                ui.add(style::Label::new(label));
+                ui.add(style::Label::new(style::rich(crate::tf!("{:.0}s", self.started.elapsed().as_secs_f32())).color(p.faint)));
             });
             style::busy_bar(ui, ui.available_width().clamp(120.0, 360.0));
         });
@@ -130,7 +130,7 @@ pub use crate::backup::human_size as human;
 /// The inside of an export menu: what can be written, a path field and the button. On click it
 /// runs `export` (which returns the success message), reports the outcome and closes the menu.
 pub fn export_fields(ui: &mut Ui, cx: &mut Cx, path: &mut String, formats: &str, export: impl FnOnce(&std::path::Path) -> anyhow::Result<String>) {
-    ui.label(style::muted(ui, formats));
+    ui.add(style::Label::new(style::muted(ui, formats)));
     style::path_input(ui, "export", path, "", 340.0, style::Pick::Save);
     if style::primary(ui, icon::EXPORT, "Export").clicked() {
         match export(std::path::Path::new(path.as_str())) {
@@ -317,8 +317,8 @@ impl App {
             crate::gui::style::column(ui, |ui| {
                 ui.spacing_mut().item_spacing.y = 1.0;
                 ui.add_space(1.0);
-                ui.label(style::strong(tr("CleanCore")).size(17.0));
-                ui.label(style::muted(ui, tr("Uninstaller & cleaner")).size(12.0));
+                ui.add(style::Label::new(style::strong(tr("CleanCore")).size(17.0)));
+                ui.add(style::Label::new(style::muted(ui, tr("Uninstaller & cleaner")).size(12.0)));
             });
         });
         ui.add_space(12.0);
@@ -341,7 +341,7 @@ impl App {
                         ui.ctx().request_repaint_after(Duration::from_millis(33));
                     }
                     ui.painter().circle_filled(r.center(), 4.0, if rec { p.success } else { p.faint });
-                    ui.label(RichText::new(if rec { tr("Recorder running") } else { tr("Recorder stopped") }).size(12.5).color(p.muted));
+                    ui.add(style::Label::new(style::rich(if rec { tr("Recorder running") } else { tr("Recorder stopped") }).size(12.5).color(p.muted)));
                 });
             });
             ui.add_space(4.0);
@@ -375,7 +375,7 @@ impl App {
                 ui.add_space(10.0);
                 crate::gui::style::row(ui, |ui| {
                     ui.add_space(14.0);
-                    ui.label(RichText::new(crate::i18n::tr(section).to_uppercase()).size(11.0).family(style::semibold()).color(p.faint));
+                    ui.add(style::Label::new(style::rich(crate::i18n::tr(section).to_uppercase()).size(11.0).family(style::semibold()).color(p.faint)));
                 });
                 ui.add_space(4.0);
                 for t in tools {
@@ -406,10 +406,10 @@ impl App {
         }
         egui::Popup::menu(&r).width(380.0).show(|ui| {
             self.seen_notices = self.notices.len();
-            ui.label(style::strong(tr("Notifications")));
+            ui.add(style::Label::new(style::strong(tr("Notifications"))));
             ui.add_space(4.0);
             if self.notices.is_empty() {
-                ui.label(style::muted(ui, tr("Nothing yet.")));
+                ui.add(style::Label::new(style::muted(ui, tr("Nothing yet."))));
             }
             egui::ScrollArea::vertical().max_height(360.0).show(ui, |ui| {
                 for n in self.notices.iter().rev() {
@@ -466,10 +466,10 @@ fn notice_row(ui: &mut Ui, n: &Notice) {
     let p = Palette::get(ui.ctx());
     crate::gui::style::row_top(ui, |ui| {
         let (ic, col) = if n.error { (icon::WARNING, p.danger) } else { (icon::CHECK_CIRCLE, p.success) };
-        ui.label(RichText::new(ic).size(17.0).color(col));
+        ui.add(style::Label::new(style::rich(ic).size(17.0).color(col)));
         crate::gui::style::column(ui, |ui| {
-            ui.add(egui::Label::new(&n.text).wrap());
-            ui.label(RichText::new(n.at.format("%H:%M:%S").to_string()).size(11.5).color(p.faint));
+            ui.add(style::Label::new(&n.text).wrap());
+            ui.add(style::Label::new(style::rich(n.at.format("%H:%M:%S").to_string()).size(11.5).color(p.faint)));
         });
     });
 }
@@ -558,8 +558,8 @@ fn first_run(ctx: &egui::Context, settings: &mut Settings) {
         ui.set_width(420.0);
         style::logo(ui, icon::SPARKLE, 48.0);
         ui.add_space(10.0);
-        ui.label(style::strong(tr("Welcome to CleanCore")).size(20.0));
-        ui.label(style::muted(ui, tr("Pick a look. You can change it any time in Settings.")));
+        ui.add(style::Label::new(style::strong(tr("Welcome to CleanCore")).size(20.0)));
+        ui.add(style::Label::new(style::muted(ui, tr("Pick a look. You can change it any time in Settings."))));
         ui.add_space(14.0);
         crate::gui::style::row(ui, |ui| {
             if style::secondary(ui, icon::SUN, "Light").clicked() {

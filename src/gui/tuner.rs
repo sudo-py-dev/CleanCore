@@ -4,7 +4,7 @@ use super::style::{self, icon, Palette};
 use super::Cx;
 use crate::i18n::tr;
 use crate::tuner::{self, Requires, State, Status, Tweak, CATEGORIES};
-use eframe::egui::{self, RichText, Ui};
+use eframe::egui::{self, Ui};
 use std::collections::{BTreeSet, HashMap};
 
 pub struct TunerView {
@@ -92,7 +92,7 @@ impl TunerView {
         let subtitle = if cfg!(windows) { tr("Hidden Windows settings, switched on and off safely") } else { tr("Desktop settings, switched on and off safely") };
         style::page_header(ui, "Tuner", subtitle, |ui| {
             ui.add_enabled_ui(ours > 0, |ui| {
-                reset = style::secondary(ui, icon::UNDO, &crate::tf!("Reset all ({ours})")).on_hover_text(tr("Restore every setting changed by CleanCore")).clicked()
+                reset = style::secondary(ui, icon::UNDO, &crate::tf!("Reset all ({ours})")).on_hover_text(style::vis(tr("Restore every setting changed by CleanCore"))).clicked()
             });
             style::search_field(ui, &mut self.search, "Search tweaks", 200.0);
         });
@@ -127,9 +127,9 @@ impl TunerView {
                 .show(ui, |ui| {
                     ui.set_width(ui.available_width());
                     crate::gui::style::row(ui, |ui| {
-                        ui.label(RichText::new(icon::WARNING).size(18.0).color(p.warning));
+                        ui.add(style::Label::new(style::rich(icon::WARNING).size(18.0).color(p.warning)));
                         let msgs: Vec<&str> = self.pending.iter().filter_map(|r| r.message()).map(|m| m.split(" (").next().unwrap_or(m)).collect();
-                        ui.label(RichText::new(crate::tf!("Some changes need one more step: {}.", msgs.join(", "))).color(p.text));
+                        ui.add(style::Label::new(style::rich(crate::tf!("Some changes need one more step: {}.", msgs.join(", "))).color(p.text)));
                         if cfg!(windows) && self.pending.contains(&Requires::Explorer) {
                             ui.with_layout(crate::gui::style::far_layout(egui::Align::Center), |ui| restart = style::secondary(ui, icon::REFRESH, "Restart Explorer").clicked());
                         }
@@ -190,9 +190,9 @@ impl TunerView {
         crate::gui::style::row(ui, |ui| {
             crate::gui::style::column(ui, |ui| {
                 ui.set_width((ui.available_width() - 240.0).max(240.0));
-                ui.label(RichText::new(tr(&t.name)).color(if available { p.text } else { p.faint }));
+                ui.add(style::Label::new(style::rich(tr(&t.name)).color(if available { p.text } else { p.faint })));
                 if !t.description.is_empty() {
-                    ui.label(RichText::new(tr(&t.description)).size(12.5).color(p.muted));
+                    ui.add(style::Label::new(style::rich(tr(&t.description)).size(12.5).color(p.muted)));
                 }
                 crate::gui::style::row_wrapped(ui, |ui| {
                     if ours.is_some() {
@@ -211,7 +211,7 @@ impl TunerView {
                         style::badge(ui, "Caution", p.warning);
                     }
                     if let Some(Err(why)) = st.map(|s| &s.available) {
-                        ui.label(RichText::new(crate::tf!("Not available: {why}")).size(12.0).color(p.faint));
+                        ui.add(style::Label::new(style::rich(crate::tf!("Not available: {why}")).size(12.0).color(p.faint)));
                     }
                 });
             });
@@ -219,20 +219,20 @@ impl TunerView {
                 ui.add_enabled_ui(available, |ui| {
                     if t.is_toggle() {
                         let mut on = current.is_some();
-                        if style::toggle(ui, &mut on, &t.name).on_hover_text(&t.name).changed() {
+                        if style::toggle(ui, &mut on, &t.name).on_hover_text(style::vis(&t.name)).changed() {
                             out = Some(if on { Change::Apply(t.id.clone(), t.options[0].id.clone()) } else { Change::Revert(t.id.clone()) });
                         }
                     } else {
                         let label = |id: &str| t.option(id).map(|o| if o.label.is_empty() { o.id.clone() } else { tr(&o.label).to_string() }).unwrap_or_default();
                         let text = current.as_deref().map(label).unwrap_or_else(|| "Default".into());
-                        egui::ComboBox::from_id_salt(("tweak", &t.id)).width(210.0).selected_text(text).show_ui(ui, |ui| {
+                        egui::ComboBox::from_id_salt(("tweak", &t.id)).width(210.0).selected_text(style::vis(text)).show_ui(ui, |ui| {
                             for o in &t.options {
                                 let l = if o.label.is_empty() { o.id.clone() } else { tr(&o.label).to_string() };
-                                if ui.selectable_label(current.as_deref() == Some(o.id.as_str()), l).clicked() {
+                                if ui.selectable_label(current.as_deref() == Some(o.id.as_str()), style::vis(l)).clicked() {
                                     out = Some(Change::Apply(t.id.clone(), o.id.clone()));
                                 }
                             }
-                            if ours.is_some() && ui.selectable_label(false, tr("Restore original")).clicked() {
+                            if ours.is_some() && ui.selectable_label(false, style::vis(tr("Restore original"))).clicked() {
                                 out = Some(Change::Revert(t.id.clone()));
                             }
                         });
@@ -259,8 +259,8 @@ impl TunerView {
             let p = Palette::get(ui.ctx());
             style::icon_tile(ui, icon::WARNING, p.warning, 44.0);
             ui.add_space(8.0);
-            ui.label(style::strong(tr("Are you sure?")).size(19.0));
-            ui.label(style::muted(ui, warning));
+            ui.add(style::Label::new(style::strong(tr("Are you sure?")).size(19.0)));
+            ui.add(style::Label::new(style::muted(ui, warning)));
             ui.add_space(14.0);
             crate::gui::style::row(ui, |ui| {
                 if style::primary(ui, "", "Apply anyway").clicked() {
