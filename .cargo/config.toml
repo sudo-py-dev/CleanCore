@@ -1,0 +1,4 @@
+# Link the Visual C++ runtime into the Windows binaries, so they run on a fresh Windows
+# without the "VCRUNTIME140.dll was not found" error (no VC++ Redistributable needed).
+[target.x86_64-pc-windows-msvc]
+rustflags = ["-C", "target-feature=+crt-static"]
