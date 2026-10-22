@@ -121,6 +121,15 @@ fn decode_svg(path: &Path) -> Option<ColorImage> {
     Some(ColorImage::from_rgba_premultiplied([SIZE as usize, SIZE as usize], pm.data()))
 }
 
+/// CleanCore's white mark (assets/logo-mark.svg) at `px` pixels square, for the logo tile.
+pub fn logo_mark(px: u32) -> Option<ColorImage> {
+    use resvg::{tiny_skia, usvg};
+    let tree = usvg::Tree::from_data(include_bytes!("../../assets/logo-mark.svg"), &usvg::Options::default()).ok()?;
+    let mut pm = tiny_skia::Pixmap::new(px, px)?;
+    resvg::render(&tree, tiny_skia::Transform::from_scale(px as f32 / tree.size().width(), px as f32 / tree.size().height()), &mut pm.as_mut());
+    Some(ColorImage::from_rgba_premultiplied([px as usize, px as usize], pm.data()))
+}
+
 /// The app's window icon, rendered from assets/logo.svg.
 pub fn window_icon() -> Option<egui::IconData> {
     use resvg::{tiny_skia, usvg};

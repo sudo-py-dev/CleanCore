@@ -792,6 +792,24 @@ pub fn text_galley(ui: &Ui, text: impl Into<String>, font: FontId, color: Color3
     ui.painter().layout_job(job)
 }
 
+/// One line of painter text no wider than `width`, cut short with "…" where it ends (on the
+/// left for right-to-left text). Also says whether it was cut.
+pub fn one_line(ui: &Ui, text: &str, font: FontId, color: Color32, width: f32) -> (Arc<egui::Galley>, bool) {
+    let text = vstr(text);
+    if rtl() && crate::i18n::has_rtl(&text) {
+        let measure = |s: &str| ui.painter().layout_no_wrap(s.to_string(), font.clone(), color).size().x;
+        return match rtl_truncated(&text, width, measure) {
+            Some(cut) => (ui.painter().layout_no_wrap(cut, font, color), true),
+            None => (ui.painter().layout_no_wrap(text, font, color), false),
+        };
+    }
+    let mut job = egui::text::LayoutJob::simple_singleline(text, font, color);
+    job.wrap = egui::text::TextWrapping::truncate_at_width(width);
+    let galley = ui.painter().layout_job(job);
+    let cut = galley.elided;
+    (galley, cut)
+}
+
 /// Height of buttons, inputs, dropdowns and search fields, so toolbars line up.
 pub const CONTROL_H: f32 = 36.0;
 
@@ -1066,6 +1084,22 @@ pub fn logo(ui: &mut Ui, glyph: &str, size: f32) -> egui::Response {
     let uv = egui::Rect::from_min_max(egui::pos2(0.25, 0.25), egui::pos2(0.75, 0.75));
     ui.painter().add(egui::epaint::RectShape::filled(rect, radius, Color32::WHITE).with_texture(tex.id(), uv));
     ui.painter().text(rect.center(), egui::Align2::CENTER_CENTER, vstr(glyph), FontId::new(size * 0.52, icon_fill()), Color32::WHITE);
+    r
+}
+
+/// CleanCore's logo: its mark on the accent-colored tile.
+pub fn brand(ui: &mut Ui, size: f32) -> egui::Response {
+    let r = logo(ui, "", size);
+    let px = (size * ui.ctx().pixels_per_point()).round() as u32;
+    let id = egui::Id::unique(("logo-mark", px));
+    let tex = ui.ctx().data(|d| d.get_temp::<egui::TextureHandle>(id)).or_else(|| {
+        let tex = ui.ctx().load_texture("logo-mark", super::appicons::logo_mark(px)?, egui::TextureOptions::LINEAR);
+        ui.ctx().data_mut(|d| d.insert_temp(id, tex.clone()));
+        Some(tex)
+    });
+    if let Some(tex) = tex {
+        ui.painter().image(tex.id(), r.rect, egui::Rect::from_min_max(egui::pos2(0.0, 0.0), egui::pos2(1.0, 1.0)), Color32::WHITE);
+    }
     r
 }
 

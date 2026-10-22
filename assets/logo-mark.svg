@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
+  <!-- CleanCore's mark, white on transparent: drawn on the accent-colored tile in the app.
+       Keep in step with logo.svg. -->
+  <g fill="none" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M84 112 L94 196 Q96 210 110 210 H146 Q160 210 162 196 L172 112" stroke-width="14"/>
+    <path d="M113 136 V186 M143 136 V186" stroke-width="11"/>
+    <g transform="rotate(-14 128 96)">
+      <path d="M72 96 H184" stroke-width="14"/>
+      <path d="M110 96 V84 Q110 76 118 76 H138 Q146 76 146 84 V96" stroke-width="11"/>
+    </g>
+  </g>
+  <g fill="#ffffff">
+    <path d="M196 34 Q199 55 220 58 Q199 61 196 82 Q193 61 172 58 Q193 55 196 34 Z"/>
+    <path d="M206 112 Q208 124 220 126 Q208 128 206 140 Q204 128 192 126 Q204 124 206 112 Z" opacity="0.85"/>
+    <circle cx="58" cy="76" r="7" opacity="0.7"/>
+  </g>
+</svg>

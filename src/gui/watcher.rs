@@ -196,9 +196,13 @@ impl WatcherView {
         crate::gui::style::row_top(ui, |ui| {
             ui.spacing_mut().item_spacing.x = 12.0;
             ui.allocate_ui_with_layout(egui::vec2(left_w, avail.y), egui::Layout::top_down(egui::Align::Min), |ui| {
+                // The panel scrolls as a whole when the window is too short for it.
                 style::card(ui, |ui| {
                     ui.set_min_height(avail.y - 34.0);
-                    action = self.watch_panel(ui, cx, p);
+                    ui.set_max_height(avail.y - 34.0);
+                    egui::ScrollArea::vertical().id_salt("watch-panel").auto_shrink([false, false]).show(ui, |ui| {
+                        action = self.watch_panel(ui, cx, p);
+                    });
                 });
             });
             ui.allocate_ui_with_layout(egui::vec2(ui.available_width(), avail.y), egui::Layout::top_down(egui::Align::Min), |ui| {
@@ -320,18 +324,16 @@ impl WatcherView {
         });
         ui.add_space(4.0);
         let mut action = None;
-        egui::ScrollArea::vertical().id_salt("watched").auto_shrink([false, false]).show(ui, |ui| {
-            if self.watches.is_empty() {
-                ui.add_space(10.0);
-                ui.add(style::Label::new(style::muted(ui, tr("Nothing yet. Use a quick pick above to start."))));
+        if self.watches.is_empty() {
+            ui.add_space(10.0);
+            ui.add(style::Label::new(style::muted(ui, tr("Nothing yet. Use a quick pick above to start."))));
+        }
+        for w in self.watches.clone() {
+            let sel = self.selected.as_deref() == Some(w.path.as_str());
+            if let Some(a) = self.watch_row(ui, &w, sel, p, cx) {
+                action = Some(a);
             }
-            for w in self.watches.clone() {
-                let sel = self.selected.as_deref() == Some(w.path.as_str());
-                if let Some(a) = self.watch_row(ui, &w, sel, p, cx) {
-                    action = Some(a);
-                }
-            }
-        });
+        }
         action
     }
 
@@ -547,7 +549,7 @@ impl WatcherView {
 /// One of the three "how it works" steps; ticked when done.
 fn step_tile(ui: &mut Ui, width: f32, n: usize, title: &str, text: &str, done: bool, p: Palette) {
     let (title, text) = (tr(title), tr(text));
-    let (rect, _) = ui.allocate_exact_size(egui::vec2(width, 58.0), egui::Sense::hover());
+    let (rect, resp) = ui.allocate_exact_size(egui::vec2(width, 58.0), egui::Sense::hover());
     let fill = if done { p.surface.lerp_to_gamma(p.success, if p.dark { 0.10 } else { 0.06 }) } else { p.surface };
     ui.painter().rect(rect, 12.0, fill, egui::Stroke::new(1.0, if done { p.success.gamma_multiply(0.5) } else { p.border }), egui::StrokeKind::Inside);
     let mr = crate::gui::style::Mirror::new(rect);
@@ -559,9 +561,16 @@ fn step_tile(ui: &mut Ui, width: f32, n: usize, title: &str, text: &str, done: b
         ui.painter().circle_stroke(c, 11.0, egui::Stroke::new(1.5, p.accent));
         ui.painter().text(c, egui::Align2::CENTER_CENTER, style::vstr(n.to_string()), egui::FontId::new(12.5, style::semibold()), p.accent);
     }
+    // Both lines fit between the badge and the far edge; what doesn't fit ends in "…".
+    let room = (width - 48.0 - 12.0).max(10.0);
+    let (tg, title_cut) = style::one_line(ui, title, egui::FontId::new(14.0, style::semibold()), p.text, room);
+    let (xg, text_cut) = style::one_line(ui, text, egui::FontId::proportional(12.0), p.muted, room);
     let painter = ui.painter().with_clip_rect(rect.shrink(4.0));
-    painter.text(mr.pos(48.0, rect.center().y - 9.0), mr.start(egui::Align::Center), style::vstr(title), egui::FontId::new(14.0, style::semibold()), p.text);
-    painter.text(mr.pos(48.0, rect.center().y + 10.0), mr.start(egui::Align::Center), style::vstr(text), egui::FontId::proportional(12.0), p.muted);
+    painter.galley(egui::pos2(mr.galley_x(48.0, tg.size().x), rect.center().y - 9.0 - tg.size().y / 2.0), tg, p.text);
+    painter.galley(egui::pos2(mr.galley_x(48.0, xg.size().x), rect.center().y + 10.0 - xg.size().y / 2.0), xg, p.muted);
+    if title_cut || text_cut {
+        resp.on_hover_text(style::vis(format!("{title}\n{text}")));
+    }
 }
 
 /// The usual places programs keep their settings, for one-click watching.

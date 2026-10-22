@@ -312,7 +312,7 @@ impl App {
         ui.add_space(18.0);
         crate::gui::style::row(ui, |ui| {
             ui.add_space(6.0);
-            style::logo(ui, icon::SPARKLE, 36.0);
+            style::brand(ui, 36.0);
             ui.add_space(2.0);
             crate::gui::style::column(ui, |ui| {
                 ui.spacing_mut().item_spacing.y = 1.0;
@@ -556,7 +556,7 @@ fn first_run(ctx: &egui::Context, settings: &mut Settings) {
     let mut chosen = None;
     egui::Modal::new(egui::Id::unique("first-run-theme")).show(ctx, |ui| {
         ui.set_width(420.0);
-        style::logo(ui, icon::SPARKLE, 48.0);
+        style::brand(ui, 48.0);
         ui.add_space(10.0);
         ui.add(style::Label::new(style::strong(tr("Welcome to CleanCore")).size(20.0)));
         ui.add(style::Label::new(style::muted(ui, tr("Pick a look. You can change it any time in Settings."))));
