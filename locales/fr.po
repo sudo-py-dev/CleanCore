@@ -601,6 +601,150 @@ msgstr "Ajouter à la liste d'exclusion"
 msgid "Copy"
 msgstr "Copier"
 
+msgid "Keep the oldest copy"
+msgstr "Garder la copie la plus ancienne"
+
+msgid "Keep the newest copy"
+msgstr "Garder la copie la plus récente"
+
+msgid "Keep the shortest path"
+msgstr "Garder le chemin le plus court"
+
+msgid "Any size"
+msgstr "Toute taille"
+
+msgid "At least {}"
+msgstr "Au moins {}"
+
+msgid "Deleted {} duplicate file(s), {}"
+msgstr "{} fichier(s) en double supprimé(s), {}"
+
+msgid "Deleted {} file(s); {} could not be deleted (first: {}: {})"
+msgstr "{} fichier(s) supprimé(s) ; {} n’ont pas pu être supprimés (premier : {} : {})"
+
+msgid "{} folders searched, {} files listed"
+msgstr "{} dossiers parcourus, {} fichiers listés"
+
+msgid "Comparing the start and end of {} of {} files"
+msgstr "Comparaison du début et de la fin de {} fichiers sur {}"
+
+msgid "Comparing contents: {} of {} files, {} read"
+msgstr "Comparaison des contenus : {} fichiers sur {}, {} lus"
+
+msgid "Stop"
+msgstr "Arrêter"
+
+msgid "Looking for duplicate files"
+msgstr "Recherche des fichiers en double"
+
+msgid "the home folder"
+msgstr "le dossier personnel"
+
+msgid "{} location(s)"
+msgstr "{} emplacement(s)"
+
+msgid "Files with the same content in {where_}"
+msgstr "Fichiers au contenu identique dans {where_}"
+
+msgid "Find duplicates"
+msgstr "Rechercher les doublons"
+
+msgid "Where to look"
+msgstr "Où chercher"
+
+msgid "{} (default)"
+msgstr "{} (par défaut)"
+
+msgid "Remove location"
+msgstr "Supprimer l'emplacement"
+
+msgid "/home/me/Pictures or /media/disk"
+msgstr "/home/moi/Images ou /media/disque"
+
+msgid "Add location"
+msgstr "Ajouter un emplacement"
+
+msgid "Never look in"
+msgstr "Ne jamais chercher dans"
+
+msgid "A folder to skip"
+msgstr "Un dossier à ignorer"
+
+msgid "The Windows component store, Installer folder, Recycle Bin and CleanCore's backups are always skipped."
+msgstr "Le magasin de composants Windows, le dossier Installer, la Corbeille et les sauvegardes de CleanCore sont toujours ignorés."
+
+msgid "System folders (/usr, /proc, /var/lib, …), the Trash and CleanCore's backups are always skipped."
+msgstr "Les dossiers système (/usr, /proc, /var/lib, …), la Corbeille et les sauvegardes de CleanCore sont toujours ignorés."
+
+msgid "Which files"
+msgstr "Quels fichiers"
+
+msgid "Minimum file size"
+msgstr "Taille minimale des fichiers"
+
+msgid "Small files rarely free much space and are often meant to be alike."
+msgstr "Les petits fichiers libèrent rarement beaucoup d’espace et sont souvent identiques à dessein."
+
+msgid "Skip hidden files and folders"
+msgstr "Ignorer les fichiers et dossiers cachés"
+
+msgid "Program data, settings and version-control folders often hold identical files on purpose."
+msgstr "Les données de programmes, les réglages et les dossiers de gestion de versions contiennent souvent des fichiers identiques à dessein."
+
+msgid "Delete to the Recycle Bin"
+msgstr "Supprimer vers la Corbeille"
+
+msgid "Delete to the Trash"
+msgstr "Supprimer vers la Corbeille"
+
+msgid "Otherwise files are deleted permanently."
+msgstr "Sinon, les fichiers sont supprimés définitivement."
+
+msgid "Delete to the trash"
+msgstr "Supprimer vers la corbeille"
+
+msgid "{} groups · {} can be freed"
+msgstr "{} groupes · {} peuvent être libérés"
+
+msgid "Delete ({}, {})"
+msgstr "Supprimer ({}, {})"
+
+msgid "Export list"
+msgstr "Exporter la liste"
+
+msgid "File (.txt or .csv)"
+msgstr "Fichier (.txt ou .csv)"
+
+msgid "No duplicates"
+msgstr "Aucun doublon"
+
+msgid "No two files in the chosen locations have the same content."
+msgstr "Aucun fichier n’a le même contenu qu’un autre dans les emplacements choisis."
+
+msgid "File"
+msgstr "Fichier"
+
+msgid "Changed"
+msgstr "Modifié"
+
+msgid "{} copies of {} · {} can be freed"
+msgstr "{} copies de {} · {} peuvent être libérés"
+
+msgid "At least one copy of each file is kept."
+msgstr "Au moins une copie de chaque fichier est conservée."
+
+msgid "Delete {} duplicate file(s)?"
+msgstr "Supprimer {} fichier(s) en double ?"
+
+msgid "They go to the Trash, so you can still get them back."
+msgstr "Ils vont à la Corbeille, vous pouvez donc encore les récupérer."
+
+msgid "They are deleted permanently."
+msgstr "Ils sont supprimés définitivement."
+
+msgid "Deleting duplicate files"
+msgstr "Suppression des fichiers en double"
+
 msgid "Reading browser extensions"
 msgstr "Lecture des extensions du navigateur"
 
@@ -817,9 +961,6 @@ msgstr "{} · {n} processus"
 msgid "Window"
 msgstr "Fenêtre"
 
-msgid "File"
-msgstr "Fichier"
-
 msgid "Installed as"
 msgstr "Installé en tant que"
 
@@ -880,17 +1021,11 @@ msgstr "{} fichier(s) supprimé(s) ; {} n'ont pas pu l'être (premier : {})"
 msgid "{} folders searched, {} junk files found"
 msgstr "{} dossiers parcourus, {} fichiers inutiles trouvés"
 
-msgid "Stop"
-msgstr "Arrêter"
-
 msgid "Looking for junk files"
 msgstr "Recherche des fichiers inutiles"
 
 msgid "the default locations"
 msgstr "les emplacements par défaut"
-
-msgid "{} location(s)"
-msgstr "{} emplacement(s)"
 
 msgid "{n_pat} patterns in {where_}"
 msgstr "{n_pat} motifs dans {where_}"
@@ -898,35 +1033,11 @@ msgstr "{n_pat} motifs dans {where_}"
 msgid "Scan for junk files"
 msgstr "Rechercher les fichiers inutiles"
 
-msgid "Where to look"
-msgstr "Où chercher"
-
-msgid "{} (default)"
-msgstr "{} (par défaut)"
-
-msgid "Remove location"
-msgstr "Supprimer l'emplacement"
-
 msgid "/home/me/Downloads or /media/disk"
 msgstr "/home/me/Downloads ou /media/disk"
 
-msgid "Add location"
-msgstr "Ajouter un emplacement"
-
 msgid "Add {path}"
 msgstr "Ajouter {path}"
-
-msgid "Never look in"
-msgstr "Ne jamais chercher dans"
-
-msgid "A folder to skip"
-msgstr "Un dossier à ignorer"
-
-msgid "The Windows component store, Installer folder, Recycle Bin and CleanCore's backups are always skipped."
-msgstr "Le magasin de composants Windows, le dossier Installer, la Corbeille et les sauvegardes de CleanCore sont toujours ignorés."
-
-msgid "System folders (/usr, /proc, /var/lib, …), the Trash and CleanCore's backups are always skipped."
-msgstr "Les dossiers système (/usr, /proc, /var/lib, …), la Corbeille et les sauvegardes de CleanCore sont toujours ignorés."
 
 msgid "What counts as junk"
 msgstr "Ce qui est considéré comme inutile"
@@ -949,29 +1060,8 @@ msgstr "Ignorer les fichiers modifiés au cours des dernières 24 heures"
 msgid "They may still be in use."
 msgstr "Ils sont peut-être encore utilisés."
 
-msgid "Delete to the Recycle Bin"
-msgstr "Supprimer vers la Corbeille"
-
-msgid "Delete to the Trash"
-msgstr "Supprimer vers la Corbeille"
-
-msgid "Otherwise files are deleted permanently."
-msgstr "Sinon, les fichiers sont supprimés définitivement."
-
-msgid "Delete to the trash"
-msgstr "Supprimer vers la corbeille"
-
 msgid "{} junk files · {}"
 msgstr "{} fichiers inutiles · {}"
-
-msgid "Delete ({}, {})"
-msgstr "Supprimer ({}, {})"
-
-msgid "Export list"
-msgstr "Exporter la liste"
-
-msgid "File (.txt or .csv)"
-msgstr "Fichier (.txt ou .csv)"
 
 msgid "No junk files"
 msgstr "Aucun fichier inutile"
@@ -979,20 +1069,11 @@ msgstr "Aucun fichier inutile"
 msgid "Nothing matched the junk patterns in the chosen locations."
 msgstr "Rien ne correspond aux motifs dans les emplacements choisis."
 
-msgid "Changed"
-msgstr "Modifié"
-
 msgid "Pattern"
 msgstr "Motif"
 
 msgid "Delete {} junk file(s)?"
 msgstr "Supprimer {} fichier(s) inutile(s) ?"
-
-msgid "They go to the Trash, so you can still get them back."
-msgstr "Ils vont à la Corbeille, vous pouvez donc encore les récupérer."
-
-msgid "They are deleted permanently."
-msgstr "Ils sont supprimés définitivement."
 
 msgid "Deleting junk files"
 msgstr "Suppression des fichiers inutiles"
@@ -1873,6 +1954,12 @@ msgstr "Fichiers inutiles"
 msgid "Temporary files, editor backups and crash dumps left on your drives"
 msgstr "Fichiers temporaires, sauvegardes d'éditeurs et vidages de plantage laissés sur vos disques"
 
+msgid "Duplicate Finder"
+msgstr "Recherche de doublons"
+
+msgid "Identical files in your folders, and deleting the extra copies"
+msgstr "Fichiers identiques dans vos dossiers, et suppression des copies en trop"
+
 msgid "History Cleaner"
 msgstr "Nettoyeur d'historique"
 
@@ -1908,6 +1995,9 @@ msgstr "Supprimer les applications préinstallées et désactiver Copilot, les p
 
 msgid "Junk files"
 msgstr "Fichiers inutiles"
+
+msgid "Duplicates"
+msgstr "Doublons"
 
 msgid "History"
 msgstr "Historique"

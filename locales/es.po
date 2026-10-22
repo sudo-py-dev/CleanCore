@@ -601,6 +601,150 @@ msgstr "Añadir a la lista de exclusiones"
 msgid "Copy"
 msgstr "Copiar"
 
+msgid "Keep the oldest copy"
+msgstr "Conservar la copia más antigua"
+
+msgid "Keep the newest copy"
+msgstr "Conservar la copia más reciente"
+
+msgid "Keep the shortest path"
+msgstr "Conservar la ruta más corta"
+
+msgid "Any size"
+msgstr "Cualquier tamaño"
+
+msgid "At least {}"
+msgstr "Al menos {}"
+
+msgid "Deleted {} duplicate file(s), {}"
+msgstr "Se eliminaron {} archivo(s) duplicado(s), {}"
+
+msgid "Deleted {} file(s); {} could not be deleted (first: {}: {})"
+msgstr "Se eliminaron {} archivo(s); {} no se pudieron eliminar (primero: {}: {})"
+
+msgid "{} folders searched, {} files listed"
+msgstr "{} carpetas revisadas, {} archivos listados"
+
+msgid "Comparing the start and end of {} of {} files"
+msgstr "Comparando el inicio y el final de {} de {} archivos"
+
+msgid "Comparing contents: {} of {} files, {} read"
+msgstr "Comparando contenidos: {} de {} archivos, {} leídos"
+
+msgid "Stop"
+msgstr "Detener"
+
+msgid "Looking for duplicate files"
+msgstr "Buscando archivos duplicados"
+
+msgid "the home folder"
+msgstr "la carpeta personal"
+
+msgid "{} location(s)"
+msgstr "{} ubicación(es)"
+
+msgid "Files with the same content in {where_}"
+msgstr "Archivos con el mismo contenido en {where_}"
+
+msgid "Find duplicates"
+msgstr "Buscar duplicados"
+
+msgid "Where to look"
+msgstr "Dónde buscar"
+
+msgid "{} (default)"
+msgstr "{} (predeterminado)"
+
+msgid "Remove location"
+msgstr "Quitar ubicación"
+
+msgid "/home/me/Pictures or /media/disk"
+msgstr "/home/yo/Imágenes o /media/disco"
+
+msgid "Add location"
+msgstr "Añadir ubicación"
+
+msgid "Never look in"
+msgstr "No buscar nunca en"
+
+msgid "A folder to skip"
+msgstr "Una carpeta que omitir"
+
+msgid "The Windows component store, Installer folder, Recycle Bin and CleanCore's backups are always skipped."
+msgstr "El almacén de componentes de Windows, la carpeta Installer, la Papelera de reciclaje y las copias de CleanCore siempre se omiten."
+
+msgid "System folders (/usr, /proc, /var/lib, …), the Trash and CleanCore's backups are always skipped."
+msgstr "Las carpetas del sistema (/usr, /proc, /var/lib, …), la Papelera y las copias de CleanCore siempre se omiten."
+
+msgid "Which files"
+msgstr "Qué archivos"
+
+msgid "Minimum file size"
+msgstr "Tamaño mínimo de archivo"
+
+msgid "Small files rarely free much space and are often meant to be alike."
+msgstr "Los archivos pequeños rara vez liberan mucho espacio y a menudo son iguales a propósito."
+
+msgid "Skip hidden files and folders"
+msgstr "Omitir archivos y carpetas ocultos"
+
+msgid "Program data, settings and version-control folders often hold identical files on purpose."
+msgstr "Los datos de programas, la configuración y las carpetas de control de versiones suelen contener archivos idénticos a propósito."
+
+msgid "Delete to the Recycle Bin"
+msgstr "Eliminar a la Papelera de reciclaje"
+
+msgid "Delete to the Trash"
+msgstr "Eliminar a la Papelera"
+
+msgid "Otherwise files are deleted permanently."
+msgstr "Si no, los archivos se eliminan para siempre."
+
+msgid "Delete to the trash"
+msgstr "Eliminar a la papelera"
+
+msgid "{} groups · {} can be freed"
+msgstr "{} grupos · se pueden liberar {}"
+
+msgid "Delete ({}, {})"
+msgstr "Eliminar ({}, {})"
+
+msgid "Export list"
+msgstr "Exportar lista"
+
+msgid "File (.txt or .csv)"
+msgstr "Archivo (.txt o .csv)"
+
+msgid "No duplicates"
+msgstr "No hay duplicados"
+
+msgid "No two files in the chosen locations have the same content."
+msgstr "No hay dos archivos con el mismo contenido en las ubicaciones elegidas."
+
+msgid "File"
+msgstr "Archivo"
+
+msgid "Changed"
+msgstr "Modificado"
+
+msgid "{} copies of {} · {} can be freed"
+msgstr "{} copias de {} · se pueden liberar {}"
+
+msgid "At least one copy of each file is kept."
+msgstr "Siempre se conserva al menos una copia de cada archivo."
+
+msgid "Delete {} duplicate file(s)?"
+msgstr "¿Eliminar {} archivo(s) duplicado(s)?"
+
+msgid "They go to the Trash, so you can still get them back."
+msgstr "Van a la Papelera, así que aún puedes recuperarlos."
+
+msgid "They are deleted permanently."
+msgstr "Se eliminan para siempre."
+
+msgid "Deleting duplicate files"
+msgstr "Eliminando archivos duplicados"
+
 msgid "Reading browser extensions"
 msgstr "Leyendo extensiones del navegador"
 
@@ -817,9 +961,6 @@ msgstr "{} · {n} proceso(s)"
 msgid "Window"
 msgstr "Ventana"
 
-msgid "File"
-msgstr "Archivo"
-
 msgid "Installed as"
 msgstr "Instalado como"
 
@@ -880,17 +1021,11 @@ msgstr "Se eliminaron {} archivo(s); {} no se pudieron eliminar (primero: {})"
 msgid "{} folders searched, {} junk files found"
 msgstr "{} carpetas revisadas, {} archivos basura encontrados"
 
-msgid "Stop"
-msgstr "Detener"
-
 msgid "Looking for junk files"
 msgstr "Buscando archivos basura"
 
 msgid "the default locations"
 msgstr "las ubicaciones predeterminadas"
-
-msgid "{} location(s)"
-msgstr "{} ubicación(es)"
 
 msgid "{n_pat} patterns in {where_}"
 msgstr "{n_pat} patrones en {where_}"
@@ -898,35 +1033,11 @@ msgstr "{n_pat} patrones en {where_}"
 msgid "Scan for junk files"
 msgstr "Buscar archivos basura"
 
-msgid "Where to look"
-msgstr "Dónde buscar"
-
-msgid "{} (default)"
-msgstr "{} (predeterminado)"
-
-msgid "Remove location"
-msgstr "Quitar ubicación"
-
 msgid "/home/me/Downloads or /media/disk"
 msgstr "/home/me/Downloads o /media/disk"
 
-msgid "Add location"
-msgstr "Añadir ubicación"
-
 msgid "Add {path}"
 msgstr "Añadir {path}"
-
-msgid "Never look in"
-msgstr "No buscar nunca en"
-
-msgid "A folder to skip"
-msgstr "Una carpeta que omitir"
-
-msgid "The Windows component store, Installer folder, Recycle Bin and CleanCore's backups are always skipped."
-msgstr "El almacén de componentes de Windows, la carpeta Installer, la Papelera de reciclaje y las copias de CleanCore siempre se omiten."
-
-msgid "System folders (/usr, /proc, /var/lib, …), the Trash and CleanCore's backups are always skipped."
-msgstr "Las carpetas del sistema (/usr, /proc, /var/lib, …), la Papelera y las copias de CleanCore siempre se omiten."
 
 msgid "What counts as junk"
 msgstr "Qué cuenta como basura"
@@ -949,29 +1060,8 @@ msgstr "Omitir archivos modificados en las últimas 24 horas"
 msgid "They may still be in use."
 msgstr "Puede que aún se estén usando."
 
-msgid "Delete to the Recycle Bin"
-msgstr "Eliminar a la Papelera de reciclaje"
-
-msgid "Delete to the Trash"
-msgstr "Eliminar a la Papelera"
-
-msgid "Otherwise files are deleted permanently."
-msgstr "Si no, los archivos se eliminan para siempre."
-
-msgid "Delete to the trash"
-msgstr "Eliminar a la papelera"
-
 msgid "{} junk files · {}"
 msgstr "{} archivos basura · {}"
-
-msgid "Delete ({}, {})"
-msgstr "Eliminar ({}, {})"
-
-msgid "Export list"
-msgstr "Exportar lista"
-
-msgid "File (.txt or .csv)"
-msgstr "Archivo (.txt o .csv)"
 
 msgid "No junk files"
 msgstr "No hay archivos basura"
@@ -979,20 +1069,11 @@ msgstr "No hay archivos basura"
 msgid "Nothing matched the junk patterns in the chosen locations."
 msgstr "Nada coincidió con los patrones de basura en las ubicaciones elegidas."
 
-msgid "Changed"
-msgstr "Modificado"
-
 msgid "Pattern"
 msgstr "Patrón"
 
 msgid "Delete {} junk file(s)?"
 msgstr "¿Eliminar {} archivo(s) basura?"
-
-msgid "They go to the Trash, so you can still get them back."
-msgstr "Van a la Papelera, así que aún puedes recuperarlos."
-
-msgid "They are deleted permanently."
-msgstr "Se eliminan para siempre."
 
 msgid "Deleting junk files"
 msgstr "Eliminando archivos basura"
@@ -1873,6 +1954,12 @@ msgstr "Archivos basura"
 msgid "Temporary files, editor backups and crash dumps left on your drives"
 msgstr "Archivos temporales, copias de editores y volcados de fallos en tus unidades"
 
+msgid "Duplicate Finder"
+msgstr "Buscador de duplicados"
+
+msgid "Identical files in your folders, and deleting the extra copies"
+msgstr "Archivos idénticos en sus carpetas y eliminación de las copias sobrantes"
+
 msgid "History Cleaner"
 msgstr "Limpiador de historial"
 
@@ -1908,6 +1995,9 @@ msgstr "Quita apps preinstaladas y desactiva Copilot, anuncios y telemetría"
 
 msgid "Junk files"
 msgstr "Archivos basura"
+
+msgid "Duplicates"
+msgstr "Duplicados"
 
 msgid "History"
 msgstr "Historial"

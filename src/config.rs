@@ -77,6 +77,16 @@ pub struct Settings {
     pub junk_skip_recent: bool,
     /// Junk Files Cleaner: delete to the Recycle Bin / Trash instead of permanently.
     pub junk_to_trash: bool,
+    /// Duplicate Finder: where to look (empty: the home folder).
+    pub dupes_locations: Vec<String>,
+    /// Duplicate Finder: folders never scanned.
+    pub dupes_exclude: Vec<String>,
+    /// Duplicate Finder: smaller files are ignored (bytes).
+    pub dupes_min_size: u64,
+    /// Duplicate Finder: leave hidden files and folders (dot names, hidden attribute) alone.
+    pub dupes_skip_hidden: bool,
+    /// Duplicate Finder: delete to the Recycle Bin / Trash instead of permanently.
+    pub dupes_to_trash: bool,
     /// History Cleaner: the items ticked last time (ids).
     pub history_selected: Vec<String>,
     /// Unrecoverable Delete / Evidence Remover: overwrite passes.
@@ -153,6 +163,11 @@ impl Default for Settings {
             junk_exclude: Vec::new(),
             junk_skip_recent: true,
             junk_to_trash: true,
+            dupes_locations: Vec::new(),
+            dupes_exclude: Vec::new(),
+            dupes_min_size: 64 * 1024,
+            dupes_skip_hidden: true,
+            dupes_to_trash: true,
             history_selected: Vec::new(),
             shred_passes: 3,
             custom_tools: Vec::new(),

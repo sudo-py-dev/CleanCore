@@ -600,6 +600,150 @@ msgstr ""
 msgid "Copy"
 msgstr ""
 
+msgid "Keep the oldest copy"
+msgstr ""
+
+msgid "Keep the newest copy"
+msgstr ""
+
+msgid "Keep the shortest path"
+msgstr ""
+
+msgid "Any size"
+msgstr ""
+
+msgid "At least {}"
+msgstr ""
+
+msgid "Deleted {} duplicate file(s), {}"
+msgstr ""
+
+msgid "Deleted {} file(s); {} could not be deleted (first: {}: {})"
+msgstr ""
+
+msgid "{} folders searched, {} files listed"
+msgstr ""
+
+msgid "Comparing the start and end of {} of {} files"
+msgstr ""
+
+msgid "Comparing contents: {} of {} files, {} read"
+msgstr ""
+
+msgid "Stop"
+msgstr ""
+
+msgid "Looking for duplicate files"
+msgstr ""
+
+msgid "the home folder"
+msgstr ""
+
+msgid "{} location(s)"
+msgstr ""
+
+msgid "Files with the same content in {where_}"
+msgstr ""
+
+msgid "Find duplicates"
+msgstr ""
+
+msgid "Where to look"
+msgstr ""
+
+msgid "{} (default)"
+msgstr ""
+
+msgid "Remove location"
+msgstr ""
+
+msgid "/home/me/Pictures or /media/disk"
+msgstr ""
+
+msgid "Add location"
+msgstr ""
+
+msgid "Never look in"
+msgstr ""
+
+msgid "A folder to skip"
+msgstr ""
+
+msgid "The Windows component store, Installer folder, Recycle Bin and CleanCore's backups are always skipped."
+msgstr ""
+
+msgid "System folders (/usr, /proc, /var/lib, …), the Trash and CleanCore's backups are always skipped."
+msgstr ""
+
+msgid "Which files"
+msgstr ""
+
+msgid "Minimum file size"
+msgstr ""
+
+msgid "Small files rarely free much space and are often meant to be alike."
+msgstr ""
+
+msgid "Skip hidden files and folders"
+msgstr ""
+
+msgid "Program data, settings and version-control folders often hold identical files on purpose."
+msgstr ""
+
+msgid "Delete to the Recycle Bin"
+msgstr ""
+
+msgid "Delete to the Trash"
+msgstr ""
+
+msgid "Otherwise files are deleted permanently."
+msgstr ""
+
+msgid "Delete to the trash"
+msgstr ""
+
+msgid "{} groups · {} can be freed"
+msgstr ""
+
+msgid "Delete ({}, {})"
+msgstr ""
+
+msgid "Export list"
+msgstr ""
+
+msgid "File (.txt or .csv)"
+msgstr ""
+
+msgid "No duplicates"
+msgstr ""
+
+msgid "No two files in the chosen locations have the same content."
+msgstr ""
+
+msgid "File"
+msgstr ""
+
+msgid "Changed"
+msgstr ""
+
+msgid "{} copies of {} · {} can be freed"
+msgstr ""
+
+msgid "At least one copy of each file is kept."
+msgstr ""
+
+msgid "Delete {} duplicate file(s)?"
+msgstr ""
+
+msgid "They go to the Trash, so you can still get them back."
+msgstr ""
+
+msgid "They are deleted permanently."
+msgstr ""
+
+msgid "Deleting duplicate files"
+msgstr ""
+
 msgid "Reading browser extensions"
 msgstr ""
 
@@ -816,9 +960,6 @@ msgstr ""
 msgid "Window"
 msgstr ""
 
-msgid "File"
-msgstr ""
-
 msgid "Installed as"
 msgstr ""
 
@@ -879,16 +1020,10 @@ msgstr ""
 msgid "{} folders searched, {} junk files found"
 msgstr ""
 
-msgid "Stop"
-msgstr ""
-
 msgid "Looking for junk files"
 msgstr ""
 
 msgid "the default locations"
-msgstr ""
-
-msgid "{} location(s)"
 msgstr ""
 
 msgid "{n_pat} patterns in {where_}"
@@ -897,34 +1032,10 @@ msgstr ""
 msgid "Scan for junk files"
 msgstr ""
 
-msgid "Where to look"
-msgstr ""
-
-msgid "{} (default)"
-msgstr ""
-
-msgid "Remove location"
-msgstr ""
-
 msgid "/home/me/Downloads or /media/disk"
 msgstr ""
 
-msgid "Add location"
-msgstr ""
-
 msgid "Add {path}"
-msgstr ""
-
-msgid "Never look in"
-msgstr ""
-
-msgid "A folder to skip"
-msgstr ""
-
-msgid "The Windows component store, Installer folder, Recycle Bin and CleanCore's backups are always skipped."
-msgstr ""
-
-msgid "System folders (/usr, /proc, /var/lib, …), the Trash and CleanCore's backups are always skipped."
 msgstr ""
 
 msgid "What counts as junk"
@@ -948,28 +1059,7 @@ msgstr ""
 msgid "They may still be in use."
 msgstr ""
 
-msgid "Delete to the Recycle Bin"
-msgstr ""
-
-msgid "Delete to the Trash"
-msgstr ""
-
-msgid "Otherwise files are deleted permanently."
-msgstr ""
-
-msgid "Delete to the trash"
-msgstr ""
-
 msgid "{} junk files · {}"
-msgstr ""
-
-msgid "Delete ({}, {})"
-msgstr ""
-
-msgid "Export list"
-msgstr ""
-
-msgid "File (.txt or .csv)"
 msgstr ""
 
 msgid "No junk files"
@@ -978,19 +1068,10 @@ msgstr ""
 msgid "Nothing matched the junk patterns in the chosen locations."
 msgstr ""
 
-msgid "Changed"
-msgstr ""
-
 msgid "Pattern"
 msgstr ""
 
 msgid "Delete {} junk file(s)?"
-msgstr ""
-
-msgid "They go to the Trash, so you can still get them back."
-msgstr ""
-
-msgid "They are deleted permanently."
 msgstr ""
 
 msgid "Deleting junk files"
@@ -1872,6 +1953,12 @@ msgstr ""
 msgid "Temporary files, editor backups and crash dumps left on your drives"
 msgstr ""
 
+msgid "Duplicate Finder"
+msgstr ""
+
+msgid "Identical files in your folders, and deleting the extra copies"
+msgstr ""
+
 msgid "History Cleaner"
 msgstr ""
 
@@ -1906,6 +1993,9 @@ msgid "Remove preinstalled apps and turn off Copilot, ads and telemetry"
 msgstr ""
 
 msgid "Junk files"
+msgstr ""
+
+msgid "Duplicates"
 msgstr ""
 
 msgid "History"

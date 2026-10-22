@@ -21,6 +21,8 @@ gui = ["dep:eframe", "dep:egui_extras", "dep:ksni", "dep:tray-icon", "dep:image"
 
 [dependencies]
 anyhow = "1"
+# Duplicate finder: content hashes, several GB/s with SIMD
+blake3 = "1.8.7"
 chrono = { version = "0.4", features = ["serde"] }
 clap = { version = "4", features = ["derive"] }
 dirs = "6"

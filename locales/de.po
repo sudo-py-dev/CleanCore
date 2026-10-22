@@ -601,6 +601,150 @@ msgstr "Zur Ausschlussliste hinzufügen"
 msgid "Copy"
 msgstr "Kopieren"
 
+msgid "Keep the oldest copy"
+msgstr "Älteste Kopie behalten"
+
+msgid "Keep the newest copy"
+msgstr "Neueste Kopie behalten"
+
+msgid "Keep the shortest path"
+msgstr "Kürzesten Pfad behalten"
+
+msgid "Any size"
+msgstr "Beliebige Größe"
+
+msgid "At least {}"
+msgstr "Mindestens {}"
+
+msgid "Deleted {} duplicate file(s), {}"
+msgstr "{} doppelte Datei(en) gelöscht, {}"
+
+msgid "Deleted {} file(s); {} could not be deleted (first: {}: {})"
+msgstr "{} Datei(en) gelöscht; {} konnten nicht gelöscht werden (erste: {}: {})"
+
+msgid "{} folders searched, {} files listed"
+msgstr "{} Ordner durchsucht, {} Dateien erfasst"
+
+msgid "Comparing the start and end of {} of {} files"
+msgstr "Anfang und Ende von {} von {} Dateien werden verglichen"
+
+msgid "Comparing contents: {} of {} files, {} read"
+msgstr "Inhalte werden verglichen: {} von {} Dateien, {} gelesen"
+
+msgid "Stop"
+msgstr "Stopp"
+
+msgid "Looking for duplicate files"
+msgstr "Doppelte Dateien werden gesucht"
+
+msgid "the home folder"
+msgstr "dem Persönlichen Ordner"
+
+msgid "{} location(s)"
+msgstr "{} Ort(e)"
+
+msgid "Files with the same content in {where_}"
+msgstr "Dateien mit gleichem Inhalt in {where_}"
+
+msgid "Find duplicates"
+msgstr "Duplikate suchen"
+
+msgid "Where to look"
+msgstr "Wo suchen"
+
+msgid "{} (default)"
+msgstr "{} (Standard)"
+
+msgid "Remove location"
+msgstr "Ort entfernen"
+
+msgid "/home/me/Pictures or /media/disk"
+msgstr "/home/ich/Bilder oder /media/disk"
+
+msgid "Add location"
+msgstr "Ort hinzufügen"
+
+msgid "Never look in"
+msgstr "Nie durchsuchen"
+
+msgid "A folder to skip"
+msgstr "Ein zu überspringender Ordner"
+
+msgid "The Windows component store, Installer folder, Recycle Bin and CleanCore's backups are always skipped."
+msgstr "Der Windows-Komponentenspeicher, der Installer-Ordner, der Papierkorb und die CleanCore-Sicherungen werden immer übersprungen."
+
+msgid "System folders (/usr, /proc, /var/lib, …), the Trash and CleanCore's backups are always skipped."
+msgstr "Systemordner (/usr, /proc, /var/lib, …), der Papierkorb und die CleanCore-Sicherungen werden immer übersprungen."
+
+msgid "Which files"
+msgstr "Welche Dateien"
+
+msgid "Minimum file size"
+msgstr "Mindestgröße"
+
+msgid "Small files rarely free much space and are often meant to be alike."
+msgstr "Kleine Dateien geben selten viel Platz frei und sind oft absichtlich gleich."
+
+msgid "Skip hidden files and folders"
+msgstr "Versteckte Dateien und Ordner überspringen"
+
+msgid "Program data, settings and version-control folders often hold identical files on purpose."
+msgstr "Programmdaten, Einstellungen und Versionsverwaltungs-Ordner enthalten oft absichtlich identische Dateien."
+
+msgid "Delete to the Recycle Bin"
+msgstr "In den Papierkorb löschen"
+
+msgid "Delete to the Trash"
+msgstr "In den Papierkorb verschieben"
+
+msgid "Otherwise files are deleted permanently."
+msgstr "Sonst werden Dateien endgültig gelöscht."
+
+msgid "Delete to the trash"
+msgstr "In den Papierkorb verschieben"
+
+msgid "{} groups · {} can be freed"
+msgstr "{} Gruppen · {} können freigegeben werden"
+
+msgid "Delete ({}, {})"
+msgstr "Löschen ({}, {})"
+
+msgid "Export list"
+msgstr "Liste exportieren"
+
+msgid "File (.txt or .csv)"
+msgstr "Datei (.txt oder .csv)"
+
+msgid "No duplicates"
+msgstr "Keine Duplikate"
+
+msgid "No two files in the chosen locations have the same content."
+msgstr "In den gewählten Orten haben keine zwei Dateien denselben Inhalt."
+
+msgid "File"
+msgstr "Datei"
+
+msgid "Changed"
+msgstr "Geändert"
+
+msgid "{} copies of {} · {} can be freed"
+msgstr "{} Kopien von {} · {} können freigegeben werden"
+
+msgid "At least one copy of each file is kept."
+msgstr "Von jeder Datei bleibt mindestens eine Kopie erhalten."
+
+msgid "Delete {} duplicate file(s)?"
+msgstr "{} doppelte Datei(en) löschen?"
+
+msgid "They go to the Trash, so you can still get them back."
+msgstr "Sie landen im Papierkorb und lassen sich noch zurückholen."
+
+msgid "They are deleted permanently."
+msgstr "Sie werden endgültig gelöscht."
+
+msgid "Deleting duplicate files"
+msgstr "Doppelte Dateien werden gelöscht"
+
 msgid "Reading browser extensions"
 msgstr "Browsererweiterungen werden gelesen"
 
@@ -817,9 +961,6 @@ msgstr "{} · {n} Prozess(e)"
 msgid "Window"
 msgstr "Fenster"
 
-msgid "File"
-msgstr "Datei"
-
 msgid "Installed as"
 msgstr "Installiert als"
 
@@ -880,17 +1021,11 @@ msgstr "{} Datei(en) gelöscht; {} konnten nicht gelöscht werden (erste: {})"
 msgid "{} folders searched, {} junk files found"
 msgstr "{} Ordner durchsucht, {} Datenmüll-Dateien gefunden"
 
-msgid "Stop"
-msgstr "Stopp"
-
 msgid "Looking for junk files"
 msgstr "Suche nach Datenmüll"
 
 msgid "the default locations"
 msgstr "den Standardorten"
-
-msgid "{} location(s)"
-msgstr "{} Ort(e)"
 
 msgid "{n_pat} patterns in {where_}"
 msgstr "{n_pat} Muster in {where_}"
@@ -898,35 +1033,11 @@ msgstr "{n_pat} Muster in {where_}"
 msgid "Scan for junk files"
 msgstr "Nach Datenmüll suchen"
 
-msgid "Where to look"
-msgstr "Wo suchen"
-
-msgid "{} (default)"
-msgstr "{} (Standard)"
-
-msgid "Remove location"
-msgstr "Ort entfernen"
-
 msgid "/home/me/Downloads or /media/disk"
 msgstr "/home/me/Downloads oder /media/disk"
 
-msgid "Add location"
-msgstr "Ort hinzufügen"
-
 msgid "Add {path}"
 msgstr "{path} hinzufügen"
-
-msgid "Never look in"
-msgstr "Nie durchsuchen"
-
-msgid "A folder to skip"
-msgstr "Ein zu überspringender Ordner"
-
-msgid "The Windows component store, Installer folder, Recycle Bin and CleanCore's backups are always skipped."
-msgstr "Der Windows-Komponentenspeicher, der Installer-Ordner, der Papierkorb und die CleanCore-Sicherungen werden immer übersprungen."
-
-msgid "System folders (/usr, /proc, /var/lib, …), the Trash and CleanCore's backups are always skipped."
-msgstr "Systemordner (/usr, /proc, /var/lib, …), der Papierkorb und die CleanCore-Sicherungen werden immer übersprungen."
 
 msgid "What counts as junk"
 msgstr "Was als Datenmüll gilt"
@@ -949,29 +1060,8 @@ msgstr "Dateien überspringen, die in den letzten 24 Stunden geändert wurden"
 msgid "They may still be in use."
 msgstr "Sie werden möglicherweise noch verwendet."
 
-msgid "Delete to the Recycle Bin"
-msgstr "In den Papierkorb löschen"
-
-msgid "Delete to the Trash"
-msgstr "In den Papierkorb verschieben"
-
-msgid "Otherwise files are deleted permanently."
-msgstr "Sonst werden Dateien endgültig gelöscht."
-
-msgid "Delete to the trash"
-msgstr "In den Papierkorb verschieben"
-
 msgid "{} junk files · {}"
 msgstr "{} Datenmüll-Dateien · {}"
-
-msgid "Delete ({}, {})"
-msgstr "Löschen ({}, {})"
-
-msgid "Export list"
-msgstr "Liste exportieren"
-
-msgid "File (.txt or .csv)"
-msgstr "Datei (.txt oder .csv)"
 
 msgid "No junk files"
 msgstr "Kein Datenmüll"
@@ -979,20 +1069,11 @@ msgstr "Kein Datenmüll"
 msgid "Nothing matched the junk patterns in the chosen locations."
 msgstr "An den gewählten Orten passt nichts zu den Datenmüll-Mustern."
 
-msgid "Changed"
-msgstr "Geändert"
-
 msgid "Pattern"
 msgstr "Muster"
 
 msgid "Delete {} junk file(s)?"
 msgstr "{} Datenmüll-Datei(en) löschen?"
-
-msgid "They go to the Trash, so you can still get them back."
-msgstr "Sie landen im Papierkorb und lassen sich noch zurückholen."
-
-msgid "They are deleted permanently."
-msgstr "Sie werden endgültig gelöscht."
 
 msgid "Deleting junk files"
 msgstr "Datenmüll wird gelöscht"
@@ -1873,6 +1954,12 @@ msgstr "Datenmüll"
 msgid "Temporary files, editor backups and crash dumps left on your drives"
 msgstr "Temporäre Dateien, Editor-Sicherungen und Absturzabbilder auf Ihren Laufwerken"
 
+msgid "Duplicate Finder"
+msgstr "Duplikat-Finder"
+
+msgid "Identical files in your folders, and deleting the extra copies"
+msgstr "Identische Dateien in Ihren Ordnern finden und die überzähligen Kopien löschen"
+
 msgid "History Cleaner"
 msgstr "Verlaufsbereinigung"
 
@@ -1908,6 +1995,9 @@ msgstr "Vorinstallierte Apps entfernen und Copilot, Werbung und Telemetrie absch
 
 msgid "Junk files"
 msgstr "Datenmüll"
+
+msgid "Duplicates"
+msgstr "Duplikate"
 
 msgid "History"
 msgstr "Verlauf"

@@ -19,6 +19,7 @@
 - **Install and trace**: records an installation so it can be undone exactly later
 - **Cleaner**: finds broken launchers, dead startup items, orphaned settings and registry entries
 - **Junk files, history and evidence remover**: temp files, browser history, free space wiping
+- **Duplicate finder**: identical files found fast (size, then sampled hash, then full BLAKE3 hash, all in parallel); the extra copies go to the Trash, one copy is always kept
 - **Unrecoverable delete**: overwrites files before removing them
 - **Autorun manager**: everything that starts with the system, in one list
 - **Tuner**: reversible system tweaks
@@ -89,6 +90,7 @@ cleancore clean                    # back up, then remove what the scan finds
 cleancore programs                 # list installed programs
 cleancore uninstall "Program Name" # uninstall and remove leftovers
 cleancore junk scan                # find junk files
+cleancore dupes scan               # find duplicate files (dupes clean --keep oldest|newest|shortest)
 cleancore --help                   # everything else
 ```
 

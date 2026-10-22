@@ -141,6 +141,9 @@ enum Cmd {
     /// Junk Files Cleaner: temporary files, editor backups, crash dumps
     #[command(subcommand)]
     Junk(JunkCmd),
+    /// Duplicate Finder: files with the same content, and deleting the extra copies
+    #[command(subcommand)]
+    Dupes(DupesCmd),
     /// History Cleaner: browser history and caches, recent files, temp files, Office MRU
     #[command(subcommand)]
     History(HistoryCmd),
@@ -294,6 +297,45 @@ struct JunkArgs {
     /// Also files changed in the last 24 hours
     #[arg(long)]
     include_recent: bool,
+}
+
+#[derive(Args)]
+struct DupesArgs {
+    /// Folder or drive to scan (repeatable; default from settings: the home folder)
+    #[arg(long = "location")]
+    locations: Vec<String>,
+    /// Ignore files smaller than this many KB (default from settings: 64)
+    #[arg(long)]
+    min_kb: Option<u64>,
+    /// Also hidden files and folders
+    #[arg(long)]
+    include_hidden: bool,
+}
+
+#[derive(Subcommand)]
+enum DupesCmd {
+    Scan {
+        #[command(flatten)]
+        a: DupesArgs,
+        #[arg(long)]
+        json: bool,
+        /// Write the groups to a file (.txt or .csv)
+        #[arg(long)]
+        export: Option<PathBuf>,
+    },
+    /// Delete every copy but one in each group
+    Clean {
+        #[command(flatten)]
+        a: DupesArgs,
+        /// Which copy stays: oldest | newest | shortest
+        #[arg(long, default_value = "oldest")]
+        keep: String,
+        /// Delete permanently instead of to the Recycle Bin / Trash
+        #[arg(long)]
+        permanent: bool,
+        #[arg(short, long)]
+        yes: bool,
+    },
 }
 
 #[derive(Subcommand)]
@@ -1084,6 +1126,7 @@ fn run(cli: Cli) -> Result<()> {
         Cmd::Hunter { list, all, gui, pid, at_pointer, action, yes } => run_hunter(gui, &settings, list, all, pid, at_pointer, &action, yes)?,
         Cmd::Logsdb(c) => run_logsdb(&settings, c)?,
         Cmd::Junk(c) => run_junk(&settings, c)?,
+        Cmd::Dupes(c) => run_dupes(&settings, c)?,
         Cmd::History(c) => run_history(&mut settings, c)?,
         Cmd::Shred { paths, passes, yes } => run_shred(&settings, &paths, passes, yes)?,
         Cmd::WipeFree { drive, passes, max_mb, yes } => run_wipe(&settings, drive, passes, max_mb, yes)?,
@@ -1571,6 +1614,71 @@ fn run_junk(settings: &Settings, cmd: JunkCmd) -> Result<()> {
                 return Ok(());
             }
             let r = junk::delete(&s, &files);
+            println!("Deleted {} file(s), {}", r.deleted, human(r.bytes));
+            for (p, e) in r.failed.iter().take(20) {
+                eprintln!("  not deleted: {p}: {e}");
+            }
+        }
+    }
+    Ok(())
+}
+
+fn run_dupes(settings: &Settings, cmd: DupesCmd) -> Result<()> {
+    use cleancore::dupes::{self, Keep};
+    let mut s = settings.clone();
+    let (DupesCmd::Scan { a, .. } | DupesCmd::Clean { a, .. }) = &cmd;
+    if !a.locations.is_empty() {
+        s.dupes_locations = a.locations.clone();
+    }
+    if let Some(kb) = a.min_kb {
+        s.dupes_min_size = kb * 1024;
+    }
+    if a.include_hidden {
+        s.dupes_skip_hidden = false;
+    }
+    let started = std::time::Instant::now();
+    let groups = dupes::scan(&s, &dupes::Progress::default());
+    let wasted: u64 = groups.iter().map(|g| g.wasted()).sum();
+    let summary = format!("{} group(s) of duplicates, {} can be freed", groups.len(), human(wasted));
+    match cmd {
+        DupesCmd::Scan { json, export, .. } => {
+            if let Some(f) = export {
+                dupes::export(&groups, &f)?;
+                println!("Exported {} group(s) to {}", groups.len(), f.display());
+            } else if json {
+                println!("{}", serde_json::to_string_pretty(&groups)?);
+                return Ok(());
+            } else {
+                for g in &groups {
+                    println!("{} × {}", g.files.len(), human(g.size));
+                    for f in &g.files {
+                        println!("    {}", f.path.display());
+                    }
+                }
+            }
+            println!("{summary} ({:.1}s)", started.elapsed().as_secs_f32());
+        }
+        DupesCmd::Clean { keep, permanent, yes, .. } => {
+            let keep = match keep.as_str() {
+                "oldest" => Keep::Oldest,
+                "newest" => Keep::Newest,
+                "shortest" => Keep::ShortestPath,
+                k => anyhow::bail!("unknown --keep \"{k}\" (oldest, newest or shortest)"),
+            };
+            if groups.is_empty() {
+                println!("No duplicates found.");
+                return Ok(());
+            }
+            if permanent {
+                s.dupes_to_trash = false;
+            }
+            let n: usize = groups.iter().map(|g| g.files.len() - 1).sum();
+            let dest = if s.dupes_to_trash { "to the Trash" } else { "permanently" };
+            println!("{summary}");
+            if !yes && !confirm(&format!("Delete {n} extra copies ({}) {dest}, keeping one of each?", human(wasted)))? {
+                return Ok(());
+            }
+            let r = dupes::delete(&s, &groups, &dupes::auto_select(&groups, keep));
             println!("Deleted {} file(s), {}", r.deleted, human(r.bytes));
             for (p, e) in r.failed.iter().take(20) {
                 eprintln!("  not deleted: {p}: {e}");

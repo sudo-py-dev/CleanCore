@@ -602,6 +602,150 @@ msgstr "הוסף לרשימת ההחרגות"
 msgid "Copy"
 msgstr "העתק"
 
+msgid "Keep the oldest copy"
+msgstr "שמירת העותק הישן ביותר"
+
+msgid "Keep the newest copy"
+msgstr "שמירת העותק החדש ביותר"
+
+msgid "Keep the shortest path"
+msgstr "שמירת הנתיב הקצר ביותר"
+
+msgid "Any size"
+msgstr "כל גודל"
+
+msgid "At least {}"
+msgstr "לפחות {}"
+
+msgid "Deleted {} duplicate file(s), {}"
+msgstr "נמחקו {} קבצים כפולים, {}"
+
+msgid "Deleted {} file(s); {} could not be deleted (first: {}: {})"
+msgstr "נמחקו {} קבצים; לא ניתן היה למחוק {} (הראשון: {}: {})"
+
+msgid "{} folders searched, {} files listed"
+msgstr "נסרקו {} תיקיות, נמצאו {} קבצים"
+
+msgid "Comparing the start and end of {} of {} files"
+msgstr "משווה את ההתחלה והסוף של {} מתוך {} קבצים"
+
+msgid "Comparing contents: {} of {} files, {} read"
+msgstr "משווה תוכן: {} מתוך {} קבצים, נקראו {}"
+
+msgid "Stop"
+msgstr "עצור"
+
+msgid "Looking for duplicate files"
+msgstr "מחפש קבצים כפולים"
+
+msgid "the home folder"
+msgstr "תיקיית הבית"
+
+msgid "{} location(s)"
+msgstr "{} מיקומים"
+
+msgid "Files with the same content in {where_}"
+msgstr "קבצים עם תוכן זהה ב{where_}"
+
+msgid "Find duplicates"
+msgstr "חיפוש כפילויות"
+
+msgid "Where to look"
+msgstr "איפה לחפש"
+
+msgid "{} (default)"
+msgstr "{} (ברירת מחדל)"
+
+msgid "Remove location"
+msgstr "הסר מיקום"
+
+msgid "/home/me/Pictures or /media/disk"
+msgstr "/home/me/Pictures או /media/disk"
+
+msgid "Add location"
+msgstr "הוסף מיקום"
+
+msgid "Never look in"
+msgstr "תיקיות שלא ייסרקו"
+
+msgid "A folder to skip"
+msgstr "תיקייה לדילוג"
+
+msgid "The Windows component store, Installer folder, Recycle Bin and CleanCore's backups are always skipped."
+msgstr "מאגר רכיבי Windows, תיקיית Installer, סל המחזור והגיבויים של CleanCore תמיד מדולגים."
+
+msgid "System folders (/usr, /proc, /var/lib, …), the Trash and CleanCore's backups are always skipped."
+msgstr "תיקיות מערכת (‎/usr, /proc, /var/lib, …), האשפה והגיבויים של CleanCore תמיד מדולגים."
+
+msgid "Which files"
+msgstr "אילו קבצים"
+
+msgid "Minimum file size"
+msgstr "גודל קובץ מינימלי"
+
+msgid "Small files rarely free much space and are often meant to be alike."
+msgstr "קבצים קטנים כמעט לא מפנים מקום ולעתים קרובות זהים בכוונה."
+
+msgid "Skip hidden files and folders"
+msgstr "דילוג על קבצים ותיקיות מוסתרים"
+
+msgid "Program data, settings and version-control folders often hold identical files on purpose."
+msgstr "נתוני תוכנות, הגדרות ותיקיות של בקרת גרסאות מכילים לעתים קרובות קבצים זהים בכוונה."
+
+msgid "Delete to the Recycle Bin"
+msgstr "מחק לסל המחזור"
+
+msgid "Delete to the Trash"
+msgstr "מחק לאשפה"
+
+msgid "Otherwise files are deleted permanently."
+msgstr "אחרת הקבצים נמחקים לצמיתות."
+
+msgid "Delete to the trash"
+msgstr "מחק לאשפה"
+
+msgid "{} groups · {} can be freed"
+msgstr "{} קבוצות · ניתן לפנות {}"
+
+msgid "Delete ({}, {})"
+msgstr "מחק ({}, {})"
+
+msgid "Export list"
+msgstr "ייצוא רשימה"
+
+msgid "File (.txt or .csv)"
+msgstr "קובץ (‎.txt או ‎.csv)"
+
+msgid "No duplicates"
+msgstr "אין כפילויות"
+
+msgid "No two files in the chosen locations have the same content."
+msgstr "אין שני קבצים עם תוכן זהה במיקומים שנבחרו."
+
+msgid "File"
+msgstr "קובץ"
+
+msgid "Changed"
+msgstr "שונה"
+
+msgid "{} copies of {} · {} can be freed"
+msgstr "{} עותקים של {} · ניתן לפנות {}"
+
+msgid "At least one copy of each file is kept."
+msgstr "לפחות עותק אחד מכל קובץ נשמר."
+
+msgid "Delete {} duplicate file(s)?"
+msgstr "למחוק {} קבצים כפולים?"
+
+msgid "They go to the Trash, so you can still get them back."
+msgstr "הם עוברים לאשפה, כך שעדיין אפשר לשחזר אותם."
+
+msgid "They are deleted permanently."
+msgstr "הם נמחקים לצמיתות."
+
+msgid "Deleting duplicate files"
+msgstr "מוחק קבצים כפולים"
+
 msgid "Reading browser extensions"
 msgstr "קורא הרחבות דפדפן"
 
@@ -818,9 +962,6 @@ msgstr "{} · {n} תהליכים"
 msgid "Window"
 msgstr "חלון"
 
-msgid "File"
-msgstr "קובץ"
-
 msgid "Installed as"
 msgstr "מותקן בתור"
 
@@ -881,17 +1022,11 @@ msgstr "נמחקו {} קבצים; לא ניתן היה למחוק {} (הראשו
 msgid "{} folders searched, {} junk files found"
 msgstr "נסרקו {} תיקיות, נמצאו {} קובצי זבל"
 
-msgid "Stop"
-msgstr "עצור"
-
 msgid "Looking for junk files"
 msgstr "מחפש קובצי זבל"
 
 msgid "the default locations"
 msgstr "המיקומים המוגדרים כברירת מחדל"
-
-msgid "{} location(s)"
-msgstr "{} מיקומים"
 
 msgid "{n_pat} patterns in {where_}"
 msgstr "{n_pat} תבניות · {where_}"
@@ -899,35 +1034,11 @@ msgstr "{n_pat} תבניות · {where_}"
 msgid "Scan for junk files"
 msgstr "חפש קובצי זבל"
 
-msgid "Where to look"
-msgstr "איפה לחפש"
-
-msgid "{} (default)"
-msgstr "{} (ברירת מחדל)"
-
-msgid "Remove location"
-msgstr "הסר מיקום"
-
 msgid "/home/me/Downloads or /media/disk"
 msgstr "‎/home/me/Downloads או ‎/media/disk"
 
-msgid "Add location"
-msgstr "הוסף מיקום"
-
 msgid "Add {path}"
 msgstr "הוסף את {path}"
-
-msgid "Never look in"
-msgstr "תיקיות שלא ייסרקו"
-
-msgid "A folder to skip"
-msgstr "תיקייה לדילוג"
-
-msgid "The Windows component store, Installer folder, Recycle Bin and CleanCore's backups are always skipped."
-msgstr "מאגר רכיבי Windows, תיקיית Installer, סל המחזור והגיבויים של CleanCore תמיד מדולגים."
-
-msgid "System folders (/usr, /proc, /var/lib, …), the Trash and CleanCore's backups are always skipped."
-msgstr "תיקיות מערכת (‎/usr, /proc, /var/lib, …), האשפה והגיבויים של CleanCore תמיד מדולגים."
 
 msgid "What counts as junk"
 msgstr "מה נחשב לזבל"
@@ -950,29 +1061,8 @@ msgstr "דלג על קבצים ששונו ב־24 השעות האחרונות"
 msgid "They may still be in use."
 msgstr "ייתכן שהם עדיין בשימוש."
 
-msgid "Delete to the Recycle Bin"
-msgstr "מחק לסל המחזור"
-
-msgid "Delete to the Trash"
-msgstr "מחק לאשפה"
-
-msgid "Otherwise files are deleted permanently."
-msgstr "אחרת הקבצים נמחקים לצמיתות."
-
-msgid "Delete to the trash"
-msgstr "מחק לאשפה"
-
 msgid "{} junk files · {}"
 msgstr "{} קובצי זבל · {}"
-
-msgid "Delete ({}, {})"
-msgstr "מחק ({}, {})"
-
-msgid "Export list"
-msgstr "ייצוא רשימה"
-
-msgid "File (.txt or .csv)"
-msgstr "קובץ (‎.txt או ‎.csv)"
 
 msgid "No junk files"
 msgstr "אין קובצי זבל"
@@ -980,20 +1070,11 @@ msgstr "אין קובצי זבל"
 msgid "Nothing matched the junk patterns in the chosen locations."
 msgstr "שום דבר במיקומים שנבחרו לא תאם לתבניות הזבל."
 
-msgid "Changed"
-msgstr "שונה"
-
 msgid "Pattern"
 msgstr "תבנית"
 
 msgid "Delete {} junk file(s)?"
 msgstr "למחוק {} קובצי זבל?"
-
-msgid "They go to the Trash, so you can still get them back."
-msgstr "הם עוברים לאשפה, כך שעדיין אפשר לשחזר אותם."
-
-msgid "They are deleted permanently."
-msgstr "הם נמחקים לצמיתות."
 
 msgid "Deleting junk files"
 msgstr "מוחק קובצי זבל"
@@ -1874,6 +1955,12 @@ msgstr "קובצי זבל"
 msgid "Temporary files, editor backups and crash dumps left on your drives"
 msgstr "קבצים זמניים, גיבויי עורכים ודמפים של קריסות שנשארו בכוננים שלך"
 
+msgid "Duplicate Finder"
+msgstr "מאתר כפילויות"
+
+msgid "Identical files in your folders, and deleting the extra copies"
+msgstr "קבצים זהים בתיקיות שלך, ומחיקת העותקים המיותרים"
+
 msgid "History Cleaner"
 msgstr "ניקוי היסטוריה"
 
@@ -1909,6 +1996,9 @@ msgstr "הסרת אפליקציות מותקנות מראש וכיבוי Copilot
 
 msgid "Junk files"
 msgstr "קובצי זבל"
+
+msgid "Duplicates"
+msgstr "כפילויות"
 
 msgid "History"
 msgstr "היסטוריה"

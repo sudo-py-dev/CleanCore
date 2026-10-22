@@ -601,6 +601,150 @@ msgstr "Додати до винятків"
 msgid "Copy"
 msgstr "Копіювати"
 
+msgid "Keep the oldest copy"
+msgstr "Залишити найстарішу копію"
+
+msgid "Keep the newest copy"
+msgstr "Залишити найновішу копію"
+
+msgid "Keep the shortest path"
+msgstr "Залишити найкоротший шлях"
+
+msgid "Any size"
+msgstr "Будь-який розмір"
+
+msgid "At least {}"
+msgstr "Не менше {}"
+
+msgid "Deleted {} duplicate file(s), {}"
+msgstr "Видалено дублікатів: {}, {}"
+
+msgid "Deleted {} file(s); {} could not be deleted (first: {}: {})"
+msgstr "Видалено файлів: {}; не вдалося видалити: {} (перший: {}: {})"
+
+msgid "{} folders searched, {} files listed"
+msgstr "Переглянуто папок: {}, знайдено файлів: {}"
+
+msgid "Comparing the start and end of {} of {} files"
+msgstr "Порівняння початку й кінця: {} з {} файлів"
+
+msgid "Comparing contents: {} of {} files, {} read"
+msgstr "Порівняння вмісту: {} з {} файлів, прочитано {}"
+
+msgid "Stop"
+msgstr "Стоп"
+
+msgid "Looking for duplicate files"
+msgstr "Пошук файлів, що повторюються"
+
+msgid "the home folder"
+msgstr "домашній папці"
+
+msgid "{} location(s)"
+msgstr "Розташувань: {}"
+
+msgid "Files with the same content in {where_}"
+msgstr "Файли з однаковим вмістом у {where_}"
+
+msgid "Find duplicates"
+msgstr "Знайти дублікати"
+
+msgid "Where to look"
+msgstr "Де шукати"
+
+msgid "{} (default)"
+msgstr "{} (типово)"
+
+msgid "Remove location"
+msgstr "Видалити розташування"
+
+msgid "/home/me/Pictures or /media/disk"
+msgstr "/home/me/Зображення або /media/disk"
+
+msgid "Add location"
+msgstr "Додати розташування"
+
+msgid "Never look in"
+msgstr "Ніколи не шукати в"
+
+msgid "A folder to skip"
+msgstr "Тека, яку пропускати"
+
+msgid "The Windows component store, Installer folder, Recycle Bin and CleanCore's backups are always skipped."
+msgstr "Сховище компонентів Windows, тека Installer, кошик і резервні копії CleanCore завжди пропускаються."
+
+msgid "System folders (/usr, /proc, /var/lib, …), the Trash and CleanCore's backups are always skipped."
+msgstr "Системні теки (/usr, /proc, /var/lib, …), кошик і резервні копії CleanCore завжди пропускаються."
+
+msgid "Which files"
+msgstr "Які файли"
+
+msgid "Minimum file size"
+msgstr "Мінімальний розмір файлу"
+
+msgid "Small files rarely free much space and are often meant to be alike."
+msgstr "Малі файли рідко звільняють багато місця й часто однакові навмисно."
+
+msgid "Skip hidden files and folders"
+msgstr "Пропускати приховані файли й папки"
+
+msgid "Program data, settings and version-control folders often hold identical files on purpose."
+msgstr "Дані програм, налаштування й папки систем контролю версій часто навмисно містять однакові файли."
+
+msgid "Delete to the Recycle Bin"
+msgstr "Видаляти до кошика"
+
+msgid "Delete to the Trash"
+msgstr "Видаляти до кошика"
+
+msgid "Otherwise files are deleted permanently."
+msgstr "Інакше файли видаляються назавжди."
+
+msgid "Delete to the trash"
+msgstr "Видаляти до кошика"
+
+msgid "{} groups · {} can be freed"
+msgstr "Груп: {} · можна звільнити {}"
+
+msgid "Delete ({}, {})"
+msgstr "Видалити ({}, {})"
+
+msgid "Export list"
+msgstr "Експорт списку"
+
+msgid "File (.txt or .csv)"
+msgstr "Файл (.txt або .csv)"
+
+msgid "No duplicates"
+msgstr "Дублікатів немає"
+
+msgid "No two files in the chosen locations have the same content."
+msgstr "У вибраних місцях немає файлів з однаковим вмістом."
+
+msgid "File"
+msgstr "Файл"
+
+msgid "Changed"
+msgstr "Змінено"
+
+msgid "{} copies of {} · {} can be freed"
+msgstr "Копій: {}, по {} · можна звільнити {}"
+
+msgid "At least one copy of each file is kept."
+msgstr "Принаймні одна копія кожного файлу завжди залишається."
+
+msgid "Delete {} duplicate file(s)?"
+msgstr "Видалити дублікати ({})?"
+
+msgid "They go to the Trash, so you can still get them back."
+msgstr "Вони потрапляють до кошика, їх ще можна повернути."
+
+msgid "They are deleted permanently."
+msgstr "Вони видаляються назавжди."
+
+msgid "Deleting duplicate files"
+msgstr "Видалення дублікатів"
+
 msgid "Reading browser extensions"
 msgstr "Читання розширень браузера"
 
@@ -817,9 +961,6 @@ msgstr "{} · процесів: {n}"
 msgid "Window"
 msgstr "Вікно"
 
-msgid "File"
-msgstr "Файл"
-
 msgid "Installed as"
 msgstr "Встановлено як"
 
@@ -880,17 +1021,11 @@ msgstr "Видалено файлів: {}; не вдалося видалити:
 msgid "{} folders searched, {} junk files found"
 msgstr "Переглянуто тек: {}, знайдено непотрібних файлів: {}"
 
-msgid "Stop"
-msgstr "Стоп"
-
 msgid "Looking for junk files"
 msgstr "Пошук непотрібних файлів"
 
 msgid "the default locations"
 msgstr "стандартних розташуваннях"
-
-msgid "{} location(s)"
-msgstr "Розташувань: {}"
 
 msgid "{n_pat} patterns in {where_}"
 msgstr "Шаблонів: {n_pat} у {where_}"
@@ -898,35 +1033,11 @@ msgstr "Шаблонів: {n_pat} у {where_}"
 msgid "Scan for junk files"
 msgstr "Знайти непотрібні файли"
 
-msgid "Where to look"
-msgstr "Де шукати"
-
-msgid "{} (default)"
-msgstr "{} (типово)"
-
-msgid "Remove location"
-msgstr "Видалити розташування"
-
 msgid "/home/me/Downloads or /media/disk"
 msgstr "/home/me/Downloads або /media/disk"
 
-msgid "Add location"
-msgstr "Додати розташування"
-
 msgid "Add {path}"
 msgstr "Додати {path}"
-
-msgid "Never look in"
-msgstr "Ніколи не шукати в"
-
-msgid "A folder to skip"
-msgstr "Тека, яку пропускати"
-
-msgid "The Windows component store, Installer folder, Recycle Bin and CleanCore's backups are always skipped."
-msgstr "Сховище компонентів Windows, тека Installer, кошик і резервні копії CleanCore завжди пропускаються."
-
-msgid "System folders (/usr, /proc, /var/lib, …), the Trash and CleanCore's backups are always skipped."
-msgstr "Системні теки (/usr, /proc, /var/lib, …), кошик і резервні копії CleanCore завжди пропускаються."
 
 msgid "What counts as junk"
 msgstr "Що вважається сміттям"
@@ -949,29 +1060,8 @@ msgstr "Пропускати файли, змінені за останні 24 �
 msgid "They may still be in use."
 msgstr "Вони можуть ще використовуватися."
 
-msgid "Delete to the Recycle Bin"
-msgstr "Видаляти до кошика"
-
-msgid "Delete to the Trash"
-msgstr "Видаляти до кошика"
-
-msgid "Otherwise files are deleted permanently."
-msgstr "Інакше файли видаляються назавжди."
-
-msgid "Delete to the trash"
-msgstr "Видаляти до кошика"
-
 msgid "{} junk files · {}"
 msgstr "Непотрібних файлів: {} · {}"
-
-msgid "Delete ({}, {})"
-msgstr "Видалити ({}, {})"
-
-msgid "Export list"
-msgstr "Експорт списку"
-
-msgid "File (.txt or .csv)"
-msgstr "Файл (.txt або .csv)"
 
 msgid "No junk files"
 msgstr "Непотрібних файлів немає"
@@ -979,20 +1069,11 @@ msgstr "Непотрібних файлів немає"
 msgid "Nothing matched the junk patterns in the chosen locations."
 msgstr "У вибраних розташуваннях ніщо не відповідає шаблонам."
 
-msgid "Changed"
-msgstr "Змінено"
-
 msgid "Pattern"
 msgstr "Шаблон"
 
 msgid "Delete {} junk file(s)?"
 msgstr "Видалити непотрібних файлів: {}?"
-
-msgid "They go to the Trash, so you can still get them back."
-msgstr "Вони потрапляють до кошика, їх ще можна повернути."
-
-msgid "They are deleted permanently."
-msgstr "Вони видаляються назавжди."
 
 msgid "Deleting junk files"
 msgstr "Видалення непотрібних файлів"
@@ -1873,6 +1954,12 @@ msgstr "Непотрібні файли"
 msgid "Temporary files, editor backups and crash dumps left on your drives"
 msgstr "Тимчасові файли, резервні копії редакторів і дампи збоїв на ваших дисках"
 
+msgid "Duplicate Finder"
+msgstr "Пошук дублікатів"
+
+msgid "Identical files in your folders, and deleting the extra copies"
+msgstr "Однакові файли у ваших папках і видалення зайвих копій"
+
 msgid "History Cleaner"
 msgstr "Очищення історії"
 
@@ -1908,6 +1995,9 @@ msgstr "Видалити попередньо встановлені засто�
 
 msgid "Junk files"
 msgstr "Непотрібні файли"
+
+msgid "Duplicates"
+msgstr "Дублікати"
 
 msgid "History"
 msgstr "Історія"

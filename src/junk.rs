@@ -65,7 +65,7 @@ pub fn default_locations() -> Vec<PathBuf> {
 }
 
 /// Folders a scan never enters: the OS itself, package-managed trees and virtual filesystems.
-fn builtin_excludes() -> Vec<String> {
+pub(crate) fn builtin_excludes() -> Vec<String> {
     let mut v: Vec<String> = if cfg!(windows) {
         let win = std::env::var("SystemRoot").unwrap_or_else(|_| r"C:\Windows".into());
         vec![format!(r"{win}\WinSxS"), format!(r"{win}\Installer"), format!(r"{win}\servicing"), r"\$Recycle.Bin".into(), r"\System Volume Information".into()]
@@ -80,7 +80,7 @@ fn builtin_excludes() -> Vec<String> {
     v
 }
 
-fn norm(p: &str) -> String {
+pub(crate) fn norm(p: &str) -> String {
     let s = p.trim_end_matches(['/', '\\']);
     if cfg!(windows) {
         s.to_lowercase().replace('/', "\\")
@@ -89,7 +89,7 @@ fn norm(p: &str) -> String {
     }
 }
 
-fn excluded(path: &Path, excludes: &[String]) -> bool {
+pub(crate) fn excluded(path: &Path, excludes: &[String]) -> bool {
     let p = norm(&path.display().to_string());
     excludes.iter().any(|e| {
         // Drive-less Windows excludes (`\$Recycle.Bin`) apply on every drive.

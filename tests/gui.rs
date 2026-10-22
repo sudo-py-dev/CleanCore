@@ -385,6 +385,22 @@ fn walk_through_every_tool() {
     wait_for(&mut h, "Deleted 1 junk file");
     assert!(!home.join("Documents/report.docx.tmp").exists());
 
+    let photo: Vec<u8> = (0..200_000u32).map(|i| (i % 253) as u8).collect();
+    std::fs::create_dir_all(home.join("Pictures/copy")).unwrap();
+    std::fs::write(home.join("Pictures/holiday.jpg"), &photo).unwrap();
+    std::fs::write(home.join("Pictures/copy/holiday (1).jpg"), &photo).unwrap();
+    h.get_by_label(&format!("{}  Duplicates", cleancore::gui::style::icon::COPY)).click();
+    h.run_steps(3);
+    shot(&mut h, "16b-tools-dupes-setup");
+    h.get_by_label_contains("Find duplicates").click();
+    wait_for(&mut h, "can be freed");
+    shot(&mut h, "16c-tools-dupes-results");
+    h.get_by_label_contains("Delete (").click();
+    h.run_steps(3);
+    h.get_by_role_and_label(Role::Button, &format!("{}  Delete", cleancore::gui::style::icon::TRASH)).click();
+    wait_for(&mut h, "Deleted 1 duplicate file");
+    assert_eq!(home.join("Pictures/holiday.jpg").exists() as u8 + home.join("Pictures/copy/holiday (1).jpg").exists() as u8, 1);
+
     h.get_by_label(&format!("{}  History", cleancore::gui::style::icon::HISTORY)).click();
     wait_for(&mut h, "Thumbnail cache");
     shot(&mut h, "17-tools-history");

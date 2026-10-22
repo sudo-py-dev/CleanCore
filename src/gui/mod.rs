@@ -5,6 +5,7 @@ mod appicons;
 mod autorun;
 mod backups;
 mod cleaner;
+mod dupes;
 mod extensions;
 mod history;
 mod hunter;
