@@ -109,6 +109,20 @@ pub fn scan(settings: &Settings, progress: &Progress) -> Vec<DupeGroup> {
         by_size.entry(f.size).or_default().push(f);
     }
     let candidates: Vec<Vec<Entry>> = by_size.into_values().filter(|g| g.len() > 1).collect();
+    // Windows tells hard links apart only through an open file: done here, for the files that
+    // share a size, rather than for every file walked.
+    #[cfg(windows)]
+    let candidates: Vec<Vec<Entry>> = candidates
+        .into_par_iter()
+        .filter_map(|mut g| {
+            let mut seen = std::collections::HashSet::new();
+            g.retain_mut(|f| {
+                f.id = windows_file_id(&f.path);
+                f.id.is_none_or(|id| seen.insert(id))
+            });
+            (g.len() > 1).then_some(g)
+        })
+        .collect();
 
     // 2. Same start and end. Small files are read whole here, so this hash is final for them.
     progress.stage.store(1, Ordering::Relaxed);
@@ -253,9 +267,24 @@ fn file_id(meta: &std::fs::Metadata) -> Option<(u64, u64)> {
     Some((meta.dev(), meta.ino()))
 }
 
+/// Windows: the walk doesn't open files, so this is read later (`windows_file_id`).
 #[cfg(not(unix))]
 fn file_id(_: &std::fs::Metadata) -> Option<(u64, u64)> {
     None
+}
+
+/// (volume serial number, file index): the same for every hard link to a file.
+#[cfg(windows)]
+fn windows_file_id(path: &Path) -> Option<(u64, u64)> {
+    use std::os::windows::io::AsRawHandle;
+    use windows_sys::Win32::Storage::FileSystem::{GetFileInformationByHandle, BY_HANDLE_FILE_INFORMATION};
+    let f = std::fs::File::open(path).ok()?;
+    // SAFETY: an open file's handle, and a zeroed plain-data struct for the answer.
+    let mut info: BY_HANDLE_FILE_INFORMATION = unsafe { std::mem::zeroed() };
+    if unsafe { GetFileInformationByHandle(f.as_raw_handle(), &mut info) } == 0 {
+        return None;
+    }
+    Some((info.dwVolumeSerialNumber as u64, (info.nFileIndexHigh as u64) << 32 | info.nFileIndexLow as u64))
 }
 
 /// Windows hidden and system files (the dot-name rule covers Linux).
