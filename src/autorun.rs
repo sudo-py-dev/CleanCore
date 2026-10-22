@@ -1,4 +1,4 @@
-//! Autorun Manager (Revo: Tools › Autorun Manager): programs, services and tasks that start
+//! Autorun Manager: programs, services and tasks that start
 //! with the system or at login. Enable/disable is reversible; Remove deletes the entry (backed
 //! up) where the OS allows it, and otherwise disables it.
 
@@ -70,7 +70,7 @@ pub struct AutorunEntry {
     pub system: bool,
 }
 
-/// How a new entry is added (Revo: Registry Run / RunOnce / Startup folder).
+/// How a new entry is added: Registry Run / RunOnce / Startup folder.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum AddMethod {
     Run,
@@ -157,12 +157,12 @@ pub fn remove(settings: &crate::config::Settings, entries: &[AutorunEntry]) -> R
     Ok((rep.cleaned + direct, disabled))
 }
 
-/// Start the entry's program now (Revo: Run).
+/// Start the entry's program now.
 pub fn run_now(e: &AutorunEntry) -> Result<()> {
     crate::platform::autorun_run(e)
 }
 
-/// Stop the entry's running program (Revo: Kill). Returns how many processes were stopped.
+/// Stop the entry's running program. Returns how many processes were stopped.
 pub fn kill(e: &AutorunEntry) -> Result<usize> {
     let exe = e.exe.as_deref().map(str::to_lowercase).ok_or_else(|| anyhow::anyhow!("CleanCore can't tell which program \"{}\" starts", e.name))?;
     let mut n = 0;

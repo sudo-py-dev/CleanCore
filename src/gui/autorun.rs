@@ -1,4 +1,4 @@
-//! Autorun Manager (Revo: Tools › Autorun Manager): what starts with the system or at login,
+//! Autorun Manager: what starts with the system or at login,
 //! with switches to enable/disable, Remove (backed up), Add, and clean-ups for broken entries.
 
 use super::style::{self, icon, Palette};

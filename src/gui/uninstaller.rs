@@ -1,4 +1,4 @@
-//! Uninstaller page (Revo Uninstaller Pro): All Programs / Store apps / History, the uninstall
+//! Uninstaller page: All Programs / Store apps / History, the uninstall
 //! wizard (built-in uninstaller → scan mode → leftovers → summary), Quick / Multiple uninstall
 //! queue and Forced Uninstall.
 
@@ -1781,7 +1781,7 @@ impl UninstallerView {
     }
 }
 
-/// Groups manager (Revo: Groups Manager): create, rename, reorder, delete.
+/// Groups manager: create, rename, reorder, delete.
 #[derive(Default)]
 struct GroupsDialog {
     new_name: String,

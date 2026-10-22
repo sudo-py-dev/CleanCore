@@ -1,4 +1,4 @@
-//! Uninstaller › Logs database (Revo: Logs Database): trace logs shared through a folder (and,
+//! Uninstaller › Logs database: trace logs shared through a folder (and,
 //! optionally, downloaded from a URL). Uninstalling with one imports it into Traced Programs.
 
 use super::style::{self, icon, Palette};

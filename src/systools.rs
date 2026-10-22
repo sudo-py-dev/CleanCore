@@ -1,4 +1,4 @@
-//! System Tools (Revo: Tools › Windows Tools): one place to open the operating system's own
+//! System Tools: one place to open the operating system's own
 //! utilities, plus tools the user adds.
 
 use crate::config::{CustomTool, Settings};

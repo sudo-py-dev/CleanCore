@@ -1,4 +1,4 @@
-//! Hunter Mode tray icon (Revo: Hunter Mode's notification-area icon): show the floating
+//! Hunter Mode tray icon: show the floating
 //! target, open CleanCore, or leave Hunter Mode. Linux: a StatusNotifierItem over D-Bus (KDE,
 //! GNOME with the AppIndicator extension, most other desktops); Windows: a notification-area
 //! icon.

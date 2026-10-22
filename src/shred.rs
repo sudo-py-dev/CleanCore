@@ -1,5 +1,4 @@
-//! Unrecoverable Delete and Evidence Remover (Revo: Tools › Unrecoverable Delete / Evidence
-//! Remover). Files are overwritten in place (zeros, ones, random; the last pass is always
+//! Unrecoverable Delete and Evidence Remover. Files are overwritten in place (zeros, ones, random; the last pass is always
 //! random), truncated, renamed to random names and deleted. Free space is wiped by filling
 //! the drive with random-data files, then deleting them.
 //!

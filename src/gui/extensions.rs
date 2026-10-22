@@ -1,4 +1,4 @@
-//! Uninstaller › Browser extensions (Revo: Browser Extensions): every extension of every
+//! Uninstaller › Browser extensions: every extension of every
 //! profile of the installed browsers, grouped by browser and profile, removable in batches.
 
 use super::style::{self, icon, Palette};

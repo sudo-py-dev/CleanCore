@@ -1,4 +1,4 @@
-//! Browser Extensions (Revo: "Browser Extensions"): list and remove extensions of
+//! Browser Extensions: list and remove extensions of
 //! Chromium-based browsers (Chrome, Chromium, Edge, Brave, Opera, Vivaldi) and Firefox, for
 //! every profile. Removal deletes the extension and its stored data and drops its entries from
 //! the browser's preference files; everything is backed up first. The browser must be closed.
@@ -33,7 +33,7 @@ impl Browser {
         }
     }
 
-    /// Command-line flag name (Revo /chrome /edge /firefox /opera).
+    /// Command-line flag name (/chrome /edge /firefox /opera).
     pub fn flag(self) -> &'static str {
         match self {
             Self::Chrome => "chrome",
@@ -437,7 +437,7 @@ pub fn remove(settings: &crate::config::Settings, exts: &[Extension]) -> Result<
     crate::cleaner::clean(&s, &issues)
 }
 
-/// Revo `/be "Ext1;Ext2" /chrome "Profile"`: find extensions by name, browser and profile.
+/// `/be "Ext1;Ext2" /chrome "Profile"`: find extensions by name, browser and profile.
 pub fn find(names: &[String], browser: Option<Browser>, profile: Option<&str>) -> Result<Vec<Extension>> {
     let all = list(false);
     let mut out = Vec::new();

@@ -197,7 +197,7 @@ pub fn prune(settings: &Settings) -> Result<Vec<String>> {
     Ok(removed)
 }
 
-/// Delete every backup created within `[from, to]` (Revo: Backup Manager › Delete by time range).
+/// Delete every backup created within `[from, to]`.
 /// Returns the ids that were removed.
 pub fn delete_range(settings: &Settings, from: DateTime<Local>, to: DateTime<Local>) -> Result<Vec<String>> {
     let mut removed = Vec::new();
@@ -222,7 +222,7 @@ pub fn create_full(settings: &Settings, name: &str, note: &str, kind: BackupKind
     Ok(b.manifest.id)
 }
 
-/// Revo's "daily registry backup": the first time CleanCore runs on a day, make a full
+/// The daily registry backup: the first time CleanCore runs on a day, make a full
 /// automatic backup (and apply the auto-delete rules). `None` when one exists for today or
 /// the option is off.
 pub fn daily_full_if_due(settings: &Settings) -> Result<Option<String>> {

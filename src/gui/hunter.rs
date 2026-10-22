@@ -1,4 +1,4 @@
-//! Hunter Mode (Revo: Hunter Mode): drag the crosshair onto any window (or pick from the
+//! Hunter Mode: drag the crosshair onto any window (or pick from the
 //! running programs) to see what it is and uninstall it, stop it from auto-starting, kill it,
 //! kill and delete it, or open its folder.
 
@@ -31,7 +31,7 @@ pub struct HunterView {
     /// "Pick in 3 s" countdown end.
     countdown: Option<Instant>,
     confirm_delete: bool,
-    /// The always-on-top target window is open (Revo: Hunter Mode with the main window hidden).
+    /// The always-on-top target window is open (Hunter Mode with the main window hidden).
     floating: bool,
     tray: Option<super::tray::Tray>,
 }

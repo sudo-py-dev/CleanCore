@@ -82,7 +82,7 @@ enum Cmd {
     /// Scheduled Auto Clean / Auto Backup tasks, and starting the watch recorder at login
     #[command(subcommand)]
     Schedule(ScheduleCmd),
-    /// List installed programs (Revo: RevoCmd /m)
+    /// List installed programs
     Programs {
         /// Wildcard pattern for the name (`*` and `?`)
         #[arg(short, long)]
@@ -99,6 +99,9 @@ enum Cmd {
         /// Only store apps (Windows Apps / Flatpak / Snap)
         #[arg(long)]
         store: bool,
+        /// One line per program, in columns (Windows: with 64-bit / 32-bit)
+        #[arg(short, long)]
+        table: bool,
         #[arg(long)]
         json: bool,
         /// Write the list to a file (.txt .csv .html .json)
@@ -188,7 +191,7 @@ enum Cmd {
     /// Microsoft slop cleaner (Windows): preinstalled apps, Copilot and other AI, ads, telemetry
     #[command(subcommand)]
     Slop(SlopCmd),
-    /// Program groups (Revo: Groups Manager)
+    /// Program groups
     #[command(subcommand)]
     Groups(GroupsCmd),
     /// Store apps (Windows Apps / Flatpak / Snap): run, terminate, reset
@@ -583,7 +586,7 @@ struct UninstallArgs {
     /// Silent uninstaller, automatic Moderate scan and leftover removal
     #[arg(long)]
     quick: bool,
-    /// Don't run the built-in uninstaller; only remove leftovers (Revo /mu)
+    /// Don't run the built-in uninstaller; only remove leftovers
     #[arg(long)]
     leftovers_only: bool,
     /// Forced Uninstall: the program isn't listed; find leftovers by name and --path
@@ -592,7 +595,7 @@ struct UninstallArgs {
     /// Use `msiexec /x {ProductCode}` instead of the registered command
     #[arg(long)]
     msi: bool,
-    /// Store apps by name, separated by `;` (Revo /wa)
+    /// Store apps by name, separated by `;`
     #[arg(long)]
     app: Option<String>,
     /// Look for leftovers in every user account
@@ -964,7 +967,40 @@ fn attach_console() {
     }
 }
 
-/// Accept the original `RRCcmd.exe` syntax: `-clean -safe -all`, `-backup -full`, `-backup -key "HK..."`.
+/// `programs --table`: name, version, 32/64-bit (Windows) and kind in columns, then the
+/// install location and uninstall command when asked for. Long names are cut short.
+fn print_programs_table(list: &[Program], location: bool, uninstall_cmd: bool) {
+    const NAME: usize = 48;
+    let cut = |s: &str, w: usize| if s.chars().count() > w { format!("{}…", s.chars().take(w - 1).collect::<String>()) } else { s.to_string() };
+    let bits = |p: &Program| match p.bits() {
+        Some(b) => format!("{b}-bit"),
+        None if p.user_scope => "user".into(),
+        None => String::new(),
+    };
+    let name_w = list.iter().map(|p| p.name.chars().count().min(NAME)).max().unwrap_or(0).max(4);
+    let ver_w = list.iter().map(|p| cut(&p.version, 20).chars().count()).max().unwrap_or(0).max(7);
+    let bits_w = list.iter().map(|p| bits(p).len()).max().unwrap_or(0);
+    let row = |name: &str, ver: &str, b: &str, kind: &str, loc: &str, cmd: &str| {
+        let mut line = format!("{name:<name_w$}  {ver:<ver_w$}  ");
+        if bits_w > 0 {
+            line += &format!("{b:<bits_w$}  ");
+        }
+        line += kind;
+        if location {
+            line += &format!("  {loc}");
+        }
+        if uninstall_cmd {
+            line += &format!("  {cmd}");
+        }
+        println!("{}", line.trim_end());
+    };
+    row("Name", "Version", if bits_w > 0 { "Bits" } else { "" }, "Kind", if location { "Location" } else { "" }, if uninstall_cmd { "Uninstall" } else { "" });
+    for p in list {
+        row(&cut(&p.name, NAME), &cut(&p.version, 20), &bits(p), p.kind.label(), p.install_location.as_deref().unwrap_or(""), p.uninstall_string.as_deref().unwrap_or(""));
+    }
+}
+
+/// Accept the classic slash-and-dash command syntax: `-clean -safe -all`, `-backup -full`, `-backup -key "HK..."`.
 fn translate_legacy(args: Vec<String>) -> Vec<String> {
     let Some(first) = args.get(1) else {
         return args;
@@ -992,19 +1028,30 @@ fn translate_legacy(args: Vec<String>) -> Vec<String> {
                 out.extend(args.get(3).cloned());
             }
         }
-        // Revo Uninstaller Pro: RevoCmd /m "name*" /i /u
-        "/m" => {
+        // Listing programs: [/m "name*"] [/i] [/u] [/t] [/p] [/winapps], in any
+        // order; without /m it lists every program. /p (pause on each page) isn't needed: the
+        // terminal scrolls.
+        "/m" | "/i" | "/u" | "/t" | "/p" | "/winapps" => {
             out.push("programs".into());
-            if let Some(p) = args.get(2) {
-                out.extend(["--match".into(), p.clone()]);
+            let mut i = 1;
+            while i < args.len() {
+                match args[i].to_ascii_lowercase().as_str() {
+                    "/m" => {
+                        out.push("--match".into());
+                        out.extend(args.get(i + 1).cloned());
+                        i += 1;
+                    }
+                    "/i" => out.push("--location".into()),
+                    "/u" => out.push("--uninstall-cmd".into()),
+                    "/t" => out.push("--table".into()),
+                    "/winapps" => out.push("--store".into()),
+                    _ => {}
+                }
+                i += 1;
             }
-            out.extend(rest.iter().skip(1).filter_map(|a| match a.as_str() {
-                "/i" => Some("--location".to_string()),
-                "/u" => Some("--uninstall-cmd".to_string()),
-                _ => None,
-            }));
         }
-        // RevoUninPro /mu "name" /path "dir" /mode Moderate
+        "/?" | "/help" => out.push("--help".into()),
+        // /mu "name" /path "dir" /mode Moderate
         "/mu" => {
             out.extend(["uninstall".into(), "--leftovers-only".into(), "--yes".into()]);
             out.extend(args.get(2).cloned());
@@ -1026,7 +1073,7 @@ fn translate_legacy(args: Vec<String>) -> Vec<String> {
                 i += 1;
             }
         }
-        // RevoUninPro /export "file" /all /txt
+        // /export "file" /all /txt
         "/export" => {
             out.push("programs".into());
             if let Some(f) = args.get(2) {
@@ -1045,17 +1092,17 @@ fn translate_legacy(args: Vec<String>) -> Vec<String> {
                 out.extend(["--export".into(), path.display().to_string()]);
             }
         }
-        // RevoUninPro /wa "App1;App2"
+        // /wa "App1;App2"
         "/wa" => {
             out.extend(["uninstall".into(), "--yes".into(), "--app".into()]);
             out.extend(args.get(2).cloned());
         }
-        // RevoUninPro /tu "Log name"
+        // /tu "Log name"
         "/tu" => {
             out.extend(["trace".into(), "uninstall".into(), "--yes".into()]);
             out.extend(args.get(2).cloned());
         }
-        // RevoUninPro /be "Ext1;Ext2" /chrome "ProfileName"
+        // /be "Ext1;Ext2" /chrome "ProfileName"
         "/be" => {
             out.extend(["extensions".into(), "remove".into(), "--yes".into()]);
             out.extend(args.get(2).cloned());
@@ -1072,7 +1119,7 @@ fn translate_legacy(args: Vec<String>) -> Vec<String> {
                 i += 1;
             }
         }
-        // RevoUninPro /hunter
+        // /hunter
         "/hunter" => out.extend(["hunter".into(), "--gui".into()]),
         "-watch" => {
             // -watch [-start|-stop|-del] "KEY"   |   -watch -export ("KEY" | -all) -csv|-txt|-xlsx "OUT"
@@ -1176,7 +1223,7 @@ fn run(cli: Cli) -> Result<()> {
         Cmd::Tune(t) => run_tune(t)?,
         Cmd::Watch(w) => run_watch(&settings, w)?,
         Cmd::Schedule(c) => run_schedule(&settings, c)?,
-        Cmd::Programs { r#match, location, uninstall_cmd, system, store, json, export } => {
+        Cmd::Programs { r#match, location, uninstall_cmd, system, store, table, json, export } => {
             let mut s = settings.clone();
             s.show_system_components |= system;
             let mut list = uninst::list_programs(&s);
@@ -1191,6 +1238,8 @@ fn run(cli: Cli) -> Result<()> {
                 println!("Exported {} program(s) to {}", list.len(), f.display());
             } else if json {
                 println!("{}", serde_json::to_string_pretty(&list)?);
+            } else if table {
+                print_programs_table(&list, location, uninstall_cmd);
             } else {
                 for p in &list {
                     println!(
@@ -2947,4 +2996,25 @@ fn run_update(check_only: bool) -> Result<()> {
     println!("Verified {}", file.display());
     println!("{}", update::install(&file)?.message());
     Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::translate_legacy;
+
+    fn t(a: &[&str]) -> Vec<String> {
+        translate_legacy(std::iter::once("cleancore").chain(a.iter().copied()).map(String::from).collect())[1..].to_vec()
+    }
+
+    #[test]
+    fn slash_syntax_for_programs() {
+        assert_eq!(t(&["/m", "Microso*", "/i", "/u"]), ["programs", "--match", "Microso*", "--location", "--uninstall-cmd"]);
+        // Any order, and without /m: every program.
+        assert_eq!(t(&["/U", "/t", "/m", "7-Zip*", "/p"]), ["programs", "--uninstall-cmd", "--table", "--match", "7-Zip*"]);
+        assert_eq!(t(&["/i"]), ["programs", "--location"]);
+        assert_eq!(t(&["/winapps", "/i"]), ["programs", "--store", "--location"]);
+        assert_eq!(t(&["/?"]), ["--help"]);
+        // The rest is left alone.
+        assert_eq!(t(&["programs", "--table"]), ["programs", "--table"]);
+    }
 }

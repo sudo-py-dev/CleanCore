@@ -1,4 +1,4 @@
-//! Junk Files Cleaner (Revo: Tools › Junk Files Cleaner): find files whose names match junk
+//! Junk Files Cleaner: find files whose names match junk
 //! patterns (temporary files, editor backups, crash dumps, …) on the chosen drives or folders,
 //! then delete them to the Recycle Bin / Trash or permanently.
 
@@ -11,7 +11,7 @@ use std::path::{Path, PathBuf};
 use std::sync::atomic::{AtomicBool, AtomicUsize, Ordering};
 use std::time::{Duration, SystemTime};
 
-/// Revo's default list, minus patterns that often match real data (`*.log` in projects).
+/// The usual junk patterns, minus those that often match real data (`*.log` in projects).
 pub const DEFAULT_PATTERNS: &[&str] = &[
     "*.tmp",
     "*.temp",

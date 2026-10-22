@@ -1,4 +1,4 @@
-//! History Cleaner (Revo: Tools › History Cleaner): browser history, caches, cookies and
+//! History Cleaner: browser history, caches, cookies and
 //! sessions; the system's recently-used lists, temporary files, thumbnails, crash dumps,
 //! Trash and clipboard; Office / LibreOffice recent documents.
 

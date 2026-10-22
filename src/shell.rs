@@ -1,5 +1,5 @@
-//! File-manager integration (Revo: "Install with Revo Uninstaller Pro" / "Uninstall with Revo
-//! Uninstaller Pro" in Explorer's right-click menu).
+//! File-manager integration: "Install with CleanCore" / "Uninstall with CleanCore" in
+//! Explorer's right-click menu.
 //!
 //! Windows: shell verbs under `HKCU\Software\Classes` for programs (.exe), installers (.msi),
 //! shortcuts (.lnk) and folders. Linux: Nautilus scripts, a KDE/Dolphin service menu, and an

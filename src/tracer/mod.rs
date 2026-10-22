@@ -1,4 +1,4 @@
-//! Real-time installation monitor (Revo's "Traced Programs").
+//! Real-time installation monitor ("Traced Programs").
 //!
 //! A trace is a pair of snapshots taken before and after an installation. The snapshots cover
 //! the places installers write to: the settings store (Windows registry / Linux dconf), the
@@ -104,7 +104,7 @@ pub struct TraceLog {
     pub author: String,
     #[serde(default)]
     pub icon: Option<String>,
-    /// Group in the Traced Programs list (Revo: log groups).
+    /// Group in the Traced Programs list.
     #[serde(default)]
     pub group: Option<String>,
     pub created: DateTime<Local>,
@@ -577,7 +577,7 @@ pub fn find(id_or_name: &str) -> Result<TraceLog> {
     }
 }
 
-/// Logs whose name matches a program (Revo searches for a matching log before uninstalling).
+/// Logs whose name matches a program, looked up before uninstalling it.
 fn name_matcher(names: &[String]) -> impl Fn(&str) -> bool {
     use crate::uninstaller::{normalize, strip_version};
     let wanted: HashSet<String> = names.iter().flat_map(|n| [normalize(n), normalize(&strip_version(n))]).filter(|n| n.len() >= 3).collect();
@@ -659,7 +659,7 @@ pub fn import(path: &Path) -> Result<TraceLog> {
     Ok(l)
 }
 
-/// Merge logs into the oldest one (Revo: "the oldest log is the base"); the others are deleted.
+/// Merge logs into the oldest one (it is the base); the others are deleted.
 pub fn merge(ids: &[String], name: &str) -> Result<TraceLog> {
     let mut logs: Vec<TraceLog> = ids.iter().map(|i| find(i)).collect::<Result<_>>()?;
     if logs.len() < 2 {
@@ -780,8 +780,7 @@ pub fn to_issues(log: &TraceLog) -> Vec<Issue> {
 
 // ---------------------------------------------------------------- logs database
 
-/// Revo's Logs Database is a proprietary server; CleanCore's is a folder of shared `.cptrace`
-/// logs (a network share, a synced folder…), optionally filled from a URL that serves
+/// The Logs Database is a folder of shared `.cptrace` logs (a network share, a synced folder…), optionally filled from a URL that serves
 /// `index.json` (a list of file names) next to the log files.
 pub fn db_folder(settings: &Settings) -> PathBuf {
     settings.logs_db_folder.clone().unwrap_or_else(|| data_dir().join("logs-db"))
@@ -865,7 +864,7 @@ pub fn db_add(settings: &Settings, log: &TraceLog) -> Result<PathBuf> {
     Ok(path)
 }
 
-/// Take a database log into the local Traced Programs (Revo imports it before uninstalling).
+/// Take a database log into the local Traced Programs, before uninstalling with it.
 pub fn db_import(d: &DbLog) -> Result<TraceLog> {
     import(&d.file)
 }

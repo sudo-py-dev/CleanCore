@@ -1,4 +1,4 @@
-//! Uninstaller (Revo Uninstaller Pro feature set): installed-program inventory, running the
+//! Uninstaller: installed-program inventory, running the
 //! built-in uninstaller, leftover scans in three depths, quick / multiple / forced uninstall,
 //! groups and comments, uninstall history and list export.
 //!
@@ -117,6 +117,17 @@ impl Program {
 
     pub fn haystack(&self) -> String {
         format!("{} {} {}", self.name, self.publisher, self.comment.as_deref().unwrap_or("")).to_lowercase()
+    }
+
+    /// Windows: 64 or 32 for a program registered machine-wide, by the registry view its
+    /// uninstall entry is in (WOW6432Node is the 32-bit one). Per-user entries and other
+    /// systems have no such split.
+    pub fn bits(&self) -> Option<u8> {
+        let key = self.registry_key.as_deref()?.to_ascii_uppercase();
+        if !key.starts_with("HKLM") && !key.starts_with("HKEY_LOCAL_MACHINE") {
+            return None;
+        }
+        Some(if key.contains(r"\WOW6432NODE\") { 32 } else { 64 })
     }
 
     /// The MSI product code, if this is (or wraps) an MSI install.
@@ -340,7 +351,7 @@ pub fn matches_loose_normalized(n: &str, tokens: &[String]) -> bool {
     matches_normalized(n, tokens) || tokens.iter().any(|t| t.len() >= 6 && n.len() <= t.len() + 10 && (n.starts_with(t.as_str()) || n.ends_with(t.as_str())))
 }
 
-/// Silent variant of a Windows uninstall command, Revo's "Quick Uninstall".
+/// Silent variant of a Windows uninstall command ("Quick Uninstall").
 pub fn quiet_command(p: &Program) -> Option<String> {
     if let Some(q) = p.quiet_uninstall_string.as_ref().filter(|q| !q.trim().is_empty()) {
         return Some(q.clone());
@@ -368,7 +379,7 @@ pub fn forced_msi_command(p: &Program) -> Option<String> {
     p.msi_product_code().map(|c| format!("MsiExec.exe /X{c}"))
 }
 
-/// `*` and `?` wildcard match, case-insensitive (RevoCmd /m).
+/// `*` and `?` wildcard match, case-insensitive (`programs --match`, /m).
 pub use crate::pathutil::wildcard;
 
 // ---------------------------------------------------------------- inventory
@@ -601,7 +612,7 @@ pub fn run_builtin(p: &Program, mode: RunMode) -> Result<RunResult> {
     crate::platform::run_uninstaller(p, mode)
 }
 
-/// Close the program's running processes (Revo option "force-stop running executables"):
+/// Close the program's running processes ("force-stop running executables"):
 /// everything started from its install folder or one of its known executables. Returns the
 /// names of what was stopped.
 pub fn stop_running(p: &Program) -> Vec<String> {
@@ -623,7 +634,7 @@ pub fn stop_running(p: &Program) -> Vec<String> {
     stopped
 }
 
-/// An uninstall whose leftover scan hasn't happened yet. Revo resumes it after a restart.
+/// An uninstall whose leftover scan hasn't happened yet. It resumes after a restart.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct PendingUninstall {
     pub program: Option<Program>,
@@ -731,7 +742,7 @@ pub fn scan(settings: &Settings, target: &Target, mode: ScanMode, all_users: boo
         .filter(|o| target.package.is_none() || o.package != target.package)
         .collect();
     let mut issues = crate::platform::scan_leftovers(target, mode, scope, &others);
-    // Revo: a trace log recorded for this program adds everything its installer created.
+    // A trace log recorded for this program adds everything its installer created.
     for log in crate::tracer::matching(&target.names) {
         for mut i in crate::tracer::to_issues(&log) {
             i.detail = format!("{} · from trace log \"{}\"", i.detail, log.name);
@@ -1038,6 +1049,20 @@ mod tests {
         assert_eq!(forced_msi_command(&p).unwrap(), "MsiExec.exe /X{23170F69-40C1-2702-2301-000001000000}");
         p.quiet_uninstall_string = Some("x.exe /quiet".into());
         assert_eq!(quiet_command(&p).unwrap(), "x.exe /quiet");
+    }
+
+    #[test]
+    fn registry_view() {
+        let mut p = Program::new("x", "x", ProgramKind::Win32);
+        let at = |p: &mut Program, k: &str| {
+            p.registry_key = Some(k.into());
+            p.bits()
+        };
+        assert_eq!(at(&mut p, r"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\7-Zip"), Some(64));
+        assert_eq!(at(&mut p, r"HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall\VLC"), Some(32));
+        assert_eq!(at(&mut p, r"HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Uninstall\Zoom"), None);
+        p.registry_key = None;
+        assert_eq!(p.bits(), None);
     }
 
     #[test]

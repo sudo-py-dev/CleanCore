@@ -83,7 +83,7 @@ pub mod icon {
 }
 
 /// Category id → icon, for scan results.
-/// Icons a program or trace log can be given (Revo: Change icon). Keys are stored, not glyphs.
+/// Icons a program or trace log can be given. Keys are stored, not glyphs.
 pub const ICON_CHOICES: &[(&str, &str)] = &[
     ("app", icon::APP_WINDOW),
     ("cube", icon::CUBE),
