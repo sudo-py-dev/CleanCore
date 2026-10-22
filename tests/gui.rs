@@ -385,21 +385,40 @@ fn walk_through_every_tool() {
     wait_for(&mut h, "Deleted 1 junk file");
     assert!(!home.join("Documents/report.docx.tmp").exists());
 
-    let photo: Vec<u8> = (0..200_000u32).map(|i| (i % 253) as u8).collect();
-    std::fs::create_dir_all(home.join("Pictures/copy")).unwrap();
-    std::fs::write(home.join("Pictures/holiday.jpg"), &photo).unwrap();
-    std::fs::write(home.join("Pictures/copy/holiday (1).jpg"), &photo).unwrap();
+    // A few sets of copies, as people keep them: a photo backed up from a phone, a downloaded
+    // document saved twice more, a video in two places.
+    let sets: [(&[&str], u32); 3] = [
+        (&["Pictures/holiday.jpg", "Pictures/Phone backup/IMG_2041.jpg"], 2_400_000),
+        (&["Documents/Tax return 2025.pdf", "Downloads/Tax return 2025 (1).pdf", "Desktop/Tax return 2025.pdf"], 850_000),
+        (&["Videos/birthday.mp4", "Downloads/birthday.mp4"], 9_000_000),
+    ];
+    for (n, (files, size)) in sets.iter().enumerate() {
+        let data: Vec<u8> = (0..*size).map(|i| (i % (241 + n as u32)) as u8).collect();
+        for f in *files {
+            write(&home.join(f), "");
+            std::fs::write(home.join(f), &data).unwrap();
+        }
+    }
     h.get_by_label(&format!("{}  Duplicates", cleancore::gui::style::icon::COPY)).click();
     h.run_steps(3);
     shot(&mut h, "16b-tools-dupes-setup");
     h.get_by_label_contains("Find duplicates").click();
     wait_for(&mut h, "can be freed");
+    // Let the junk files toast fade and move the pointer off the buttons, for a clean picture.
+    h.hover_at(egui::pos2(760.0, 700.0));
+    let fade = Instant::now();
+    while fade.elapsed() < Duration::from_millis(4500) {
+        h.step();
+        std::thread::sleep(Duration::from_millis(50));
+    }
     shot(&mut h, "16c-tools-dupes-results");
     h.get_by_label_contains("Delete (").click();
     h.run_steps(3);
     h.get_by_role_and_label(Role::Button, &format!("{}  Delete", cleancore::gui::style::icon::TRASH)).click();
-    wait_for(&mut h, "Deleted 1 duplicate file");
-    assert_eq!(home.join("Pictures/holiday.jpg").exists() as u8 + home.join("Pictures/copy/holiday (1).jpg").exists() as u8, 1);
+    wait_for(&mut h, "Deleted 4 duplicate file");
+    for (files, _) in sets {
+        assert_eq!(files.iter().filter(|f| home.join(f).exists()).count(), 1, "{files:?}");
+    }
 
     h.get_by_label(&format!("{}  History", cleancore::gui::style::icon::HISTORY)).click();
     wait_for(&mut h, "Thumbnail cache");

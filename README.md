@@ -14,21 +14,40 @@
 
 ## Features
 
-- **Uninstaller**: removes programs, then finds and deletes everything they left behind
+### Programs
+
+- **Uninstaller**: runs a program's own uninstaller, then finds and deletes everything it left behind
 - **Quick and batch uninstall**: silent uninstallers plus automatic leftover cleanup for many programs at once
-- **Install and trace**: records an installation so it can be undone exactly later
-- **Cleaner**: finds broken launchers, dead startup items, orphaned settings and registry entries
-- **Junk files, history and evidence remover**: temp files, browser history, free space wiping
-- **Duplicate finder**: identical files found fast (size, then sampled hash, then full BLAKE3 hash, all in parallel); the extra copies go to the Trash, one copy is always kept
-- **Unrecoverable delete**: overwrites files before removing them
-- **Autorun manager**: everything that starts with the system, in one list
-- **Tuner**: reversible system tweaks
-- **Watcher**: live view of every change to config files, settings or the registry
-- **Backups**: everything is backed up before it is deleted, and can be restored in one click
+- **Forced uninstall**: removes what's left of programs whose uninstaller is gone or broken
+- **Install and trace**: records an installation so it can be undone exactly later; trace logs can be shared through a logs database
+- **Browser extensions**: lists and removes extensions of Chrome, Edge, Brave, Opera, Vivaldi and Firefox, for every profile
+- **Autorun manager**: programs, services and tasks that start with the system, in one list
+- **Hunter Mode** (Windows): point at any window to uninstall its program, stop it from starting, or kill it
 
 <p align="center">
   <img src="docs/uninstall.png" width="820" alt="Leftovers after an uninstall">
 </p>
+
+### Clean up
+
+- **Cleaner**: finds broken launchers, dead startup items, orphaned settings and registry entries
+- **Auto Clean**: scans and cleans on a schedule (systemd user timers / Task Scheduler)
+- **Junk files**: temp files, editor backups and crash dumps on your drives
+- **Duplicate finder**: identical files, found fast: grouped by size, then compared by a few KB from each end, and only files still alike are hashed whole (BLAKE3), all in parallel. A whole home folder takes seconds. Every copy but one is ticked (keep the oldest, the newest or the shortest path), and one copy of each file is always kept.
+- **History cleaner**: browser history and caches, recent files and other traces
+- **Unrecoverable delete and evidence remover**: overwrite files, or the free space, so nothing can be recovered
+- **Microsoft slop cleaner** (Windows): removes preinstalled and pushed apps, turns off Copilot, ads and telemetry, and removes Edge and OneDrive and keeps them away
+- **Tuner**: reversible system tweaks
+- **System tools**: the operating system's own utilities in one place, plus your own
+
+<p align="center">
+  <img src="docs/duplicates.png" width="820" alt="Duplicate finder results">
+</p>
+
+### Monitor and restore
+
+- **Watcher**: live view of every change to config files, settings or the registry
+- **Backups**: everything is backed up before it is deleted, and can be restored in one click; optionally a full backup every day
 
 ## Install
 
@@ -90,7 +109,8 @@ cleancore clean                    # back up, then remove what the scan finds
 cleancore programs                 # list installed programs
 cleancore uninstall "Program Name" # uninstall and remove leftovers
 cleancore junk scan                # find junk files
-cleancore dupes scan               # find duplicate files (dupes clean --keep oldest|newest|shortest)
+cleancore dupes scan               # find duplicate files
+cleancore dupes clean --keep newest # delete the extra copies, keeping one of each
 cleancore --help                   # everything else
 ```
 
