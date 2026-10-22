@@ -243,8 +243,7 @@ impl HunterView {
         if self.confirm_delete {
             if let Some(t) = self.target.clone() {
                 let mut close = false;
-                egui::Modal::new(egui::Id::unique("hunter-kill-delete")).show(ui.ctx(), |ui| {
-                    ui.set_width(440.0);
+                crate::gui::style::modal("hunter-kill-delete", 440.0, ui.ctx(), |ui| {
                     ui.add(style::Label::new(style::strong(crate::tf!("Close {} and delete its program file?", t.name)).size(18.0)));
                     ui.add_space(6.0);
                     ui.add(style::Label::new(style::rich(t.exe.clone().unwrap_or_default()).monospace().size(12.0)));

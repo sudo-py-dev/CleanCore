@@ -190,8 +190,7 @@ impl ShredView {
 
         if self.confirm {
             let mut close = false;
-            egui::Modal::new(egui::Id::unique("shred-confirm")).show(ui.ctx(), |ui| {
-                ui.set_width(440.0);
+            crate::gui::style::modal("shred-confirm", 440.0, ui.ctx(), |ui| {
                 ui.add(style::Label::new(style::strong(crate::tf!("Destroy {} item(s)?", self.items.len())).size(18.0)));
                 ui.add_space(6.0);
                 ui.add(style::Label::new(style::muted(
@@ -321,8 +320,7 @@ impl EvidenceView {
         if self.confirm {
             let mut close = false;
             if let Some(d) = &drive {
-                egui::Modal::new(egui::Id::unique("wipe-confirm")).show(ui.ctx(), |ui| {
-                    ui.set_width(460.0);
+                crate::gui::style::modal("wipe-confirm", 460.0, ui.ctx(), |ui| {
                     ui.add(style::Label::new(style::strong(crate::tf!("Wipe the free space of {}?", d.label)).size(18.0)));
                     ui.add_space(6.0);
                     let passes = cx.settings.shred_passes.min(7);
@@ -332,7 +330,10 @@ impl EvidenceView {
                         if style::primary(ui, icon::DRIVES, "Wipe").clicked() {
                             let ctl = Arc::new(Control::default());
                             let (c, dir) = (ctl.clone(), d.path.clone());
-                            self.job = Some(Job { pending: Pending::spawn(ui.ctx(), "Wiping", move || shred::wipe_free_space(&dir, passes, None, &c).map_err(|e| crate::tf!("{e:#}"))), ctl });
+                            self.job = Some(Job {
+                                pending: Pending::spawn(ui.ctx(), "Wiping", move || shred::wipe_free_space(&dir, passes, None, &c).map_err(|e| crate::tf!("{e:#}"))),
+                                ctl,
+                            });
                             close = true;
                         }
                         if style::secondary(ui, "", "Cancel").clicked() {

@@ -249,9 +249,8 @@ impl App {
         let s = settings.clone();
         let daily = settings.daily_full_backup.then(|| Pending::spawn(&cc.egui_ctx, "Daily backup", move || crate::backup::daily_full_if_due(&s)));
         apply_theme(&cc.egui_ctx, &settings);
-        let mut settings = settings;
         let mut updates = updates::Updates::new();
-        updates.startup(&cc.egui_ctx, &mut settings);
+        updates.startup(&cc.egui_ctx, &settings);
         Self {
             options: options::SettingsView::new(&settings),
             settings,
@@ -560,8 +559,7 @@ impl eframe::App for App {
 
 fn first_run(ctx: &egui::Context, settings: &mut Settings) {
     let mut chosen = None;
-    egui::Modal::new(egui::Id::unique("first-run-theme")).show(ctx, |ui| {
-        ui.set_width(420.0);
+    crate::gui::style::modal("first-run-theme", 420.0, ctx, |ui| {
         style::brand(ui, 48.0);
         ui.add_space(10.0);
         ui.add(style::Label::new(style::strong(tr("Welcome to CleanCore")).size(20.0)));

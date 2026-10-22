@@ -216,8 +216,7 @@ impl ExtensionsTab {
         if self.confirm {
             let running: Vec<&str> = self.running.iter().filter(|b| selected.iter().any(|e| e.browser == **b)).map(|b| b.label()).collect();
             let (mut close, mut recheck) = (false, false);
-            egui::Modal::new(egui::Id::unique("ext-confirm")).show(ui.ctx(), |ui| {
-                ui.set_width(440.0);
+            crate::gui::style::modal("ext-confirm", 440.0, ui.ctx(), |ui| {
                 ui.add(style::Label::new(style::strong(crate::tf!("Remove {} extension(s)?", selected.len())).size(18.0)));
                 ui.add_space(6.0);
                 for e in selected.iter().take(8) {

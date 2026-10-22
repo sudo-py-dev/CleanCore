@@ -2729,9 +2729,6 @@ msgstr "רשומה"
 msgid "Package"
 msgstr "חבילה"
 
-msgid "up to date"
-msgstr "מעודכן"
-
 msgid "Checking for updates"
 msgstr "בודק עדכונים"
 
@@ -2759,6 +2756,9 @@ msgstr "גרסה {} זמינה."
 msgid "You have the latest version."
 msgstr "יש לך את הגרסה העדכנית ביותר."
 
+msgid "Could not check for updates. Trying again at {}."
+msgstr "לא ניתן היה לבדוק עדכונים. ניסיון נוסף בשעה {}."
+
 msgid "Updates come from the project's GitHub releases."
 msgstr "העדכונים מגיעים מגרסאות הפרויקט ב־GitHub."
 
@@ -2777,8 +2777,8 @@ msgstr "בדוק עדכונים"
 msgid "Check for updates automatically"
 msgstr "בדוק עדכונים אוטומטית"
 
-msgid "Once a day, when CleanCore starts. Updates are installed only when you choose to."
-msgstr "פעם ביום, כש־CleanCore נפתח. עדכונים מותקנים רק כשאתה בוחר בכך."
+msgid "When CleanCore starts, then once a day while it runs. Updates are installed only when you choose to."
+msgstr "כש־CleanCore נפתח, ואחר כך פעם ביום כל עוד הוא פועל. עדכונים מותקנים רק כשאתה בוחר בכך."
 
 msgid "{}  Every update is checked against the CleanCore release signature and its checksum before it is installed."
 msgstr "{}  כל עדכון נבדק מול חתימת הגרסה של CleanCore ומול סכום הביקורת שלו לפני ההתקנה."

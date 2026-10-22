@@ -315,8 +315,7 @@ impl BackupView {
                 Confirm::DeleteAll => "Are you sure you want to delete all backups?".to_string(),
             };
             let mut answer = None;
-            let r = egui::Modal::new(egui::Id::unique("backup-confirm")).show(ctx, |ui| {
-                ui.set_width(420.0);
+            let r = crate::gui::style::modal("backup-confirm", 420.0, ctx, |ui| {
                 let p = Palette::get(ui.ctx());
                 let restore = text.starts_with("Restore");
                 style::icon_tile(ui, if restore { icon::UNDO } else { icon::TRASH }, if restore { p.accent } else { p.danger }, 44.0);
@@ -362,7 +361,7 @@ impl BackupView {
         // Custom restore
         if let Some(c) = &mut self.custom {
             let mut done = None;
-            egui::Modal::new(egui::Id::unique("custom-restore")).show(ctx, |ui| {
+            crate::gui::style::modal("custom-restore", 520.0, ctx, |ui| {
                 ui.add(style::Label::new(style::strong(tr("Custom restore")).size(19.0)));
                 ui.add(style::Label::new(style::muted(ui, crate::tf!("Choose what to restore from {}", c.id))));
                 crate::gui::style::row(ui, |ui| {
@@ -401,8 +400,7 @@ impl BackupView {
         // Create backup
         if let Some(f) = &mut self.create {
             let mut done = None;
-            egui::Modal::new(egui::Id::unique("create-backup")).show(ctx, |ui| {
-                ui.set_width(620.0);
+            crate::gui::style::modal("create-backup", 620.0, ctx, |ui| {
                 let p = Palette::get(ui.ctx());
                 ui.add(style::Label::new(style::strong(tr("Create backup")).size(19.0)));
                 ui.add_space(8.0);

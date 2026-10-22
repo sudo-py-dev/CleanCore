@@ -1,11 +1,29 @@
-//! Settings › Updates, and the once-a-day check at start-up. Installing goes through
-//! `crate::update`, which verifies the release signature and the download's checksum first.
+//! Settings › Updates, and the automatic checks: when CleanCore starts, then once a day while
+//! it runs. Installing goes through `crate::update`, which verifies the release signature and
+//! the download's checksum first.
 
 use super::style::{self, icon, Palette};
 use super::{take, Cx, Pending};
 use crate::i18n::tr;
 use crate::update::{self, Release};
+use chrono::{DateTime, Local};
 use eframe::egui::{self, Ui};
+use std::sync::atomic::{AtomicBool, Ordering};
+use std::sync::mpsc::{Receiver, Sender};
+use std::sync::Arc;
+use std::time::{Duration, SystemTime};
+
+/// Time between automatic checks that worked.
+const DAY: Duration = Duration::from_secs(24 * 3600);
+/// Waits before trying again after an automatic check failed (offline, GitHub not answering);
+/// the last one repeats.
+const RETRY: [Duration; 4] = [Duration::from_secs(5 * 60), Duration::from_secs(30 * 60), Duration::from_secs(2 * 3600), Duration::from_secs(6 * 3600)];
+
+/// What an automatic check found, and when it runs again if it failed.
+struct AutoCheck {
+    result: Result<Option<Release>, String>,
+    retry: DateTime<Local>,
+}
 
 pub struct Updates {
     check: Option<Pending<Result<Option<Release>, String>>>,
@@ -16,47 +34,69 @@ pub struct Updates {
     up_to_date: bool,
     /// Finished installing: restart to use it.
     installed: bool,
-    /// The check was started by the user (so "up to date" is worth saying).
-    manual: bool,
+    /// Results of the automatic checks, from their thread.
+    auto: Option<Receiver<AutoCheck>>,
+    /// The setting, read by that thread: switching it off pauses the checks.
+    auto_on: Arc<AtomicBool>,
+    /// The last automatic check failed: why, and when it is tried again.
+    auto_failed: Option<(String, DateTime<Local>)>,
 }
 
 impl Updates {
     pub fn new() -> Self {
-        Self { check: None, install: None, available: None, up_to_date: false, installed: false, manual: false }
+        Self { check: None, install: None, available: None, up_to_date: false, installed: false, auto: None, auto_on: Arc::new(AtomicBool::new(false)), auto_failed: None }
     }
 
-    /// Look for an update in the background if the setting is on and a day has passed.
-    pub fn startup(&mut self, ctx: &egui::Context, settings: &mut crate::config::Settings) {
+    /// Start the automatic checks: one now, then one a day after each that worked, sooner
+    /// after one that failed.
+    pub fn startup(&mut self, ctx: &egui::Context, settings: &crate::config::Settings) {
         // Development builds (and the test runs) never reach out to GitHub on their own.
         if cfg!(debug_assertions) {
             return;
         }
-        let due = settings.last_update_check.is_none_or(|t| chrono::Local::now() - t > chrono::Duration::hours(24));
-        if settings.check_updates && due {
-            settings.last_update_check = Some(chrono::Local::now());
-            let _ = settings.save();
-            self.start_check(ctx, false);
-        }
+        self.auto_on.store(settings.check_updates, Ordering::Relaxed);
+        let (tx, rx) = std::sync::mpsc::channel();
+        self.auto = Some(rx);
+        let (ctx, on) = (ctx.clone(), self.auto_on.clone());
+        std::thread::spawn(move || auto_checks(&ctx, &on, &tx));
     }
 
-    fn start_check(&mut self, ctx: &egui::Context, manual: bool) {
-        self.manual = manual;
+    fn start_check(&mut self, ctx: &egui::Context) {
         self.up_to_date = false;
         self.check = Some(Pending::spawn(ctx, "Checking for updates", || update::check().map_err(|e| crate::tf!("{e:#}"))));
     }
 
+    /// A check worked: remember when, and tell about a release not told about yet.
+    fn found(&mut self, cx: &mut Cx, release: Option<Release>) {
+        cx.settings.last_update_check = Some(Local::now());
+        cx.save_settings();
+        self.auto_failed = None;
+        match release {
+            Some(rel) => {
+                if self.available.as_ref().is_none_or(|r| r.version != rel.version) {
+                    cx.info(crate::tf!("CleanCore {} is available. Install it from Settings › Updates.", rel.version));
+                }
+                self.available = Some(rel);
+            }
+            None => self.up_to_date = true,
+        }
+    }
+
     /// Collect finished background work; called every frame, whatever page is open.
     pub fn poll(&mut self, cx: &mut Cx) {
+        self.auto_on.store(cx.settings.check_updates, Ordering::Relaxed);
+        let results: Vec<AutoCheck> = self.auto.as_ref().map(|rx| rx.try_iter().collect()).unwrap_or_default();
+        for a in results {
+            match a.result {
+                Ok(release) => self.found(cx, release),
+                // Not worth an error (offline, say): the card says when it is tried again.
+                Err(e) => self.auto_failed = Some((e, a.retry)),
+            }
+        }
         if let Some(r) = take(&mut self.check) {
             match r {
-                Ok(Some(rel)) => {
-                    cx.info(crate::tf!("CleanCore {} is available. Install it from Settings › Updates.", rel.version));
-                    self.available = Some(rel);
-                }
-                Ok(None) => self.up_to_date = true,
-                // A failed automatic check (offline, say) is not worth an error.
-                Err(e) if self.manual => cx.error(crate::tf!("Checking for updates failed: {e}")),
-                Err(_) => {}
+                Ok(release) => self.found(cx, release),
+                Err(e) => cx.error(crate::tf!("Checking for updates failed: {e}")),
             }
         }
         if let Some(r) = take(&mut self.install) {
@@ -84,10 +124,15 @@ impl Updates {
                         (crate::tf!("Version {} is available.", r.version), p.accent)
                     } else if self.up_to_date {
                         (tr("You have the latest version.").to_string(), p.success)
+                    } else if let Some((_, retry)) = &self.auto_failed {
+                        (crate::tf!("Could not check for updates. Trying again at {}.", retry.format("%H:%M")), p.muted)
                     } else {
                         (tr("Updates come from the project's GitHub releases.").to_string(), p.muted)
                     };
-                    ui.add(style::Label::new(style::rich(text).size(12.5).color(col)));
+                    let r = ui.add(style::Label::new(style::rich(text).size(12.5).color(col)));
+                    if let (Some((why, _)), None, false) = (&self.auto_failed, &self.available, self.up_to_date) {
+                        r.on_hover_text(style::vis(why.as_str()));
+                    }
                 });
                 ui.with_layout(crate::gui::style::far_layout(egui::Align::Center), |ui| {
                     let busy = self.check.is_some() || self.install.is_some();
@@ -105,7 +150,7 @@ impl Updates {
                             }
                         }
                     } else if ui.add_enabled_ui(!busy, |ui| style::secondary(ui, icon::REFRESH, "Check for updates")).inner.clicked() {
-                        self.start_check(ui.ctx(), true);
+                        self.start_check(ui.ctx());
                     }
                 });
             });
@@ -116,14 +161,58 @@ impl Updates {
                 p.show_progress(ui);
             }
             style::divider(ui);
-            style::setting_row(ui, "Check for updates automatically", "Once a day, when CleanCore starts. Updates are installed only when you choose to.", |ui| {
-                style::toggle(ui, check_updates, "Check for updates automatically");
-            });
+            style::setting_row(
+                ui,
+                "Check for updates automatically",
+                "When CleanCore starts, then once a day while it runs. Updates are installed only when you choose to.",
+                |ui| {
+                    style::toggle(ui, check_updates, "Check for updates automatically");
+                },
+            );
             ui.add(style::Label::new(
                 style::rich(crate::tf!("{}  Every update is checked against the CleanCore release signature and its checksum before it is installed.", icon::SHIELD_CHECK))
                     .size(12.0)
                     .color(p.muted),
             ));
         });
+    }
+}
+
+/// The automatic checks, on their own thread for as long as CleanCore runs (also from the tray,
+/// when no frames are drawn). Waits are wall-clock time, so a computer that slept still checks
+/// once it wakes.
+fn auto_checks(ctx: &egui::Context, on: &AtomicBool, tx: &Sender<AutoCheck>) {
+    let mut next = SystemTime::now();
+    let mut failures = 0;
+    let mut told: Option<String> = None;
+    let mut first = true;
+    loop {
+        if on.load(Ordering::Relaxed) && SystemTime::now() >= next {
+            let result = update::check().map_err(|e| crate::tf!("{e:#}"));
+            let wait = match &result {
+                Ok(found) => {
+                    failures = 0;
+                    // A desktop notification for a release found later on, when the window may
+                    // be closed to the tray (at start-up the window says it).
+                    if let Some(r) = found.as_ref().filter(|r| !first && told.as_deref() != Some(r.version.as_str())) {
+                        let _ = crate::platform::notify("CleanCore", &crate::tf!("CleanCore {} is available. Install it from Settings › Updates.", r.version));
+                        told = Some(r.version.clone());
+                    }
+                    DAY
+                }
+                Err(_) => {
+                    failures += 1;
+                    RETRY[(failures - 1).min(RETRY.len() - 1)]
+                }
+            };
+            first = false;
+            next = SystemTime::now() + wait;
+            let retry = DateTime::<Local>::from(next);
+            if tx.send(AutoCheck { result, retry }).is_err() {
+                return;
+            }
+            ctx.request_repaint();
+        }
+        std::thread::sleep(Duration::from_secs(60));
     }
 }

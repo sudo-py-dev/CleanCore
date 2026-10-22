@@ -304,8 +304,7 @@ impl AutorunView {
     fn dialogs(&mut self, ctx: &egui::Context, cx: &mut Cx) {
         if let Some(list) = self.confirm.clone() {
             let mut close = false;
-            egui::Modal::new(egui::Id::unique("autorun-remove")).show(ctx, |ui| {
-                ui.set_width(460.0);
+            crate::gui::style::modal("autorun-remove", 460.0, ctx, |ui| {
                 let title = if list.len() == 1 { crate::tf!("Remove \"{}\"?", list[0].name) } else { crate::tf!("Remove {} entries?", list.len()) };
                 ui.add(style::Label::new(style::strong(title).size(18.0)));
                 ui.add_space(6.0);
@@ -339,8 +338,7 @@ impl AutorunView {
 
         if let Some(f) = &mut self.add {
             let (mut close, mut done) = (false, false);
-            egui::Modal::new(egui::Id::unique("autorun-add")).show(ctx, |ui| {
-                ui.set_width(480.0);
+            crate::gui::style::modal("autorun-add", 480.0, ctx, |ui| {
                 ui.add(style::Label::new(style::strong(tr("Add a startup entry")).size(18.0)));
                 ui.add_space(8.0);
                 ui.add(style::Label::new(style::muted(ui, tr("Name"))));

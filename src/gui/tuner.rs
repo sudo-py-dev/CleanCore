@@ -254,8 +254,7 @@ impl TunerView {
         };
         let warning = self.tweaks.iter().find(|t| t.id == id).and_then(|t| t.warning.clone()).unwrap_or_default();
         let mut answer = None;
-        let r = egui::Modal::new(egui::Id::unique("tweak-warning")).show(ctx, |ui| {
-            ui.set_width(440.0);
+        let r = crate::gui::style::modal("tweak-warning", 440.0, ctx, |ui| {
             let p = Palette::get(ui.ctx());
             style::icon_tile(ui, icon::WARNING, p.warning, 44.0);
             ui.add_space(8.0);

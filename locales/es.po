@@ -2728,9 +2728,6 @@ msgstr "Entrada"
 msgid "Package"
 msgstr "Paquete"
 
-msgid "up to date"
-msgstr "actualizado"
-
 msgid "Checking for updates"
 msgstr "Buscando actualizaciones"
 
@@ -2758,6 +2755,9 @@ msgstr "La versión {} está disponible."
 msgid "You have the latest version."
 msgstr "Tienes la versión más reciente."
 
+msgid "Could not check for updates. Trying again at {}."
+msgstr "No se pudo buscar actualizaciones. Se volverá a intentar a las {}."
+
 msgid "Updates come from the project's GitHub releases."
 msgstr "Las actualizaciones vienen de las versiones del proyecto en GitHub."
 
@@ -2776,8 +2776,8 @@ msgstr "Buscar actualizaciones"
 msgid "Check for updates automatically"
 msgstr "Buscar actualizaciones automáticamente"
 
-msgid "Once a day, when CleanCore starts. Updates are installed only when you choose to."
-msgstr "Una vez al día, al abrir CleanCore. Las actualizaciones solo se instalan cuando tú lo decides."
+msgid "When CleanCore starts, then once a day while it runs. Updates are installed only when you choose to."
+msgstr "Al abrir CleanCore y luego una vez al día mientras está abierto. Las actualizaciones solo se instalan cuando tú lo decides."
 
 msgid "{}  Every update is checked against the CleanCore release signature and its checksum before it is installed."
 msgstr "{}  Cada actualización se comprueba con la firma de versiones de CleanCore y su suma de verificación antes de instalarse."

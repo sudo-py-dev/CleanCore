@@ -336,8 +336,7 @@ impl JunkView {
 
         if self.confirm {
             let mut close = false;
-            egui::Modal::new(egui::Id::unique("junk-confirm")).show(ui.ctx(), |ui| {
-                ui.set_width(420.0);
+            crate::gui::style::modal("junk-confirm", 420.0, ui.ctx(), |ui| {
                 ui.add(style::Label::new(style::strong(crate::tf!("Delete {} junk file(s)?", sel.len())).size(18.0)));
                 ui.add_space(6.0);
                 ui.add(style::Label::new(style::muted(

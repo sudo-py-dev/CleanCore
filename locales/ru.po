@@ -2728,9 +2728,6 @@ msgstr "Запись"
 msgid "Package"
 msgstr "Пакет"
 
-msgid "up to date"
-msgstr "актуально"
-
 msgid "Checking for updates"
 msgstr "Проверка обновлений"
 
@@ -2758,6 +2755,9 @@ msgstr "Доступна версия {}."
 msgid "You have the latest version."
 msgstr "У вас последняя версия."
 
+msgid "Could not check for updates. Trying again at {}."
+msgstr "Не удалось проверить обновления. Следующая попытка в {}."
+
 msgid "Updates come from the project's GitHub releases."
 msgstr "Обновления берутся из релизов проекта на GitHub."
 
@@ -2776,8 +2776,8 @@ msgstr "Проверить обновления"
 msgid "Check for updates automatically"
 msgstr "Проверять обновления автоматически"
 
-msgid "Once a day, when CleanCore starts. Updates are installed only when you choose to."
-msgstr "Раз в день при запуске CleanCore. Обновления устанавливаются только по вашему выбору."
+msgid "When CleanCore starts, then once a day while it runs. Updates are installed only when you choose to."
+msgstr "При запуске CleanCore, а затем раз в день, пока он работает. Обновления устанавливаются только по вашему выбору."
 
 msgid "{}  Every update is checked against the CleanCore release signature and its checksum before it is installed."
 msgstr "{}  Каждое обновление перед установкой проверяется по подписи релизов CleanCore и контрольной сумме."

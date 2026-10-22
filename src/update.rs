@@ -101,8 +101,13 @@ fn curl(args: &[&str]) -> Result<Vec<u8>> {
     Ok(out.stdout)
 }
 
-/// The latest published release.
+/// The latest published release: from GitHub's API or, when that fails (its rate limit, an
+/// outage), from where the releases page's "latest" link leads.
 pub fn latest() -> Result<Release> {
+    latest_from_api().or_else(|api| latest_from_page().with_context(|| format!("{api:#}; the releases page did not answer either")))
+}
+
+fn latest_from_api() -> Result<Release> {
     let body =
         curl(&["-H", "Accept: application/vnd.github+json", "-H", &format!("User-Agent: cleancore/{CURRENT}"), &format!("https://api.github.com/repos/{REPO}/releases/latest")])?;
     let v: serde_json::Value = serde_json::from_slice(&body).context("reading the release information")?;
@@ -118,6 +123,23 @@ pub fn latest() -> Result<Release> {
         tag,
         assets,
     })
+}
+
+/// The release the releases page's "latest" link redirects to. Its downloads have fixed names,
+/// so they are known without the API (its notes are not).
+fn latest_from_page() -> Result<Release> {
+    let out = curl(&["--head", "--write-out", "\n%{url_effective}", &format!("https://github.com/{REPO}/releases/latest")])?;
+    let url = String::from_utf8_lossy(&out).lines().last().unwrap_or("").trim().to_string();
+    let tag = url.rsplit_once("/releases/tag/").map(|(_, t)| t.to_string()).filter(|t| !t.is_empty()).context("the releases page shows no release")?;
+    let version = tag.trim_start_matches('v').to_string();
+    let assets = [SUMS.to_string(), SIG.to_string(), asset_name(&version, install_kind())]
+        .into_iter()
+        .map(|name| {
+            let url = format!("https://github.com/{REPO}/releases/download/{tag}/{name}");
+            (name, url)
+        })
+        .collect();
+    Ok(Release { version, notes: String::new(), url, tag, assets })
 }
 
 /// The latest release if it is newer than this build.

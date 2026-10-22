@@ -670,8 +670,7 @@ impl CleanerView {
         let Some(c) = &mut self.confirm else { return };
         let n = self.checked.iter().filter(|c| **c).count();
         let mut go = None;
-        let resp = egui::Modal::new(egui::Id::unique("confirm-clean")).show(ctx, |ui| {
-            ui.set_width(440.0);
+        let resp = crate::gui::style::modal("confirm-clean", 440.0, ctx, |ui| {
             let p = Palette::get(ui.ctx());
             style::icon_tile(ui, icon::BROOM, p.accent, 44.0);
             ui.add_space(8.0);

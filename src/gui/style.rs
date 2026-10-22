@@ -1291,6 +1291,16 @@ pub fn tabs<T: PartialEq + Copy>(ui: &mut Ui, current: &mut T, items: &[(T, &str
     changed
 }
 
+/// A modal dialog `width` wide whose contents line up at the start of the reading direction.
+pub fn modal<R>(id: &str, width: f32, ctx: &egui::Context, add: impl FnOnce(&mut Ui) -> R) -> egui::ModalResponse<R> {
+    egui::Modal::new(egui::Id::unique(id)).show(ctx, |ui| {
+        // The width first, in egui's left-to-right layout: a right-to-left column in a dialog
+        // that sizes itself to its contents would otherwise stretch across the window.
+        ui.set_width(width);
+        column(ui, add).inner
+    })
+}
+
 /// A compact dropdown that matches buttons and inputs.
 pub fn dropdown<R>(ui: &mut Ui, id: &str, selected: &str, width: f32, contents: impl FnOnce(&mut Ui) -> R) -> Option<R> {
     let p = Palette::get(ui.ctx());
@@ -1299,12 +1309,44 @@ pub fn dropdown<R>(ui: &mut Ui, id: &str, selected: &str, width: f32, contents: 
         let w = &mut ui.visuals_mut().widgets;
         w.inactive.weak_bg_fill = p.surface;
         w.inactive.bg_stroke = Stroke::new(1.0, p.border);
-        let r = egui::ComboBox::from_id_salt(id).selected_text(vis(selected)).width(width).height(420.0).show_ui(ui, contents);
+        let (response, inner) = if rtl() {
+            dropdown_rtl(ui, id, selected, width, contents)
+        } else {
+            let r = egui::ComboBox::from_id_salt(id).selected_text(vis(selected)).width(width).height(420.0).show_ui(ui, contents);
+            (r.response, r.inner)
+        };
         // No label beside it: what it shows is its name for screen readers.
-        r.response.widget_info(|| egui::WidgetInfo::labeled(egui::Role::ComboBox, ui.is_enabled(), selected));
-        r.inner
+        response.widget_info(|| egui::WidgetInfo::labeled(egui::Role::ComboBox, ui.is_enabled(), selected));
+        inner
     })
     .inner
+}
+
+/// egui's ComboBox keeps its text on the left and its arrow on the right: the same button
+/// mirrored, opening the same menu with its items from the right.
+fn dropdown_rtl<R>(ui: &mut Ui, id: &str, selected: &str, width: f32, contents: impl FnOnce(&mut Ui) -> R) -> (egui::Response, Option<R>) {
+    let (rect, _) = ui.allocate_exact_size(Vec2::new(width, ui.spacing().interact_size.y), egui::Sense::hover());
+    let resp = ui.interact(rect, ui.make_persistent_id(id), egui::Sense::click());
+    if ui.is_rect_visible(rect) {
+        let v = ui.style().interact(&resp);
+        let painter = ui.painter();
+        let pad = ui.spacing().button_padding.x;
+        let icon_w = ui.spacing().icon_width;
+        painter.rect(rect.expand(v.expansion), v.corner_radius, v.weak_bg_fill, v.bg_stroke, egui::StrokeKind::Inside);
+        let arrow = egui::Rect::from_center_size(egui::pos2(rect.left() + pad + icon_w / 2.0, rect.center().y), Vec2::new(icon_w * 0.7, icon_w * 0.45));
+        painter.add(egui::Shape::rotated_triangle(arrow, 0.0, v.fg_stroke.color));
+        let font = egui::TextStyle::Button.resolve(ui.style());
+        let text = vstr(selected);
+        let room = rect.width() - 3.0 * pad - icon_w;
+        let text = rtl_truncated(&text, room, |s| painter.layout_no_wrap(s.to_string(), font.clone(), Color32::PLACEHOLDER).size().x).unwrap_or(text);
+        painter.text(egui::pos2(rect.right() - pad, rect.center().y), egui::Align2::RIGHT_CENTER, text, font, v.text_color());
+    }
+    let inner = egui::Popup::menu(&resp)
+        .width(width)
+        .layout(egui::Layout::top_down_justified(egui::Align::Max))
+        .show(|ui| egui::ScrollArea::vertical().max_height(420.0).show(ui, contents).inner)
+        .map(|r| r.inner);
+    (resp, inner)
 }
 
 /// Centered icon, title and text for empty pages.

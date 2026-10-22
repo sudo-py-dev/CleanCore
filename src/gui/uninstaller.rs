@@ -788,8 +788,7 @@ impl UninstallerView {
             return;
         };
         let mut done = None;
-        egui::Modal::new(egui::Id::unique("comment")).show(ctx, |ui| {
-            ui.set_width(420.0);
+        crate::gui::style::modal("comment", 420.0, ctx, |ui| {
             ui.add(style::Label::new(style::strong(tr("Comment")).size(18.0)));
             style::text_input(ui, text, "Shown under the program name", 400.0);
             ui.add_space(10.0);
@@ -1614,8 +1613,7 @@ impl UninstallerView {
         let mut close = false;
         let mut changed = false;
         let mut err: Option<String> = None;
-        egui::Modal::new(egui::Id::unique("groups-manager")).show(ctx, |ui| {
-            ui.set_width(460.0);
+        crate::gui::style::modal("groups-manager", 460.0, ctx, |ui| {
             ui.add(style::Label::new(style::strong(tr("Groups")).size(18.0)));
             ui.add(style::Label::new(style::muted(ui, tr("Programs are added to a group from their right-click menu.")).size(12.5)));
             ui.add_space(8.0);

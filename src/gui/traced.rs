@@ -646,8 +646,7 @@ impl TracedTab {
         let p = Palette::get(ctx);
         if let Some((id, name)) = &mut self.rename {
             let mut done = None;
-            egui::Modal::new(egui::Id::unique("rename-log")).show(ctx, |ui| {
-                ui.set_width(400.0);
+            crate::gui::style::modal("rename-log", 400.0, ctx, |ui| {
                 ui.add(style::Label::new(style::strong(tr("Rename log")).size(18.0)));
                 style::text_input(ui, name, "", 380.0);
                 ui.add_space(10.0);
@@ -673,8 +672,7 @@ impl TracedTab {
         }
         if let Some(id) = self.confirm_delete.clone() {
             let mut done = None;
-            egui::Modal::new(egui::Id::unique("delete-log")).show(ctx, |ui| {
-                ui.set_width(420.0);
+            crate::gui::style::modal("delete-log", 420.0, ctx, |ui| {
                 style::icon_tile(ui, icon::TRASH, p.danger, 44.0);
                 ui.add_space(8.0);
                 ui.add(style::Label::new(style::strong(tr("Delete this log?")).size(18.0)));
@@ -704,8 +702,7 @@ impl TracedTab {
         if let Some(ed) = &mut self.editor {
             let mut done = None;
             let mut remove = None;
-            egui::Modal::new(egui::Id::unique("edit-log")).show(ctx, |ui| {
-                ui.set_width(760.0);
+            crate::gui::style::modal("edit-log", 760.0, ctx, |ui| {
                 ui.set_max_height(620.0);
                 ui.add(style::Label::new(style::strong(tr("Edit log")).size(19.0)));
                 egui::Grid::new("edit-props").num_columns(2).spacing([16.0, 8.0]).show(ui, |ui| {

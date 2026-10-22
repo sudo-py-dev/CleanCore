@@ -155,8 +155,7 @@ impl HistoryView {
         if self.confirm {
             let open: Vec<&str> = self.running.iter().filter(|b| picked.iter().any(|i| i.browser == Some(**b))).map(|b| b.label()).collect();
             let (mut close, mut recheck) = (false, false);
-            egui::Modal::new(egui::Id::unique("history-confirm")).show(ui.ctx(), |ui| {
-                ui.set_width(440.0);
+            crate::gui::style::modal("history-confirm", 440.0, ui.ctx(), |ui| {
                 ui.add(style::Label::new(style::strong(crate::tf!("Clean {} item(s)?", picked.len())).size(18.0)));
                 ui.add_space(6.0);
                 ui.add(style::Label::new(style::muted(ui, tr("History, caches and recent lists are deleted for good; there is no backup of them."))));

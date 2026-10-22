@@ -239,8 +239,7 @@ impl SlopView {
     fn keep_away_dialog(&mut self, ctx: &egui::Context) {
         let Some(app) = self.keep_confirm else { return };
         let mut close = false;
-        egui::Modal::new(egui::Id::unique("keep-away-confirm")).show(ctx, |ui| {
-            ui.set_width(460.0);
+        crate::gui::style::modal("keep-away-confirm", 460.0, ctx, |ui| {
             ui.add(style::Label::new(style::strong(crate::tf!("Remove {} and keep it away?", app.name())).size(18.0)));
             ui.add_space(6.0);
             let what = match app {
@@ -526,8 +525,7 @@ impl SlopView {
             _ => Vec::new(),
         };
         let mut close = false;
-        egui::Modal::new(egui::Id::unique("slop-confirm")).show(ctx, |ui| {
-            ui.set_width(460.0);
+        crate::gui::style::modal("slop-confirm", 460.0, ctx, |ui| {
             ui.add(style::Label::new(style::strong(crate::tf!("Remove {} app(s)?", picked.len())).size(18.0)));
             ui.add_space(6.0);
             for f in picked.iter().take(10) {
