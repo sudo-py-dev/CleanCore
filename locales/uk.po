@@ -1588,6 +1588,9 @@ msgstr "Пошук попередньо встановлених застосу�
 msgid "Removed {} app(s)"
 msgstr "Видалено застосунків: {}"
 
+msgid "Removed {} app(s); {} were already gone"
+msgstr "Видалено застосунків: {}; уже були відсутні: {}"
+
 msgid "Removed {}; {} failed: {}"
 msgstr "Видалено: {}; помилок: {}: {}"
 

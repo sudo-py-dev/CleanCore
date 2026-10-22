@@ -1587,6 +1587,9 @@ msgstr ""
 msgid "Removed {} app(s)"
 msgstr ""
 
+msgid "Removed {} app(s); {} were already gone"
+msgstr ""
+
 msgid "Removed {}; {} failed: {}"
 msgstr ""
 

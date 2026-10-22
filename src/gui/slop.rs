@@ -149,8 +149,10 @@ impl SlopView {
             self.set_scan(s);
         }
         if let Some(r) = take(&mut self.removing) {
-            if r.failed.is_empty() {
+            if r.failed.is_empty() && r.skipped.is_empty() {
                 cx.info(crate::tf!("Removed {} app(s)", r.removed.len()));
+            } else if r.failed.is_empty() {
+                cx.info(crate::tf!("Removed {} app(s); {} were already gone", r.removed.len(), r.skipped.len()));
             } else {
                 cx.error(crate::tf!(
                     "Removed {}; {} failed: {}",

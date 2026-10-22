@@ -177,6 +177,8 @@ pub fn scan() -> Result<Scan> {
 #[derive(Debug, Default, Serialize)]
 pub struct RemoveReport {
     pub removed: Vec<String>,
+    /// Nothing of it was left to remove by the time it ran (already gone): not a failure.
+    pub skipped: Vec<String>,
     pub failed: Vec<(String, String)>,
 }
 
@@ -186,34 +188,86 @@ pub fn remove(settings: &crate::config::Settings, apps: &[Found], all_users: boo
     let mut r = RemoveReport::default();
     for f in apps {
         match remove_one(f, all_users, deprovision) {
-            Ok(()) => {
+            Ok(Outcome::Removed) => {
                 let _ = crate::uninstaller::remove(settings, f.app.name, "", crate::uninstaller::Operation::Uninstall, &[]);
                 r.removed.push(f.app.name.to_string());
             }
+            Ok(Outcome::AlreadyGone) => r.skipped.push(f.app.name.to_string()),
             Err(e) => r.failed.push((f.app.name.to_string(), format!("{e:#}"))),
         }
     }
     r
 }
 
-#[cfg(windows)]
-fn remove_one(f: &Found, all_users: bool, deprovision: bool) -> Result<()> {
-    let q = |s: &str| s.replace('\'', "''");
-    let mut script = String::from("$ErrorActionPreference = 'Stop'\n");
+#[derive(Debug)]
+enum Outcome {
+    Removed,
+    AlreadyGone,
+}
+
+/// The PowerShell that removes one catalog app. Packages are looked up again now, by name
+/// pattern (`DisplayName` for preinstalled copies), and each real package object is piped to
+/// its removal on its own: a copy that is already gone by then (removed together with the app,
+/// or never on this build of Windows) is a skip, not an error. One line per step:
+/// `OK`, `SKIP` or `FAIL` and what, then `LEFT` and what is still there at the end.
+pub fn removal_script(pattern: &str, all_users: bool, deprovision: bool) -> String {
+    let q = pattern.replace('\'', "''");
     let scope = if all_users { " -AllUsers" } else { "" };
-    for name in &f.packages {
-        script += &format!("Get-AppxPackage{scope} -Name '{}' | Remove-AppxPackage{scope}\n", q(name));
-    }
+    let mut s = format!(
+        r#"$ErrorActionPreference = 'Continue'
+$pattern = '{q}'
+$found = @(Get-AppxPackage{scope} -Name $pattern | Where-Object {{ -not $_.NonRemovable }})
+if ($found.Count -eq 0) {{ Write-Output "SKIP`tinstalled copy" }}
+foreach ($p in $found) {{
+  try {{ $p | Remove-AppxPackage{scope} -ErrorAction Stop; Write-Output "OK`t$($p.Name)" }}
+  catch {{ Write-Output "FAIL`t$($p.Name): $($_.Exception.Message)" }}
+}}
+"#
+    );
     if deprovision {
-        for p in &f.provisioned {
-            script += &format!("Remove-AppxProvisionedPackage -Online -PackageName '{}' | Out-Null\n", q(p));
-        }
+        s += r#"$prov = @(Get-AppxProvisionedPackage -Online | Where-Object { $_.DisplayName -like $pattern })
+if ($prov.Count -eq 0) { Write-Output "SKIP`tpreinstalled copy" }
+foreach ($p in $prov) {
+  try { $p | Remove-AppxProvisionedPackage -Online -ErrorAction Stop | Out-Null; Write-Output "OK`t$($p.DisplayName) (preinstalled)" }
+  catch { Write-Output "FAIL`t$($p.DisplayName) (preinstalled): $($_.Exception.Message)" }
+}
+"#;
     }
-    crate::platform::powershell(&script).map(|_| ())
+    s += &format!(
+        r#"Get-AppxPackage{scope} -Name $pattern | Where-Object {{ -not $_.NonRemovable }} | ForEach-Object {{ Write-Output "LEFT`t$($_.Name)" }}
+"#
+    );
+    if deprovision {
+        s += r#"Get-AppxProvisionedPackage -Online | Where-Object { $_.DisplayName -like $pattern } | ForEach-Object { Write-Output "LEFT`t$($_.DisplayName) (preinstalled)" }
+"#;
+    }
+    s
+}
+
+/// What the removal script printed: removed, already gone, or what failed (only what is
+/// actually still there counts; a step that failed on something now gone did no harm).
+fn outcome(output: &str) -> Result<Outcome> {
+    let lines = |tag: &str| output.lines().filter_map(|l| l.strip_prefix(tag).map(str::to_string)).collect::<Vec<_>>();
+    let (ok, fail, left) = (lines("OK\t"), lines("FAIL\t"), lines("LEFT\t"));
+    if !left.is_empty() {
+        let why = if fail.is_empty() { format!("still there: {}", left.join(", ")) } else { fail.join("; ") };
+        let hint = if why.contains("cannot find the path specified") {
+            ". If this keeps happening, Windows' component store may be damaged: run DISM /Online /Cleanup-Image /RestoreHealth as administrator, then try again"
+        } else {
+            ""
+        };
+        anyhow::bail!("{why}{hint}");
+    }
+    Ok(if ok.is_empty() { Outcome::AlreadyGone } else { Outcome::Removed })
+}
+
+#[cfg(windows)]
+fn remove_one(f: &Found, all_users: bool, deprovision: bool) -> Result<Outcome> {
+    outcome(&crate::platform::powershell(&removal_script(f.app.pattern, all_users, deprovision))?)
 }
 
 #[cfg(not(windows))]
-fn remove_one(_: &Found, _: bool, _: bool) -> Result<()> {
+fn remove_one(_: &Found, _: bool, _: bool) -> Result<Outcome> {
     anyhow::bail!("the Microsoft slop cleaner is for Windows")
 }
 
@@ -236,6 +290,38 @@ mod tests {
                 assert!(!crate::pathutil::wildcard(a.pattern, p), "{} matches {p}", a.pattern);
             }
         }
+    }
+
+    #[test]
+    fn removal_looks_packages_up_by_name_and_tries_each_on_its_own() {
+        let s = removal_script("Microsoft.GetHelp", true, true);
+        assert!(s.contains("$pattern = 'Microsoft.GetHelp'"));
+        assert!(s.contains("Get-AppxPackage -AllUsers -Name $pattern"));
+        assert!(s.contains("$p | Remove-AppxPackage -AllUsers -ErrorAction Stop"));
+        // Preinstalled copies by DisplayName, piped as objects; never by a short -PackageName.
+        assert!(s.contains("Where-Object { $_.DisplayName -like $pattern }"));
+        assert!(s.contains("$p | Remove-AppxProvisionedPackage -Online -ErrorAction Stop"));
+        assert!(!s.contains("-PackageName"));
+        assert!(!s.contains("'Stop'\n"));
+        // This user only, no preinstalled copies: neither -AllUsers nor DISM.
+        let s = removal_script("king.com.*", false, false);
+        assert!(!s.contains("-AllUsers") && !s.contains("Provisioned"));
+        // Quotes in a pattern can't break out of the string.
+        assert!(removal_script("a'b", false, false).contains("$pattern = 'a''b'"));
+    }
+
+    #[test]
+    fn reads_the_removal_outcome() {
+        assert!(matches!(outcome("OK\tMicrosoft.GetHelp\nSKIP\tpreinstalled copy\n"), Ok(Outcome::Removed)));
+        // Nothing there any more: a skip, not a failure.
+        assert!(matches!(outcome("SKIP\tinstalled copy\nSKIP\tpreinstalled copy\n"), Ok(Outcome::AlreadyGone)));
+        // DISM failed on a copy that is gone anyway: no harm done.
+        assert!(matches!(outcome("OK\tMicrosoft.GetHelp\nFAIL\tGetHelp (preinstalled): The system cannot find the path specified.\n"), Ok(Outcome::Removed)));
+        // Still there: a failure, with the DISM hint for that error.
+        let e = outcome("FAIL\tGetHelp (preinstalled): The system cannot find the path specified.\nLEFT\tGetHelp (preinstalled)\n").unwrap_err().to_string();
+        assert!(e.contains("RestoreHealth"), "{e}");
+        let e = outcome("LEFT\tMicrosoft.GetHelp\n").unwrap_err().to_string();
+        assert!(e.contains("still there"), "{e}");
     }
 
     #[test]

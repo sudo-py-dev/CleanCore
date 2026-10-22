@@ -1589,6 +1589,9 @@ msgstr "מחפש אפליקציות מותקנות מראש"
 msgid "Removed {} app(s)"
 msgstr "הוסרו {} אפליקציות"
 
+msgid "Removed {} app(s); {} were already gone"
+msgstr "הוסרו {} אפליקציות; {} כבר לא היו"
+
 msgid "Removed {}; {} failed: {}"
 msgstr "הוסרו {}; {} נכשלו: {}"
 

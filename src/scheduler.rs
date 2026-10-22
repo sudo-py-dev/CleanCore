@@ -340,6 +340,9 @@ fn run_action(settings: &Settings, task: &Task) -> Result<String> {
             // and the preinstalled copies too, so they stay away.
             let r = crate::slop::remove(settings, &back, scan.admin, scan.admin);
             let mut s = format!("removed {}", if r.removed.is_empty() { "nothing".to_string() } else { r.removed.join(", ") });
+            if !r.skipped.is_empty() {
+                s.push_str(&format!("; already gone: {}", r.skipped.join(", ")));
+            }
             if !r.failed.is_empty() {
                 s.push_str(&format!("; failed: {}", r.failed.iter().map(|(n, e)| format!("{n} ({e})")).collect::<Vec<_>>().join("; ")));
                 anyhow::bail!(s);

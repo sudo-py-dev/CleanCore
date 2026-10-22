@@ -1588,6 +1588,9 @@ msgstr "Recherche des applications préinstallées"
 msgid "Removed {} app(s)"
 msgstr "{} application(s) supprimée(s)"
 
+msgid "Removed {} app(s); {} were already gone"
+msgstr "{} application(s) supprimée(s) ; {} n'étaient déjà plus là"
+
 msgid "Removed {}; {} failed: {}"
 msgstr "{} supprimées ; {} en échec : {}"
 

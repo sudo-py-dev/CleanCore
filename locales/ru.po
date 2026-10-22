@@ -1588,6 +1588,9 @@ msgstr "Поиск предустановленных приложений"
 msgid "Removed {} app(s)"
 msgstr "Удалено приложений: {}"
 
+msgid "Removed {} app(s); {} were already gone"
+msgstr "Удалено приложений: {}; уже отсутствовали: {}"
+
 msgid "Removed {}; {} failed: {}"
 msgstr "Удалено: {}; ошибок: {}: {}"
 
