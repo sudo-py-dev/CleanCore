@@ -29,6 +29,19 @@
   <img src="docs/uninstall.png" width="820" alt="Leftovers after an uninstall">
 </p>
 
+## Install
+
+Download from the [latest release](https://github.com/sudo-py-dev/CleanCore/releases/latest):
+
+| System | File |
+| --- | --- |
+| Windows | `cleancore-<version>-windows-x64-setup.exe`: a setup wizard with Start menu entry, optional desktop shortcut and an uninstaller in Apps & features. Or the `.zip` to run without installing. |
+| Debian, Ubuntu and derivatives | `cleancore_<version>_amd64.deb` |
+| Other Linux (x86_64) | `cleancore-<version>-linux-x86_64.tar.gz` |
+
+CleanCore updates itself from Settings › Updates (or `cleancore update`), and checks every
+download against the release's signature first.
+
 ## Languages
 
 English, עברית, Español, Français, Deutsch, Русский and Українська. CleanCore follows your

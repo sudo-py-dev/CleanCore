@@ -53,10 +53,21 @@ jobs:
           $v = "$env:GITHUB_REF_NAME".TrimStart("v")
           New-Item -ItemType Directory -Force out | Out-Null
           Compress-Archive -Path target/release/cleancore.exe, target/release/cleancore-gui.exe, README.md, LICENSE -DestinationPath "out/cleancore-$v-windows-x64.zip"
+      # The setup wizard (Inno Setup): cleancore-<version>-windows-x64-setup.exe
+      - name: Setup wizard
+        shell: pwsh
+        run: |
+          $v = "$env:GITHUB_REF_NAME".TrimStart("v")
+          $iscc = "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe"
+          if (-not (Test-Path $iscc)) { choco install innosetup -y --no-progress }
+          & $iscc /Qp "/DAppVersion=$v" "/DBinDir=$pwd\target\release" "/DOutDir=$pwd\out" packaging\windows\cleancore.iss
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
       - uses: actions/upload-artifact@v4
         with:
           name: windows
-          path: out/*.zip
+          path: |
+            out/*.zip
+            out/*-setup.exe
 
   publish:
     name: Sign and publish

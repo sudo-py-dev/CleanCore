@@ -59,3 +59,18 @@ jobs:
         run: cargo build --all-targets --locked
       - name: Tests
         run: cargo test --locked
+      # The release's setup wizard still builds (from the debug binaries here).
+      - name: Setup wizard
+        shell: pwsh
+        run: |
+          $v = (Select-String -Path Cargo.toml -Pattern '^version = "(.*)"' | Select-Object -First 1).Matches[0].Groups[1].Value
+          $iscc = "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe"
+          if (-not (Test-Path $iscc)) { choco install innosetup -y --no-progress }
+          & $iscc /Qp "/DAppVersion=$v" "/DBinDir=$pwd\target\debug" "/DOutDir=$pwd\out" packaging\windows\cleancore.iss
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          Get-ChildItem out
+      - uses: actions/upload-artifact@v4
+        with:
+          name: windows-setup
+          path: out/*-setup.exe
+          if-no-files-found: error

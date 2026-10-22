@@ -49,12 +49,16 @@ pub enum Install {
     Deb,
     /// An unpacked .tar.gz (Linux) or .zip (Windows): the binaries are replaced in place.
     Archive,
+    /// Installed with the Windows setup wizard: the newer setup runs over it, silently.
+    Setup,
 }
 
 pub fn install_kind() -> Install {
     let exe = std::env::current_exe().unwrap_or_default();
     if cfg!(target_os = "linux") && exe.starts_with("/usr/bin") && Path::new("/var/lib/dpkg/info/cleancore.list").exists() {
         Install::Deb
+    } else if cfg!(windows) && exe.parent().is_some_and(|d| d.join("unins000.exe").exists()) {
+        Install::Setup
     } else {
         Install::Archive
     }
@@ -63,9 +67,10 @@ pub fn install_kind() -> Install {
 /// The file of `release` meant for this system and install kind.
 pub fn asset_name(version: &str, kind: Install) -> String {
     match (cfg!(windows), kind) {
+        (true, Install::Setup) => format!("cleancore-{version}-windows-x64-setup.exe"),
         (true, _) => format!("cleancore-{version}-windows-x64.zip"),
         (false, Install::Deb) => format!("cleancore_{version}_amd64.deb"),
-        (false, Install::Archive) => format!("cleancore-{version}-linux-x86_64.tar.gz"),
+        (false, _) => format!("cleancore-{version}-linux-x86_64.tar.gz"),
     }
 }
 
@@ -176,6 +181,12 @@ pub fn install(file: &Path) -> Result<String> {
             bail!("the package manager did not install the update");
         }
         return Ok("Updated. Restart CleanCore to use the new version.".into());
+    }
+    if file.extension().is_some_and(|e| e == "exe") {
+        // The setup wizard, without its pages: it closes CleanCore, updates the install (and its
+        // entry in Apps & features) and starts CleanCore again.
+        Command::new(file).args(["/SILENT", "/SUPPRESSMSGBOXES", "/NORESTART", "/CLOSEAPPLICATIONS", "/RESTARTAPPLICATIONS"]).spawn().context("starting the setup")?;
+        return Ok("Installing the update. CleanCore closes and starts again when it is done.".into());
     }
     let unpacked = file.with_extension("unpacked");
     let _ = std::fs::remove_dir_all(&unpacked);
