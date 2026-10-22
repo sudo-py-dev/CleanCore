@@ -1334,7 +1334,14 @@ pub fn nav_item(ui: &mut Ui, icon: &str, label: &str, selected: bool) -> egui::R
     let label = tr(label);
     let p = Palette::get(ui.ctx());
     // Shorter entries when the window is short, so the whole list fits without scrolling.
-    let h = if ui.ctx().content_rect().height() < 700.0 { 34.0 } else { 38.0 };
+    let screen_h = ui.ctx().content_rect().height();
+    let h = if screen_h < 640.0 {
+        32.0
+    } else if screen_h < 700.0 {
+        34.0
+    } else {
+        38.0
+    };
     let (rect, resp) = ui.allocate_exact_size(Vec2::new(ui.available_width(), h), egui::Sense::click());
     resp.widget_info(|| egui::WidgetInfo::selected(egui::Role::Button, true, selected, label));
     let t = ui.ctx().animate_bool_with_time(resp.id.with("hover"), resp.hovered() && !selected, FADE);

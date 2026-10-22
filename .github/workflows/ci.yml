@@ -59,6 +59,12 @@ jobs:
         run: cargo build --all-targets --locked
       - name: Tests
         run: cargo test --locked
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: gui-screenshots-windows
+          path: target/gui-shots/
+          if-no-files-found: ignore
       # The release's setup wizard still builds (from the debug binaries here).
       - name: Setup wizard
         shell: pwsh

@@ -751,8 +751,23 @@ msgstr "CleanCore ausblenden und ein kleines Ziel über allen Fenstern behalten"
 msgid "Refresh running programs"
 msgstr "Laufende Programme aktualisieren"
 
+msgid "Close {} and delete its program file?"
+msgstr "{} schließen und die Programmdatei löschen?"
+
+msgid "Unsaved work in it is lost. The file is backed up and can be restored from Backups."
+msgstr "Ungespeicherte Arbeit geht verloren. Die Datei wird gesichert und kann unter „Sicherungen“ wiederhergestellt werden."
+
+msgid "Close and delete"
+msgstr "Schließen und löschen"
+
+msgid "Deleted {}. Backup: {id}"
+msgstr "{} gelöscht. Sicherung: {id}"
+
 msgid "Hunter target: drag onto a window"
 msgstr "Jagdziel: auf ein Fenster ziehen"
+
+msgid "Now let go over the window"
+msgstr "Jetzt über dem Fenster loslassen"
 
 msgid "Drag the target onto a window"
 msgstr "Ziehen Sie das Ziel auf ein Fenster"
@@ -778,29 +793,20 @@ msgstr "Laufende Programme"
 msgid "Filter"
 msgstr "Filter"
 
+msgid "All processes"
+msgstr "Alle Prozesse"
+
 msgid "Show all processes"
 msgstr "Alle Prozesse anzeigen"
 
-msgid "All processes"
-msgstr "Alle Prozesse"
+msgid "No running programs match."
+msgstr "Keine laufenden Programme passen."
 
 msgid "No target yet"
 msgstr "Noch kein Ziel"
 
 msgid "Drag the crosshair onto a window or pick a running program."
 msgstr "Ziehen Sie das Fadenkreuz auf ein Fenster oder wählen Sie ein laufendes Programm."
-
-msgid "Close {} and delete its program file?"
-msgstr "{} schließen und die Programmdatei löschen?"
-
-msgid "Unsaved work in it is lost. The file is backed up and can be restored from Backups."
-msgstr "Ungespeicherte Arbeit geht verloren. Die Datei wird gesichert und kann unter „Sicherungen“ wiederhergestellt werden."
-
-msgid "Close and delete"
-msgstr "Schließen und löschen"
-
-msgid "Deleted {}. Backup: {id}"
-msgstr "{} gelöscht. Sicherung: {id}"
 
 msgid "{} · {n} process(es)"
 msgstr "{} · {n} Prozess(e)"
@@ -1093,17 +1099,17 @@ msgstr "Tägliche Sicherung"
 msgid "Uninstaller & cleaner"
 msgstr "Deinstallation & Bereinigung"
 
-msgid "Recorder running"
-msgstr "Aufzeichnung läuft"
-
-msgid "Recorder stopped"
-msgstr "Aufzeichnung gestoppt"
-
 msgid "Switch to light"
 msgstr "Zum hellen Design wechseln"
 
 msgid "Switch to dark"
 msgstr "Zum dunklen Design wechseln"
+
+msgid "Recorder running"
+msgstr "Aufzeichnung läuft"
+
+msgid "Recorder stopped"
+msgstr "Aufzeichnung gestoppt"
 
 msgid "Notifications ({unread} new)"
 msgstr "Benachrichtigungen ({unread} neu)"

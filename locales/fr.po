@@ -751,8 +751,23 @@ msgstr "Masquer CleanCore et garder une petite cible au-dessus de toutes les fen
 msgid "Refresh running programs"
 msgstr "Actualiser les programmes en cours"
 
+msgid "Close {} and delete its program file?"
+msgstr "Fermer {} et supprimer son fichier programme ?"
+
+msgid "Unsaved work in it is lost. The file is backed up and can be restored from Backups."
+msgstr "Le travail non enregistré sera perdu. Le fichier est sauvegardé et peut être restauré depuis Sauvegardes."
+
+msgid "Close and delete"
+msgstr "Fermer et supprimer"
+
+msgid "Deleted {}. Backup: {id}"
+msgstr "{} supprimé. Sauvegarde : {id}"
+
 msgid "Hunter target: drag onto a window"
 msgstr "Cible : faites-la glisser sur une fenêtre"
+
+msgid "Now let go over the window"
+msgstr "Relâchez maintenant au-dessus de la fenêtre"
 
 msgid "Drag the target onto a window"
 msgstr "Faites glisser la cible sur une fenêtre"
@@ -778,29 +793,20 @@ msgstr "Programmes en cours"
 msgid "Filter"
 msgstr "Filtrer"
 
+msgid "All processes"
+msgstr "Tous les processus"
+
 msgid "Show all processes"
 msgstr "Afficher tous les processus"
 
-msgid "All processes"
-msgstr "Tous les processus"
+msgid "No running programs match."
+msgstr "Aucun programme en cours ne correspond."
 
 msgid "No target yet"
 msgstr "Pas encore de cible"
 
 msgid "Drag the crosshair onto a window or pick a running program."
 msgstr "Faites glisser le viseur sur une fenêtre ou choisissez un programme en cours."
-
-msgid "Close {} and delete its program file?"
-msgstr "Fermer {} et supprimer son fichier programme ?"
-
-msgid "Unsaved work in it is lost. The file is backed up and can be restored from Backups."
-msgstr "Le travail non enregistré sera perdu. Le fichier est sauvegardé et peut être restauré depuis Sauvegardes."
-
-msgid "Close and delete"
-msgstr "Fermer et supprimer"
-
-msgid "Deleted {}. Backup: {id}"
-msgstr "{} supprimé. Sauvegarde : {id}"
 
 msgid "{} · {n} process(es)"
 msgstr "{} · {n} processus"
@@ -1093,17 +1099,17 @@ msgstr "Sauvegarde quotidienne"
 msgid "Uninstaller & cleaner"
 msgstr "Désinstallateur et nettoyeur"
 
-msgid "Recorder running"
-msgstr "Enregistreur actif"
-
-msgid "Recorder stopped"
-msgstr "Enregistreur arrêté"
-
 msgid "Switch to light"
 msgstr "Passer au thème clair"
 
 msgid "Switch to dark"
 msgstr "Passer au thème sombre"
+
+msgid "Recorder running"
+msgstr "Enregistreur actif"
+
+msgid "Recorder stopped"
+msgstr "Enregistreur arrêté"
 
 msgid "Notifications ({unread} new)"
 msgstr "Notifications ({unread} nouvelles)"

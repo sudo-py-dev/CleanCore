@@ -752,8 +752,23 @@ msgstr "הסתר את CleanCore והשאר מטרה קטנה מעל כל החל�
 msgid "Refresh running programs"
 msgstr "רענן תוכנות פועלות"
 
+msgid "Close {} and delete its program file?"
+msgstr "לסגור את {} ולמחוק את קובץ התוכנה שלו?"
+
+msgid "Unsaved work in it is lost. The file is backed up and can be restored from Backups."
+msgstr "עבודה שלא נשמרה בו תאבד. הקובץ מגובה וניתן לשחזר אותו מהגיבויים."
+
+msgid "Close and delete"
+msgstr "סגור ומחק"
+
+msgid "Deleted {}. Backup: {id}"
+msgstr "{} נמחק. גיבוי: {id}"
+
 msgid "Hunter target: drag onto a window"
 msgstr "מטרת צייד: גרור אל חלון"
+
+msgid "Now let go over the window"
+msgstr "עכשיו שחרר מעל החלון"
 
 msgid "Drag the target onto a window"
 msgstr "גרור את המטרה אל חלון"
@@ -779,29 +794,20 @@ msgstr "תוכנות פועלות"
 msgid "Filter"
 msgstr "סינון"
 
+msgid "All processes"
+msgstr "כל התהליכים"
+
 msgid "Show all processes"
 msgstr "הצג את כל התהליכים"
 
-msgid "All processes"
-msgstr "כל התהליכים"
+msgid "No running programs match."
+msgstr "אין תוכנות פועלות שמתאימות."
 
 msgid "No target yet"
 msgstr "עדיין אין מטרה"
 
 msgid "Drag the crosshair onto a window or pick a running program."
 msgstr "גרור את הכוונת אל חלון או בחר תוכנה פועלת."
-
-msgid "Close {} and delete its program file?"
-msgstr "לסגור את {} ולמחוק את קובץ התוכנה שלו?"
-
-msgid "Unsaved work in it is lost. The file is backed up and can be restored from Backups."
-msgstr "עבודה שלא נשמרה בו תאבד. הקובץ מגובה וניתן לשחזר אותו מהגיבויים."
-
-msgid "Close and delete"
-msgstr "סגור ומחק"
-
-msgid "Deleted {}. Backup: {id}"
-msgstr "{} נמחק. גיבוי: {id}"
 
 msgid "{} · {n} process(es)"
 msgstr "{} · {n} תהליכים"
@@ -1094,17 +1100,17 @@ msgstr "גיבוי יומי"
 msgid "Uninstaller & cleaner"
 msgstr "הסרת תוכנות וניקוי"
 
-msgid "Recorder running"
-msgstr "המקליט פועל"
-
-msgid "Recorder stopped"
-msgstr "המקליט עצור"
-
 msgid "Switch to light"
 msgstr "עבור למצב בהיר"
 
 msgid "Switch to dark"
 msgstr "עבור למצב כהה"
+
+msgid "Recorder running"
+msgstr "המקליט פועל"
+
+msgid "Recorder stopped"
+msgstr "המקליט עצור"
 
 msgid "Notifications ({unread} new)"
 msgstr "התראות ({unread} חדשות)"

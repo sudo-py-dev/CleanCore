@@ -329,9 +329,11 @@ impl App {
         egui::Panel::bottom("sidebar-bottom").frame(egui::Frame::NONE).show_separator_line(false).resizable(false).show(ui, |ui| {
             ui.add_space(8.0);
             let rec = crate::watcher::recorder_running();
-            egui::Frame::new().fill(p.surface_alt).corner_radius(8).inner_margin(egui::Margin::symmetric(10, 6)).show(ui, |ui| {
+            // The recorder's state, with the theme switch and notifications at its far end.
+            egui::Frame::new().fill(p.surface_alt).corner_radius(10).inner_margin(egui::Margin { left: 10, right: 2, top: 1, bottom: 1 }).show(ui, |ui| {
                 ui.set_width(ui.available_width());
                 crate::gui::style::row(ui, |ui| {
+                    ui.spacing_mut().item_spacing.x = 6.0;
                     let (r, _) = ui.allocate_exact_size(Vec2::splat(8.0), egui::Sense::hover());
                     if rec {
                         // A slow pulse while recording.
@@ -341,31 +343,32 @@ impl App {
                         ui.ctx().request_repaint_after(Duration::from_millis(33));
                     }
                     ui.painter().circle_filled(r.center(), 4.0, if rec { p.success } else { p.faint });
-                    ui.add(style::Label::new(style::rich(if rec { tr("Recorder running") } else { tr("Recorder stopped") }).size(12.5).color(p.muted)));
+                    ui.with_layout(crate::gui::style::far_layout(egui::Align::Center), |ui| {
+                        ui.spacing_mut().item_spacing.x = 0.0;
+                        self.notifications_button(ui);
+                        let dark = p.dark;
+                        if style::icon_button(ui, if dark { icon::SUN } else { icon::MOON }, if dark { tr("Switch to light") } else { tr("Switch to dark") }).clicked() {
+                            self.settings.gui_theme = Some(if dark { "light" } else { "dark" }.into());
+                            apply_theme(ui.ctx(), &self.settings);
+                            let _ = self.settings.save();
+                        }
+                        ui.with_layout(crate::gui::style::near_layout(egui::Align::Center), |ui| {
+                            ui.add(style::Label::new(style::rich(if rec { tr("Recorder running") } else { tr("Recorder stopped") }).size(12.0).color(p.muted)).truncate());
+                        });
+                    });
                 });
             });
             ui.add_space(4.0);
-            // Settings, with the theme switch and notifications on the same row.
-            crate::gui::style::row(ui, |ui| {
-                ui.spacing_mut().item_spacing.x = 2.0;
-                let w = ui.available_width() - 2.0 * 34.0 - 6.0;
-                let r = ui.allocate_ui(Vec2::new(w, 38.0), |ui| style::nav_item(ui, Tool::Settings.icon(), Tool::Settings.label(), self.tool == Tool::Settings)).inner;
-                if self.tool == Tool::Settings {
-                    selected_rect = Some(r.rect);
-                    selected_clip = ui.clip_rect();
-                }
-                if r.clicked() {
-                    self.switch(Tool::Settings);
-                }
-                let dark = p.dark;
-                if style::icon_button(ui, if dark { icon::SUN } else { icon::MOON }, if dark { tr("Switch to light") } else { tr("Switch to dark") }).clicked() {
-                    self.settings.gui_theme = Some(if dark { "light" } else { "dark" }.into());
-                    apply_theme(ui.ctx(), &self.settings);
-                    let _ = self.settings.save();
-                }
-                self.notifications_button(ui);
-            });
-            ui.add_space(12.0);
+            // Settings: a full-width entry like the ones above, so it lines up with them.
+            let r = style::nav_item(ui, Tool::Settings.icon(), Tool::Settings.label(), self.tool == Tool::Settings);
+            if self.tool == Tool::Settings {
+                selected_rect = Some(r.rect);
+                selected_clip = ui.clip_rect();
+            }
+            if r.clicked() {
+                self.switch(Tool::Settings);
+            }
+            ui.add_space(8.0);
         });
 
         egui::ScrollArea::vertical().auto_shrink([false, false]).show(ui, |ui| {
@@ -402,7 +405,10 @@ impl App {
         let r = style::icon_button(ui, icon::BELL, &tip);
         if unread > 0 {
             let p = Palette::get(ui.ctx());
-            ui.painter().circle_filled(r.rect.right_top() + Vec2::new(-7.0, 7.0), 4.0, p.danger);
+            // Inside the button, with a ring in the background color so it reads as a badge.
+            let c = r.rect.right_top() + Vec2::new(-9.0, 9.0);
+            ui.painter().circle_filled(c, 4.5, p.surface_alt);
+            ui.painter().circle_filled(c, 3.5, p.danger);
         }
         egui::Popup::menu(&r).width(380.0).show(|ui| {
             self.seen_notices = self.notices.len();

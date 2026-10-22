@@ -750,7 +750,22 @@ msgstr ""
 msgid "Refresh running programs"
 msgstr ""
 
+msgid "Close {} and delete its program file?"
+msgstr ""
+
+msgid "Unsaved work in it is lost. The file is backed up and can be restored from Backups."
+msgstr ""
+
+msgid "Close and delete"
+msgstr ""
+
+msgid "Deleted {}. Backup: {id}"
+msgstr ""
+
 msgid "Hunter target: drag onto a window"
+msgstr ""
+
+msgid "Now let go over the window"
 msgstr ""
 
 msgid "Drag the target onto a window"
@@ -777,28 +792,19 @@ msgstr ""
 msgid "Filter"
 msgstr ""
 
+msgid "All processes"
+msgstr ""
+
 msgid "Show all processes"
 msgstr ""
 
-msgid "All processes"
+msgid "No running programs match."
 msgstr ""
 
 msgid "No target yet"
 msgstr ""
 
 msgid "Drag the crosshair onto a window or pick a running program."
-msgstr ""
-
-msgid "Close {} and delete its program file?"
-msgstr ""
-
-msgid "Unsaved work in it is lost. The file is backed up and can be restored from Backups."
-msgstr ""
-
-msgid "Close and delete"
-msgstr ""
-
-msgid "Deleted {}. Backup: {id}"
 msgstr ""
 
 msgid "{} · {n} process(es)"
@@ -1092,16 +1098,16 @@ msgstr ""
 msgid "Uninstaller & cleaner"
 msgstr ""
 
-msgid "Recorder running"
-msgstr ""
-
-msgid "Recorder stopped"
-msgstr ""
-
 msgid "Switch to light"
 msgstr ""
 
 msgid "Switch to dark"
+msgstr ""
+
+msgid "Recorder running"
+msgstr ""
+
+msgid "Recorder stopped"
 msgstr ""
 
 msgid "Notifications ({unread} new)"

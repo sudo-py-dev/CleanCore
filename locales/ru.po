@@ -751,8 +751,23 @@ msgstr "Скрыть CleanCore и держать маленькую мишень
 msgid "Refresh running programs"
 msgstr "Обновить запущенные программы"
 
+msgid "Close {} and delete its program file?"
+msgstr "Закрыть {} и удалить файл программы?"
+
+msgid "Unsaved work in it is lost. The file is backed up and can be restored from Backups."
+msgstr "Несохранённая работа будет потеряна. Файл сохраняется в резервной копии и может быть восстановлен."
+
+msgid "Close and delete"
+msgstr "Закрыть и удалить"
+
+msgid "Deleted {}. Backup: {id}"
+msgstr "{} удалён. Резервная копия: {id}"
+
 msgid "Hunter target: drag onto a window"
 msgstr "Мишень: перетащите на окно"
+
+msgid "Now let go over the window"
+msgstr "Теперь отпустите над окном"
 
 msgid "Drag the target onto a window"
 msgstr "Перетащите мишень на окно"
@@ -778,29 +793,20 @@ msgstr "Запущенные программы"
 msgid "Filter"
 msgstr "Фильтр"
 
+msgid "All processes"
+msgstr "Все процессы"
+
 msgid "Show all processes"
 msgstr "Показать все процессы"
 
-msgid "All processes"
-msgstr "Все процессы"
+msgid "No running programs match."
+msgstr "Нет подходящих запущенных программ."
 
 msgid "No target yet"
 msgstr "Цель не выбрана"
 
 msgid "Drag the crosshair onto a window or pick a running program."
 msgstr "Перетащите прицел на окно или выберите запущенную программу."
-
-msgid "Close {} and delete its program file?"
-msgstr "Закрыть {} и удалить файл программы?"
-
-msgid "Unsaved work in it is lost. The file is backed up and can be restored from Backups."
-msgstr "Несохранённая работа будет потеряна. Файл сохраняется в резервной копии и может быть восстановлен."
-
-msgid "Close and delete"
-msgstr "Закрыть и удалить"
-
-msgid "Deleted {}. Backup: {id}"
-msgstr "{} удалён. Резервная копия: {id}"
 
 msgid "{} · {n} process(es)"
 msgstr "{} · процессов: {n}"
@@ -1093,17 +1099,17 @@ msgstr "Ежедневная копия"
 msgid "Uninstaller & cleaner"
 msgstr "Удаление и очистка"
 
-msgid "Recorder running"
-msgstr "Запись идёт"
-
-msgid "Recorder stopped"
-msgstr "Запись остановлена"
-
 msgid "Switch to light"
 msgstr "Светлая тема"
 
 msgid "Switch to dark"
 msgstr "Тёмная тема"
+
+msgid "Recorder running"
+msgstr "Запись идёт"
+
+msgid "Recorder stopped"
+msgstr "Запись остановлена"
 
 msgid "Notifications ({unread} new)"
 msgstr "Уведомления (новых: {unread})"
