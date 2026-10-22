@@ -542,7 +542,7 @@ impl CleanerView {
                 ui.add_enabled_ui(!busy, |ui| new_scan = style::ghost(ui, icon::UNDO, "New scan").clicked());
                 let r = style::ghost(ui, icon::EXPORT, "Export");
                 let results = &self.results;
-                super::export_menu(&r, cx, &mut self.export_path, "File (.txt .csv .html .xml .json)", |f| {
+                super::export_menu(&r, cx, &mut self.export_path, "File (.txt .csv .xlsx .html .xml .json)", |f| {
                     crate::export::export(results, f)?;
                     Ok(crate::tf!("Exported to {}", f.display()))
                 });

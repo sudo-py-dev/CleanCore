@@ -1,4 +1,4 @@
-//! "Export List to": TXT, CSV, HTML, XML, JSON.
+//! "Export List to": TXT, CSV, Excel, HTML, XML, JSON.
 
 use crate::model::Issue;
 use anyhow::{bail, Result};
@@ -7,13 +7,17 @@ use std::path::Path;
 
 pub fn export(issues: &[Issue], path: &Path) -> Result<()> {
     let ext = path.extension().and_then(|e| e.to_str()).unwrap_or("txt").to_ascii_lowercase();
+    if ext == "xlsx" {
+        let rows: Vec<Vec<String>> = issues.iter().map(|i| vec![i.category.to_string(), i.location.clone(), i.detail.clone()]).collect();
+        return crate::xlsx::write(path, "Scan results", &["Category", "Location", "Detail"], &rows);
+    }
     let body = match ext.as_str() {
         "txt" => to_txt(issues),
         "csv" => to_csv(issues),
         "html" | "htm" => to_html(issues),
         "xml" => to_xml(issues),
         "json" => serde_json::to_string_pretty(issues)?,
-        other => bail!("unsupported export format '.{other}' (txt, csv, html, xml, json)"),
+        other => bail!("unsupported export format '.{other}' (txt, csv, xlsx, html, xml, json)"),
     };
     std::fs::write(path, body)?;
     Ok(())

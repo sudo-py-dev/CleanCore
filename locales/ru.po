@@ -34,8 +34,8 @@ msgstr "Элементы, программа которых больше не с
 msgid "Remove disabled entries ({n_disabled})"
 msgstr "Удалить отключённые ({n_disabled})"
 
-msgid "Export (.txt .html .csv .json)"
-msgstr "Экспорт (.txt .html .csv .json)"
+msgid "Export (.txt .html .csv .xlsx .json)"
+msgstr "Экспорт (.txt .html .csv .xlsx .json)"
 
 msgid "Exported {} entries to {}"
 msgstr "Экспортировано элементов: {} в {}"
@@ -532,8 +532,8 @@ msgstr "Всё проверенное в порядке."
 msgid "Export"
 msgstr "Экспорт"
 
-msgid "File (.txt .csv .html .xml .json)"
-msgstr "Файл (.txt .csv .html .xml .json)"
+msgid "File (.txt .csv .xlsx .html .xml .json)"
+msgstr "Файл (.txt .csv .xlsx .html .xml .json)"
 
 msgid "Exported to {}"
 msgstr "Экспортировано в {}"
@@ -2368,8 +2368,8 @@ msgstr "Удалить программу, которой нет в списке
 msgid "Record an installation so it can be undone exactly"
 msgstr "Записать установку, чтобы её можно было точно отменить"
 
-msgid "File (.txt .html .csv .json)"
-msgstr "Файл (.txt .html .csv .json)"
+msgid "File (.txt .html .csv .xlsx .json)"
+msgstr "Файл (.txt .html .csv .xlsx .json)"
 
 msgid "Exported {} programs to {}"
 msgstr "Экспортировано программ: {} в {}"
@@ -3067,8 +3067,8 @@ msgstr "Очистить его изменения"
 msgid "Export its changes"
 msgstr "Экспортировать его изменения"
 
-msgid "File (.txt .csv .json)"
-msgstr "Файл (.txt .csv .json)"
+msgid "File (.txt .csv .xlsx .json)"
+msgstr "Файл (.txt .csv .xlsx .json)"
 
 msgid "Pause watching"
 msgstr "Приостановить наблюдение"
@@ -4311,6 +4311,9 @@ msgstr "{} снова разрешено и установлено заново.
 
 msgid "{} is allowed again. Reinstall it from microsoft.com or the Microsoft Store."
 msgstr "{} снова разрешено. Установите его заново с microsoft.com или из Microsoft Store."
+
+msgid "Force delete needs administrator rights."
+msgstr "Для принудительного удаления нужны права администратора."
 
 msgid "System Restore is turned off on this PC: System Protection for the system drive, or the Volume Shadow Copy service, is disabled."
 msgstr "Восстановление системы на этом ПК выключено: защита системного диска или служба теневого копирования тома отключены."

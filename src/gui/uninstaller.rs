@@ -493,7 +493,7 @@ impl UninstallerView {
             let r = style::icon_button(ui, icon::EXPORT, "Export list");
             let shown = self.visible(cx);
             let programs = &self.programs;
-            super::export_menu(&r, cx, &mut self.export_path, "File (.txt .html .csv .json)", |f| {
+            super::export_menu(&r, cx, &mut self.export_path, "File (.txt .html .csv .xlsx .json)", |f| {
                 let list: Vec<Program> = shown.iter().map(|i| programs[*i].clone()).collect();
                 uninst::export(&list, f)?;
                 Ok(crate::tf!("Exported {} programs to {}", list.len(), f.display()))

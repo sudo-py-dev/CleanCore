@@ -104,7 +104,7 @@ enum Cmd {
         table: bool,
         #[arg(long)]
         json: bool,
-        /// Write the list to a file (.txt .csv .html .json)
+        /// Write the list to a file (.txt .csv .xlsx .html .json)
         #[arg(long)]
         export: Option<PathBuf>,
     },
@@ -245,7 +245,7 @@ enum AutorunCmd {
         all: bool,
         #[arg(long)]
         json: bool,
-        /// Write the list to a file (.txt .csv .html .json)
+        /// Write the list to a file (.txt .csv .xlsx .html .json)
         #[arg(long)]
         export: Option<PathBuf>,
     },
@@ -693,7 +693,7 @@ enum WatchCmd {
     /// Remove a key/path from the watch list and delete its log
     Del {
         path: String,
-        /// Export the log to this file first (.txt .csv .json)
+        /// Export the log to this file first (.txt .csv .xlsx .json)
         #[arg(long)]
         export: Option<PathBuf>,
     },
@@ -722,7 +722,7 @@ enum WatchCmd {
         args: Vec<String>,
         #[arg(long)]
         all: bool,
-        /// txt | csv | json (default: from OUT's extension, else csv)
+        /// txt | csv | xlsx | json (default: from OUT's extension, else csv)
         #[arg(long)]
         format: Option<String>,
     },
@@ -782,7 +782,7 @@ struct ScanArgs {
     /// Scan every user account instead of only the current one
     #[arg(long)]
     all_users: bool,
-    /// Write the results to a file (.txt .csv .html .xml .json)
+    /// Write the results to a file (.txt .csv .xlsx .html .xml .json)
     #[arg(long)]
     export: Option<PathBuf>,
     /// Print results as JSON
@@ -1142,7 +1142,7 @@ fn translate_legacy(args: Vec<String>) -> Vec<String> {
                         i = 2;
                     }
                     if let Some(fmt) = rest.get(i).and_then(|f| f.strip_prefix('-')) {
-                        out.extend(["--format".into(), if fmt == "xlsx" { "csv".into() } else { fmt.to_string() }]);
+                        out.extend(["--format".into(), fmt.to_string()]);
                         out.extend(orig.get(i + 1).cloned());
                     }
                 }

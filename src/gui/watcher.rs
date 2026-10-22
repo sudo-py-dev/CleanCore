@@ -360,7 +360,7 @@ impl WatcherView {
                             out = Some(RowAction::Clear(w.clone()));
                         }
                         let r = style::icon_button(ui, icon::EXPORT, "Export its changes");
-                        super::export_menu(&r, cx, &mut self.export_path, "File (.txt .csv .json)", |f| {
+                        super::export_menu(&r, cx, &mut self.export_path, "File (.txt .csv .xlsx .json)", |f| {
                             watcher::export_events(&watcher::read_log(w)?, f)?;
                             Ok(crate::tf!("Exported to {}", f.display()))
                         });

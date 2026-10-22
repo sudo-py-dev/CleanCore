@@ -33,7 +33,7 @@ msgstr ""
 msgid "Remove disabled entries ({n_disabled})"
 msgstr ""
 
-msgid "Export (.txt .html .csv .json)"
+msgid "Export (.txt .html .csv .xlsx .json)"
 msgstr ""
 
 msgid "Exported {} entries to {}"
@@ -531,7 +531,7 @@ msgstr ""
 msgid "Export"
 msgstr ""
 
-msgid "File (.txt .csv .html .xml .json)"
+msgid "File (.txt .csv .xlsx .html .xml .json)"
 msgstr ""
 
 msgid "Exported to {}"
@@ -2367,7 +2367,7 @@ msgstr ""
 msgid "Record an installation so it can be undone exactly"
 msgstr ""
 
-msgid "File (.txt .html .csv .json)"
+msgid "File (.txt .html .csv .xlsx .json)"
 msgstr ""
 
 msgid "Exported {} programs to {}"
@@ -3066,7 +3066,7 @@ msgstr ""
 msgid "Export its changes"
 msgstr ""
 
-msgid "File (.txt .csv .json)"
+msgid "File (.txt .csv .xlsx .json)"
 msgstr ""
 
 msgid "Pause watching"
@@ -4309,6 +4309,9 @@ msgid "{} is allowed again and reinstalled."
 msgstr ""
 
 msgid "{} is allowed again. Reinstall it from microsoft.com or the Microsoft Store."
+msgstr ""
+
+msgid "Force delete needs administrator rights."
 msgstr ""
 
 msgid "System Restore is turned off on this PC: System Protection for the system drive, or the Volume Shadow Copy service, is disabled."

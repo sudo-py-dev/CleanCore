@@ -944,6 +944,9 @@ pub fn export(programs: &[Program], path: &std::path::Path) -> Result<()> {
         ]
     };
     const HEAD: [&str; 9] = ["Name", "Version", "Company", "Type", "Install date", "Size", "Install location", "Uninstall string", "Comment"];
+    if ext == "xlsx" {
+        return crate::xlsx::write(path, "Installed programs", &HEAD, &programs.iter().map(|p| cols(p).to_vec()).collect::<Vec<_>>());
+    }
     let body = match ext.as_str() {
         "csv" | "xls" => {
             let q = |s: &str| format!("\"{}\"", s.replace('"', "\"\""));

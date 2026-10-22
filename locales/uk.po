@@ -34,8 +34,8 @@ msgstr "Елементи, програма яких більше не існує
 msgid "Remove disabled entries ({n_disabled})"
 msgstr "Видалити вимкнені ({n_disabled})"
 
-msgid "Export (.txt .html .csv .json)"
-msgstr "Експорт (.txt .html .csv .json)"
+msgid "Export (.txt .html .csv .xlsx .json)"
+msgstr "Експорт (.txt .html .csv .xlsx .json)"
 
 msgid "Exported {} entries to {}"
 msgstr "Експортовано елементів: {} до {}"
@@ -532,8 +532,8 @@ msgstr "Усе перевірене в порядку."
 msgid "Export"
 msgstr "Експорт"
 
-msgid "File (.txt .csv .html .xml .json)"
-msgstr "Файл (.txt .csv .html .xml .json)"
+msgid "File (.txt .csv .xlsx .html .xml .json)"
+msgstr "Файл (.txt .csv .xlsx .html .xml .json)"
 
 msgid "Exported to {}"
 msgstr "Експортовано до {}"
@@ -2368,8 +2368,8 @@ msgstr "Видалити програму, якої немає в списку �
 msgid "Record an installation so it can be undone exactly"
 msgstr "Записати встановлення, щоб його можна було точно скасувати"
 
-msgid "File (.txt .html .csv .json)"
-msgstr "Файл (.txt .html .csv .json)"
+msgid "File (.txt .html .csv .xlsx .json)"
+msgstr "Файл (.txt .html .csv .xlsx .json)"
 
 msgid "Exported {} programs to {}"
 msgstr "Експортовано програм: {} до {}"
@@ -3067,8 +3067,8 @@ msgstr "Очистити його зміни"
 msgid "Export its changes"
 msgstr "Експортувати його зміни"
 
-msgid "File (.txt .csv .json)"
-msgstr "Файл (.txt .csv .json)"
+msgid "File (.txt .csv .xlsx .json)"
+msgstr "Файл (.txt .csv .xlsx .json)"
 
 msgid "Pause watching"
 msgstr "Призупинити спостереження"
@@ -4311,6 +4311,9 @@ msgstr "{} знову дозволено й установлено заново.
 
 msgid "{} is allowed again. Reinstall it from microsoft.com or the Microsoft Store."
 msgstr "{} знову дозволено. Установіть його заново з microsoft.com або з Microsoft Store."
+
+msgid "Force delete needs administrator rights."
+msgstr "Для примусового видалення потрібні права адміністратора."
 
 msgid "System Restore is turned off on this PC: System Protection for the system drive, or the Volume Shadow Copy service, is disabled."
 msgstr "Відновлення системи на цьому ПК вимкнено: захист системного диска або служба тіньового копіювання томів вимкнені."

@@ -32,3 +32,4 @@ pub mod tuner;
 pub mod uninstaller;
 pub mod update;
 pub mod watcher;
+pub mod xlsx;

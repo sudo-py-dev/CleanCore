@@ -731,16 +731,113 @@ pub fn apply_fix(fix: &Fix, settings: &Settings) -> Result<()> {
             if leaf.is_empty() {
                 bail!("refusing to delete a root key");
             }
-            let p = RegKey::predef(h).open_subkey_with_flags(parent, KEY_ALL_ACCESS).with_context(|| format!("opening {parent}"))?;
-            p.delete_subkey_all(leaf).with_context(|| format!("deleting {key}"))
+            let delete = || RegKey::predef(h).open_subkey_with_flags(parent, KEY_ALL_ACCESS).and_then(|p| p.delete_subkey_all(leaf));
+            match delete() {
+                Err(e) if settings.force_delete && e.kind() == std::io::ErrorKind::PermissionDenied => {
+                    take_ownership(key, true)?;
+                    delete()
+                }
+                r => r,
+            }
+            .with_context(|| format!("deleting {key}"))
         }
         Fix::DeleteRegValue { key, value } => {
             let (h, rest) = split_root(key).context("bad key")?;
-            let k = RegKey::predef(h).open_subkey_with_flags(rest, KEY_SET_VALUE).with_context(|| format!("opening {key}"))?;
-            k.delete_value(value).with_context(|| format!("deleting {}", value_loc(key, value)))
+            let delete = || RegKey::predef(h).open_subkey_with_flags(rest, KEY_SET_VALUE).and_then(|k| k.delete_value(value));
+            match delete() {
+                Err(e) if settings.force_delete && e.kind() == std::io::ErrorKind::PermissionDenied => {
+                    take_ownership(key, false)?;
+                    delete()
+                }
+                r => r,
+            }
+            .with_context(|| format!("deleting {}", value_loc(key, value)))
         }
         other => bail!("unsupported fix on Windows: {other:?}"),
     }
+}
+
+/// Force delete (Settings › "Force delete registry keys"): make Administrators the owner of
+/// `key` (and, with `tree`, of every key under it) with full control, so a protected key can be
+/// deleted. Keys are opened for backup and restore, which reaches them whatever their
+/// permissions say; that needs administrator rights.
+fn take_ownership(key: &str, tree: bool) -> Result<()> {
+    use windows_sys::Win32::Foundation::{LocalFree, ERROR_SUCCESS};
+    use windows_sys::Win32::Security::Authorization::{ConvertStringSecurityDescriptorToSecurityDescriptorW, SDDL_REVISION_1};
+    use windows_sys::Win32::Security::{DACL_SECURITY_INFORMATION, OWNER_SECURITY_INFORMATION, PSECURITY_DESCRIPTOR};
+    use windows_sys::Win32::System::Registry::{RegCloseKey, RegEnumKeyExW, RegOpenKeyExW, RegSetKeySecurity, HKEY as RawKey, KEY_READ, REG_OPTION_BACKUP_RESTORE};
+
+    fn own(parent: RawKey, path: &str, sd: PSECURITY_DESCRIPTOR, tree: bool) -> Result<()> {
+        let wide: Vec<u16> = path.encode_utf16().chain(Some(0)).collect();
+        let mut k: RawKey = std::ptr::null_mut();
+        // SAFETY: a valid parent key, a NUL-terminated name and an out pointer for the key.
+        let r = unsafe { RegOpenKeyExW(parent, wide.as_ptr(), REG_OPTION_BACKUP_RESTORE, KEY_READ, &mut k) };
+        if r != ERROR_SUCCESS {
+            bail!("{}", std::io::Error::from_raw_os_error(r as i32));
+        }
+        // SAFETY: an open key and a valid security descriptor.
+        let r = unsafe { RegSetKeySecurity(k, OWNER_SECURITY_INFORMATION | DACL_SECURITY_INFORMATION, sd) };
+        let mut result = if r == ERROR_SUCCESS { Ok(()) } else { Err(anyhow::anyhow!("{}", std::io::Error::from_raw_os_error(r as i32))) };
+        if tree && result.is_ok() {
+            let mut names = Vec::new();
+            let mut buf = [0u16; 256];
+            for i in 0.. {
+                let mut len = buf.len() as u32;
+                // SAFETY: an open key and a buffer of `len` characters.
+                let r = unsafe { RegEnumKeyExW(k, i, buf.as_mut_ptr(), &mut len, std::ptr::null(), std::ptr::null_mut(), std::ptr::null_mut(), std::ptr::null_mut()) };
+                if r != ERROR_SUCCESS {
+                    break;
+                }
+                names.push(String::from_utf16_lossy(&buf[..len as usize]));
+            }
+            result = names.iter().try_for_each(|n| own(k, n, sd, true));
+        }
+        // SAFETY: the key opened above.
+        unsafe { RegCloseKey(k) };
+        result
+    }
+
+    if !crate::slop::is_admin() {
+        bail!("{}", crate::i18n::tr("Force delete needs administrator rights."));
+    }
+    enable_privileges(&["SeTakeOwnershipPrivilege", "SeBackupPrivilege", "SeRestorePrivilege"]);
+    let (h, rest) = split_root(key).context("bad key")?;
+    // Owner: Administrators. Access: full control for Administrators, passed on to subkeys.
+    let sddl: Vec<u16> = "O:BAD:(A;CI;KA;;;BA)".encode_utf16().chain(Some(0)).collect();
+    let mut sd: PSECURITY_DESCRIPTOR = std::ptr::null_mut();
+    // SAFETY: a NUL-terminated SDDL string and an out pointer, freed with LocalFree below.
+    if unsafe { ConvertStringSecurityDescriptorToSecurityDescriptorW(sddl.as_ptr(), SDDL_REVISION_1, &mut sd, std::ptr::null_mut()) } == 0 {
+        bail!("building the security descriptor: {}", std::io::Error::last_os_error());
+    }
+    let r = own(h as RawKey, rest, sd, tree).with_context(|| format!("taking ownership of {key}"));
+    // SAFETY: allocated by ConvertStringSecurityDescriptorToSecurityDescriptorW.
+    unsafe { LocalFree(sd) };
+    r
+}
+
+/// Turn on privileges this process holds but has off (administrators hold these).
+fn enable_privileges(names: &[&str]) {
+    use windows_sys::Win32::Foundation::{CloseHandle, HANDLE, LUID};
+    use windows_sys::Win32::Security::{AdjustTokenPrivileges, LookupPrivilegeValueW, LUID_AND_ATTRIBUTES, SE_PRIVILEGE_ENABLED, TOKEN_ADJUST_PRIVILEGES, TOKEN_PRIVILEGES};
+    use windows_sys::Win32::System::Threading::{GetCurrentProcess, OpenProcessToken};
+    let mut token: HANDLE = std::ptr::null_mut();
+    // SAFETY: the current process's pseudo handle and an out pointer.
+    if unsafe { OpenProcessToken(GetCurrentProcess(), TOKEN_ADJUST_PRIVILEGES, &mut token) } == 0 {
+        return;
+    }
+    for name in names {
+        let wide: Vec<u16> = name.encode_utf16().chain(Some(0)).collect();
+        let mut luid = LUID { LowPart: 0, HighPart: 0 };
+        // SAFETY: a NUL-terminated privilege name and an out pointer.
+        if unsafe { LookupPrivilegeValueW(std::ptr::null(), wide.as_ptr(), &mut luid) } == 0 {
+            continue;
+        }
+        let tp = TOKEN_PRIVILEGES { PrivilegeCount: 1, Privileges: [LUID_AND_ATTRIBUTES { Luid: luid, Attributes: SE_PRIVILEGE_ENABLED }] };
+        // SAFETY: an open token and a filled TOKEN_PRIVILEGES.
+        unsafe { AdjustTokenPrivileges(token, 0, &tp, 0, std::ptr::null_mut(), std::ptr::null_mut()) };
+    }
+    // SAFETY: the token opened above.
+    unsafe { CloseHandle(token) };
 }
 
 pub fn create_restore_point(description: &str) -> Result<()> {

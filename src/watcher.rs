@@ -352,6 +352,12 @@ pub fn export_events(events: &[WatchEvent], out: &Path) -> Result<()> {
         ]
     };
     const HEAD: [&str; 9] = ["Time", "Process Name", "PID", "Operation", "Registry Key", "Value", "New Data", "Old Data", "Data Type"];
+    if let Some(p) = out.parent().filter(|p| !p.as_os_str().is_empty()) {
+        ensure_dir(p)?;
+    }
+    if ext == "xlsx" {
+        return crate::xlsx::write(out, "Registry changes", &HEAD, &events.iter().map(|e| cols(e).to_vec()).collect::<Vec<_>>());
+    }
     let body = match ext.as_str() {
         "csv" => {
             let q = |s: &str| format!("\"{}\"", s.replace('"', "\"\""));
@@ -371,11 +377,8 @@ pub fn export_events(events: &[WatchEvent], out: &Path) -> Result<()> {
             }
             s
         }
-        other => bail!("unsupported format '.{other}' (txt, csv, json)"),
+        other => bail!("unsupported format '.{other}' (txt, csv, xlsx, json)"),
     };
-    if let Some(p) = out.parent().filter(|p| !p.as_os_str().is_empty()) {
-        ensure_dir(p)?;
-    }
     std::fs::write(out, body).with_context(|| format!("writing {}", out.display()))
 }
 

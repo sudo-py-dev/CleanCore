@@ -110,7 +110,7 @@ impl AutorunView {
                 });
                 ui.separator();
                 let list: Vec<AutorunEntry> = self.shown().into_iter().cloned().collect();
-                super::export_fields(ui, cx, &mut self.export_path, "Export (.txt .html .csv .json)", |f| {
+                super::export_fields(ui, cx, &mut self.export_path, "Export (.txt .html .csv .xlsx .json)", |f| {
                     autorun::export(&list, f)?;
                     Ok(crate::tf!("Exported {} entries to {}", list.len(), f.display()))
                 });

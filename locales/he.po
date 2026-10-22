@@ -35,8 +35,8 @@ msgstr "רשומות שהתוכנה שלהן כבר לא קיימת"
 msgid "Remove disabled entries ({n_disabled})"
 msgstr "הסר רשומות מושבתות ({n_disabled})"
 
-msgid "Export (.txt .html .csv .json)"
-msgstr "ייצוא (‎.txt .html .csv .json)"
+msgid "Export (.txt .html .csv .xlsx .json)"
+msgstr "ייצוא (‎.txt .html .csv .xlsx .json)"
 
 msgid "Exported {} entries to {}"
 msgstr "יוצאו {} רשומות אל {}"
@@ -533,8 +533,8 @@ msgstr "כל מה שבדקנו נראה תקין."
 msgid "Export"
 msgstr "ייצוא"
 
-msgid "File (.txt .csv .html .xml .json)"
-msgstr "קובץ (‎.txt .csv .html .xml .json)"
+msgid "File (.txt .csv .xlsx .html .xml .json)"
+msgstr "קובץ (‎.txt .csv .xlsx .html .xml .json)"
 
 msgid "Exported to {}"
 msgstr "יוצא אל {}"
@@ -2369,8 +2369,8 @@ msgstr "הסר תוכנה שאינה ברשימה או שהוסרה חלקית"
 msgid "Record an installation so it can be undone exactly"
 msgstr "תעד התקנה כדי שאפשר יהיה לבטל אותה בדיוק"
 
-msgid "File (.txt .html .csv .json)"
-msgstr "קובץ (‎.txt .html .csv .json)"
+msgid "File (.txt .html .csv .xlsx .json)"
+msgstr "קובץ (‎.txt .html .csv .xlsx .json)"
 
 msgid "Exported {} programs to {}"
 msgstr "יוצאו {} תוכנות אל {}"
@@ -3068,8 +3068,8 @@ msgstr "נקה את השינויים שלו"
 msgid "Export its changes"
 msgstr "ייצא את השינויים שלו"
 
-msgid "File (.txt .csv .json)"
-msgstr "קובץ (‎.txt .csv .json)"
+msgid "File (.txt .csv .xlsx .json)"
+msgstr "קובץ (‎.txt .csv .xlsx .json)"
 
 msgid "Pause watching"
 msgstr "השהה מעקב"
@@ -4312,6 +4312,9 @@ msgstr "{} מותרת שוב והותקנה מחדש."
 
 msgid "{} is allowed again. Reinstall it from microsoft.com or the Microsoft Store."
 msgstr "{} מותרת שוב. התקן אותה מחדש מ־microsoft.com או מ־Microsoft Store."
+
+msgid "Force delete needs administrator rights."
+msgstr "מחיקה בכוח דורשת הרשאות מנהל."
 
 msgid "System Restore is turned off on this PC: System Protection for the system drive, or the Volume Shadow Copy service, is disabled."
 msgstr "שחזור המערכת כבוי במחשב הזה: הגנת המערכת של כונן המערכת, או השירות Volume Shadow Copy, מושבתים."

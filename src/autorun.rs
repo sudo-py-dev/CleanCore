@@ -196,6 +196,9 @@ pub fn export(entries: &[AutorunEntry], path: &Path) -> Result<()> {
         ]
     };
     const HEAD: [&str; 7] = ["Name", "State", "Type", "Command", "Publisher", "Location", "Running"];
+    if ext == "xlsx" {
+        return crate::xlsx::write(path, "Autorun", &HEAD, &entries.iter().map(|e| row(e).to_vec()).collect::<Vec<_>>());
+    }
     let body = match ext.as_str() {
         "csv" | "xls" => {
             let q = |s: &str| format!("\"{}\"", s.replace('"', "\"\""));

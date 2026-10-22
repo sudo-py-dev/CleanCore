@@ -34,8 +34,8 @@ msgstr "Entrées dont le programme n'existe plus"
 msgid "Remove disabled entries ({n_disabled})"
 msgstr "Supprimer les entrées désactivées ({n_disabled})"
 
-msgid "Export (.txt .html .csv .json)"
-msgstr "Exporter (.txt .html .csv .json)"
+msgid "Export (.txt .html .csv .xlsx .json)"
+msgstr "Exporter (.txt .html .csv .xlsx .json)"
 
 msgid "Exported {} entries to {}"
 msgstr "{} entrées exportées vers {}"
@@ -532,8 +532,8 @@ msgstr "Tout ce que nous avons vérifié est en ordre."
 msgid "Export"
 msgstr "Exporter"
 
-msgid "File (.txt .csv .html .xml .json)"
-msgstr "Fichier (.txt .csv .html .xml .json)"
+msgid "File (.txt .csv .xlsx .html .xml .json)"
+msgstr "Fichier (.txt .csv .xlsx .html .xml .json)"
 
 msgid "Exported to {}"
 msgstr "Exporté vers {}"
@@ -2368,8 +2368,8 @@ msgstr "Supprimer un programme non listé ou partiellement supprimé"
 msgid "Record an installation so it can be undone exactly"
 msgstr "Enregistrer une installation pour pouvoir l'annuler exactement"
 
-msgid "File (.txt .html .csv .json)"
-msgstr "Fichier (.txt .html .csv .json)"
+msgid "File (.txt .html .csv .xlsx .json)"
+msgstr "Fichier (.txt .html .csv .xlsx .json)"
 
 msgid "Exported {} programs to {}"
 msgstr "{} programmes exportés vers {}"
@@ -3067,8 +3067,8 @@ msgstr "Effacer ses modifications"
 msgid "Export its changes"
 msgstr "Exporter ses modifications"
 
-msgid "File (.txt .csv .json)"
-msgstr "Fichier (.txt .csv .json)"
+msgid "File (.txt .csv .xlsx .json)"
+msgstr "Fichier (.txt .csv .xlsx .json)"
 
 msgid "Pause watching"
 msgstr "Suspendre la surveillance"
@@ -4311,6 +4311,9 @@ msgstr "{} est de nouveau autorisée et réinstallée."
 
 msgid "{} is allowed again. Reinstall it from microsoft.com or the Microsoft Store."
 msgstr "{} est de nouveau autorisée. Réinstallez-la depuis microsoft.com ou le Microsoft Store."
+
+msgid "Force delete needs administrator rights."
+msgstr "La suppression forcée nécessite les droits d'administrateur."
 
 msgid "System Restore is turned off on this PC: System Protection for the system drive, or the Volume Shadow Copy service, is disabled."
 msgstr "La Restauration du système est désactivée sur ce PC : la protection du système du lecteur système, ou le service Cliché instantané des volumes, est désactivé."

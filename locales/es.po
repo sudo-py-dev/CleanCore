@@ -34,8 +34,8 @@ msgstr "Entradas cuyo programa ya no existe"
 msgid "Remove disabled entries ({n_disabled})"
 msgstr "Quitar entradas desactivadas ({n_disabled})"
 
-msgid "Export (.txt .html .csv .json)"
-msgstr "Exportar (.txt .html .csv .json)"
+msgid "Export (.txt .html .csv .xlsx .json)"
+msgstr "Exportar (.txt .html .csv .xlsx .json)"
 
 msgid "Exported {} entries to {}"
 msgstr "Se exportaron {} entradas a {}"
@@ -532,8 +532,8 @@ msgstr "Todo lo que revisamos está bien."
 msgid "Export"
 msgstr "Exportar"
 
-msgid "File (.txt .csv .html .xml .json)"
-msgstr "Archivo (.txt .csv .html .xml .json)"
+msgid "File (.txt .csv .xlsx .html .xml .json)"
+msgstr "Archivo (.txt .csv .xlsx .html .xml .json)"
 
 msgid "Exported to {}"
 msgstr "Exportado a {}"
@@ -2368,8 +2368,8 @@ msgstr "Quita un programa que no aparece o que se quitó a medias"
 msgid "Record an installation so it can be undone exactly"
 msgstr "Registra una instalación para poder deshacerla exactamente"
 
-msgid "File (.txt .html .csv .json)"
-msgstr "Archivo (.txt .html .csv .json)"
+msgid "File (.txt .html .csv .xlsx .json)"
+msgstr "Archivo (.txt .html .csv .xlsx .json)"
 
 msgid "Exported {} programs to {}"
 msgstr "Se exportaron {} programas a {}"
@@ -3067,8 +3067,8 @@ msgstr "Borrar sus cambios"
 msgid "Export its changes"
 msgstr "Exportar sus cambios"
 
-msgid "File (.txt .csv .json)"
-msgstr "Archivo (.txt .csv .json)"
+msgid "File (.txt .csv .xlsx .json)"
+msgstr "Archivo (.txt .csv .xlsx .json)"
 
 msgid "Pause watching"
 msgstr "Pausar la vigilancia"
@@ -4311,6 +4311,9 @@ msgstr "{} vuelve a estar permitida y se ha reinstalado."
 
 msgid "{} is allowed again. Reinstall it from microsoft.com or the Microsoft Store."
 msgstr "{} vuelve a estar permitida. Reinstálala desde microsoft.com o Microsoft Store."
+
+msgid "Force delete needs administrator rights."
+msgstr "El borrado forzado necesita derechos de administrador."
 
 msgid "System Restore is turned off on this PC: System Protection for the system drive, or the Volume Shadow Copy service, is disabled."
 msgstr "Restaurar sistema está desactivado en este PC: la protección del sistema de la unidad del sistema, o el servicio Instantáneas de volumen, está deshabilitado."

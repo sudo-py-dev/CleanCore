@@ -34,8 +34,8 @@ msgstr "Einträge, deren Programm nicht mehr existiert"
 msgid "Remove disabled entries ({n_disabled})"
 msgstr "Deaktivierte Einträge entfernen ({n_disabled})"
 
-msgid "Export (.txt .html .csv .json)"
-msgstr "Exportieren (.txt .html .csv .json)"
+msgid "Export (.txt .html .csv .xlsx .json)"
+msgstr "Exportieren (.txt .html .csv .xlsx .json)"
 
 msgid "Exported {} entries to {}"
 msgstr "{} Einträge exportiert nach {}"
@@ -532,8 +532,8 @@ msgstr "Alles, was wir geprüft haben, ist in Ordnung."
 msgid "Export"
 msgstr "Exportieren"
 
-msgid "File (.txt .csv .html .xml .json)"
-msgstr "Datei (.txt .csv .html .xml .json)"
+msgid "File (.txt .csv .xlsx .html .xml .json)"
+msgstr "Datei (.txt .csv .xlsx .html .xml .json)"
 
 msgid "Exported to {}"
 msgstr "Exportiert nach {}"
@@ -2368,8 +2368,8 @@ msgstr "Ein nicht aufgeführtes oder teilweise entferntes Programm entfernen"
 msgid "Record an installation so it can be undone exactly"
 msgstr "Eine Installation aufzeichnen, um sie exakt rückgängig machen zu können"
 
-msgid "File (.txt .html .csv .json)"
-msgstr "Datei (.txt .html .csv .json)"
+msgid "File (.txt .html .csv .xlsx .json)"
+msgstr "Datei (.txt .html .csv .xlsx .json)"
 
 msgid "Exported {} programs to {}"
 msgstr "{} Programme exportiert nach {}"
@@ -3067,8 +3067,8 @@ msgstr "Seine Änderungen löschen"
 msgid "Export its changes"
 msgstr "Seine Änderungen exportieren"
 
-msgid "File (.txt .csv .json)"
-msgstr "Datei (.txt .csv .json)"
+msgid "File (.txt .csv .xlsx .json)"
+msgstr "Datei (.txt .csv .xlsx .json)"
 
 msgid "Pause watching"
 msgstr "Überwachung pausieren"
@@ -4311,6 +4311,9 @@ msgstr "{} ist wieder erlaubt und neu installiert."
 
 msgid "{} is allowed again. Reinstall it from microsoft.com or the Microsoft Store."
 msgstr "{} ist wieder erlaubt. Installieren Sie es über microsoft.com oder den Microsoft Store neu."
+
+msgid "Force delete needs administrator rights."
+msgstr "Erzwungenes Löschen braucht Administratorrechte."
 
 msgid "System Restore is turned off on this PC: System Protection for the system drive, or the Volume Shadow Copy service, is disabled."
 msgstr "Die Systemwiederherstellung ist auf diesem PC ausgeschaltet: Der Computerschutz für das Systemlaufwerk oder der Dienst Volumeschattenkopie ist deaktiviert."
