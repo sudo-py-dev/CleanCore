@@ -367,6 +367,9 @@ msgstr "Расширенное сканирование"
 msgid "Exhaustive. Review the results before you clean."
 msgstr "Исчерпывающее. Проверьте результаты перед очисткой."
 
+msgid "Clean without reviewing"
+msgstr "Очистить без просмотра"
+
 msgid "Forced scan"
 msgstr "Принудительное сканирование"
 
@@ -412,15 +415,6 @@ msgstr "Поиск и удаление настроек, оставшихся о
 msgid "Cleaner"
 msgstr "Очистка"
 
-msgid "Quick Clean"
-msgstr "Быстрая очистка"
-
-msgid "Scan and clean with one click"
-msgstr "Сканировать и очистить одним щелчком"
-
-msgid "Scheduled scans and cleans"
-msgstr "Сканирование и очистка по расписанию"
-
 msgid "every account"
 msgstr "все учётные записи"
 
@@ -439,8 +433,17 @@ msgstr "{}  Текущая учётная запись"
 msgid "{}  All accounts"
 msgstr "{}  Все учётные записи"
 
+msgid "Scan and clean"
+msgstr "Сканировать и очистить"
+
 msgid "Start scan"
 msgstr "Начать сканирование"
+
+msgid "Remove everything the scan finds right away (a backup is made first)"
+msgstr "Сразу удалить всё, что найдёт сканирование (сначала создаётся резервная копия)"
+
+msgid "Quick Clean"
+msgstr "Быстрая очистка"
 
 msgid "Scan depth"
 msgstr "Глубина сканирования"
@@ -514,15 +517,6 @@ msgstr "Результаты сканирования"
 msgid "Clean ({sel})"
 msgstr "Очистить ({sel})"
 
-msgid "Export"
-msgstr "Экспорт"
-
-msgid "File (.txt .csv .html .xml .json)"
-msgstr "Файл (.txt .csv .html .xml .json)"
-
-msgid "Exported to {}"
-msgstr "Экспортировано в {}"
-
 msgid "New scan"
 msgstr "Новое сканирование"
 
@@ -535,11 +529,20 @@ msgstr "Проблем не найдено"
 msgid "Everything we checked looks fine."
 msgstr "Всё проверенное в порядке."
 
-msgid "Expand all"
-msgstr "Развернуть всё"
+msgid "Export"
+msgstr "Экспорт"
+
+msgid "File (.txt .csv .html .xml .json)"
+msgstr "Файл (.txt .csv .html .xml .json)"
+
+msgid "Exported to {}"
+msgstr "Экспортировано в {}"
 
 msgid "Collapse all"
 msgstr "Свернуть всё"
+
+msgid "Expand all"
+msgstr "Развернуть всё"
 
 msgid "Show details"
 msgstr "Показать подробности"

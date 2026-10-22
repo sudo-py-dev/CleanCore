@@ -53,6 +53,11 @@ pub struct CleanerView {
     clean: Option<Pending<Result<crate::cleaner::CleanReport, String>>>,
     /// Quick Clean: clean everything as soon as the scan finishes.
     quick: bool,
+    /// The result groups are open (the toolbar's Expand / Collapse all).
+    expanded: bool,
+    descs: HashMap<&'static str, &'static str>,
+    /// The home screen's "Clean without reviewing" switch: the next scan is a Quick Clean.
+    clean_now: bool,
     results: Vec<Issue>,
     checked: Vec<bool>,
     show_details: bool,
@@ -82,6 +87,9 @@ impl CleanerView {
             scan: None,
             clean: None,
             quick: false,
+            expanded: true,
+            descs: checks.iter().map(|c| (c.id, c.description)).collect(),
+            clean_now: false,
             results: Vec::new(),
             checked: Vec::new(),
             show_details: false,
@@ -222,24 +230,7 @@ impl CleanerView {
     fn home(&mut self, ui: &mut Ui, cx: &mut Cx) {
         let busy = self.busy();
         let subtitle = if cfg!(windows) { tr("Find and remove invalid and leftover registry entries") } else { tr("Find and remove settings left behind by removed apps") };
-        let (mut quick, mut auto) = (false, false);
-        style::page_header(ui, "Cleaner", subtitle, |ui| {
-            ui.add_enabled_ui(!busy, |ui| {
-                quick = style::primary(ui, icon::LIGHTNING, "Quick Clean").on_hover_text(style::vis(tr("Scan and clean with one click"))).clicked();
-                auto = style::secondary(ui, icon::CALENDAR, "Auto Clean").on_hover_text(style::vis(tr("Scheduled scans and cleans"))).clicked();
-            });
-        });
-        if quick {
-            self.quick = true;
-            let mode = cx.settings.quick_clean_mode;
-            self.start_scan(ui.ctx(), cx, Selection::Mode(mode), "Quick Clean".into());
-            return;
-        }
-        if auto {
-            self.auto.refresh(cx);
-            self.screen = Screen::Auto;
-            return;
-        }
+        style::page_header(ui, "Cleaner", subtitle, |_| {});
 
         let p = Palette::get(ui.ctx());
         let checks = engine::all_checks();
@@ -269,17 +260,31 @@ impl CleanerView {
                         }
                     });
                 });
+                // The one main action, and under it whether to clean straight away
+                // (Quick Clean) instead of reviewing what was found first.
                 ui.with_layout(crate::gui::style::far_layout(egui::Align::Center), |ui| {
-                    ui.add_enabled_ui(!busy, |ui| {
-                        ui.spacing_mut().button_padding = Vec2::new(24.0, 12.0);
-                        start = style::primary(ui, icon::PLAY, "Start scan").clicked();
+                    let far = if crate::gui::style::rtl() { egui::Align::Min } else { egui::Align::Max };
+                    ui.with_layout(egui::Layout::top_down(far), |ui| {
+                        ui.add_enabled_ui(!busy, |ui| {
+                            ui.spacing_mut().button_padding = Vec2::new(24.0, 12.0);
+                            let label = if self.clean_now { "Scan and clean" } else { "Start scan" };
+                            start = style::primary(ui, if self.clean_now { icon::LIGHTNING } else { icon::PLAY }, label).clicked();
+                        });
+                        ui.add_space(4.0);
+                        crate::gui::style::row(ui, |ui| {
+                            style::toggle(ui, &mut self.clean_now, "Clean without reviewing");
+                            ui.add(style::Label::new(style::muted(ui, tr("Clean without reviewing")).size(12.5)).extend())
+                                .on_hover_text(style::vis(tr("Remove everything the scan finds right away (a backup is made first)")));
+                        });
                     });
                 });
             });
         });
         if start {
             let m = self.mode;
-            self.start_scan(ui.ctx(), cx, Selection::Mode(m), mode_meta(m).1.to_string());
+            self.quick = self.clean_now;
+            let label = if self.clean_now { "Quick Clean".to_string() } else { mode_meta(m).1.to_string() };
+            self.start_scan(ui.ctx(), cx, Selection::Mode(m), label);
             return;
         }
         ui.add_space(18.0);
@@ -308,17 +313,32 @@ impl CleanerView {
         }
         ui.add_space(20.0);
 
+        // One card, a row each: fits any width.
         style::eyebrow(ui, "Other ways to scan");
-        let w2 = ((ui.available_width() - gap) / 2.0).max(260.0);
-        crate::gui::style::row(ui, |ui| {
-            ui.spacing_mut().item_spacing.x = gap;
-            if mode_card(ui, Vec2::new(w2, 84.0), icon::SLIDERS, "Custom Scan", "Choose exactly which categories to scan.", None, p).clicked() && !busy {
-                self.screen = Screen::Managed;
-            }
-            if mode_card(ui, Vec2::new(w2, 84.0), icon::SEARCH, "Forced Scan", "Find every entry that mentions a program or vendor.", None, p).clicked() && !busy {
-                self.screen = Screen::Forced;
+        let mut open = None;
+        style::card(ui, |ui| {
+            ui.spacing_mut().item_spacing.y = 0.0;
+            let rows = [
+                (icon::SLIDERS, "Custom Scan", "Choose exactly which categories to scan.", Screen::Managed),
+                (icon::SEARCH, "Forced Scan", "Find every entry that mentions a program or vendor.", Screen::Forced),
+                (icon::CALENDAR, "Auto Clean", "Scan and clean automatically on a schedule", Screen::Auto),
+            ];
+            let n = rows.len();
+            for (i, (ic, title, desc, screen)) in rows.into_iter().enumerate() {
+                if other_row(ui, ic, title, desc, p).clicked() && !busy {
+                    open = Some(screen);
+                }
+                if i + 1 < n {
+                    style::divider(ui);
+                }
             }
         });
+        if let Some(screen) = open {
+            if matches!(screen, Screen::Auto) {
+                self.auto.refresh(cx);
+            }
+            self.screen = screen;
+        }
     }
 
     fn scanning_ui(&self, ui: &mut Ui, p: Palette) {
@@ -483,17 +503,12 @@ impl CleanerView {
         let cats = self.order.iter().filter(|c| self.results.iter().any(|i| i.category == **c)).count();
         let subtitle = if total == 0 { self.scan_label.clone() } else { crate::tf!("{total} item(s) in {cats} category(ies) · {sel} selected") };
         let (mut clean, mut new_scan) = (false, false);
+        // One action up top; the rest sit in the toolbar above the list.
         style::page_header(ui, "Scan results", &subtitle, |ui| {
             ui.add_enabled_ui(!busy && sel > 0, |ui| clean = style::primary(ui, icon::BROOM, &crate::tf!("Clean ({sel})")).clicked());
-            ui.add_enabled_ui(total > 0, |ui| {
-                let r = style::secondary(ui, icon::EXPORT, "Export");
-                let results = &self.results;
-                super::export_menu(&r, cx, &mut self.export_path, "File (.txt .csv .html .xml .json)", |f| {
-                    crate::export::export(results, f)?;
-                    Ok(crate::tf!("Exported to {}", f.display()))
-                });
-            });
-            ui.add_enabled_ui(!busy, |ui| new_scan = style::secondary(ui, icon::UNDO, "New scan").clicked());
+            if total == 0 {
+                ui.add_enabled_ui(!busy, |ui| new_scan = style::secondary(ui, icon::UNDO, "New scan").clicked());
+            }
         });
         if clean {
             self.request_clean(ui.ctx(), cx);
@@ -518,19 +533,36 @@ impl CleanerView {
 
         crate::gui::style::row(ui, |ui| {
             let mut all = sel == total;
-            if ui.checkbox(&mut all, style::vis(tr("Select all"))).changed() {
+            let cb = egui::Checkbox::new(&mut all, style::vis(tr("Select all"))).indeterminate(sel > 0 && sel < total);
+            if ui.add(cb).changed() {
                 self.checked.iter_mut().for_each(|c| *c = all);
             }
-            ui.add_space(8.0);
-            if style::ghost(ui, icon::LIST_CHECKS, "Expand all").clicked() {
-                self.set_open = Some(true);
-            }
-            if style::ghost(ui, icon::X, "Collapse all").clicked() {
-                self.set_open = Some(false);
-            }
-            ui.add_space(8.0);
-            ui.checkbox(&mut self.show_details, style::vis(tr("Show details")));
+            ui.with_layout(crate::gui::style::far_layout(egui::Align::Center), |ui| {
+                ui.spacing_mut().item_spacing.x = 2.0;
+                ui.add_enabled_ui(!busy, |ui| new_scan = style::ghost(ui, icon::UNDO, "New scan").clicked());
+                let r = style::ghost(ui, icon::EXPORT, "Export");
+                let results = &self.results;
+                super::export_menu(&r, cx, &mut self.export_path, "File (.txt .csv .html .xml .json)", |f| {
+                    crate::export::export(results, f)?;
+                    Ok(crate::tf!("Exported to {}", f.display()))
+                });
+                let (ic, label) = if self.expanded { (icon::X, "Collapse all") } else { (icon::LIST_CHECKS, "Expand all") };
+                if style::ghost(ui, ic, label).clicked() {
+                    self.expanded = !self.expanded;
+                    self.set_open = Some(self.expanded);
+                }
+                ui.add_space(6.0);
+                style::toggle(ui, &mut self.show_details, "Show details");
+                ui.add_space(4.0);
+                ui.add(style::Label::new(style::muted(ui, tr("Show details")).size(13.0)).extend());
+            });
         });
+        if new_scan {
+            self.screen = Screen::Home;
+            self.results.clear();
+            self.checked.clear();
+            return;
+        }
         ui.add_space(6.0);
 
         let mut groups: Vec<(&'static str, Vec<usize>)> = Vec::new();
@@ -545,6 +577,7 @@ impl CleanerView {
         egui::ScrollArea::vertical().auto_shrink([false, false]).show(ui, |ui| {
             for (cat, idx) in &groups {
                 let name = tr(self.names.get(cat).copied().unwrap_or(cat));
+                let desc = self.descs.get(cat).map(|d| tr(d)).unwrap_or_default();
                 style::card(ui, |ui| {
                     let id = ui.make_persistent_id(("cat", cat));
                     let mut state = CollapsingState::load_with_default_open(ui.ctx(), id, true);
@@ -561,24 +594,39 @@ impl CleanerView {
                                 idx.iter().for_each(|i| checked[*i] = all);
                             }
                             style::icon_tile(ui, style::category_icon(cat), p.accent, 28.0);
-                            ui.add(style::Label::new(style::strong(name)));
+                            ui.add(style::Label::new(style::strong(name)).extend());
                             style::badge(ui, &idx.len().to_string(), p.accent);
+                            // What the category means, cut to the room left.
+                            if !desc.is_empty() {
+                                ui.add(style::Label::new(style::muted(ui, desc).size(12.5)).truncate());
+                            }
                         })
                         .body(|ui| {
-                            ui.add_space(4.0);
+                            ui.add_space(2.0);
                             for &i in idx {
                                 let issue = &self.results[i];
-                                crate::gui::style::row(ui, |ui| {
+                                // The hover background goes behind the row, painted once its size is known.
+                                let bg = ui.painter().add(egui::Shape::Noop);
+                                let row = crate::gui::style::row_top(ui, |ui| {
+                                    ui.add_space(4.0);
                                     ui.checkbox(&mut self.checked[i], style::vis(""));
                                     crate::gui::style::column(ui, |ui| {
-                                        let r = ui.add(style::Label::new(style::rich(&issue.location).monospace().size(12.5)).sense(egui::Sense::click()).truncate());
+                                        ui.spacing_mut().item_spacing.y = 1.0;
+                                        let r = ui.add(style::Label::new(style::rich(friendly(&issue.location)).monospace().size(12.5)).sense(egui::Sense::click()).truncate());
                                         let r = r.on_hover_text(style::vis(crate::tf!("{}\n{}", issue.location, issue.detail)));
                                         r.context_menu(|ui| item_menu(ui, i, self.checked[i], &issue.location, &mut action));
-                                        if self.show_details {
-                                            ui.add(style::Label::new(style::rich(&issue.detail).size(12.0).color(p.muted)));
+                                        // Why it was flagged: one line, or all of it with "Show details".
+                                        if !issue.detail.is_empty() {
+                                            let l = style::Label::new(style::rich(&issue.detail).size(12.0).color(p.muted));
+                                            ui.add(if self.show_details { l.wrap() } else { l.truncate() });
                                         }
                                     });
                                 });
+                                let hover = ui.ctx().animate_bool_with_time(row.response.id.with("hover"), row.response.contains_pointer(), style::FADE);
+                                if hover > 0.0 {
+                                    ui.painter().set(bg, egui::Shape::rect_filled(row.response.rect.expand2(Vec2::new(4.0, 2.0)), 8.0, p.hover.gamma_multiply(hover * 0.7)));
+                                }
+                                ui.add_space(4.0);
                             }
                         });
                 });
@@ -702,37 +750,44 @@ fn depth_card(ui: &mut Ui, size: Vec2, m: ScanMode, selected: bool, categories: 
 }
 
 /// Clickable card with an icon tile, a title, a description and an optional tag.
-fn mode_card(ui: &mut Ui, size: Vec2, ic: &str, title: &str, desc: &str, tag: Option<&str>, p: Palette) -> egui::Response {
-    let (title, desc, tag) = (tr(title), tr(desc), tag.map(tr));
-    let (rect, resp) = ui.allocate_exact_size(size, egui::Sense::click());
-    resp.widget_info(|| egui::WidgetInfo::labeled(egui::Role::Button, ui.is_enabled(), title));
-    if ui.is_rect_visible(rect) {
-        let t = style::tile_frame(ui, rect, &resp, false);
-        let mr = style::Mirror::new(rect);
-        let tile = mr.rect(18.0, rect.top() + 18.0, Vec2::splat(40.0));
-        ui.painter().rect_filled(tile, 11.0, p.accent_soft.lerp_to_gamma(p.accent, t * 0.15));
-        ui.painter().text(tile.center(), egui::Align2::CENTER_CENTER, style::vstr(ic), egui::FontId::new(20.0, style::icon_fill()), p.accent);
-        let d = 18.0 + 40.0 + 14.0;
-        let width = rect.width() - d - 18.0;
-        let tg = style::text_galley(ui, title, egui::FontId::new(16.0, style::semibold()), p.text, f32::INFINITY);
-        let title_w = tg.size().x;
-        let tag_g = tag.map(|t| ui.painter().layout_no_wrap(style::vstr(t.to_string()), egui::FontId::new(11.5, style::semibold()), p.success));
-        let dg = style::text_galley(ui, desc, egui::FontId::proportional(13.5), p.muted, width);
-        let painter = ui.painter();
-        painter.galley(egui::pos2(mr.x(d), tile.top() + 1.0), tg, p.text);
-        if let Some(tg2) = tag_g {
-            let r = mr.rect(d + title_w + 10.0, tile.top() + 2.0, tg2.size() + Vec2::new(14.0, 4.0));
-            painter.rect_filled(r, 9.0, egui::Color32::from_rgba_unmultiplied(p.success.r(), p.success.g(), p.success.b(), 30));
-            painter.galley(r.min + Vec2::new(7.0, 2.0), tg2, p.success);
-        }
-        painter.galley(egui::pos2(mr.x(d), tile.top() + 26.0), dg, p.muted);
-        // An arrow slides in on hover, at the far end: this card starts something.
-        if t > 0.0 {
-            let c = mr.pos(rect.width() - 22.0 - 6.0 * (1.0 - t), rect.top() + 26.0);
-            painter.text(c, egui::Align2::CENTER_CENTER, style::vstr(crate::gui::style::icon_forward()), egui::FontId::proportional(16.0), p.accent.gamma_multiply(t));
-        }
+/// A location as people know it: the home folder as `~`.
+fn friendly(location: &str) -> String {
+    match dirs::home_dir().map(|h| h.display().to_string()).filter(|h| h.len() > 1) {
+        Some(h) if location.starts_with(&h) => format!("~{}", &location[h.len()..]),
+        _ => location.to_string(),
     }
-    resp
+}
+
+/// A row of "Other ways to scan": icon, title and one line of description, an arrow on hover.
+fn other_row(ui: &mut Ui, ic: &str, title: &str, desc: &str, p: Palette) -> egui::Response {
+    let (title, desc) = (tr(title), tr(desc));
+    let (rect, resp) = ui.allocate_exact_size(Vec2::new(ui.available_width(), 58.0), egui::Sense::click());
+    resp.widget_info(|| egui::WidgetInfo::labeled(egui::Role::Button, ui.is_enabled(), title));
+    let t = ui.ctx().animate_bool_with_time(resp.id.with("hover"), resp.hovered(), style::FADE);
+    if t > 0.0 {
+        ui.painter().rect_filled(rect.expand2(Vec2::new(8.0, -2.0)), 10.0, p.hover.gamma_multiply(t));
+    }
+    if resp.hovered() {
+        ui.ctx().set_cursor_icon(egui::CursorIcon::PointingHand);
+    }
+    let mr = style::Mirror::new(rect);
+    let cy = rect.center().y;
+    let tile = mr.rect(0.0, cy - 18.0, Vec2::splat(36.0));
+    ui.painter().rect_filled(tile, 10.0, p.accent_soft.lerp_to_gamma(p.accent, t * 0.15));
+    ui.painter().text(tile.center(), egui::Align2::CENTER_CENTER, style::vstr(ic), egui::FontId::new(18.0, style::icon_fill()), p.accent);
+    let d = 36.0 + 14.0;
+    let room = (rect.width() - d - 30.0).max(20.0);
+    let (tg, _) = style::one_line(ui, title, egui::FontId::new(15.0, style::semibold()), p.text, room);
+    let (dg, cut) = style::one_line(ui, desc, egui::FontId::proportional(13.0), p.muted, room);
+    ui.painter().galley(egui::pos2(mr.galley_x(d, tg.size().x), cy - 1.0 - tg.size().y), tg, p.text);
+    ui.painter().galley(egui::pos2(mr.galley_x(d, dg.size().x), cy + 1.0), dg, p.muted);
+    let c = mr.pos(rect.width() - 10.0 - 4.0 * (1.0 - t), cy);
+    ui.painter().text(c, egui::Align2::CENTER_CENTER, style::vstr(crate::gui::style::icon_forward()), egui::FontId::proportional(16.0), p.faint.lerp_to_gamma(p.accent, t));
+    if cut {
+        resp.on_hover_text(style::vis(desc))
+    } else {
+        resp
+    }
 }
 
 enum ItemAction {

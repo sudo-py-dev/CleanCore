@@ -368,6 +368,9 @@ msgstr "סריקה מתקדמת"
 msgid "Exhaustive. Review the results before you clean."
 msgstr "יסודית. בדוק את התוצאות לפני הניקוי."
 
+msgid "Clean without reviewing"
+msgstr "נקה בלי לסקור"
+
 msgid "Forced scan"
 msgstr "סריקה מאולצת"
 
@@ -413,15 +416,6 @@ msgstr "מציאה והסרה של הגדרות שנשארו מאפליקציו�
 msgid "Cleaner"
 msgstr "ניקוי"
 
-msgid "Quick Clean"
-msgstr "ניקוי מהיר"
-
-msgid "Scan and clean with one click"
-msgstr "סריקה וניקוי בלחיצה אחת"
-
-msgid "Scheduled scans and cleans"
-msgstr "סריקות וניקויים מתוזמנים"
-
 msgid "every account"
 msgstr "כל החשבונות"
 
@@ -440,8 +434,17 @@ msgstr "{}  החשבון הנוכחי"
 msgid "{}  All accounts"
 msgstr "{}  כל החשבונות"
 
+msgid "Scan and clean"
+msgstr "סרוק ונקה"
+
 msgid "Start scan"
 msgstr "התחל סריקה"
+
+msgid "Remove everything the scan finds right away (a backup is made first)"
+msgstr "הסר מיד את כל מה שהסריקה מוצאת (קודם נוצר גיבוי)"
+
+msgid "Quick Clean"
+msgstr "ניקוי מהיר"
 
 msgid "Scan depth"
 msgstr "עומק הסריקה"
@@ -515,15 +518,6 @@ msgstr "תוצאות הסריקה"
 msgid "Clean ({sel})"
 msgstr "נקה ({sel})"
 
-msgid "Export"
-msgstr "ייצוא"
-
-msgid "File (.txt .csv .html .xml .json)"
-msgstr "קובץ (‎.txt .csv .html .xml .json)"
-
-msgid "Exported to {}"
-msgstr "יוצא אל {}"
-
 msgid "New scan"
 msgstr "סריקה חדשה"
 
@@ -536,11 +530,20 @@ msgstr "לא נמצאו בעיות"
 msgid "Everything we checked looks fine."
 msgstr "כל מה שבדקנו נראה תקין."
 
-msgid "Expand all"
-msgstr "הרחב הכול"
+msgid "Export"
+msgstr "ייצוא"
+
+msgid "File (.txt .csv .html .xml .json)"
+msgstr "קובץ (‎.txt .csv .html .xml .json)"
+
+msgid "Exported to {}"
+msgstr "יוצא אל {}"
 
 msgid "Collapse all"
 msgstr "כווץ הכול"
+
+msgid "Expand all"
+msgstr "הרחב הכול"
 
 msgid "Show details"
 msgstr "הצג פרטים"

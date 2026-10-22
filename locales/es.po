@@ -367,6 +367,9 @@ msgstr "Análisis avanzado"
 msgid "Exhaustive. Review the results before you clean."
 msgstr "Exhaustivo. Revisa los resultados antes de limpiar."
 
+msgid "Clean without reviewing"
+msgstr "Limpiar sin revisar"
+
 msgid "Forced scan"
 msgstr "Análisis forzado"
 
@@ -412,15 +415,6 @@ msgstr "Encuentra y elimina ajustes que dejaron las apps eliminadas"
 msgid "Cleaner"
 msgstr "Limpieza"
 
-msgid "Quick Clean"
-msgstr "Limpieza rápida"
-
-msgid "Scan and clean with one click"
-msgstr "Analiza y limpia con un clic"
-
-msgid "Scheduled scans and cleans"
-msgstr "Análisis y limpiezas programados"
-
 msgid "every account"
 msgstr "todas las cuentas"
 
@@ -439,8 +433,17 @@ msgstr "{}  Cuenta actual"
 msgid "{}  All accounts"
 msgstr "{}  Todas las cuentas"
 
+msgid "Scan and clean"
+msgstr "Analizar y limpiar"
+
 msgid "Start scan"
 msgstr "Iniciar análisis"
+
+msgid "Remove everything the scan finds right away (a backup is made first)"
+msgstr "Quitar enseguida todo lo que encuentre el análisis (antes se hace una copia de seguridad)"
+
+msgid "Quick Clean"
+msgstr "Limpieza rápida"
 
 msgid "Scan depth"
 msgstr "Profundidad del análisis"
@@ -514,15 +517,6 @@ msgstr "Resultados del análisis"
 msgid "Clean ({sel})"
 msgstr "Limpiar ({sel})"
 
-msgid "Export"
-msgstr "Exportar"
-
-msgid "File (.txt .csv .html .xml .json)"
-msgstr "Archivo (.txt .csv .html .xml .json)"
-
-msgid "Exported to {}"
-msgstr "Exportado a {}"
-
 msgid "New scan"
 msgstr "Nuevo análisis"
 
@@ -535,11 +529,20 @@ msgstr "No se encontraron problemas"
 msgid "Everything we checked looks fine."
 msgstr "Todo lo que revisamos está bien."
 
-msgid "Expand all"
-msgstr "Expandir todo"
+msgid "Export"
+msgstr "Exportar"
+
+msgid "File (.txt .csv .html .xml .json)"
+msgstr "Archivo (.txt .csv .html .xml .json)"
+
+msgid "Exported to {}"
+msgstr "Exportado a {}"
 
 msgid "Collapse all"
 msgstr "Contraer todo"
+
+msgid "Expand all"
+msgstr "Expandir todo"
 
 msgid "Show details"
 msgstr "Mostrar detalles"

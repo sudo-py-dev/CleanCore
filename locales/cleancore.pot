@@ -366,6 +366,9 @@ msgstr ""
 msgid "Exhaustive. Review the results before you clean."
 msgstr ""
 
+msgid "Clean without reviewing"
+msgstr ""
+
 msgid "Forced scan"
 msgstr ""
 
@@ -411,15 +414,6 @@ msgstr ""
 msgid "Cleaner"
 msgstr ""
 
-msgid "Quick Clean"
-msgstr ""
-
-msgid "Scan and clean with one click"
-msgstr ""
-
-msgid "Scheduled scans and cleans"
-msgstr ""
-
 msgid "every account"
 msgstr ""
 
@@ -438,7 +432,16 @@ msgstr ""
 msgid "{}  All accounts"
 msgstr ""
 
+msgid "Scan and clean"
+msgstr ""
+
 msgid "Start scan"
+msgstr ""
+
+msgid "Remove everything the scan finds right away (a backup is made first)"
+msgstr ""
+
+msgid "Quick Clean"
 msgstr ""
 
 msgid "Scan depth"
@@ -513,15 +516,6 @@ msgstr ""
 msgid "Clean ({sel})"
 msgstr ""
 
-msgid "Export"
-msgstr ""
-
-msgid "File (.txt .csv .html .xml .json)"
-msgstr ""
-
-msgid "Exported to {}"
-msgstr ""
-
 msgid "New scan"
 msgstr ""
 
@@ -534,10 +528,19 @@ msgstr ""
 msgid "Everything we checked looks fine."
 msgstr ""
 
-msgid "Expand all"
+msgid "Export"
+msgstr ""
+
+msgid "File (.txt .csv .html .xml .json)"
+msgstr ""
+
+msgid "Exported to {}"
 msgstr ""
 
 msgid "Collapse all"
+msgstr ""
+
+msgid "Expand all"
 msgstr ""
 
 msgid "Show details"
