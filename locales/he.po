@@ -2801,6 +2801,9 @@ msgstr "CleanCore {} זמין. התקן אותו בהגדרות › עדכוני
 msgid "Checking for updates failed: {e}"
 msgstr "בדיקת העדכונים נכשלה: {e}"
 
+msgid "Updated, but CleanCore could not start again: {e:#}. Restart it to use the new version."
+msgstr "עודכן, אבל CleanCore לא הצליח להיפתח מחדש: {e:#}. הפעל אותו מחדש כדי להשתמש בגרסה החדשה."
+
 msgid "The update was not installed: {e}"
 msgstr "העדכון לא הותקן: {e}"
 
@@ -4304,14 +4307,14 @@ msgstr "מסיר ההתקנה מבקש הפעלה מחדש. אפשר לסרוק 
 msgid "{name} does not match its signed checksum, so it was not installed."
 msgstr "{name} לא תואם לסכום הביקורת החתום שלו, ולכן לא הותקן."
 
-msgid "The package manager did not install the update."
-msgstr "מנהל החבילות לא התקין את העדכון."
-
 msgid "Updated. Restart CleanCore to use the new version."
 msgstr "עודכן. הפעל מחדש את CleanCore כדי להשתמש בגרסה החדשה."
 
 msgid "Installing the update. CleanCore closes and starts again when it is done."
 msgstr "מתקין את העדכון. CleanCore ייסגר ויופעל שוב בסיום."
+
+msgid "The package manager did not install the update."
+msgstr "מנהל החבילות לא התקין את העדכון."
 
 msgid "Could not unpack the update."
 msgstr "לא ניתן היה לחלץ את העדכון."

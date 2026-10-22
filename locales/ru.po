@@ -2800,6 +2800,9 @@ msgstr "Доступна версия CleanCore {}. Установите её в
 msgid "Checking for updates failed: {e}"
 msgstr "Не удалось проверить обновления: {e}"
 
+msgid "Updated, but CleanCore could not start again: {e:#}. Restart it to use the new version."
+msgstr "Обновлено, но CleanCore не удалось перезапустить: {e:#}. Перезапустите его, чтобы использовать новую версию."
+
 msgid "The update was not installed: {e}"
 msgstr "Обновление не установлено: {e}"
 
@@ -4303,14 +4306,14 @@ msgstr "Деинсталлятор просит перезагрузку. Мож
 msgid "{name} does not match its signed checksum, so it was not installed."
 msgstr "{name} не совпадает с подписанной контрольной суммой, поэтому не установлен."
 
-msgid "The package manager did not install the update."
-msgstr "Менеджер пакетов не установил обновление."
-
 msgid "Updated. Restart CleanCore to use the new version."
 msgstr "Обновлено. Перезапустите CleanCore, чтобы использовать новую версию."
 
 msgid "Installing the update. CleanCore closes and starts again when it is done."
 msgstr "Установка обновления. CleanCore закроется и запустится снова по завершении."
+
+msgid "The package manager did not install the update."
+msgstr "Менеджер пакетов не установил обновление."
 
 msgid "Could not unpack the update."
 msgstr "Не удалось распаковать обновление."

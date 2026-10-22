@@ -2799,6 +2799,9 @@ msgstr ""
 msgid "Checking for updates failed: {e}"
 msgstr ""
 
+msgid "Updated, but CleanCore could not start again: {e:#}. Restart it to use the new version."
+msgstr ""
+
 msgid "The update was not installed: {e}"
 msgstr ""
 
@@ -4302,13 +4305,13 @@ msgstr ""
 msgid "{name} does not match its signed checksum, so it was not installed."
 msgstr ""
 
-msgid "The package manager did not install the update."
-msgstr ""
-
 msgid "Updated. Restart CleanCore to use the new version."
 msgstr ""
 
 msgid "Installing the update. CleanCore closes and starts again when it is done."
+msgstr ""
+
+msgid "The package manager did not install the update."
 msgstr ""
 
 msgid "Could not unpack the update."

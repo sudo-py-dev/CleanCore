@@ -194,21 +194,43 @@ pub fn download(release: &Release) -> Result<PathBuf> {
     Ok(file)
 }
 
-/// Put a verified download in place. Returns what to tell the user.
-pub fn install(file: &Path) -> Result<String> {
+/// What comes after `install` worked.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum Installed {
+    /// The new version is in place: start it (`relaunch`) and close this one.
+    InPlace,
+    /// The setup wizard is updating the install: close CleanCore so it can replace the files.
+    /// It starts CleanCore again when it is done.
+    BySetup,
+}
+
+impl Installed {
+    /// What to tell someone who updated from the command line.
+    pub fn message(self) -> &'static str {
+        match self {
+            Installed::InPlace => crate::i18n::tr("Updated. Restart CleanCore to use the new version."),
+            Installed::BySetup => crate::i18n::tr("Installing the update. CleanCore closes and starts again when it is done."),
+        }
+    }
+}
+
+/// Put a verified download in place.
+pub fn install(file: &Path) -> Result<Installed> {
     if file.extension().is_some_and(|e| e == "deb") {
         // Root is needed for /usr/bin: ask through the desktop's password prompt.
         let st = Command::new("pkexec").args(["apt-get", "install", "-y", "--allow-downgrades"]).arg(file).status().context("running pkexec")?;
         if !st.success() {
             bail!("{}", crate::i18n::tr("The package manager did not install the update."));
         }
-        return Ok(crate::i18n::tr("Updated. Restart CleanCore to use the new version.").into());
+        return Ok(Installed::InPlace);
     }
     if file.extension().is_some_and(|e| e == "exe") {
-        // The setup wizard, without its pages: it closes CleanCore, updates the install (and its
-        // entry in Apps & features) and starts CleanCore again.
-        Command::new(file).args(["/SILENT", "/SUPPRESSMSGBOXES", "/NORESTART", "/CLOSEAPPLICATIONS", "/RESTARTAPPLICATIONS"]).spawn().context("starting the setup")?;
-        return Ok(crate::i18n::tr("Installing the update. CleanCore closes and starts again when it is done.").into());
+        // The setup wizard, without its pages: it updates the install (and its entry in Apps &
+        // features) once CleanCore has closed, then starts CleanCore again (its [Run] entry for
+        // silent setups). Windows' Restart Manager isn't asked to restart it too: CleanCore
+        // doesn't register with it, and the [Run] entry would start a second copy.
+        Command::new(file).args(["/SILENT", "/SUPPRESSMSGBOXES", "/NORESTART", "/CLOSEAPPLICATIONS", "/NORESTARTAPPLICATIONS"]).spawn().context("starting the setup")?;
+        return Ok(Installed::BySetup);
     }
     let unpacked = file.with_extension("unpacked");
     let _ = std::fs::remove_dir_all(&unpacked);
@@ -241,7 +263,23 @@ pub fn install(file: &Path) -> Result<String> {
         }
     }
     let _ = std::fs::remove_dir_all(&unpacked);
-    Ok(crate::i18n::tr("Updated. Restart CleanCore to use the new version.").into())
+    Ok(Installed::InPlace)
+}
+
+/// Start the CleanCore window again, from where this copy runs: after an update in place,
+/// that is the new version.
+pub fn relaunch() -> Result<()> {
+    let gui = gui_beside(&std::env::current_exe().context("locating CleanCore")?);
+    Command::new(&gui).spawn().with_context(|| format!("starting {}", gui.display()))?;
+    Ok(())
+}
+
+/// The CleanCore window's program next to `exe`, the running one (the window, or the command
+/// line tool).
+fn gui_beside(exe: &Path) -> PathBuf {
+    // Linux names a running program whose file was replaced "<path> (deleted)".
+    let exe = PathBuf::from(exe.to_string_lossy().trim_end_matches(" (deleted)").to_string());
+    exe.with_file_name(if cfg!(windows) { "cleancore-gui.exe" } else { "cleancore-gui" })
 }
 
 fn find_file(dir: &Path, name: &str) -> Option<PathBuf> {
@@ -270,6 +308,13 @@ pub fn cleanup_after_update() {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    #[cfg(unix)]
+    fn restarts_the_window_from_a_replaced_program() {
+        assert_eq!(gui_beside(Path::new("/usr/bin/cleancore-gui (deleted)")), PathBuf::from("/usr/bin/cleancore-gui"));
+        assert_eq!(gui_beside(Path::new("/opt/cleancore/cleancore")), PathBuf::from("/opt/cleancore/cleancore-gui"));
+    }
 
     #[test]
     fn versions() {

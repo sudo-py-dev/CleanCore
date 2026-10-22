@@ -2800,6 +2800,9 @@ msgstr "CleanCore {} ist verfügbar. Installieren Sie es unter Einstellungen ›
 msgid "Checking for updates failed: {e}"
 msgstr "Updateprüfung fehlgeschlagen: {e}"
 
+msgid "Updated, but CleanCore could not start again: {e:#}. Restart it to use the new version."
+msgstr "Aktualisiert, aber CleanCore konnte nicht neu starten: {e:#}. Starten Sie es neu, um die neue Version zu verwenden."
+
 msgid "The update was not installed: {e}"
 msgstr "Das Update wurde nicht installiert: {e}"
 
@@ -4303,14 +4306,14 @@ msgstr "Das Deinstallationsprogramm verlangt einen Neustart. Sie können jetzt n
 msgid "{name} does not match its signed checksum, so it was not installed."
 msgstr "{name} passt nicht zu seiner signierten Prüfsumme und wurde daher nicht installiert."
 
-msgid "The package manager did not install the update."
-msgstr "Die Paketverwaltung hat das Update nicht installiert."
-
 msgid "Updated. Restart CleanCore to use the new version."
 msgstr "Aktualisiert. Starten Sie CleanCore neu, um die neue Version zu verwenden."
 
 msgid "Installing the update. CleanCore closes and starts again when it is done."
 msgstr "Das Update wird installiert. CleanCore schließt sich und startet danach neu."
+
+msgid "The package manager did not install the update."
+msgstr "Die Paketverwaltung hat das Update nicht installiert."
 
 msgid "Could not unpack the update."
 msgstr "Das Update konnte nicht entpackt werden."

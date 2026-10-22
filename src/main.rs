@@ -2742,6 +2742,6 @@ fn run_update(check_only: bool) -> Result<()> {
     println!("Downloading and verifying the signature and checksum…");
     let file = update::download(&r)?;
     println!("Verified {}", file.display());
-    println!("{}", update::install(&file)?);
+    println!("{}", update::install(&file)?.message());
     Ok(())
 }

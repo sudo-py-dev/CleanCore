@@ -27,7 +27,7 @@ struct AutoCheck {
 
 pub struct Updates {
     check: Option<Pending<Result<Option<Release>, String>>>,
-    install: Option<Pending<Result<String, String>>>,
+    install: Option<Pending<Result<update::Installed, String>>>,
     /// A newer release, once found.
     pub available: Option<Release>,
     /// The last check found nothing newer.
@@ -101,10 +101,16 @@ impl Updates {
         }
         if let Some(r) = take(&mut self.install) {
             match r {
-                Ok(msg) => {
-                    self.installed = true;
-                    cx.info(msg);
-                }
+                // The new version is in place: start it and close this copy.
+                Ok(update::Installed::InPlace) => match update::relaunch() {
+                    Ok(()) => std::process::exit(0),
+                    Err(e) => {
+                        self.installed = true;
+                        cx.error(crate::tf!("Updated, but CleanCore could not start again: {e:#}. Restart it to use the new version."));
+                    }
+                },
+                // The setup replaces the files once CleanCore is closed, then starts it again.
+                Ok(update::Installed::BySetup) => std::process::exit(0),
                 Err(e) => cx.error(crate::tf!("The update was not installed: {e}")),
             }
         }

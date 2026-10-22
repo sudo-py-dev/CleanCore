@@ -77,6 +77,8 @@ Name: "{autodesktop}\CleanCore"; Filename: "{app}\cleancore-gui.exe"; IconFilena
 
 [Run]
 Filename: "{app}\cleancore-gui.exe"; Description: "{cm:LaunchProgram,CleanCore}"; Flags: nowait postinstall skipifsilent
+; An update CleanCore started (silent): CleanCore closed for it, so start it again.
+Filename: "{app}\cleancore-gui.exe"; Flags: nowait runasoriginaluser; Check: WizardSilent
 
 [UninstallDelete]
 ; Copies an in-place update left behind.
