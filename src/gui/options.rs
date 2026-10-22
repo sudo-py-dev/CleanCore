@@ -169,7 +169,7 @@ impl SettingsView {
                 let cur = cx.settings.gui_accent.clone().unwrap_or_else(|| "blue".into());
                 for (id, label, color) in ACCENTS.iter().rev() {
                     let (rect, r) = ui.allocate_exact_size(Vec2::splat(26.0), egui::Sense::click());
-                    r.widget_info(|| egui::WidgetInfo::selected(egui::Role::Button, true, cur == *id, *label));
+                    r.widget_info(|| egui::WidgetInfo::selected(egui::Role::Button, true, cur == *id, tr(label)));
                     let shown = if p.dark { color.lerp_to_gamma(egui::Color32::WHITE, 0.18) } else { *color };
                     ui.painter().circle_filled(rect.center(), 11.0, shown);
                     if cur == *id {
@@ -350,7 +350,7 @@ impl SettingsView {
 fn list_editor(ui: &mut Ui, list: &mut Vec<ListEntry>, new: &mut String, title: &str, help: &str) {
     let p = Palette::get(ui.ctx());
     style::section_title(ui, title);
-    ui.add(style::Label::new(style::muted(ui, help).size(12.5)));
+    ui.add(style::Label::new(style::muted(ui, tr(help)).size(12.5)).wrap());
     ui.add_space(6.0);
     let mut remove = None;
     if list.is_empty() {

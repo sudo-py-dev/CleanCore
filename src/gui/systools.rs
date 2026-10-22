@@ -59,7 +59,7 @@ impl SystemToolsView {
                 crate::gui::style::row_wrapped(ui, |ui| {
                     for t in shown.iter().filter(|t| t.group == g) {
                         let (rect, r) = ui.allocate_exact_size(egui::vec2(262.0, 64.0), egui::Sense::click());
-                        r.widget_info(|| egui::WidgetInfo::labeled(egui::Role::Button, true, &t.name));
+                        r.widget_info(|| egui::WidgetInfo::labeled(egui::Role::Button, true, tr(&t.name)));
                         style::tile_frame(ui, rect, &r, false);
                         let mr = crate::gui::style::Mirror::new(rect);
                         let top = rect.top() + 14.0;

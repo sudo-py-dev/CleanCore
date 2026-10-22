@@ -343,7 +343,7 @@ impl WatcherView {
         let resp = egui::Frame::new().fill(fill).corner_radius(8).inner_margin(egui::Margin::symmetric(10, 6)).show(ui, |ui| {
             ui.set_width(ui.available_width());
             crate::gui::style::row(ui, |ui| {
-                let (dot, col, state) = if w.active { (icon::RECORD, p.success, "watching") } else { (icon::PAUSE, p.faint, "paused") };
+                let (dot, col, state) = if w.active { (icon::RECORD, p.success, tr("Watching")) } else { (icon::PAUSE, p.faint, tr("Paused")) };
                 ui.add(style::Label::new(style::rich(dot).color(col))).on_hover_text(style::vis(state));
                 crate::gui::style::column(ui, |ui| {
                     // Leave room for the action icons of the selected row.
@@ -512,9 +512,9 @@ impl WatcherView {
                                 (e.time.format("%H:%M:%S%.3f").to_string(), p.muted),
                                 (e.process.clone(), p.text),
                                 (e.pid.map(|p| p.to_string()).unwrap_or_default(), p.muted),
-                                (e.op.label().to_string(), op_color),
+                                (tr(e.op.label()).to_string(), op_color),
                                 (e.key.clone(), p.text),
-                                (e.value.clone().map(|v| if v.is_empty() { "(Default)".into() } else { v }).unwrap_or_default(), p.text),
+                                (e.value.clone().map(|v| if v.is_empty() { tr("(Default)").to_string() } else { v }).unwrap_or_default(), p.text),
                                 (e.new_data.clone().unwrap_or_default(), p.text),
                                 (e.old_data.clone().unwrap_or_default(), p.muted),
                                 (e.data_type.clone().unwrap_or_default(), p.muted),
@@ -646,7 +646,7 @@ fn describe(e: &WatchEvent, p: Palette) -> (&'static str, Color32, &'static str)
 fn change_row(ui: &mut Ui, e: &WatchEvent, p: Palette) -> bool {
     let (ic, col, verb) = describe(e, p);
     let what = match e.value.as_deref() {
-        Some("") => "(Default)".to_string(),
+        Some("") => tr("(Default)").to_string(),
         Some(v) => v.to_string(),
         None => watch_name(&e.key),
     };

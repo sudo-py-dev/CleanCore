@@ -219,7 +219,7 @@ impl TunerView {
                 ui.add_enabled_ui(available, |ui| {
                     if t.is_toggle() {
                         let mut on = current.is_some();
-                        if style::toggle(ui, &mut on, &t.name).on_hover_text(style::vis(&t.name)).changed() {
+                        if style::toggle(ui, &mut on, &t.name).on_hover_text(style::vis(tr(&t.name))).changed() {
                             out = Some(if on { Change::Apply(t.id.clone(), t.options[0].id.clone()) } else { Change::Revert(t.id.clone()) });
                         }
                     } else {

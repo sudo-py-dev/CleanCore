@@ -3178,6 +3178,18 @@ msgstr "Розділи програм, що не містять даних."
 msgid "Contents of keys added to the include list."
 msgstr "Вміст розділів зі списку включень."
 
+msgid "File Explorer / Files"
+msgstr "Провідник / Файли"
+
+msgid "Desktop"
+msgstr "Робочий стіл"
+
+msgid "Security and Stability"
+msgstr "Безпека й стабільність"
+
+msgid "Usage"
+msgstr "Використання"
+
 msgid "Win32"
 msgstr "Win32"
 
@@ -3222,6 +3234,39 @@ msgstr "Cron @reboot"
 
 msgid "Login script"
 msgstr "Сценарій входу"
+
+msgid "Created Key"
+msgstr "Розділ створено"
+
+msgid "Deleted Key"
+msgstr "Розділ видалено"
+
+msgid "Renamed Key"
+msgstr "Розділ перейменовано"
+
+msgid "Value Set"
+msgstr "Значення задано"
+
+msgid "Deleted Value"
+msgstr "Значення видалено"
+
+msgid "Set Information Key"
+msgstr "Відомості про розділ змінено"
+
+msgid "Query Key"
+msgstr "Запит розділу"
+
+msgid "Query Value"
+msgstr "Запит значення"
+
+msgid "Query Multiple Value"
+msgstr "Запит кількох значень"
+
+msgid "Enumerate Key"
+msgstr "Перелік розділів"
+
+msgid "Enumerate Value"
+msgstr "Перелік значень"
 
 msgid "Recently used files"
 msgstr "Нещодавні файли"
@@ -4086,6 +4131,36 @@ msgstr "Дані форм"
 
 msgid "Text typed into forms (autofill)"
 msgstr "Текст, введений у форми (автозаповнення)"
+
+msgid "Run CleanCore as administrator to remove it for every user and keep it away."
+msgstr "Запустіть CleanCore від імені адміністратора, щоб видалити його для всіх користувачів і заблокувати."
+
+msgid "{}'s uninstaller did not remove it. It stays blocked, and the daily check tries again."
+msgstr "Деінсталятор {} не видалив його. Блокування залишається, щоденна перевірка спробує знову."
+
+msgid "{} is removed and won't come back."
+msgstr "{} видалено, і воно не повернеться."
+
+msgid "{} is allowed again and reinstalled."
+msgstr "{} знову дозволено й установлено заново."
+
+msgid "{} is allowed again. Reinstall it from microsoft.com or the Microsoft Store."
+msgstr "{} знову дозволено. Установіть його заново з microsoft.com або з Microsoft Store."
+
+msgid "{name} does not match its signed checksum, so it was not installed."
+msgstr "{name} не збігається з підписаною контрольною сумою, тому не встановлено."
+
+msgid "The package manager did not install the update."
+msgstr "Менеджер пакетів не встановив оновлення."
+
+msgid "Updated. Restart CleanCore to use the new version."
+msgstr "Оновлено. Перезапустіть CleanCore, щоб користуватися новою версією."
+
+msgid "Installing the update. CleanCore closes and starts again when it is done."
+msgstr "Встановлення оновлення. CleanCore закриється й запуститься знову після завершення."
+
+msgid "Could not unpack the update."
+msgstr "Не вдалося розпакувати оновлення."
 
 msgid "Color scheme"
 msgstr "Колірна схема"

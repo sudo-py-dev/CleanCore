@@ -581,7 +581,7 @@ impl UninstallerView {
                         }
                         let r = if narrow {
                             let r = style::secondary(ui, icon::LIGHTNING, "");
-                            r.widget_info(|| egui::WidgetInfo::labeled(egui::Role::Button, ui.is_enabled(), "Quick uninstall"));
+                            r.widget_info(|| egui::WidgetInfo::labeled(egui::Role::Button, ui.is_enabled(), tr("Quick uninstall")));
                             r
                         } else {
                             style::secondary(ui, icon::LIGHTNING, "Quick uninstall")
@@ -833,7 +833,7 @@ impl UninstallerView {
                                 last_day = day;
                             }
                             let sel = self.history_sel == Some(i);
-                            let text = crate::tf!("{}  {}   ·  {}  ·  {} removed", e.time.format("%H:%M"), e.program, e.operation.label(), e.removed.len());
+                            let text = crate::tf!("{}  {}   ·  {}  ·  {} removed", e.time.format("%H:%M"), e.program, tr(e.operation.label()), e.removed.len());
                             if ui.add_sized([ui.available_width(), 30.0], egui::Button::selectable(sel, text)).clicked() {
                                 self.history_sel = Some(i);
                             }
@@ -844,7 +844,7 @@ impl UninstallerView {
                 crate::gui::style::column(ui, |ui| match self.history_sel.and_then(|i| self.history.get(i)) {
                     Some(e) => {
                         ui.add(style::Label::new(style::strong(crate::tf!("{} {}", e.program, e.version)).size(17.0)));
-                        ui.add(style::Label::new(style::muted(ui, crate::tf!("{} · {}", e.operation.label(), e.time.format("%d %b %Y, %H:%M")))));
+                        ui.add(style::Label::new(style::muted(ui, crate::tf!("{} · {}", tr(e.operation.label()), e.time.format("%d %b %Y, %H:%M")))));
                         if let Some(b) = &e.backup_id {
                             ui.add(style::Label::new(style::muted(ui, crate::tf!("Backup {b} (restore it from Backups)"))));
                         }

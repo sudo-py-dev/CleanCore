@@ -21,7 +21,7 @@ fn passes_picker(ui: &mut Ui, cx: &mut Cx) {
     crate::gui::style::row(ui, |ui| {
         ui.add(style::Label::new(tr("Overwrite passes")));
         for (n, tip) in [(1, "Fast; enough for modern drives"), (3, "Zeros, ones, random (default)"), (7, "Seven passes; slow")] {
-            if style::segment(ui, cx.settings.shred_passes == n, &n.to_string()).on_hover_text(style::vis(tip)).clicked() {
+            if style::segment(ui, cx.settings.shred_passes == n, &n.to_string()).on_hover_text(style::vis(tr(tip))).clicked() {
                 cx.settings.shred_passes = n;
                 cx.save_settings();
             }

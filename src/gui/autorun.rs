@@ -135,7 +135,7 @@ impl AutorunView {
             }
             for s in sources {
                 let n = self.list.iter().filter(|e| e.source == s).count();
-                if style::segment(ui, self.source == Some(s), &crate::tf!("{}  {n}", s.label())).clicked() {
+                if style::segment(ui, self.source == Some(s), &crate::tf!("{}  {n}", tr(s.label()))).clicked() {
                     self.source = Some(s);
                 }
             }
@@ -228,7 +228,7 @@ impl AutorunView {
                                 });
                             }),
                             Box::new(|ui: &mut Ui| {
-                                ui.add(style::Label::new(style::muted(ui, e.source.label())));
+                                ui.add(style::Label::new(style::muted(ui, tr(e.source.label()))));
                             }),
                             Box::new(|ui: &mut Ui| {
                                 ui.add(style::Label::new(style::muted(ui, e.publisher.as_deref().unwrap_or(""))).truncate());

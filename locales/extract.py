@@ -64,8 +64,12 @@ def backend_messages():
             out += [m.group(1), m.group(2)]
         for m in re.finditer(r"name:\s*" + LIT + r",\s*description:\s*" + LIT, text):
             out += [m.group(1), m.group(2)]
+    # The Tuner's sections: CATEGORIES = [("id", "Name"), …].
+    text = (ROOT / "src/tuner.rs").read_text()
+    block = re.search(r"pub const CATEGORIES[^=]*=\s*\[(.*?)\];", text, re.S)
+    out += [m.group(1) for m in re.finditer(r'\(\s*"[^"]*",\s*' + LIT + r"\s*\)", block.group(1))]
     # `fn label` of enums shown in the interface.
-    for f in ("src/uninstaller/mod.rs", "src/autorun.rs", "src/tracer/mod.rs", "src/backup.rs", "src/model.rs"):
+    for f in ("src/uninstaller/mod.rs", "src/autorun.rs", "src/tracer/mod.rs", "src/backup.rs", "src/model.rs", "src/watcher.rs"):
         text = (ROOT / f).read_text()
         for m in re.finditer(r"fn label\(self\)[^{]*\{(.*?)\n    \}", text, re.S):
             out += [lit for lit, _ in literals(m.group(1)) if ui_text(lit)]
@@ -73,6 +77,12 @@ def backend_messages():
     for f in ("src/platform/linux_tools.rs", "src/platform/windows_tools.rs", "src/slop.rs", "src/history.rs"):
         text = (ROOT / f).read_text().split("#[cfg(test)]")[0]
         out += [lit for lit, before in literals(text) if ui_text(lit) and not NOT_TEXT.search(before) and "{" not in lit and "\\" not in lit and "/" not in lit]
+    # Messages the rest of the code translates itself: tr("…") and tf!("…").
+    for f in sorted(glob.glob(str(ROOT / "src/**/*.rs"), recursive=True)):
+        if "/src/gui/" in f or f.endswith("i18n.rs"):
+            continue
+        text = Path(f).read_text().split("#[cfg(test)]")[0]
+        out += [m.group(1) for m in re.finditer(r"(?:\btr|tf!)\(\s*" + LIT, text)]
     # Tuner tweaks.
     for f in ("tweaks/linux.toml", "tweaks/windows.toml"):
         for line in (ROOT / f).read_text().splitlines():

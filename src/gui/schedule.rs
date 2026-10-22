@@ -399,7 +399,7 @@ impl TaskPanel {
 
 fn task_row(ui: &mut Ui, t: &Task, selected: bool, p: Palette) -> egui::Response {
     let (rect, resp) = ui.allocate_exact_size(egui::vec2(ui.available_width(), 52.0), egui::Sense::click());
-    resp.widget_info(|| egui::WidgetInfo::selected(egui::Role::Button, true, selected, &t.name));
+    resp.widget_info(|| egui::WidgetInfo::selected(egui::Role::Button, true, selected, tr(&t.name)));
     let bg = if selected {
         p.accent_soft
     } else if resp.hovered() {

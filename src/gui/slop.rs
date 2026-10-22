@@ -333,12 +333,12 @@ impl SlopView {
             for f in &found {
                 if f.app.group != last {
                     ui.add_space(6.0);
-                    ui.add(style::Label::new(style::strong(f.app.group).size(13.5)));
+                    ui.add(style::Label::new(style::strong(tr(f.app.group)).size(13.5)));
                     last = f.app.group;
                 }
                 crate::gui::style::row(ui, |ui| {
                     let mut on = self.checked.contains(f.app.name);
-                    if ui.checkbox(&mut on, style::vis(f.app.name)).changed() {
+                    if ui.checkbox(&mut on, style::vis(tr(f.app.name))).changed() {
                         if on {
                             self.checked.insert(f.app.name);
                         } else {
@@ -355,7 +355,7 @@ impl SlopView {
                         style::badge(ui, "Only the preinstalled copy", p.muted);
                     }
                     if !f.app.note.is_empty() {
-                        ui.add(style::Label::new(style::muted(ui, f.app.note).size(12.0)));
+                        ui.add(style::Label::new(style::muted(ui, tr(f.app.note)).size(12.0)));
                     }
                 });
             }
@@ -402,12 +402,12 @@ impl SlopView {
             for a in slop::CATALOG {
                 if a.group != last {
                     ui.add_space(6.0);
-                    ui.add(style::Label::new(style::strong(a.group).size(13.5)));
+                    ui.add(style::Label::new(style::strong(tr(a.group)).size(13.5)));
                     last = a.group;
                 }
                 crate::gui::style::row(ui, |ui| {
                     let mut on = auto.apps.contains(a.name);
-                    if ui.checkbox(&mut on, style::vis(a.name)).changed() {
+                    if ui.checkbox(&mut on, style::vis(tr(a.name))).changed() {
                         if on {
                             auto.apps.insert(a.name);
                         } else {
@@ -416,7 +416,7 @@ impl SlopView {
                         changed = true;
                     }
                     if !a.note.is_empty() {
-                        ui.add(style::Label::new(style::muted(ui, a.note).size(12.0)));
+                        ui.add(style::Label::new(style::muted(ui, tr(a.note)).size(12.0)));
                     }
                 });
             }
@@ -531,7 +531,7 @@ impl SlopView {
             ui.add(style::Label::new(style::strong(crate::tf!("Remove {} app(s)?", picked.len())).size(18.0)));
             ui.add_space(6.0);
             for f in picked.iter().take(10) {
-                ui.add(style::Label::new(crate::tf!("• {}", f.app.name)));
+                ui.add(style::Label::new(crate::tf!("• {}", tr(f.app.name))));
             }
             if picked.len() > 10 {
                 ui.add(style::Label::new(style::muted(ui, crate::tf!("and {} more", picked.len() - 10))));

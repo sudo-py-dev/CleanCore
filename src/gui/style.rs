@@ -127,7 +127,7 @@ pub fn icon_picker(ui: &mut Ui, current: Option<&str>) -> Option<Option<String>>
                     .fill(if sel { p.accent_soft } else { Color32::TRANSPARENT })
                     .min_size(Vec2::splat(34.0)),
             );
-            r.widget_info(|| egui::WidgetInfo::selected(egui::Role::Button, true, sel, format!("Icon {key}")));
+            r.widget_info(|| egui::WidgetInfo::selected(egui::Role::Button, true, sel, crate::tf!("Icon {key}")));
             if r.clicked() {
                 out = Some(Some(key.to_string()));
             }
@@ -1188,8 +1188,8 @@ pub fn page_header_back(ui: &mut Ui, title: &str, subtitle: &str, actions: impl 
         subtitle,
         |ui| {
             let r = ui.add(egui::Button::new(vis(rich(icon_back()).size(17.0))).frame_when_inactive(false).corner_radius(8).min_size(Vec2::splat(CONTROL_H)));
-            r.widget_info(|| egui::WidgetInfo::labeled(egui::Role::Button, true, "Back"));
-            back = r.on_hover_text(vis("Back")).clicked();
+            r.widget_info(|| egui::WidgetInfo::labeled(egui::Role::Button, true, tr("Back")));
+            back = r.on_hover_text(vis(tr("Back"))).clicked();
             ui.add_space(2.0);
         },
         actions,
@@ -1452,7 +1452,7 @@ fn field(ui: &mut Ui, text: &mut String, hint: &str, width: f32, lead: Option<&s
         }));
     if clear_w > 0.0 {
         let c = child.add(egui::Button::new(vis(rich(icon::X).size(12.0).color(p.muted))).frame_when_inactive(false).min_size(Vec2::splat(20.0)));
-        c.widget_info(|| egui::WidgetInfo::labeled(egui::Role::Button, true, "Clear"));
+        c.widget_info(|| egui::WidgetInfo::labeled(egui::Role::Button, true, tr("Clear")));
         if c.clicked() {
             text.clear();
         }

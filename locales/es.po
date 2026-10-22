@@ -3178,6 +3178,18 @@ msgstr "Claves de software que no contienen datos."
 msgid "Contents of keys added to the include list."
 msgstr "Contenido de las claves añadidas a la lista de inclusiones."
 
+msgid "File Explorer / Files"
+msgstr "Explorador de archivos / Archivos"
+
+msgid "Desktop"
+msgstr "Escritorio"
+
+msgid "Security and Stability"
+msgstr "Seguridad y estabilidad"
+
+msgid "Usage"
+msgstr "Uso"
+
 msgid "Win32"
 msgstr "Win32"
 
@@ -3222,6 +3234,39 @@ msgstr "Cron @reboot"
 
 msgid "Login script"
 msgstr "Script de inicio de sesión"
+
+msgid "Created Key"
+msgstr "Clave creada"
+
+msgid "Deleted Key"
+msgstr "Clave eliminada"
+
+msgid "Renamed Key"
+msgstr "Clave renombrada"
+
+msgid "Value Set"
+msgstr "Valor establecido"
+
+msgid "Deleted Value"
+msgstr "Valor eliminado"
+
+msgid "Set Information Key"
+msgstr "Información de clave cambiada"
+
+msgid "Query Key"
+msgstr "Consulta de clave"
+
+msgid "Query Value"
+msgstr "Consulta de valor"
+
+msgid "Query Multiple Value"
+msgstr "Consulta de varios valores"
+
+msgid "Enumerate Key"
+msgstr "Enumeración de claves"
+
+msgid "Enumerate Value"
+msgstr "Enumeración de valores"
 
 msgid "Recently used files"
 msgstr "Archivos recientes"
@@ -4086,6 +4131,36 @@ msgstr "Datos de formularios"
 
 msgid "Text typed into forms (autofill)"
 msgstr "Texto escrito en formularios (autocompletar)"
+
+msgid "Run CleanCore as administrator to remove it for every user and keep it away."
+msgstr "Ejecuta CleanCore como administrador para quitarla para todos los usuarios y bloquearla."
+
+msgid "{}'s uninstaller did not remove it. It stays blocked, and the daily check tries again."
+msgstr "El desinstalador de {} no la quitó. Sigue bloqueada y la comprobación diaria lo volverá a intentar."
+
+msgid "{} is removed and won't come back."
+msgstr "{} se ha quitado y no volverá."
+
+msgid "{} is allowed again and reinstalled."
+msgstr "{} vuelve a estar permitida y se ha reinstalado."
+
+msgid "{} is allowed again. Reinstall it from microsoft.com or the Microsoft Store."
+msgstr "{} vuelve a estar permitida. Reinstálala desde microsoft.com o Microsoft Store."
+
+msgid "{name} does not match its signed checksum, so it was not installed."
+msgstr "{name} no coincide con su suma de comprobación firmada, así que no se instaló."
+
+msgid "The package manager did not install the update."
+msgstr "El gestor de paquetes no instaló la actualización."
+
+msgid "Updated. Restart CleanCore to use the new version."
+msgstr "Actualizado. Reinicia CleanCore para usar la nueva versión."
+
+msgid "Installing the update. CleanCore closes and starts again when it is done."
+msgstr "Instalando la actualización. CleanCore se cerrará y volverá a abrirse al terminar."
+
+msgid "Could not unpack the update."
+msgstr "No se pudo descomprimir la actualización."
 
 msgid "Color scheme"
 msgstr "Combinación de colores"

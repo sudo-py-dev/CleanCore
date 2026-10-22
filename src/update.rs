@@ -167,7 +167,7 @@ pub fn download(release: &Release) -> Result<PathBuf> {
     let got = sha256_file(&file)?;
     if got != want {
         let _ = std::fs::remove_file(&file);
-        bail!("{name} does not match its signed checksum; not installing");
+        bail!("{}", crate::tf!("{name} does not match its signed checksum, so it was not installed."));
     }
     Ok(file)
 }
@@ -178,15 +178,15 @@ pub fn install(file: &Path) -> Result<String> {
         // Root is needed for /usr/bin: ask through the desktop's password prompt.
         let st = Command::new("pkexec").args(["apt-get", "install", "-y", "--allow-downgrades"]).arg(file).status().context("running pkexec")?;
         if !st.success() {
-            bail!("the package manager did not install the update");
+            bail!("{}", crate::i18n::tr("The package manager did not install the update."));
         }
-        return Ok("Updated. Restart CleanCore to use the new version.".into());
+        return Ok(crate::i18n::tr("Updated. Restart CleanCore to use the new version.").into());
     }
     if file.extension().is_some_and(|e| e == "exe") {
         // The setup wizard, without its pages: it closes CleanCore, updates the install (and its
         // entry in Apps & features) and starts CleanCore again.
         Command::new(file).args(["/SILENT", "/SUPPRESSMSGBOXES", "/NORESTART", "/CLOSEAPPLICATIONS", "/RESTARTAPPLICATIONS"]).spawn().context("starting the setup")?;
-        return Ok("Installing the update. CleanCore closes and starts again when it is done.".into());
+        return Ok(crate::i18n::tr("Installing the update. CleanCore closes and starts again when it is done.").into());
     }
     let unpacked = file.with_extension("unpacked");
     let _ = std::fs::remove_dir_all(&unpacked);
@@ -194,7 +194,7 @@ pub fn install(file: &Path) -> Result<String> {
     // bsdtar on Windows reads .zip; GNU tar on Linux reads .tar.gz.
     let st = Command::new("tar").arg("-xf").arg(file).arg("-C").arg(&unpacked).status().context("running tar")?;
     if !st.success() {
-        bail!("could not unpack the update");
+        bail!("{}", crate::i18n::tr("Could not unpack the update."));
     }
     let dir = std::env::current_exe()?.parent().context("locating the program folder")?.to_path_buf();
     let names: &[&str] = if cfg!(windows) { &["cleancore.exe", "cleancore-gui.exe"] } else { &["cleancore", "cleancore-gui"] };
@@ -219,7 +219,7 @@ pub fn install(file: &Path) -> Result<String> {
         }
     }
     let _ = std::fs::remove_dir_all(&unpacked);
-    Ok("Updated. Restart CleanCore to use the new version.".into())
+    Ok(crate::i18n::tr("Updated. Restart CleanCore to use the new version.").into())
 }
 
 fn find_file(dir: &Path, name: &str) -> Option<PathBuf> {

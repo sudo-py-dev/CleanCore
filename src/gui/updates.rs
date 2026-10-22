@@ -3,6 +3,7 @@
 
 use super::style::{self, icon, Palette};
 use super::{take, Cx, Pending};
+use crate::i18n::tr;
 use crate::update::{self, Release};
 use eframe::egui::{self, Ui};
 
@@ -78,13 +79,13 @@ impl Updates {
                 crate::gui::style::column(ui, |ui| {
                     ui.add(style::Label::new(crate::tf!("CleanCore {}", update::CURRENT)));
                     let (text, col) = if self.installed {
-                        ("Update installed. Restart CleanCore to use it.".to_string(), p.success)
+                        (tr("Update installed. Restart CleanCore to use it.").to_string(), p.success)
                     } else if let Some(r) = &self.available {
                         (crate::tf!("Version {} is available.", r.version), p.accent)
                     } else if self.up_to_date {
-                        ("You have the latest version.".to_string(), p.success)
+                        (tr("You have the latest version.").to_string(), p.success)
                     } else {
-                        ("Updates come from the project's GitHub releases.".to_string(), p.muted)
+                        (tr("Updates come from the project's GitHub releases.").to_string(), p.muted)
                     };
                     ui.add(style::Label::new(style::rich(text).size(12.5).color(col)));
                 });

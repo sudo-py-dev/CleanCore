@@ -128,7 +128,7 @@ impl HistoryView {
                     for i in &in_group {
                         crate::gui::style::row(ui, |ui| {
                             let mut on = self.checked.contains(&i.id);
-                            if ui.checkbox(&mut on, style::vis("")).on_hover_text(style::vis(&i.description)).changed() {
+                            if ui.checkbox(&mut on, style::vis("")).on_hover_text(style::vis(tr(&i.description))).changed() {
                                 if on {
                                     self.checked.insert(i.id.clone());
                                 } else {
@@ -138,7 +138,7 @@ impl HistoryView {
                             crate::gui::style::column(ui, |ui| {
                                 ui.spacing_mut().item_spacing.y = 1.0;
                                 ui.add(style::Label::new(tr(&i.name)));
-                                ui.add(style::Label::new(style::muted(ui, &i.description).size(12.0)));
+                                ui.add(style::Label::new(style::muted(ui, tr(&i.description)).size(12.0)));
                             });
                             ui.with_layout(crate::gui::style::far_layout(egui::Align::Center), |ui| {
                                 if i.size > 0 {

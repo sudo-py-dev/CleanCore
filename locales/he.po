@@ -3179,6 +3179,18 @@ msgstr "מפתחות הקשורים לתוכנות שאינם מכילים נת�
 msgid "Contents of keys added to the include list."
 msgstr "תוכן המפתחות שנוספו לרשימת ההכללות."
 
+msgid "File Explorer / Files"
+msgstr "סייר הקבצים / קבצים"
+
+msgid "Desktop"
+msgstr "שולחן עבודה"
+
+msgid "Security and Stability"
+msgstr "אבטחה ויציבות"
+
+msgid "Usage"
+msgstr "שימוש"
+
 msgid "Win32"
 msgstr "Win32"
 
@@ -3223,6 +3235,39 @@ msgstr "Cron @reboot"
 
 msgid "Login script"
 msgstr "סקריפט כניסה"
+
+msgid "Created Key"
+msgstr "מפתח נוצר"
+
+msgid "Deleted Key"
+msgstr "מפתח נמחק"
+
+msgid "Renamed Key"
+msgstr "שם המפתח שונה"
+
+msgid "Value Set"
+msgstr "ערך נקבע"
+
+msgid "Deleted Value"
+msgstr "ערך נמחק"
+
+msgid "Set Information Key"
+msgstr "מידע המפתח שונה"
+
+msgid "Query Key"
+msgstr "קריאת מפתח"
+
+msgid "Query Value"
+msgstr "קריאת ערך"
+
+msgid "Query Multiple Value"
+msgstr "קריאת ערכים מרובים"
+
+msgid "Enumerate Key"
+msgstr "מנייה של מפתחות"
+
+msgid "Enumerate Value"
+msgstr "מנייה של ערכים"
 
 msgid "Recently used files"
 msgstr "קבצים אחרונים"
@@ -4087,6 +4132,36 @@ msgstr "נתוני טפסים"
 
 msgid "Text typed into forms (autofill)"
 msgstr "טקסט שהוקלד בטפסים (מילוי אוטומטי)"
+
+msgid "Run CleanCore as administrator to remove it for every user and keep it away."
+msgstr "הפעל את CleanCore כמנהל מערכת כדי להסיר אותה לכל המשתמשים ולחסום אותה."
+
+msgid "{}'s uninstaller did not remove it. It stays blocked, and the daily check tries again."
+msgstr "מסיר ההתקנה של {} לא הסיר אותה. היא נשארת חסומה, והבדיקה היומית תנסה שוב."
+
+msgid "{} is removed and won't come back."
+msgstr "{} הוסרה ולא תחזור."
+
+msgid "{} is allowed again and reinstalled."
+msgstr "{} מותרת שוב והותקנה מחדש."
+
+msgid "{} is allowed again. Reinstall it from microsoft.com or the Microsoft Store."
+msgstr "{} מותרת שוב. התקן אותה מחדש מ־microsoft.com או מ־Microsoft Store."
+
+msgid "{name} does not match its signed checksum, so it was not installed."
+msgstr "{name} לא תואם לסכום הביקורת החתום שלו, ולכן לא הותקן."
+
+msgid "The package manager did not install the update."
+msgstr "מנהל החבילות לא התקין את העדכון."
+
+msgid "Updated. Restart CleanCore to use the new version."
+msgstr "עודכן. הפעל מחדש את CleanCore כדי להשתמש בגרסה החדשה."
+
+msgid "Installing the update. CleanCore closes and starts again when it is done."
+msgstr "מתקין את העדכון. CleanCore ייסגר ויופעל שוב בסיום."
+
+msgid "Could not unpack the update."
+msgstr "לא ניתן היה לחלץ את העדכון."
 
 msgid "Color scheme"
 msgstr "ערכת צבעים"

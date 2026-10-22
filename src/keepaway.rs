@@ -221,7 +221,7 @@ fn ps(script: &str) -> Result<String> {
 
 fn need_admin() -> Result<()> {
     if !crate::slop::is_admin() {
-        bail!("run CleanCore as administrator to remove it for every user and keep it away");
+        bail!("{}", crate::i18n::tr("Run CleanCore as administrator to remove it for every user and keep it away."));
     }
     Ok(())
 }
@@ -247,9 +247,9 @@ pub fn remove(app: App) -> Result<String> {
     save(&k)?;
     ensure_daily_check(&k)?;
     if installed(app) {
-        bail!("{}'s uninstaller did not remove it; it stays blocked, and the daily check tries again", app.name());
+        bail!("{}", crate::tf!("{}'s uninstaller did not remove it. It stays blocked, and the daily check tries again.", app.name()));
     }
-    Ok(format!("{} is removed and won't come back", app.name()))
+    Ok(crate::tf!("{} is removed and won't come back.", app.name()))
 }
 
 /// Undo the blocks and reinstall the app with winget.
@@ -272,8 +272,8 @@ pub fn allow(app: App) -> Result<String> {
         .args(["install", "--id", app.winget_id(), "--exact", "--silent", "--accept-package-agreements", "--accept-source-agreements"])
         .status();
     match st {
-        Ok(s) if s.success() => Ok(format!("{} is allowed again and reinstalled", app.name())),
-        _ => Ok(format!("{} is allowed again; reinstall it from microsoft.com or the Microsoft Store", app.name())),
+        Ok(s) if s.success() => Ok(crate::tf!("{} is allowed again and reinstalled.", app.name())),
+        _ => Ok(crate::tf!("{} is allowed again. Reinstall it from microsoft.com or the Microsoft Store.", app.name())),
     }
 }
 

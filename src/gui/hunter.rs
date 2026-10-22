@@ -133,7 +133,7 @@ impl HunterView {
                 });
                 ui.vertical_centered(|ui| {
                     let (rect, r) = ui.allocate_exact_size(egui::vec2(64.0, 64.0), egui::Sense::drag());
-                    r.widget_info(|| egui::WidgetInfo::labeled(egui::Role::Button, true, "Floating hunter target"));
+                    r.widget_info(|| egui::WidgetInfo::labeled(egui::Role::Button, true, tr("Floating hunter target")));
                     let col = if r.dragged() { p.danger } else { p.accent };
                     ui.painter().rect_filled(rect, 16.0, col.gamma_multiply(if p.dark { 0.25 } else { 0.14 }));
                     ui.painter().text(rect.center(), egui::Align2::CENTER_CENTER, style::vstr(icon::CROSSHAIR), egui::FontId::proportional(38.0), col);
@@ -291,7 +291,7 @@ impl HunterView {
                     ui.painter().rect_stroke(rect, 18.0, egui::Stroke::new(2.0, col), egui::StrokeKind::Inside);
                 }
                 ui.painter().text(rect.center(), egui::Align2::CENTER_CENTER, style::vstr(icon::CROSSHAIR), egui::FontId::proportional(40.0 + 2.0 * hover), col);
-                resp.widget_info(|| egui::WidgetInfo::labeled(egui::Role::Button, true, "Hunter target: drag onto a window"));
+                resp.widget_info(|| egui::WidgetInfo::labeled(egui::Role::Button, true, tr("Hunter target: drag onto a window")));
                 if resp.hovered() || dragging {
                     ui.ctx().set_cursor_icon(egui::CursorIcon::Crosshair);
                 }
@@ -433,14 +433,14 @@ impl HunterView {
                 row(ui, "Publisher", pb);
             }
             match &t.program {
-                Some(pr) => row(ui, "Installed as", &crate::tf!("{} {} ({})", pr.name, pr.version, pr.kind.label())),
+                Some(pr) => row(ui, "Installed as", &crate::tf!("{} {} ({})", pr.name, pr.version, tr(pr.kind.label()))),
                 None => row(ui, "Installed as", "Not in the list of installed programs"),
             }
             if t.autoruns.is_empty() {
                 row(ui, "Autorun", "Doesn't start automatically");
             }
             for a in &t.autoruns {
-                row(ui, "Autorun", &crate::tf!("{} · {}{}", a.name, a.source.label(), if a.enabled { "" } else { tr(" (disabled)") }));
+                row(ui, "Autorun", &crate::tf!("{} · {}{}", a.name, tr(a.source.label()), if a.enabled { "" } else { tr(" (disabled)") }));
             }
         });
         ui.add_space(10.0);
