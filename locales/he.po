@@ -2471,6 +2471,9 @@ msgstr "שינוי/תיקון זמין רק ב־Windows ({cmd})"
 msgid "Added to group {g}"
 msgstr "נוסף לקבוצה {g}"
 
+msgid "Starting {}"
+msgstr "מפעיל את {}"
+
 msgid "{} wasn't running"
 msgstr "{} לא פעל"
 
@@ -2480,8 +2483,14 @@ msgstr "{} נעצר"
 msgid "Resetting the Microsoft Store…"
 msgstr "מאפס את Microsoft Store…"
 
+msgid "Removing {} for all users"
+msgstr "מסיר את {} עבור כל המשתמשים"
+
 msgid "{} removed for all users"
 msgstr "{} הוסר לכל המשתמשים"
+
+msgid "Resetting {}"
+msgstr "מאפס את {}"
 
 msgid "{} was reset"
 msgstr "{} אופס"
@@ -2939,6 +2948,9 @@ msgstr "כש־CleanCore נפתח, ואחר כך פעם ביום כל עוד הו
 msgid "{}  Every update is checked against the CleanCore release signature and its checksum before it is installed."
 msgstr "{}  כל עדכון נבדק מול חתימת הגרסה של CleanCore ומול סכום הביקורת שלו לפני ההתקנה."
 
+msgid "Reading changes"
+msgstr "קורא את השינויים"
+
 msgid "Pick or type a key/path to watch."
 msgstr "בחר או הקלד מפתח/נתיב למעקב."
 
@@ -2947,6 +2959,9 @@ msgstr "המעקב אחרי {path} חודש"
 
 msgid "Watching {path}"
 msgstr "עוקב אחרי {path}"
+
+msgid "Checking the recorder"
+msgstr "בודק את המקליט"
 
 msgid "Find out exactly what a program changes in the registry"
 msgstr "גלה בדיוק מה תוכנה משנה ברישום"
@@ -3118,6 +3133,9 @@ msgstr "ממתין לשינויים"
 
 msgid "Use your program now: install it, change a setting, close it. Changes appear here."
 msgstr "השתמש בתוכנה שלך עכשיו: התקן אותה, שנה הגדרה, סגור אותה. השינויים יופיעו כאן."
+
+msgid "The newest {} of {} changes. Filter them, or see them all in Details."
+msgstr "{} השינויים האחרונים מתוך {}. סננו אותם, או ראו את כולם בפרטים."
 
 msgid "Highlight rows"
 msgstr "הדגש שורות"

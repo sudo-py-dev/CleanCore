@@ -2470,6 +2470,9 @@ msgstr "Змінення/відновлення доступне лише у Win
 msgid "Added to group {g}"
 msgstr "Додано до групи {g}"
 
+msgid "Starting {}"
+msgstr "Запуск {}"
+
 msgid "{} wasn't running"
 msgstr "{} не було запущено"
 
@@ -2479,8 +2482,14 @@ msgstr "{} зупинено"
 msgid "Resetting the Microsoft Store…"
 msgstr "Скидання Microsoft Store…"
 
+msgid "Removing {} for all users"
+msgstr "Видалення {} для всіх користувачів"
+
 msgid "{} removed for all users"
 msgstr "{} видалено для всіх користувачів"
+
+msgid "Resetting {}"
+msgstr "Скидання {}"
 
 msgid "{} was reset"
 msgstr "{} скинуто"
@@ -2938,6 +2947,9 @@ msgstr "Під час запуску CleanCore, а потім раз на ден
 msgid "{}  Every update is checked against the CleanCore release signature and its checksum before it is installed."
 msgstr "{}  Кожне оновлення перед встановленням перевіряється за підписом релізів CleanCore і контрольною сумою."
 
+msgid "Reading changes"
+msgstr "Читання змін"
+
 msgid "Pick or type a key/path to watch."
 msgstr "Виберіть або введіть розділ чи шлях для спостереження."
 
@@ -2946,6 +2958,9 @@ msgstr "Спостереження за {path} відновлено"
 
 msgid "Watching {path}"
 msgstr "Спостереження за {path}"
+
+msgid "Checking the recorder"
+msgstr "Перевірка запису"
 
 msgid "Find out exactly what a program changes in the registry"
 msgstr "Дізнайтеся, що саме програма змінює в реєстрі"
@@ -3117,6 +3132,9 @@ msgstr "Очікування змін"
 
 msgid "Use your program now: install it, change a setting, close it. Changes appear here."
 msgstr "Попрацюйте з програмою: встановіть її, змініть налаштування, закрийте. Зміни з'являться тут."
+
+msgid "The newest {} of {} changes. Filter them, or see them all in Details."
+msgstr "Останні {} з {} змін. Відфільтруйте їх або перегляньте всі в розділі «Подробиці»."
 
 msgid "Highlight rows"
 msgstr "Підсвітити рядки"

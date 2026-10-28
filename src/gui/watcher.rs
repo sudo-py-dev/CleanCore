@@ -2,7 +2,7 @@
 //! Three steps across the top say what to do next; the detailed event table is one click away.
 
 use super::style::{self, icon, Palette};
-use super::{tree::Browser, Cx};
+use super::{take, tree::Browser, Cx, Pending};
 use crate::gui::style::ColumnsInOrder;
 use crate::i18n::tr;
 use crate::watcher::{self, Watch, WatchEvent};
@@ -19,13 +19,24 @@ pub struct WatcherView {
     add_reads: bool,
     events: Vec<WatchEvent>,
     events_for: Option<String>,
+    /// How far into the selected log `events` goes: only what was appended since is read.
     log_len: u64,
+    /// The selected log being read, off the interface thread: (watch, read from, events and end).
+    log_job: Option<Pending<LogRead>>,
+    /// Indices into `events`, newest first, that pass the filter; and the filter and event count
+    /// they were made for.
+    rows: Vec<usize>,
+    rows_for: Option<(String, usize)>,
     filter: String,
     highlight: String,
     export_path: String,
     export_dir: String,
     in_app: bool,
     at_login: Option<String>,
+    /// Asking the task scheduler / systemd whether the recorder starts at login.
+    status_job: Option<Pending<String>>,
+    /// Turning start-at-login on or off: what it was set to, and how that went.
+    login_job: Option<(bool, Pending<Result<String, String>>)>,
     /// The full key / folder browser (quick picks cover the usual places).
     show_browser: bool,
     /// Detailed table instead of the readable list of changes.
@@ -51,12 +62,17 @@ impl WatcherView {
             events: Vec::new(),
             events_for: None,
             log_len: 0,
+            log_job: None,
+            rows: Vec::new(),
+            rows_for: None,
             filter: String::new(),
             highlight: String::new(),
             export_path: dir.join("cleancore-watch.csv").display().to_string(),
             export_dir: dir.join("cleancore-watch-logs").display().to_string(),
             in_app: false,
             at_login: None,
+            status_job: None,
+            login_job: None,
             show_browser: false,
             table_view: false,
         }
@@ -71,7 +87,24 @@ impl WatcherView {
         self.selected.as_ref().and_then(|p| self.watches.iter().find(|w| &w.path == p))
     }
 
-    fn reload(&mut self, cx: &mut Cx) {
+    fn reload(&mut self, ctx: &egui::Context, cx: &mut Cx) {
+        if let Some((path, from, r)) = take(&mut self.log_job) {
+            // Dropped when another watch was selected or the log was cleared meanwhile.
+            if self.events_for.as_deref() == Some(path.as_str()) {
+                match r {
+                    Ok((events, end)) => {
+                        if from == 0 {
+                            self.events = events;
+                        } else {
+                            self.events.extend(events);
+                        }
+                        self.log_len = end;
+                    }
+                    Err(e) => cx.error(e),
+                }
+                self.rows_for = None;
+            }
+        }
         if self.last_reload.is_some_and(|t| t.elapsed() < Duration::from_secs(1)) {
             return;
         }
@@ -83,18 +116,42 @@ impl WatcherView {
         if self.selected_watch().is_none() {
             self.selected = self.watches.first().map(|w| w.path.clone());
         }
-        // Re-read the selected log only when it grew (or another watch got selected).
+        // Read only what was appended to the selected log; all of it when another watch got
+        // selected or the log was cleared. A big log takes a while: never on this thread.
         if let Some(w) = self.selected_watch().cloned() {
+            if self.log_job.is_some() {
+                return;
+            }
             let len = std::fs::metadata(w.log_file()).map(|m| m.len()).unwrap_or(0);
-            if self.events_for.as_deref() != Some(w.path.as_str()) || len != self.log_len {
-                self.events = watcher::read_log(&w).unwrap_or_default();
+            if self.events_for.as_deref() != Some(w.path.as_str()) || len < self.log_len {
+                self.events.clear();
+                self.rows_for = None;
                 self.events_for = Some(w.path.clone());
-                self.log_len = len;
+                self.log_len = 0;
+            }
+            if len > self.log_len {
+                let from = self.log_len;
+                self.log_job = Some(Pending::spawn(ctx, "Reading changes", move || {
+                    let r = watcher::read_log_from(&w, from).map_err(|e| crate::tf!("{e:#}"));
+                    (w.path, from, r)
+                }));
             }
         } else {
             self.events.clear();
+            self.rows_for = None;
             self.events_for = None;
         }
+    }
+
+    /// The rows to show, newest first; filtered again only when the filter or the events change.
+    fn update_rows(&mut self) {
+        let key = (self.filter.to_lowercase(), self.events.len());
+        if self.rows_for.as_ref() == Some(&key) {
+            return;
+        }
+        let f = &key.0;
+        self.rows = (0..self.events.len()).rev().filter(|&i| f.is_empty() || self.events[i].haystack().contains(f.as_str())).collect();
+        self.rows_for = Some(key);
     }
 
     fn edit(&mut self, cx: &mut Cx, f: impl FnOnce(&mut Vec<Watch>) -> Result<String, String>) {
@@ -125,18 +182,36 @@ impl WatcherView {
     }
 
     pub fn main(&mut self, ui: &mut Ui, cx: &mut Cx) {
-        self.reload(cx);
+        self.reload(ui.ctx(), cx);
         ui.ctx().request_repaint_after(Duration::from_secs(1));
         let p = Palette::get(ui.ctx());
         let running = watcher::recorder_running();
+        // The scheduler can take seconds to answer: ask it in the background.
+        if let Some(s) = take(&mut self.status_job) {
+            self.at_login = Some(s);
+        }
+        if let Some(r) = self.login_job.as_ref().and_then(|(_, job)| job.poll()) {
+            match r {
+                Ok(m) => cx.info(m),
+                Err(e) => cx.error(e),
+            }
+            self.login_job = None;
+            self.at_login = None;
+        }
+        if self.at_login.is_none() && self.status_job.is_none() && self.login_job.is_none() {
+            self.status_job = Some(Pending::spawn(ui.ctx(), "Checking the recorder", crate::platform::recorder_status));
+        }
         let subtitle = if cfg!(windows) {
             tr("Find out exactly what a program changes in the registry")
         } else {
             tr("Find out exactly what a program changes in your settings and config files")
         };
         let (mut start, mut login_changed) = (false, false);
-        let status = self.at_login.get_or_insert_with(crate::platform::recorder_status).clone();
-        let mut at_login = status.starts_with("starts at login");
+        let busy = self.login_job.is_some() || self.at_login.is_none();
+        let mut at_login = match &self.login_job {
+            Some((on, _)) => *on,
+            None => self.at_login.as_deref().is_some_and(|s| s.starts_with("starts at login")),
+        };
         style::page_header(ui, "Watcher", subtitle, |ui| {
             if running {
                 egui::Frame::new()
@@ -150,9 +225,11 @@ impl WatcherView {
                 start = style::primary(ui, icon::PLAY, "Start recording").on_hover_text(style::vis(tr("Record changes while CleanCore is open"))).clicked();
             }
             ui.add_space(6.0);
-            login_changed = style::toggle(ui, &mut at_login, "Start recorder at login")
-                .on_hover_text(style::vis(tr("Keep recording in the background, even when CleanCore is closed")))
-                .changed();
+            ui.add_enabled_ui(!busy, |ui| {
+                login_changed = style::toggle(ui, &mut at_login, "Start recorder at login")
+                    .on_hover_text(style::vis(tr("Keep recording in the background, even when CleanCore is closed")))
+                    .changed();
+            });
             ui.add(style::Label::new(tr("Record in the background")));
         });
         if start {
@@ -164,16 +241,18 @@ impl WatcherView {
             cx.info(tr("Recorder started"));
         }
         if login_changed {
-            let r = if at_login {
-                crate::scheduler::exe_args(&["watch", "run", "--quiet"]).and_then(|(exe, args)| crate::platform::recorder_enable(&exe, &args))
-            } else {
-                crate::platform::recorder_disable()
-            };
-            match r {
-                Ok(()) => cx.info(if at_login { tr("The recorder now runs in the background from login") } else { tr("The recorder no longer runs in the background") }),
-                Err(e) => cx.error(crate::tf!("{e:#}")),
-            }
-            self.at_login = None;
+            let job = Pending::spawn(ui.ctx(), "Start recorder at login", move || {
+                let r = if at_login {
+                    crate::scheduler::exe_args(&["watch", "run", "--quiet"]).and_then(|(exe, args)| crate::platform::recorder_enable(&exe, &args))
+                } else {
+                    crate::platform::recorder_disable()
+                };
+                match r {
+                    Ok(()) => Ok(if at_login { tr("The recorder now runs in the background from login") } else { tr("The recorder no longer runs in the background") }.to_string()),
+                    Err(e) => Err(crate::tf!("{e:#}")),
+                }
+            });
+            self.login_job = Some((at_login, job));
         }
 
         // How it works: three steps that tick off as they're done.
@@ -447,19 +526,24 @@ impl WatcherView {
                 style::empty_state(ui, if running { icon::RECORD } else { icon::HISTORY }, title, text);
                 return;
             }
-            let f = self.filter.to_lowercase();
             // Newest first, so live changes appear at the top.
-            let rows: Vec<&WatchEvent> = self.events.iter().rev().filter(|e| f.is_empty() || e.haystack().contains(&f)).collect();
+            self.update_rows();
+            let rows: Vec<&WatchEvent> = self.rows.iter().map(|&i| &self.events[i]).collect();
             if !self.table_view {
                 let mut open: Option<String> = None;
                 egui::ScrollArea::vertical().id_salt("changes").auto_shrink([false, false]).show(ui, |ui| {
-                    for (i, e) in rows.iter().enumerate() {
+                    // Every row is laid out each frame here: the newest ones only; the table has them all.
+                    for (i, e) in rows.iter().take(SIMPLE_ROWS).enumerate() {
                         if i > 0 {
                             style::divider(ui);
                         }
                         if change_row(ui, e, p) {
                             open = Some(e.key.clone());
                         }
+                    }
+                    if rows.len() > SIMPLE_ROWS {
+                        ui.add_space(8.0);
+                        ui.add(style::Label::new(style::muted(ui, crate::tf!("The newest {} of {} changes. Filter them, or see them all in Details.", SIMPLE_ROWS, rows.len()))));
                     }
                 });
                 if let Some(k) = open {
@@ -558,6 +642,12 @@ impl WatcherView {
         });
     }
 }
+
+/// A read of one watch's log: the watch, where the read started, and the events and end offset.
+type LogRead = (String, u64, Result<(Vec<WatchEvent>, u64), String>);
+
+/// Changes shown in the simple view.
+const SIMPLE_ROWS: usize = 300;
 
 /// One of the three "how it works" steps; ticked when done.
 fn step_tile(ui: &mut Ui, width: f32, n: usize, title: &str, text: &str, done: bool, p: Palette) {

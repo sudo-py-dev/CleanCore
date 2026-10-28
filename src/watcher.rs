@@ -325,6 +325,23 @@ pub fn read_log(w: &Watch) -> Result<Vec<WatchEvent>> {
     Ok(std::io::BufReader::new(f).lines().map_while(Result::ok).filter_map(|l| serde_json::from_str(&l).ok()).collect())
 }
 
+/// The events written to a watch's log from byte `from` on, and where the last whole line ends
+/// (a line the recorder is still writing is left for the next call).
+pub fn read_log_from(w: &Watch, from: u64) -> Result<(Vec<WatchEvent>, u64)> {
+    use std::io::{Read, Seek, SeekFrom};
+    let mut f = match std::fs::File::open(w.log_file()) {
+        Ok(f) => f,
+        Err(e) if e.kind() == std::io::ErrorKind::NotFound => return Ok((Vec::new(), 0)),
+        Err(e) => return Err(e.into()),
+    };
+    f.seek(SeekFrom::Start(from))?;
+    let mut buf = Vec::new();
+    f.read_to_end(&mut buf)?;
+    let whole = buf.iter().rposition(|b| *b == b'\n').map_or(0, |i| i + 1);
+    let events = buf[..whole].split(|b| *b == b'\n').filter_map(|l| serde_json::from_slice(l).ok()).collect();
+    Ok((events, from + whole as u64))
+}
+
 pub fn clear_log(w: &Watch) -> Result<()> {
     match std::fs::remove_file(w.log_file()) {
         Err(e) if e.kind() != std::io::ErrorKind::NotFound => Err(e.into()),

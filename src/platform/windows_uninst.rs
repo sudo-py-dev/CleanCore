@@ -9,7 +9,8 @@ use chrono::NaiveDate;
 use std::collections::HashSet;
 use std::os::windows::process::CommandExt;
 use std::path::{Path, PathBuf};
-use std::process::Command;
+use std::process::{Command, Stdio};
+use std::time::{Duration, Instant};
 
 pub const CAT_REGISTRY: &str = "leftover_registry";
 pub const CAT_FILES: &str = "leftover_files";
@@ -88,7 +89,8 @@ fn win32_programs(show_system: bool) -> Vec<Program> {
             p.system = system;
             p.user_scope = user;
             p.package = p.msi_product_code();
-            if let Some(exe) = p.icon.as_deref().and_then(icon_exe) {
+            // Icons borrowed from Windows (msiexec, the Installer cache) say nothing about the program.
+            if let Some(exe) = p.icon.as_deref().and_then(icon_exe).filter(|e| !in_windows_dir(e)) {
                 if p.install_location.is_none() {
                     p.install_location = Path::new(&exe).parent().map(|d| d.display().to_string());
                 }
@@ -115,11 +117,64 @@ fn pretty_app_name(name: &str) -> String {
 }
 
 pub fn powershell(script: &str) -> Result<String> {
-    let o = Command::new("powershell").args(["-NoProfile", "-NonInteractive", "-Command", script]).creation_flags(CREATE_NO_WINDOW).output()?;
-    if !o.status.success() {
-        bail!("{}", String::from_utf8_lossy(&o.stderr).trim());
+    powershell_within(script, Duration::from_secs(600))
+}
+
+/// Run a PowerShell script, stopping it when it takes longer than `limit`: an Appx removal
+/// waiting on a busy deployment service otherwise never returns.
+pub fn powershell_within(script: &str, limit: Duration) -> Result<String> {
+    use std::io::Read;
+    let mut child = Command::new("powershell")
+        .args(["-NoProfile", "-NonInteractive", "-Command", script])
+        .stdin(Stdio::null())
+        .stdout(Stdio::piped())
+        .stderr(Stdio::piped())
+        .creation_flags(CREATE_NO_WINDOW)
+        .spawn()
+        .context("starting PowerShell")?;
+    // Read both pipes while waiting, so a full pipe can't stall the script.
+    let pipe = |r: Option<Box<dyn Read + Send>>| {
+        std::thread::spawn(move || {
+            let mut buf = Vec::new();
+            if let Some(mut r) = r {
+                let _ = r.read_to_end(&mut buf);
+            }
+            buf
+        })
+    };
+    let out = pipe(child.stdout.take().map(|s| Box::new(s) as Box<dyn Read + Send>));
+    let err = pipe(child.stderr.take().map(|s| Box::new(s) as Box<dyn Read + Send>));
+    let started = Instant::now();
+    let status = loop {
+        if let Some(st) = child.try_wait()? {
+            break st;
+        }
+        if started.elapsed() > limit {
+            let _ = child.kill();
+            let _ = child.wait();
+            bail!("PowerShell did not finish within {} s and was stopped", limit.as_secs());
+        }
+        std::thread::sleep(Duration::from_millis(100));
+    };
+    let (out, err) = (out.join().unwrap_or_default(), err.join().unwrap_or_default());
+    if !status.success() {
+        bail!("{}", String::from_utf8_lossy(&err).trim());
     }
-    Ok(String::from_utf8_lossy(&o.stdout).into_owned())
+    Ok(String::from_utf8_lossy(&out).into_owned())
+}
+
+/// Removing one Store app: long enough for a large app, short of hanging the uninstall.
+const APPX_REMOVE: Duration = Duration::from_secs(180);
+
+/// Windows' own folder and everything in it: never a program's folder, and what runs from
+/// there is never the program's to stop.
+pub fn in_windows_dir(path: &str) -> bool {
+    let Some(root) = env("SystemRoot") else {
+        return false;
+    };
+    let root = root.display().to_string().trim_end_matches('\\').to_lowercase();
+    let p = path.trim().trim_matches('"').to_lowercase();
+    p == root || p.starts_with(&format!("{root}\\"))
 }
 
 fn store_apps(show_system: bool) -> Vec<Program> {
@@ -170,7 +225,7 @@ pub fn program_exists(p: &Program) -> bool {
     match p.kind {
         ProgramKind::WindowsApp => {
             let name = p.package.as_deref().and_then(|f| f.split('_').next()).unwrap_or("");
-            powershell(&format!("Get-AppxPackage -Name '{}'", name.replace('\'', "''"))).is_ok_and(|o| !o.trim().is_empty())
+            powershell_within(&format!("Get-AppxPackage -Name '{}'", name.replace('\'', "''")), Duration::from_secs(30)).is_ok_and(|o| !o.trim().is_empty())
         }
         _ => p.registry_key.as_deref().is_some_and(|k| open(k).is_some()),
     }
@@ -180,8 +235,9 @@ pub fn run_uninstaller(p: &Program, mode: RunMode) -> Result<RunResult> {
     if p.kind == ProgramKind::WindowsApp {
         let full = p.package.clone().context("package name unknown")?;
         let script = format!("Remove-AppxPackage -Package '{}'", full.replace('\'', "''"));
-        let r = powershell(&script);
-        return Ok(RunResult { command: script, exit_code: Some(if r.is_ok() { 0 } else { 1 }) });
+        // A failed or stopped removal says why instead of ending with a bare exit code.
+        powershell_within(&script, APPX_REMOVE).with_context(|| format!("removing {}", p.name))?;
+        return Ok(RunResult { command: script, exit_code: Some(0) });
     }
     if mode != RunMode::ForcedMsi && crate::keepaway::is_edge(p) {
         // Files still in use go at the next restart: 3010, as an MSI asking for one.
@@ -202,19 +258,19 @@ pub fn run_uninstaller(p: &Program, mode: RunMode) -> Result<RunResult> {
 /// Windows Apps extras.
 pub fn app_uninstall_all_users(p: &Program) -> Result<()> {
     let full = p.package.clone().context("package name unknown")?;
-    powershell(&format!("Remove-AppxPackage -Package '{}' -AllUsers", full.replace('\'', "''"))).map(|_| ())
+    powershell_within(&format!("Remove-AppxPackage -Package '{}' -AllUsers", full.replace('\'', "''")), APPX_REMOVE).map(|_| ())
 }
 
 pub fn app_reset(p: &Program) -> Result<()> {
     let name = p.package.as_deref().and_then(|f| f.split('_').next()).context("package name unknown")?;
-    powershell(&format!("Get-AppxPackage -Name '{}' | Reset-AppxPackage", name.replace('\'', "''"))).map(|_| ())
+    powershell_within(&format!("Get-AppxPackage -Name '{}' | Reset-AppxPackage", name.replace('\'', "''")), APPX_REMOVE).map(|_| ())
 }
 
 /// Start a Store app by its AppUserModelID (`<PackageFamilyName>!<AppId>`).
 pub fn app_run(p: &Program) -> Result<()> {
     let pfn = p.comment.clone().filter(|c| !c.is_empty()).context("package family name unknown")?;
     let q = pfn.replace('\'', "''");
-    let aumid = powershell(&format!("(Get-StartApps | Where-Object {{ $_.AppID -like '{q}!*' }} | Select-Object -First 1).AppID"))
+    let aumid = powershell_within(&format!("(Get-StartApps | Where-Object {{ $_.AppID -like '{q}!*' }} | Select-Object -First 1).AppID"), Duration::from_secs(30))
         .ok()
         .map(|s| s.trim().to_string())
         .filter(|s| !s.is_empty())
@@ -387,7 +443,8 @@ pub fn scan_leftovers(target: &Target, mode: ScanMode, scope: Scope, others: &[P
     }
     for p in &target.paths {
         let path = Path::new(p);
-        let protected = [env("ProgramFiles"), env("ProgramFiles(x86)"), env("SystemRoot"), env("ProgramData"), env("USERPROFILE")].iter().flatten().any(|d| d == path);
+        let protected =
+            [env("ProgramFiles"), env("ProgramFiles(x86)"), env("SystemRoot"), env("ProgramData"), env("USERPROFILE")].iter().flatten().any(|d| d == path) || in_windows_dir(p);
         if path.exists() && !protected && path.components().count() > 2 {
             s.file(path, "program folder");
         }

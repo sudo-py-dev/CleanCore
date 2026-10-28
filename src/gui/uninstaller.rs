@@ -219,6 +219,8 @@ pub struct UninstallerView {
     app_icons: super::appicons::IconCache,
     /// "Uninstall with CleanCore": the clicked path being resolved to a program.
     from_path: Option<Pending<(Option<Program>, String, String)>>,
+    /// A Store app action running (run, reset, remove for all users); and whether to reload after.
+    app_job: Option<Pending<(Result<String, String>, bool)>>,
     groups_dlg: Option<GroupsDialog>,
     /// The interrupted uninstall the user dismissed this session.
     dismissed_pending: Option<chrono::DateTime<chrono::Local>>,
@@ -247,6 +249,7 @@ impl UninstallerView {
             traced: TracedTab::new(),
             app_icons: Default::default(),
             from_path: None,
+            app_job: None,
             groups_dlg: None,
             dismissed_pending: None,
             extensions: super::extensions::ExtensionsTab::new(),
@@ -449,6 +452,19 @@ impl UninstallerView {
         if let Some(f) = &self.from_path {
             f.show_progress(ui);
             return;
+        }
+        if let Some((r, reload)) = take(&mut self.app_job) {
+            match r {
+                Ok(m) => cx.info(m),
+                Err(e) => cx.error(e),
+            }
+            if reload {
+                self.loaded = false;
+            }
+        }
+        if let Some(j) = &self.app_job {
+            j.show_progress(ui);
+            ui.add_space(8.0);
         }
         let mut screen = std::mem::replace(&mut self.screen, Screen::List);
         let keep = match &mut screen {
@@ -865,10 +881,7 @@ impl UninstallerView {
                 self.meta.remove_from_groups(&id);
                 let _ = self.meta.save();
             }
-            RowAction::RunApp(p) => match crate::platform::app_run(&p) {
-                Ok(()) => cx.info(crate::tf!("Started {}", p.name)),
-                Err(e) => cx.error(crate::tf!("{e:#}")),
-            },
+            RowAction::RunApp(p) => self.app_job(ctx, crate::tf!("Starting {}", p.name), false, move || crate::platform::app_run(&p).map(|()| crate::tf!("Started {}", p.name))),
             RowAction::TerminateApp(p) => match crate::platform::app_terminate(&p) {
                 Ok(0) => cx.info(crate::tf!("{} wasn't running", p.name)),
                 Ok(_) => cx.info(crate::tf!("Stopped {}", p.name)),
@@ -884,19 +897,23 @@ impl UninstallerView {
                 let _ = self.meta.save();
             }
             #[cfg(windows)]
-            RowAction::AllUsers(p) => match crate::platform::app_uninstall_all_users(&p) {
-                Ok(()) => {
-                    cx.info(crate::tf!("{} removed for all users", p.name));
-                    self.loaded = false;
-                }
-                Err(e) => cx.error(crate::tf!("{e:#}")),
-            },
+            RowAction::AllUsers(p) => self.app_job(ctx, crate::tf!("Removing {} for all users", p.name), true, move || {
+                crate::platform::app_uninstall_all_users(&p).map(|()| crate::tf!("{} removed for all users", p.name))
+            }),
             #[cfg(windows)]
-            RowAction::Reset(p) => match crate::platform::app_reset(&p) {
-                Ok(()) => cx.info(crate::tf!("{} was reset", p.name)),
-                Err(e) => cx.error(crate::tf!("{e:#}")),
-            },
+            RowAction::Reset(p) => {
+                self.app_job(ctx, crate::tf!("Resetting {}", p.name), false, move || crate::platform::app_reset(&p).map(|()| crate::tf!("{} was reset", p.name)))
+            }
         }
+    }
+
+    /// A Store app action, off the interface thread: PowerShell can take a while to answer.
+    /// `reload` re-reads the program list once it is done.
+    fn app_job(&mut self, ctx: &egui::Context, label: String, reload: bool, work: impl FnOnce() -> anyhow::Result<String> + Send + 'static) {
+        if self.app_job.is_some() {
+            return;
+        }
+        self.app_job = Some(Pending::spawn(ctx, label, move || (work().map_err(|e| crate::tf!("{e:#}")), reload)));
     }
 
     fn comment_dialog(&mut self, ctx: &egui::Context, cx: &mut Cx) {

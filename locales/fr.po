@@ -2470,6 +2470,9 @@ msgstr "Modifier/Réparer est une fonction de Windows ({cmd})"
 msgid "Added to group {g}"
 msgstr "Ajouté au groupe {g}"
 
+msgid "Starting {}"
+msgstr "Démarrage de {}"
+
 msgid "{} wasn't running"
 msgstr "{} n'était pas en cours d'exécution"
 
@@ -2479,8 +2482,14 @@ msgstr "{} arrêté"
 msgid "Resetting the Microsoft Store…"
 msgstr "Réinitialisation du Microsoft Store…"
 
+msgid "Removing {} for all users"
+msgstr "Suppression de {} pour tous les utilisateurs"
+
 msgid "{} removed for all users"
 msgstr "{} supprimé pour tous les utilisateurs"
+
+msgid "Resetting {}"
+msgstr "Réinitialisation de {}"
 
 msgid "{} was reset"
 msgstr "{} réinitialisé"
@@ -2938,6 +2947,9 @@ msgstr "Au démarrage de CleanCore, puis une fois par jour tant qu'il est ouvert
 msgid "{}  Every update is checked against the CleanCore release signature and its checksum before it is installed."
 msgstr "{}  Chaque mise à jour est vérifiée avec la signature des versions de CleanCore et sa somme de contrôle avant installation."
 
+msgid "Reading changes"
+msgstr "Lecture des modifications"
+
 msgid "Pick or type a key/path to watch."
 msgstr "Choisissez ou saisissez une clé / un chemin à surveiller."
 
@@ -2946,6 +2958,9 @@ msgstr "Surveillance de {path} reprise"
 
 msgid "Watching {path}"
 msgstr "Surveillance de {path}"
+
+msgid "Checking the recorder"
+msgstr "Vérification de l’enregistreur"
 
 msgid "Find out exactly what a program changes in the registry"
 msgstr "Découvrez exactement ce qu'un programme modifie dans le registre"
@@ -3117,6 +3132,9 @@ msgstr "En attente de modifications"
 
 msgid "Use your program now: install it, change a setting, close it. Changes appear here."
 msgstr "Utilisez votre programme maintenant : installez-le, changez un réglage, fermez-le. Les modifications apparaissent ici."
+
+msgid "The newest {} of {} changes. Filter them, or see them all in Details."
+msgstr "Les {} modifications les plus récentes sur {}. Filtrez-les, ou voyez-les toutes dans Détails."
 
 msgid "Highlight rows"
 msgstr "Surligner les lignes"

@@ -2470,6 +2470,9 @@ msgstr "Ändern/Reparieren ist eine Windows-Funktion ({cmd})"
 msgid "Added to group {g}"
 msgstr "Zur Gruppe {g} hinzugefügt"
 
+msgid "Starting {}"
+msgstr "{} wird gestartet"
+
 msgid "{} wasn't running"
 msgstr "{} lief nicht"
 
@@ -2479,8 +2482,14 @@ msgstr "{} beendet"
 msgid "Resetting the Microsoft Store…"
 msgstr "Microsoft Store wird zurückgesetzt…"
 
+msgid "Removing {} for all users"
+msgstr "{} wird für alle Benutzer entfernt"
+
 msgid "{} removed for all users"
 msgstr "{} für alle Benutzer entfernt"
+
+msgid "Resetting {}"
+msgstr "{} wird zurückgesetzt"
 
 msgid "{} was reset"
 msgstr "{} zurückgesetzt"
@@ -2938,6 +2947,9 @@ msgstr "Beim Start von CleanCore, danach einmal täglich, solange es läuft. Upd
 msgid "{}  Every update is checked against the CleanCore release signature and its checksum before it is installed."
 msgstr "{}  Jedes Update wird vor der Installation mit der CleanCore-Release-Signatur und seiner Prüfsumme abgeglichen."
 
+msgid "Reading changes"
+msgstr "Änderungen werden gelesen"
+
 msgid "Pick or type a key/path to watch."
 msgstr "Schlüssel/Pfad zum Überwachen auswählen oder eingeben."
 
@@ -2946,6 +2958,9 @@ msgstr "Überwachung von {path} fortgesetzt"
 
 msgid "Watching {path}"
 msgstr "{path} wird überwacht"
+
+msgid "Checking the recorder"
+msgstr "Rekorder wird geprüft"
 
 msgid "Find out exactly what a program changes in the registry"
 msgstr "Genau herausfinden, was ein Programm in der Registrierung ändert"
@@ -3117,6 +3132,9 @@ msgstr "Warten auf Änderungen"
 
 msgid "Use your program now: install it, change a setting, close it. Changes appear here."
 msgstr "Verwenden Sie jetzt Ihr Programm: installieren, eine Einstellung ändern, schließen. Änderungen erscheinen hier."
+
+msgid "The newest {} of {} changes. Filter them, or see them all in Details."
+msgstr "Die neuesten {} von {} Änderungen. Filtern Sie sie, oder sehen Sie alle unter Details."
 
 msgid "Highlight rows"
 msgstr "Zeilen hervorheben"

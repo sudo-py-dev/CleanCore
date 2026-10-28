@@ -624,6 +624,11 @@ pub fn stop_running(p: &Program) -> Vec<String> {
         let Some(exe) = pr.exe.as_deref().map(str::to_lowercase) else {
             continue;
         };
+        // Windows' own processes (explorer, svchost…) are never the program's, whatever it registered.
+        #[cfg(windows)]
+        if crate::platform::in_windows_dir(&exe) {
+            continue;
+        }
         let inside = loc.as_ref().is_some_and(|l| exe.starts_with(&format!("{l}/")) || exe.starts_with(&format!("{l}\\")));
         if pr.pid != me && (inside || exes.contains(&exe)) && crate::platform::kill_process(pr.pid).is_ok() {
             stopped.push(pr.name);
@@ -838,11 +843,11 @@ pub fn quick_uninstall(settings: &Settings, p: &Program) -> Result<QuickReport> 
             still_installed: still_installed(p),
         });
     }
-    // Give hand-off uninstallers a moment to finish.
-    for _ in 0..30 {
-        if !still_installed(p) {
-            break;
-        }
+    // Give hand-off uninstallers a moment to finish. A Store app's removal is done when it
+    // returns, and each check of one starts PowerShell: check it once.
+    let wait = if p.kind == ProgramKind::WindowsApp { std::time::Duration::ZERO } else { std::time::Duration::from_secs(15) };
+    let started = std::time::Instant::now();
+    while still_installed(p) && started.elapsed() < wait {
         std::thread::sleep(std::time::Duration::from_millis(500));
     }
     let leftovers = scan(settings, &Target::from_program(p), settings.uninstall_scan_mode, false);
