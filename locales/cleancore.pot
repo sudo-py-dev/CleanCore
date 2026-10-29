@@ -4962,3 +4962,68 @@ msgstr ""
 msgid "Hides Edge's sidebar (Copilot), shopping assistant and Microsoft Rewards."
 msgstr ""
 
+msgid "Not measured"
+msgstr ""
+
+msgid "Low"
+msgstr ""
+
+msgid "Medium"
+msgstr ""
+
+msgid "High"
+msgstr ""
+
+msgid "Startup impact"
+msgstr ""
+
+msgid "{enabled} start with your computer · {heavy} slow it down"
+msgstr ""
+
+msgid "{enabled} start with your computer"
+msgstr ""
+
+msgid "Search name or publisher"
+msgstr ""
+
+msgid "Show where each entry comes from, its command and more actions"
+msgstr ""
+
+msgid "≈ marks an estimate from the program's size. Open CleanCore as administrator to use the startup times Windows records."
+msgstr ""
+
+msgid "≈ marks an estimate from the program's size. Services show the startup times systemd records."
+msgstr ""
+
+msgid "Its program is gone: you can remove this"
+msgstr ""
+
+msgid "Windows needs this: leave it on"
+msgstr ""
+
+msgid "Your system needs this: leave it on"
+msgstr ""
+
+msgid "Helps your hardware work: best left on"
+msgstr ""
+
+msgid "Turning this off makes startup faster"
+msgstr ""
+
+msgid "Turning this off makes startup a bit faster"
+msgstr ""
+
+msgid "Delayed startup by {:.1} s"
+msgstr ""
+
+msgid "CPU {cpu} ms at startup"
+msgstr ""
+
+msgid "{} read from disk"
+msgstr ""
+
+msgid "Estimated from the program's size ({})"
+msgstr ""
+
+msgid "No startup measurements for this entry"
+msgstr ""

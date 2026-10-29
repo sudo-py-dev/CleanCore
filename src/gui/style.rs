@@ -1123,12 +1123,19 @@ pub fn badge(ui: &mut Ui, text: &str, color: Color32) {
     let text = tr(text);
     // Painted at its natural size so it never stretches inside table cells.
     let galley = ui.painter().layout_no_wrap(vstr(text.to_string()), FontId::new(12.0, semibold()), color);
-    let size = galley.size() + Vec2::new(16.0, 4.0);
+    let size = galley.size() + BADGE_PAD;
     let (rect, resp) = ui.allocate_exact_size(size, egui::Sense::hover());
     resp.widget_info(|| egui::WidgetInfo::labeled(egui::Role::Label, true, text));
     let fill = soft(color, if Palette::get(ui.ctx()).dark { 48 } else { 30 });
     ui.painter().rect_filled(rect, 10.0, fill);
     ui.painter().galley(rect.min + Vec2::new(8.0, 2.0), galley, color);
+}
+
+const BADGE_PAD: Vec2 = Vec2::new(16.0, 4.0);
+
+/// Width [`badge`] takes for `text`, translated, so a table column can be sized to fit it.
+pub fn badge_width(ui: &Ui, text: &str) -> f32 {
+    ui.painter().layout_no_wrap(vstr(tr(text).to_string()), FontId::new(12.0, semibold()), Color32::WHITE).size().x + BADGE_PAD.x
 }
 
 /// Rounded square with an icon on a soft accent background.

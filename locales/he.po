@@ -162,7 +162,7 @@ msgid "/usr/bin/app --minimized"
 msgstr "/usr/bin/app --minimized"
 
 msgid "Registry Run"
-msgstr "Registry Run"
+msgstr "מפתח Run ברישום"
 
 msgid "Run once"
 msgstr "הפעלה חד־פעמית"
@@ -3390,7 +3390,7 @@ msgid "Traced Uninstall"
 msgstr "הסרה לפי מעקב"
 
 msgid "Registry RunOnce"
-msgstr "Registry RunOnce"
+msgstr "מפתח RunOnce ברישום"
 
 msgid "Autostart"
 msgstr "הפעלה אוטומטית"
@@ -4964,3 +4964,68 @@ msgstr "כבה את Copilot והקניות ב־Microsoft Edge"
 msgid "Hides Edge's sidebar (Copilot), shopping assistant and Microsoft Rewards."
 msgstr "מסתיר את סרגל הצד של Edge ‏(Copilot), את עוזר הקניות ואת Microsoft Rewards."
 
+msgid "Not measured"
+msgstr "לא נמדד"
+
+msgid "Low"
+msgstr "נמוכה"
+
+msgid "Medium"
+msgstr "בינונית"
+
+msgid "High"
+msgstr "גבוהה"
+
+msgid "Startup impact"
+msgstr "השפעה על ההפעלה"
+
+msgid "{enabled} start with your computer · {heavy} slow it down"
+msgstr "{enabled} מופעלות עם המחשב · {heavy} מאטות אותו"
+
+msgid "{enabled} start with your computer"
+msgstr "{enabled} מופעלות עם המחשב"
+
+msgid "Search name or publisher"
+msgstr "חיפוש לפי שם או מפרסם"
+
+msgid "Show where each entry comes from, its command and more actions"
+msgstr "מציג מאיפה מגיעה כל רשומה, את הפקודה שלה ופעולות נוספות"
+
+msgid "≈ marks an estimate from the program's size. Open CleanCore as administrator to use the startup times Windows records."
+msgstr "≈ מסמן הערכה לפי גודל התוכנה. פתח את CleanCore כמנהל כדי להשתמש בזמני ההפעלה ש־Windows מתעד."
+
+msgid "≈ marks an estimate from the program's size. Services show the startup times systemd records."
+msgstr "≈ מסמן הערכה לפי גודל התוכנה. שירותים מציגים את זמני ההפעלה ש־systemd מתעד."
+
+msgid "Its program is gone: you can remove this"
+msgstr "התוכנה כבר לא קיימת: אפשר להסיר את הרשומה"
+
+msgid "Windows needs this: leave it on"
+msgstr "נדרש ל־Windows: השאר מופעל"
+
+msgid "Your system needs this: leave it on"
+msgstr "נדרש למערכת: השאר מופעל"
+
+msgid "Helps your hardware work: best left on"
+msgstr "עוזר לחומרה לעבוד: עדיף להשאיר מופעל"
+
+msgid "Turning this off makes startup faster"
+msgstr "כיבוי שלו יאיץ את ההפעלה"
+
+msgid "Turning this off makes startup a bit faster"
+msgstr "כיבוי שלו יאיץ מעט את ההפעלה"
+
+msgid "Delayed startup by {:.1} s"
+msgstr "עיכב את ההפעלה ב־{:.1} שנ׳"
+
+msgid "CPU {cpu} ms at startup"
+msgstr "מעבד {cpu} ms בהפעלה"
+
+msgid "{} read from disk"
+msgstr "{} נקראו מהדיסק"
+
+msgid "Estimated from the program's size ({})"
+msgstr "הערכה לפי גודל התוכנה ({})"
+
+msgid "No startup measurements for this entry"
+msgstr "אין מדידות הפעלה לרשומה זו"

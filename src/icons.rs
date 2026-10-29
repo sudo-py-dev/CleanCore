@@ -16,6 +16,25 @@ pub fn resolve(p: &Program) -> Option<IconSource> {
     platform_resolve(p)
 }
 
+/// An autorun entry's icon: its program's (Windows) or its desktop entry's `Icon=` (Linux).
+pub fn for_autorun(e: &crate::autorun::AutorunEntry) -> Option<IconSource> {
+    #[cfg(windows)]
+    {
+        let file = PathBuf::from(e.exe.as_deref()?);
+        let ext = file.extension().map(|x| x.to_string_lossy().to_lowercase()).unwrap_or_default();
+        (file.is_file() && ext == "exe").then_some(IconSource::Resource { file, index: 0 })
+    }
+    #[cfg(not(windows))]
+    {
+        if e.source != crate::autorun::Source::StartupFolder {
+            return None;
+        }
+        let text = std::fs::read_to_string(&e.location).ok()?;
+        let name = text.lines().find_map(|l| l.trim().strip_prefix("Icon=")).map(str::trim).filter(|n| !n.is_empty())?;
+        named(name)
+    }
+}
+
 // ---------------------------------------------------------------- Windows
 
 #[cfg(windows)]
@@ -99,11 +118,17 @@ fn platform_resolve(p: &Program) -> Option<IconSource> {
         }
         None => return None,
     };
+    named(&name)
+}
+
+/// An icon by `Icon=` value: a path, or a name in the icon theme.
+#[cfg(not(windows))]
+fn named(name: &str) -> Option<IconSource> {
     if name.starts_with('/') {
-        let path = PathBuf::from(&name);
+        let path = PathBuf::from(name);
         return path.is_file().then_some(IconSource::File(path));
     }
-    theme_index().lookup(&name).map(IconSource::File)
+    theme_index().lookup(name).map(IconSource::File)
 }
 
 #[cfg(not(windows))]

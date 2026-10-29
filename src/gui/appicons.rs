@@ -1,4 +1,4 @@
-//! Program icons for the Uninstaller list: resolved and decoded on a background thread
+//! Program icons for the Uninstaller and Autorun lists: resolved and decoded on a background thread
 //! (PNG / ICO / BMP with `image`, SVG with `resvg`, Windows `.exe` / `.dll` icons through
 //! the shell), then turned into textures as they arrive.
 
@@ -25,6 +25,16 @@ impl IconCache {
     /// Start loading the icons of programs not seen before.
     pub fn load(&mut self, ctx: &egui::Context, programs: &[Program]) {
         let todo: Vec<Program> = programs.iter().filter(|p| self.requested.insert(p.id.clone())).cloned().collect();
+        self.load_with(ctx, todo, |p| (p.id.clone(), icons::resolve(p)));
+    }
+
+    /// The same for autorun entries, by entry id.
+    pub fn load_autorun(&mut self, ctx: &egui::Context, entries: &[crate::autorun::AutorunEntry]) {
+        let todo: Vec<crate::autorun::AutorunEntry> = entries.iter().filter(|e| self.requested.insert(e.id.clone())).cloned().collect();
+        self.load_with(ctx, todo, |e| (e.id.clone(), icons::for_autorun(e)));
+    }
+
+    fn load_with<T: Send + Sync + 'static>(&mut self, ctx: &egui::Context, todo: Vec<T>, resolve: fn(&T) -> (String, Option<IconSource>)) {
         if todo.is_empty() {
             return;
         }
@@ -33,7 +43,7 @@ impl IconCache {
         let ctx = ctx.clone();
         std::thread::spawn(move || {
             // Several programs often share one icon file: decode each source once.
-            let sources: Vec<(String, Option<IconSource>)> = todo.par_iter().map(|p| (p.id.clone(), icons::resolve(p))).collect();
+            let sources: Vec<(String, Option<IconSource>)> = todo.par_iter().map(resolve).collect();
             let mut by_source: HashMap<IconSource, Vec<String>> = HashMap::new();
             for (id, src) in sources {
                 if let Some(s) = src {
