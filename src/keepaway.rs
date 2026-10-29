@@ -233,8 +233,9 @@ foreach ($r in $roots) {
   }
 }
 # A copy of Edge's setup it handed over to (setup.exe is a common name: only Edge's counts).
+# Only waited for, never stopped.
 $until = (Get-Date).AddMinutes(2)
-while ((Get-Date) -lt $until -and @(Get-Process setup | Where-Object { $_.Product -like '*Edge*' -and $_.Product -notlike '*WebView*' }).Count) { Start-Sleep -Milliseconds 500 }
+while ((Get-Date) -lt $until -and @(Get-Process setup | Where-Object { $_.Product -like '*Edge*' }).Count) { Start-Sleep -Milliseconds 500 }
 if ($made) { Remove-Item "$legacy\MicrosoftEdge.exe" -Force }
 Remove-ItemProperty $dev -Name AllowUninstall
 

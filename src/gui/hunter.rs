@@ -543,7 +543,7 @@ fn bar_button(ui: &mut Ui, glyph: &str, tip: &str, p: Palette) -> egui::Response
     if r.hovered() {
         ui.ctx().set_cursor_icon(egui::CursorIcon::PointingHand);
     }
-    r.widget_info(|| egui::WidgetInfo::labeled(egui::Role::Button, true, tip.clone()));
+    r.widget_info(|| egui::WidgetInfo::labeled(egui::Role::Button, true, tip));
     r.on_hover_text(style::vis(tip))
 }
 
