@@ -120,17 +120,30 @@ function Remove-Autostart($like) {
 }
 "#;
 
+/// Put before a script that calls `Invoke-Uninstaller $exe $arguments`: it runs the uninstaller
+/// and waits for it, and for the copies of it named `$name` it hands over to, 5 minutes at most.
+/// `Start-Process -Wait` waits for every process the uninstaller starts too, so an uninstaller
+/// that leaves Edge Update or a helper running held the removal until PowerShell was stopped.
+const RUN: &str = r#"
+function Invoke-Uninstaller($exe, $arguments, $name) {
+  $until = (Get-Date).AddMinutes(5)
+  $p = Start-Process $exe $arguments -PassThru
+  if ($p) { [void]$p.WaitForExit(300000) }
+  while ($name -and (Get-Date) -lt $until -and @(Get-Process -Name $name -ErrorAction SilentlyContinue).Count) { Start-Sleep -Milliseconds 500 }
+}
+"#;
+
 /// OneDrive: its own uninstallers (this user's copy, then the machine-wide one).
 const ONEDRIVE_REMOVE: &str = r#"
 $ErrorActionPreference = 'SilentlyContinue'
 Stop-Process -Name OneDrive, OneDriveSetup -Force
 Start-Sleep -Seconds 1
-Get-ChildItem "$env:LOCALAPPDATA\Microsoft\OneDrive\*\OneDriveSetup.exe" | ForEach-Object { Start-Process $_.FullName '/uninstall' -Wait }
+Get-ChildItem "$env:LOCALAPPDATA\Microsoft\OneDrive\*\OneDriveSetup.exe" | ForEach-Object { Invoke-Uninstaller $_.FullName '/uninstall' 'OneDriveSetup' }
 foreach ($d in $env:ProgramFiles, ${env:ProgramFiles(x86)}) {
-  Get-ChildItem "$d\Microsoft OneDrive\*\OneDriveSetup.exe" | ForEach-Object { Start-Process $_.FullName '/uninstall /allusers' -Wait }
+  Get-ChildItem "$d\Microsoft OneDrive\*\OneDriveSetup.exe" | ForEach-Object { Invoke-Uninstaller $_.FullName '/uninstall /allusers' 'OneDriveSetup' }
 }
 foreach ($s in "$env:SystemRoot\System32\OneDriveSetup.exe", "$env:SystemRoot\SysWOW64\OneDriveSetup.exe") {
-  if (Test-Path $s) { Start-Process $s '/uninstall' -Wait }
+  if (Test-Path $s) { Invoke-Uninstaller $s '/uninstall' 'OneDriveSetup' }
 }
 "#;
 
@@ -139,7 +152,7 @@ const ONEDRIVE_BLOCK: &str = r#"
 $ErrorActionPreference = 'SilentlyContinue'
 # The policy "Prevent the usage of OneDrive for file storage": OneDrive won't run for anyone.
 $pol = 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\OneDrive'
-New-Item $pol -Force | Out-Null
+if (-not (Test-Path $pol)) { New-Item $pol -Force | Out-Null }
 Set-ItemProperty $pol -Name DisableFileSyncNGSC -Value 1 -Type DWord
 # New accounts: the default profile installs it at first sign-in.
 $hive = "$env:SystemDrive\Users\Default\NTUSER.DAT"
@@ -156,7 +169,7 @@ Remove-Autostart 'OneDrive*'
 Get-ScheduledTask -TaskName 'OneDrive*' | Unregister-ScheduledTask -Confirm:$false
 # Explorer's sidebar entry.
 foreach ($c in 'HKCU:\Software\Classes\CLSID\{018D5C66-4533-4307-9B53-224DE2ED1FE6}', 'HKCU:\Software\Classes\WOW6432Node\CLSID\{018D5C66-4533-4307-9B53-224DE2ED1FE6}') {
-  New-Item $c -Force | Out-Null
+  if (-not (Test-Path $c)) { New-Item $c -Force | Out-Null }
   Set-ItemProperty $c -Name 'System.IsPinnedToNameSpaceTree' -Value 0 -Type DWord
 }
 Write-Output $old
@@ -172,8 +185,9 @@ foreach ($c in 'HKCU:\Software\Classes\CLSID\{018D5C66-4533-4307-9B53-224DE2ED1F
 $hive = "$env:SystemDrive\Users\Default\NTUSER.DAT"
 if ($old -and (Test-Path $hive)) {
   reg.exe load 'HKU\CleanCoreDefault' $hive | Out-Null
-  New-Item 'Registry::HKEY_USERS\CleanCoreDefault\Software\Microsoft\Windows\CurrentVersion\Run' -Force | Out-Null
-  Set-ItemProperty 'Registry::HKEY_USERS\CleanCoreDefault\Software\Microsoft\Windows\CurrentVersion\Run' -Name OneDriveSetup -Value $old
+  $run = 'Registry::HKEY_USERS\CleanCoreDefault\Software\Microsoft\Windows\CurrentVersion\Run'
+  if (-not (Test-Path $run)) { New-Item $run -Force | Out-Null }
+  Set-ItemProperty $run -Name OneDriveSetup -Value $old
   [gc]::Collect()
   reg.exe unload 'HKU\CleanCoreDefault' | Out-Null
 }
@@ -208,16 +222,19 @@ function Stop-Edge {
 Stop-Edge
 
 $dev = 'HKLM:\SOFTWARE\WOW6432Node\Microsoft\EdgeUpdateDev'
-New-Item $dev -Force | Out-Null
+if (-not (Test-Path $dev)) { New-Item $dev -Force | Out-Null }
 Set-ItemProperty $dev -Name AllowUninstall -Value 1 -Type DWord
 $legacy = "$env:SystemRoot\SystemApps\Microsoft.MicrosoftEdge_8wekyb3d8bbwe"
 $made = -not (Test-Path "$legacy\MicrosoftEdge.exe")
 if ($made) { New-Item $legacy -ItemType Directory -Force | Out-Null; New-Item "$legacy\MicrosoftEdge.exe" -ItemType File -Force | Out-Null }
 foreach ($r in $roots) {
   Get-ChildItem "$r\Application\*\Installer\setup.exe" | ForEach-Object {
-    Start-Process $_.FullName '--uninstall --msedge --system-level --verbose-logging --force-uninstall' -Wait
+    Invoke-Uninstaller $_.FullName '--uninstall --msedge --system-level --verbose-logging --force-uninstall'
   }
 }
+# A copy of Edge's setup it handed over to (setup.exe is a common name: only Edge's counts).
+$until = (Get-Date).AddMinutes(2)
+while ((Get-Date) -lt $until -and @(Get-Process setup | Where-Object { $_.Product -like '*Edge*' -and $_.Product -notlike '*WebView*' }).Count) { Start-Sleep -Milliseconds 500 }
 if ($made) { Remove-Item "$legacy\MicrosoftEdge.exe" -Force }
 Remove-ItemProperty $dev -Name AllowUninstall
 
@@ -225,7 +242,6 @@ Remove-ItemProperty $dev -Name AllowUninstall
 Stop-Edge
 $svc = Get-CimInstance Win32_Service -Filter "Name='MicrosoftEdgeElevationService'"
 if ($svc -and @($roots | Where-Object { $svc.PathName.Trim('"').StartsWith("$_\", 'OrdinalIgnoreCase') }).Count) { sc.exe delete MicrosoftEdgeElevationService | Out-Null }
-Add-Type -Namespace CleanCore -Name Kernel32 -MemberDefinition '[DllImport("kernel32.dll", CharSet = CharSet.Unicode)] public static extern bool MoveFileEx(string from, string to, int flags);'
 foreach ($r in $roots) {
   if (-not (Test-Path -LiteralPath $r)) { continue }
   # Ownership to Administrators, then full control for them. takeown's prompt (for folders it
@@ -237,6 +253,10 @@ foreach ($r in $roots) {
   Remove-Item -LiteralPath $r -Recurse -Force
   if (Test-Path -LiteralPath $r) {
     # Still in use: deleted when Windows restarts, deepest first so each folder is empty by then.
+    # (Compiling MoveFileEx's wrapper takes a few seconds: only when it is needed.)
+    if (-not ('CleanCore.Kernel32' -as [type])) {
+      Add-Type -Namespace CleanCore -Name Kernel32 -MemberDefinition '[DllImport("kernel32.dll", CharSet = CharSet.Unicode)] public static extern bool MoveFileEx(string from, string to, int flags);'
+    }
     @(Get-ChildItem -LiteralPath $r -Recurse -Force) + @(Get-Item -LiteralPath $r) | Sort-Object { $_.FullName.Length } -Descending | ForEach-Object { [CleanCore.Kernel32]::MoveFileEx($_.FullName, [NullString]::Value, 4) | Out-Null }
     'REBOOT'
   }
@@ -249,6 +269,9 @@ foreach ($k in 'HKLM:\SOFTWARE\Microsoft\Active Setup\Installed Components', 'HK
   Remove-Item "$k\{9459C573-B17A-45AE-9F64-1857B5D58CEE}" -Recurse -Force
 }
 
+# The Edge installer Edge Update downloaded for its next update (Edge's app id only).
+Remove-Item "${env:ProgramFiles(x86)}\Microsoft\EdgeUpdate\Download\{56EB18F8-B008-4CBD-B6D2-8C97FE7E9062}" -Recurse -Force
+
 # Its Store placeholder and shortcuts.
 Get-AppxPackage -AllUsers 'Microsoft.MicrosoftEdge.Stable' | Remove-AppxPackage -AllUsers
 Remove-Item "$env:PUBLIC\Desktop\Microsoft Edge.lnk", "$env:USERPROFILE\Desktop\Microsoft Edge.lnk", "$env:ProgramData\Microsoft\Windows\Start Menu\Programs\Microsoft Edge.lnk" -Force
@@ -259,11 +282,11 @@ const EDGE_BLOCK: &str = r#"
 $ErrorActionPreference = 'SilentlyContinue'
 # Microsoft's blocker for the automatic switch to the new Edge.
 $eu = 'HKLM:\SOFTWARE\Microsoft\EdgeUpdate'
-New-Item $eu -Force | Out-Null
+if (-not (Test-Path $eu)) { New-Item $eu -Force | Out-Null }
 Set-ItemProperty $eu -Name DoNotUpdateToEdgeWithChromium -Value 1 -Type DWord
 # Edge Update policies: don't install Edge, nor put its shortcut on the desktop.
 $pol = 'HKLM:\SOFTWARE\Policies\Microsoft\EdgeUpdate'
-New-Item $pol -Force | Out-Null
+if (-not (Test-Path $pol)) { New-Item $pol -Force | Out-Null }
 Set-ItemProperty $pol -Name 'Install{56EB18F8-B008-4CBD-B6D2-8C97FE7E9062}' -Value 0 -Type DWord
 Set-ItemProperty $pol -Name 'CreateDesktopShortcut{56EB18F8-B008-4CBD-B6D2-8C97FE7E9062}' -Value 0 -Type DWord
 # Edge Update off: its services and scheduled tasks are disabled, not deleted (Allow turns them
@@ -325,7 +348,7 @@ pub fn uninstall_edge() -> Result<bool> {
 
 /// Run `EDGE_REMOVE`; true when some files are deleted at the next restart.
 fn remove_edge() -> Result<bool> {
-    Ok(ps(&format!("{AUTOSTART}{EDGE_REMOVE}"))?.lines().any(|l| l.trim() == "REBOOT"))
+    Ok(ps(&format!("{AUTOSTART}{RUN}{EDGE_REMOVE}"))?.lines().any(|l| l.trim() == "REBOOT"))
 }
 
 /// Remove the app and block it from coming back. Keeps the daily check running.
@@ -345,7 +368,7 @@ pub fn remove(app: App) -> Result<String> {
             None
         }
         App::OneDrive => {
-            ps(ONEDRIVE_REMOVE)?;
+            ps(&format!("{RUN}{ONEDRIVE_REMOVE}"))?;
             let old = ps(&format!("{AUTOSTART}{ONEDRIVE_BLOCK}"))?.trim().to_string();
             // Keep an entry saved by an earlier removal: this run found it already gone.
             Some(old).filter(|s| !s.is_empty()).or_else(|| k.get(app).and_then(|r| r.default_run.clone()))
@@ -458,11 +481,24 @@ mod tests {
         assert!(!EDGE_REMOVE.contains("sc.exe delete edgeupdate"));
     }
 
+    /// `New-Item -Force` on a registry key that exists empties it (values and subkeys), so a
+    /// key is only ever created when it is missing; and no uninstaller is waited for with
+    /// `Start-Process -Wait`, which also waits for whatever it leaves running.
+    #[test]
+    fn keeps_existing_keys_and_waits_for_the_uninstaller_only() {
+        for s in [AUTOSTART, RUN, EDGE_REMOVE, EDGE_BLOCK, EDGE_ALLOW, ONEDRIVE_REMOVE, ONEDRIVE_BLOCK, ONEDRIVE_ALLOW] {
+            for line in s.lines().filter(|l| l.contains("New-Item") && !l.contains("-ItemType")) {
+                assert!(line.contains("if (-not (Test-Path "), "{line}");
+            }
+            assert!(!s.contains("-Wait"), "{s}");
+        }
+    }
+
     /// The scripts parse (PowerShell's own parser: nothing runs).
     #[test]
     #[cfg(windows)]
     fn scripts_parse() {
-        for s in [AUTOSTART, EDGE_REMOVE, EDGE_BLOCK, EDGE_ALLOW, ONEDRIVE_REMOVE, ONEDRIVE_BLOCK, ONEDRIVE_ALLOW] {
+        for s in [AUTOSTART, RUN, EDGE_REMOVE, EDGE_BLOCK, EDGE_ALLOW, ONEDRIVE_REMOVE, ONEDRIVE_BLOCK, ONEDRIVE_ALLOW] {
             let check = "$e = $null; [void][System.Management.Automation.Language.Parser]::ParseInput($env:CLEANCORE_SCRIPT, [ref]$null, [ref]$e); if ($e) { $e | ForEach-Object { $_.Message }; exit 1 }";
             let o = std::process::Command::new("powershell").args(["-NoProfile", "-NonInteractive", "-Command", check]).env("CLEANCORE_SCRIPT", s).output().unwrap();
             assert!(o.status.success(), "{}\n{s}", String::from_utf8_lossy(&o.stdout));

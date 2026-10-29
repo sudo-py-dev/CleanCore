@@ -580,6 +580,27 @@ pub fn prepare(settings: &Settings, label: &str) -> std::result::Result<Vec<Note
     Ok(notes)
 }
 
+/// System Restore leaves Store apps out (the Store reinstalls them), so a restore point helps
+/// an uninstall only when it is more than Store apps. Making one anyway stopped every Store
+/// app uninstall on PCs where System Restore is off.
+pub fn restore_point_helps<'a>(programs: impl IntoIterator<Item = &'a Program>) -> bool {
+    let mut any = false;
+    for p in programs {
+        if p.kind != ProgramKind::WindowsApp {
+            return true;
+        }
+        any = true;
+    }
+    !any
+}
+
+/// `settings` to `prepare` the uninstall of `programs` with: no restore point where it can't help.
+pub fn settings_for<'a>(settings: &Settings, programs: impl IntoIterator<Item = &'a Program>) -> Settings {
+    let mut s = settings.clone();
+    s.uninstall_restore_point &= restore_point_helps(programs);
+    s
+}
+
 /// `prepare` once the user chose to go on although the restore point failed.
 pub fn prepare_without_restore_point(settings: &Settings, label: &str) -> Vec<Note> {
     let mut s = settings.clone();
@@ -999,6 +1020,21 @@ pub fn export(programs: &[Program], path: &std::path::Path) -> Result<()> {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn store_apps_alone_make_no_restore_point() {
+        let app = Program::new("a", "Quick Assist", ProgramKind::WindowsApp);
+        let win32 = Program::new("w", "Notepad++", ProgramKind::Win32);
+        let mut s = Settings::default();
+        s.uninstall_restore_point = true;
+        assert!(!settings_for(&s, [&app]).uninstall_restore_point);
+        assert!(!settings_for(&s, &vec![app.clone(), app.clone()]).uninstall_restore_point);
+        assert!(settings_for(&s, [&app, &win32]).uninstall_restore_point);
+        // Forced Uninstall (no program) and a switched-off setting stay as they are.
+        assert!(settings_for(&s, None).uninstall_restore_point);
+        s.uninstall_restore_point = false;
+        assert!(!settings_for(&s, [&win32]).uninstall_restore_point);
+    }
 
     #[test]
     fn never_offers_the_runtimes_edge_shares() {

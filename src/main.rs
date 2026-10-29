@@ -2428,7 +2428,7 @@ fn run_uninstall(settings: &Settings, a: UninstallArgs) -> Result<()> {
         if !a.yes && !confirm(&format!("Quick uninstall {} program(s): {}?", programs.len(), programs.iter().map(|p| p.name.as_str()).collect::<Vec<_>>().join(", ")))? {
             return Ok(());
         }
-        prepare_uninstall(settings, &format!("{} program(s)", programs.len()), a.yes)?;
+        prepare_uninstall(&uninst::settings_for(settings, &programs), &format!("{} program(s)", programs.len()), a.yes)?;
         let mut s2 = settings.clone();
         if let Some(m) = a.mode {
             s2.uninstall_scan_mode = m;
@@ -2451,8 +2451,8 @@ fn run_uninstall(settings: &Settings, a: UninstallArgs) -> Result<()> {
         t.paths.extend(a.path.iter().cloned());
         return leftovers_step(settings, &t, &a, &p.name, &p.version, Operation::LeftoversOnly);
     }
-    prepare_uninstall(settings, &p.name, a.yes)?;
-    let mode = if a.msi { RunMode::ForcedMsi } else { RunMode::Normal };
+    prepare_uninstall(&uninst::settings_for(settings, [p]), &p.name, a.yes)?;
+    let mode =if a.msi { RunMode::ForcedMsi } else { RunMode::Normal };
     if p.uninstall_string.is_none() && !a.msi {
         println!("No built-in uninstaller: removing the program's files and leftovers.");
         return leftovers_step(settings, &target, &a, &p.name, &p.version, Operation::Uninstall);

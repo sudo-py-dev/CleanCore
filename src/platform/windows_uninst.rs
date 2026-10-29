@@ -177,8 +177,17 @@ pub fn in_windows_dir(path: &str) -> bool {
     p == root || p.starts_with(&format!("{root}\\"))
 }
 
+/// Store app package folders (`Program Files\WindowsApps`, `<drive>:\WindowsApps`) and app
+/// aliases (`AppData\Local\Microsoft\WindowsApps`) are Windows' deployment service's: only it
+/// can delete them (anyone else gets Access denied), and it does once no account still has the
+/// package, which a removal for this user alone often leaves (new accounts get it too).
+fn in_windows_apps(path: &str) -> bool {
+    path.split(['\\', '/']).any(|c| c.eq_ignore_ascii_case("WindowsApps"))
+}
+
 fn store_apps(show_system: bool) -> Vec<Program> {
-    let script = "Get-AppxPackage | Select-Object Name,PackageFullName,PackageFamilyName,Version,Publisher,InstallLocation,IsFramework,SignatureKind,NonRemovable | ConvertTo-Json -Compress";
+    // SignatureKind as its name: ConvertTo-Json writes enums as numbers.
+    let script = "Get-AppxPackage | Select-Object Name,PackageFullName,PackageFamilyName,Version,Publisher,InstallLocation,IsFramework,@{n='SignatureKind';e={\"$($_.SignatureKind)\"}},NonRemovable | ConvertTo-Json -Compress";
     let Ok(text) = powershell(script) else {
         return Vec::new();
     };
@@ -347,7 +356,7 @@ impl Scan<'_> {
 
     fn file(&mut self, p: &Path, what: &str) {
         let s = p.display().to_string();
-        if self.other_owns(&s) {
+        if self.other_owns(&s) || in_windows_apps(&s) {
             return;
         }
         let Ok(meta) = std::fs::symlink_metadata(p) else {
@@ -617,4 +626,23 @@ pub fn scan_leftovers(target: &Target, mode: ScanMode, scope: Scope, others: &[P
         }
     }
     s.out
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn store_app_folders_are_never_leftovers() {
+        for p in [
+            r"C:\Program Files\WindowsApps\MicrosoftCorporationII.QuickAssist_2.0.5.0_x64__8wekyb3d8bbwe",
+            r"D:\WindowsApps\Some.App_1.0.0.0_x64__abc",
+            r"C:\Users\me\AppData\Local\Microsoft\WindowsApps\Some.App_abc",
+        ] {
+            assert!(in_windows_apps(p), "{p}");
+        }
+        for p in [r"C:\Users\me\AppData\Local\Packages\Some.App_abc", r"C:\Program Files\WindowsAppsTool"] {
+            assert!(!in_windows_apps(p), "{p}");
+        }
+    }
 }

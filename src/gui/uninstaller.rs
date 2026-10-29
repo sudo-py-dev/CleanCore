@@ -79,6 +79,7 @@ enum Ran {
 /// the program's own uninstaller when there is one. `turn_on_restore` first switches System
 /// Restore back on (the user's choice after it failed).
 fn first_stage(settings: &Settings, label: &str, prog: Option<&Program>, run_mode: RunMode, restore_point: bool, turn_on_restore: bool) -> Result<Ran, String> {
+    let settings = &uninst::settings_for(settings, prog);
     if turn_on_restore {
         if let Err(e) = crate::platform::enable_system_restore() {
             return Ok(Ran::RestorePointFailed(crate::tf!("Turning on System Restore failed: {e:#}")));
@@ -366,7 +367,7 @@ impl UninstallerView {
     }
 
     fn start_queue(&mut self, ctx: &egui::Context, cx: &Cx, items: Vec<Program>) {
-        let settings = cx.settings.clone();
+        let settings = uninst::settings_for(cx.settings, &items);
         let label = crate::tf!("{} program(s)", items.len());
         let prepared = Pending::spawn(ctx, "Creating restore point and backup", move || uninst::prepare(&settings, &label));
         self.screen = Screen::Queue(Queue {

@@ -104,7 +104,7 @@ impl HunterView {
         let (mut hunted, mut close, mut open_main, mut hide) = (false, false, false, false);
         let builder = egui::ViewportBuilder::default()
             .with_title("CleanCore Hunter")
-            .with_inner_size([128.0, 132.0])
+            .with_inner_size([132.0, 150.0])
             .with_resizable(false)
             .with_decorations(false)
             .with_always_on_top()
@@ -113,37 +113,41 @@ impl HunterView {
             if ui.input(|i| i.viewport().close_requested()) {
                 close = true;
             }
-            egui::CentralPanel::default().frame(egui::Frame::new().fill(p.surface).stroke(egui::Stroke::new(1.0, p.border)).inner_margin(6)).show(ui, |ui| {
-                crate::gui::style::row(ui, |ui| {
-                    // Grip: drag the window around. Its buttons sit at the far end.
-                    ui.spacing_mut().item_spacing.x = 0.0;
-                    let (grip, r) = ui.allocate_exact_size(egui::vec2(24.0, 30.0), egui::Sense::drag());
-                    ui.painter().text(grip.center(), egui::Align2::CENTER_CENTER, style::vstr(icon::DOTS), egui::FontId::proportional(14.0), p.faint);
-                    if r.hovered() {
-                        ui.ctx().set_cursor_icon(egui::CursorIcon::Grab);
-                    }
-                    if r.drag_started() {
-                        ui.ctx().send_viewport_cmd(egui::ViewportCommand::StartDrag);
-                    }
-                    r.on_hover_text(style::vis(tr("Move")));
-                    ui.with_layout(crate::gui::style::far_layout(egui::Align::Center), |ui| {
-                        close = style::icon_button(ui, icon::X, "Exit Hunter Mode").clicked() || close;
-                        hide = style::icon_button(ui, icon::APP_WINDOW, "Open CleanCore").clicked();
-                    });
-                });
+            egui::CentralPanel::default().frame(egui::Frame::new().fill(p.surface).stroke(egui::Stroke::new(1.0, p.border)).inner_margin(egui::Margin::symmetric(6, 4))).show(ui, |ui| {
+                // Title bar: all of it moves the window, except its two small buttons at the far end.
+                let (bar, r) = ui.allocate_exact_size(egui::vec2(ui.available_width(), 26.0), egui::Sense::drag());
+                if r.hovered() {
+                    ui.ctx().set_cursor_icon(egui::CursorIcon::Grab);
+                }
+                if r.drag_started() {
+                    ui.ctx().send_viewport_cmd(egui::ViewportCommand::StartDrag);
+                }
+                r.on_hover_text(style::vis(tr("Move")));
+                let mut buttons = ui.new_child(egui::UiBuilder::new().max_rect(bar).layout(style::far_layout(egui::Align::Center)));
+                buttons.spacing_mut().item_spacing.x = 2.0;
+                close = bar_button(&mut buttons, icon::X, "Exit Hunter Mode", p).clicked() || close;
+                hide = bar_button(&mut buttons, icon::APP_WINDOW, "Open CleanCore", p).clicked();
+
+                ui.add_space(4.0);
                 ui.vertical_centered(|ui| {
-                    let (rect, r) = ui.allocate_exact_size(egui::vec2(64.0, 64.0), egui::Sense::drag());
+                    // The target: a round button with a ring that answers hover, red while hunting.
+                    let (rect, r) = ui.allocate_exact_size(egui::vec2(72.0, 72.0), egui::Sense::drag());
                     r.widget_info(|| egui::WidgetInfo::labeled(egui::Role::Button, true, tr("Floating hunter target")));
+                    let hover = ui.ctx().animate_bool(r.id, r.hovered() || r.dragged());
                     let col = if r.dragged() { p.danger } else { p.accent };
-                    ui.painter().rect_filled(rect, 16.0, col.gamma_multiply(if p.dark { 0.25 } else { 0.14 }));
-                    ui.painter().text(rect.center(), egui::Align2::CENTER_CENTER, style::vstr(icon::CROSSHAIR), egui::FontId::proportional(38.0), col);
+                    let painter = ui.painter();
+                    let radius = 30.0 + 2.0 * hover;
+                    painter.circle_filled(rect.center(), radius, col.gamma_multiply(if p.dark { 0.22 } else { 0.12 } + 0.08 * hover));
+                    painter.circle_stroke(rect.center(), radius, egui::Stroke::new(1.5, col.gamma_multiply(0.35 + 0.65 * hover)));
+                    painter.text(rect.center(), egui::Align2::CENTER_CENTER, style::vstr(icon::CROSSHAIR), egui::FontId::proportional(34.0 + 2.0 * hover), col);
                     if r.hovered() || r.dragged() {
                         ui.ctx().set_cursor_icon(egui::CursorIcon::Crosshair);
                     }
                     if r.drag_stopped() {
                         hunted = true;
                     }
-                    ui.add(style::Label::new(style::rich(tr("Drag me")).size(11.0).color(p.muted)));
+                    ui.add_space(2.0);
+                    ui.add(style::Label::new(style::rich(tr("Drag me")).size(12.0).color(if r.dragged() { p.danger } else { p.muted })));
                 });
             });
         });
@@ -526,6 +530,22 @@ fn program_row(ui: &mut Ui, pr: &Proc, selected: bool, p: Palette) -> egui::Resp
 }
 
 /// Bring the main window back from the taskbar.
+/// A small icon button for the floating target's title bar (the usual ones would crowd it).
+fn bar_button(ui: &mut Ui, glyph: &str, tip: &str, p: Palette) -> egui::Response {
+    let tip = tr(tip);
+    let (rect, r) = ui.allocate_exact_size(egui::vec2(24.0, 24.0), egui::Sense::click());
+    let t = ui.ctx().animate_bool(r.id, r.hovered());
+    if t > 0.0 {
+        ui.painter().rect_filled(rect, 6.0, p.surface_alt.lerp_to_gamma(p.border, 0.5).gamma_multiply(t));
+    }
+    ui.painter().text(rect.center(), egui::Align2::CENTER_CENTER, style::vstr(glyph), egui::FontId::proportional(14.0), p.faint.lerp_to_gamma(p.text, t));
+    if r.hovered() {
+        ui.ctx().set_cursor_icon(egui::CursorIcon::PointingHand);
+    }
+    r.widget_info(|| egui::WidgetInfo::labeled(egui::Role::Button, true, tip.clone()));
+    r.on_hover_text(style::vis(tip))
+}
+
 fn show_main(ctx: &egui::Context) {
     ctx.send_viewport_cmd_to(egui::ViewportId::ROOT, egui::ViewportCommand::Minimized(false));
     ctx.send_viewport_cmd_to(egui::ViewportId::ROOT, egui::ViewportCommand::Focus);
