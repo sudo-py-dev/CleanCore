@@ -462,8 +462,13 @@ fn walk_through_every_tool() {
     h.run_steps(3);
     h.get_by_label("Switch to dark").click();
     h.run_steps(3);
+    h.query_all_by_role_and_label(Role::Button, "Settings").next().unwrap().click();
+    h.run_steps(3);
     shot(&mut h, "12-settings-dark-violet");
     h.get_by_label("Indigo").click();
+    h.run_steps(3);
+    h.query_all_by_role_and_label(Role::Button, "Close").next().unwrap().click();
+    h.run_steps(3);
     h.get_by_role_and_label(Role::Button, "Cleaner").click();
     h.run_steps(3);
     shot(&mut h, "13-dark-cleaner");
