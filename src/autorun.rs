@@ -378,9 +378,11 @@ pub fn add(name: &str, command: &str, all_users: bool, method: AddMethod) -> Res
 
 pub fn export(entries: &[AutorunEntry], path: &Path) -> Result<()> {
     let ext = path.extension().and_then(|e| e.to_str()).unwrap_or("txt").to_ascii_lowercase();
-    let row = |e: &AutorunEntry| -> [String; 7] {
+    let row = |e: &AutorunEntry| -> [String; 8] {
+        let s = &e.startup;
         [
             e.name.clone(),
+            if s.measured || s.impact == Impact::Unknown { s.impact.label().into() } else { format!("{} (estimated)", s.impact.label()) },
             if e.enabled { "Enabled".into() } else { "Disabled".into() },
             e.source.label().into(),
             e.command.clone(),
@@ -498,6 +500,19 @@ mod tests {
         boot.delay.insert("docker.service".into(), 1800);
         let svc = entry("/usr/bin/dockerd", Source::Service, "docker.service");
         assert_eq!(measure(&svc, &boot, None, None).impact, Impact::High);
+    }
+
+    #[test]
+    fn export_columns_match_headers() {
+        let mut e = entry(r"C:\Apps\Chat\Chat.exe", Source::Run, "HKCU | Chat");
+        e.startup.impact = Impact::High;
+        let path = std::env::temp_dir().join(format!("cleancore-autorun-{}.csv", std::process::id()));
+        export(&[e], &path).unwrap();
+        let text = std::fs::read_to_string(&path).unwrap();
+        let _ = std::fs::remove_file(&path);
+        let lines: Vec<&str> = text.lines().collect();
+        assert_eq!(lines[0].split(',').count(), lines[1].split("\",\"").count());
+        assert!(lines[1].starts_with("\"x\",\"High (estimated)\",\"Enabled\",\"Registry Run\""), "{}", lines[1]);
     }
 
     #[test]
