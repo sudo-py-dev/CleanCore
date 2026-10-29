@@ -241,7 +241,6 @@ pub struct App {
     settings: Settings,
     tool: Tool,
     notices: Vec<Notice>,
-    seen_notices: usize,
     uninstaller: uninstaller::UninstallerView,
     autorun: autorun::AutorunView,
     hunter: hunter::HunterView,
@@ -281,7 +280,6 @@ impl App {
             // `cleancore --hunter` (or /hunter) opens Hunter Mode.
             tool: if Tool::Hunter.supported() && std::env::args().skip(1).any(|a| a == "--hunter" || a.eq_ignore_ascii_case("/hunter")) { Tool::Hunter } else { Tool::Uninstaller },
             notices,
-            seen_notices: 0,
             uninstaller: uninstaller::UninstallerView::new(),
             autorun: autorun::AutorunView::new(),
             hunter: hunter::HunterView::new(),
@@ -352,7 +350,7 @@ impl App {
         egui::Panel::bottom("sidebar-bottom").frame(egui::Frame::NONE).show_separator_line(false).resizable(false).show(ui, |ui| {
             ui.add_space(8.0);
             let rec = crate::watcher::recorder_running();
-            // The recorder's state, with the theme switch and notifications at its far end.
+            // The recorder's state, with the theme switch at its far end.
             egui::Frame::new().fill(p.surface_alt).corner_radius(10).inner_margin(egui::Margin { left: 10, right: 2, top: 1, bottom: 1 }).show(ui, |ui| {
                 ui.set_width(ui.available_width());
                 crate::gui::style::row(ui, |ui| {
@@ -368,7 +366,6 @@ impl App {
                     ui.painter().circle_filled(r.center(), 4.0, if rec { p.success } else { p.faint });
                     ui.with_layout(crate::gui::style::far_layout(egui::Align::Center), |ui| {
                         ui.spacing_mut().item_spacing.x = 0.0;
-                        self.notifications_button(ui);
                         let dark = p.dark;
                         if style::icon_button(ui, if dark { icon::SUN } else { icon::MOON }, if dark { tr("Switch to light") } else { tr("Switch to dark") }).clicked() {
                             self.settings.gui_theme = Some(if dark { "light" } else { "dark" }.into());
@@ -422,38 +419,9 @@ impl App {
         ui.ctx().request_repaint_after(Duration::from_secs(2));
     }
 
-    fn notifications_button(&mut self, ui: &mut Ui) {
-        let unread = self.notices.len().saturating_sub(self.seen_notices);
-        let tip = if unread > 0 { crate::tf!("Notifications ({unread} new)") } else { "Notifications".to_string() };
-        let r = style::icon_button(ui, icon::BELL, &tip);
-        if unread > 0 {
-            let p = Palette::get(ui.ctx());
-            // Inside the button, with a ring in the background color so it reads as a badge.
-            let c = r.rect.right_top() + Vec2::new(-9.0, 9.0);
-            ui.painter().circle_filled(c, 4.5, p.surface_alt);
-            ui.painter().circle_filled(c, 3.5, p.danger);
-        }
-        egui::Popup::menu(&r).width(380.0).show(|ui| {
-            self.seen_notices = self.notices.len();
-            ui.add(style::Label::new(style::strong(tr("Notifications"))));
-            ui.add_space(4.0);
-            if self.notices.is_empty() {
-                ui.add(style::Label::new(style::muted(ui, tr("Nothing yet."))));
-            }
-            egui::ScrollArea::vertical().max_height(360.0).show(ui, |ui| {
-                for n in self.notices.iter().rev() {
-                    notice_row(ui, n);
-                    ui.add_space(4.0);
-                }
-            });
-            if !self.notices.is_empty() && style::ghost(ui, icon::TRASH, "Clear all").clicked() {
-                self.notices.clear();
-                self.seen_notices = 0;
-            }
-        });
-    }
-
     fn toasts(&mut self, ctx: &egui::Context) {
+        // A message is a toast for a few seconds and then gone: nothing keeps a list of them.
+        self.notices.retain(|n| n.shown.elapsed() < Duration::from_secs(4));
         let live: Vec<&Notice> = self.notices.iter().filter(|n| n.shown.elapsed() < Duration::from_secs(4)).collect();
         if live.is_empty() {
             return;
