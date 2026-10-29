@@ -738,15 +738,11 @@ impl UninstallerView {
             }
             // Checkbox, icon, Name, Version, Size, Installed, Type. Columns that don't fit the card
             // go, the least needed first (Installed, Version, Type), so no row runs off the edge.
-            let widths = [
-                28.0,
-                34.0,
-                if narrow { 150.0 } else { 220.0 },
-                if narrow { 96.0 } else { 130.0 },
-                if narrow { 76.0 } else { 90.0 },
-                if narrow { 92.0 } else { 100.0 },
-                if narrow { 72.0 } else { 90.0 },
-            ];
+            // Type fits its widest translated badge, so a long one ("Windows App") isn't cut.
+            let kinds: BTreeSet<&str> = visible.iter().map(|&i| self.programs[i].kind.label()).collect();
+            let type_w = kinds.into_iter().map(|k| style::badge_width(ui, k)).fold(if narrow { 72.0 } else { 90.0 }, f32::max);
+            let widths =
+                [28.0, 34.0, if narrow { 150.0 } else { 220.0 }, if narrow { 96.0 } else { 130.0 }, if narrow { 76.0 } else { 90.0 }, if narrow { 92.0 } else { 100.0 }, type_w];
             let gap = ui.spacing().item_spacing.x;
             let mut show = [true; 7];
             for drop in [5, 3, 6] {
