@@ -69,18 +69,21 @@ impl SettingsView {
         let screen = ctx.content_rect();
         let size = Vec2::new((screen.width() - 64.0).clamp(520.0, 980.0), (screen.height() - 150.0).clamp(320.0, 620.0));
         let mut close = false;
-        let frame = egui::Frame::new().fill(p.surface).stroke(egui::Stroke::new(1.0, p.border)).corner_radius(14);
-        let shown = egui::Modal::new(egui::Id::unique("settings-dialog")).frame(frame).show(ctx, |ui| {
+        let frame = egui::Frame::new().fill(p.bg).corner_radius(15).shadow(ctx.global_style().visuals.window_shadow);
+        let id = egui::Id::unique("settings-dialog");
+        let intro = style::dialog_intro(ctx, id);
+        let shown = egui::Modal::new(id).frame(frame).show(ctx, |ui| {
+            ui.multiply_opacity(intro);
             ui.set_width(size.x);
             ui.spacing_mut().item_spacing.y = 0.0;
             // Title bar: the name in the middle, the close button at the far end.
-            egui::Frame::new().fill(p.bg).corner_radius(egui::CornerRadius { nw: 14, ne: 14, sw: 0, se: 0 }).show(ui, |ui| {
-                let (rect, _) = ui.allocate_exact_size(Vec2::new(size.x, 56.0), egui::Sense::hover());
-                let title = crate::tf!("{}  {}", icon::GEAR, tr("Settings"));
-                ui.painter().text(rect.center(), egui::Align2::CENTER_CENTER, style::vstr(title), egui::FontId::new(19.0, style::semibold()), p.text);
+            // Header bar, as in GNOME: the title centred, a round close button at the far end.
+            egui::Frame::new().show(ui, |ui| {
+                let (rect, _) = ui.allocate_exact_size(Vec2::new(size.x, 50.0), egui::Sense::hover());
+                ui.painter().text(rect.center(), egui::Align2::CENTER_CENTER, style::vstr(tr("Settings")), egui::FontId::new(15.0, style::semibold()), p.text);
                 let m = style::Mirror::new(rect);
-                let x = m.rect(size.x - 52.0, rect.center().y - 16.0, Vec2::splat(32.0));
-                if ui.put(x, |ui: &mut Ui| style::icon_button(ui, icon::X, "Close")).clicked() {
+                let x = m.rect(size.x - 38.0, rect.center().y - 12.0, Vec2::splat(24.0));
+                if ui.put(x, |ui: &mut Ui| style::close_button(ui, "Close")).clicked() {
                     close = true;
                 }
             });
@@ -506,10 +509,10 @@ fn category(ui: &mut Ui, s: Section, selected: bool, p: Palette) -> egui::Respon
     let (rect, resp) = ui.allocate_exact_size(Vec2::new(ui.available_width(), 46.0), egui::Sense::click());
     // Tabs, so assistive tools (and the translation audit) see them as one group.
     resp.widget_info(|| egui::WidgetInfo::selected(egui::Role::Tab, true, selected, label));
-    if selected {
-        ui.painter().rect_filled(rect, 10.0, p.accent_soft);
-    } else if resp.hovered() {
-        ui.painter().rect_filled(rect, 10.0, p.hover);
+    let h = ui.ctx().animate_bool_with_time(resp.id.with("hover"), resp.hovered() && !selected, style::FADE);
+    let s_t = ui.ctx().animate_bool_with_time(resp.id.with("sel"), selected, style::FADE);
+    if s_t > 0.0 || h > 0.0 {
+        ui.painter().rect_filled(rect, 8.0, p.hover.gamma_multiply(h).lerp_to_gamma(p.selected, s_t));
     }
     let m = style::Mirror::new(rect);
     let tile = m.rect(10.0, rect.center().y - 15.0, Vec2::splat(30.0));
