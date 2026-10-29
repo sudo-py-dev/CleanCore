@@ -118,7 +118,7 @@ impl BackupView {
             });
             folder = style::icon_button(ui, icon::FOLDER_OPEN, "Open backup folder").clicked();
             let r = style::icon_button(ui, icon::CALENDAR, "Delete by time range");
-            egui::Popup::menu(&r).width(320.0).show(|ui| {
+            style::menu(&r).width(320.0).show(|ui| {
                 ui.add(style::Label::new(style::strong(tr("Delete backups made between"))));
                 ui.add(style::Label::new(
                     style::muted(ui, tr("Dates like 2026-10-01, or 2026-10-01 14:30. An end date includes that whole day; leave it empty for \"now\".")).size(12.0),
@@ -189,7 +189,7 @@ impl BackupView {
                 }
                 ui.with_layout(crate::gui::style::far_layout(egui::Align::Center), |ui| {
                     let r = style::icon_button(ui, icon::DOTS, "More");
-                    egui::Popup::menu(&r).show(|ui| {
+                    style::menu(&r).show(|ui| {
                         if style::ghost(ui, icon::TRASH, "Delete all backups").clicked() {
                             self.confirm = Some(Confirm::DeleteAll);
                             ui.close();
@@ -274,7 +274,7 @@ impl BackupView {
                     if r.clicked() {
                         clicked = Some(m.id.clone());
                     }
-                    r.context_menu(|ui| {
+                    style::context_menu(&r, |ui| {
                         if style::ghost(ui, icon::UNDO, "Restore").clicked() {
                             menu = Some(Confirm::Restore(m.id.clone()));
                             ui.close();

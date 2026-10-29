@@ -130,7 +130,7 @@ impl AutorunView {
                 self.add = Some(AddForm { name: String::new(), command: String::new(), all_users: false, method: AddMethod::Run });
             }
             let r = style::secondary(ui, icon::DOTS, "More");
-            egui::Popup::menu(&r).width(360.0).show(|ui| {
+            style::menu(&r).width(360.0).show(|ui| {
                 ui.add_enabled_ui(n_invalid > 0, |ui| {
                     if style::ghost(ui, icon::WARNING, &crate::tf!("Remove invalid entries ({n_invalid})"))
                         .on_hover_text(style::vis(tr("Entries whose program no longer exists")))
@@ -332,7 +332,7 @@ impl AutorunView {
                         if r.clicked() {
                             act = Some(Act::Focus(e.id.clone()));
                         }
-                        r.context_menu(|ui| {
+                        style::context_menu(&r, |ui| {
                             if let Some(a) = entry_menu(ui, cx, e) {
                                 act = Some(a);
                             }
@@ -442,7 +442,7 @@ impl AutorunView {
                                     }
                                 });
                                 let r = style::icon_button(ui, icon::DOTS, "More");
-                                egui::Popup::menu(&r).width(220.0).show(|ui| {
+                                style::menu(&r).width(220.0).show(|ui| {
                                     if let Some(a) = entry_menu(ui, cx, e) {
                                         act = Some(a);
                                     }
@@ -464,7 +464,7 @@ impl AutorunView {
                     if r.clicked() {
                         act = Some(Act::Focus(e.id.clone()));
                     }
-                    r.context_menu(|ui| {
+                    style::context_menu(&r, |ui| {
                         if let Some(a) = entry_menu(ui, cx, e) {
                             act = Some(a);
                         }

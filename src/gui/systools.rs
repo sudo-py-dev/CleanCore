@@ -29,6 +29,39 @@ impl SystemToolsView {
         Self { search: String::new(), new_name: String::new(), new_command: String::new() }
     }
 
+    /// The "Add" popover: a name and a command line (or a picked program).
+    fn add_form(&mut self, ui: &mut Ui, cx: &mut Cx) {
+        // Menus pad buttons less; the form's buttons keep their usual size.
+        ui.spacing_mut().button_padding = egui::vec2(12.0, 6.0);
+        ui.spacing_mut().item_spacing.y = 8.0;
+        style::section_title(ui, "Add your own tool");
+        ui.add(style::Label::new(style::muted(ui, tr("Any program or command line. Right-click one of your tools to remove it.")).size(12.5)).wrap());
+        style::text_input(ui, &mut self.new_name, "Name", 360.0);
+        let hint = if cfg!(windows) { r"C:\Tools\app.exe --flag" } else { tr("/usr/bin/app --flag") };
+        crate::gui::style::row(ui, |ui| {
+            ui.spacing_mut().item_spacing.x = 6.0;
+            style::text_input(ui, &mut self.new_command, hint, 360.0 - style::CONTROL_H - 6.0);
+            if let Some(p) = style::browse_button(ui, "systool-command", style::Pick::File, &self.new_command) {
+                if self.new_name.trim().is_empty() {
+                    self.new_name = std::path::Path::new(&p).file_stem().map(|s| s.to_string_lossy().into_owned()).unwrap_or_default();
+                }
+                self.new_command = style::command_from_path(&p);
+            }
+        });
+        let ready = !self.new_name.trim().is_empty() && !self.new_command.trim().is_empty();
+        if ui.add_enabled_ui(ready, |ui| style::primary(ui, icon::PLUS, "Add")).inner.clicked() {
+            match systools::add(cx.settings, &self.new_name, &self.new_command) {
+                Ok(()) => {
+                    cx.info(crate::tf!("Added \"{}\"", self.new_name.trim()));
+                    self.new_name.clear();
+                    self.new_command.clear();
+                    ui.close();
+                }
+                Err(e) => cx.error(crate::tf!("{e:#}")),
+            }
+        }
+    }
+
     pub fn ui(&mut self, ui: &mut Ui, cx: &mut Cx) {
         let p = Palette::get(ui.ctx());
         let tools = systools::list(cx.settings);
@@ -39,6 +72,11 @@ impl SystemToolsView {
             .collect();
         crate::gui::style::row(ui, |ui| {
             style::search_field(ui, &mut self.search, "Search tools", 220.0);
+            ui.with_layout(crate::gui::style::far_layout(egui::Align::Center), |ui| {
+                let r = style::secondary(ui, icon::PLUS, "Add");
+                r.widget_info(|| egui::WidgetInfo::labeled(egui::Role::Button, true, tr("Add your own tool")));
+                style::menu(&r).width(380.0).close_behavior(egui::PopupCloseBehavior::CloseOnClickOutside).show(|ui| self.add_form(ui, cx));
+            });
         });
         ui.add_space(8.0);
         let mut run = None;
@@ -83,7 +121,7 @@ impl SystemToolsView {
                             run = Some((*t).clone());
                         }
                         if t.custom {
-                            r.context_menu(|ui| {
+                            style::context_menu(&r, |ui| {
                                 if style::ghost(ui, icon::TRASH, "Remove").clicked() {
                                     remove = Some(t.name.clone());
                                     ui.close();
@@ -94,31 +132,6 @@ impl SystemToolsView {
                 });
                 ui.add_space(12.0);
             }
-            style::card(ui, |ui| {
-                style::section_title(ui, "Add your own tool");
-                ui.add(style::Label::new(style::muted(ui, tr("Any program or command line. Right-click one of your tools to remove it.")).size(12.5)));
-                ui.add_space(4.0);
-                crate::gui::style::row(ui, |ui| {
-                    style::text_input(ui, &mut self.new_name, "Name", 180.0);
-                    style::text_input(ui, &mut self.new_command, if cfg!(windows) { r"C:\Tools\app.exe --flag" } else { tr("/usr/bin/app --flag") }, 340.0);
-                    if let Some(p) = style::browse_button(ui, "systool-command", style::Pick::File, &self.new_command) {
-                        if self.new_name.trim().is_empty() {
-                            self.new_name = std::path::Path::new(&p).file_stem().map(|s| s.to_string_lossy().into_owned()).unwrap_or_default();
-                        }
-                        self.new_command = style::command_from_path(&p);
-                    }
-                    if style::secondary(ui, icon::PLUS, "Add").clicked() {
-                        match systools::add(cx.settings, &self.new_name, &self.new_command) {
-                            Ok(()) => {
-                                cx.info(crate::tf!("Added \"{}\"", self.new_name.trim()));
-                                self.new_name.clear();
-                                self.new_command.clear();
-                            }
-                            Err(e) => cx.error(crate::tf!("{e:#}")),
-                        }
-                    }
-                });
-            });
         });
         if let Some(t) = run {
             match systools::run(&t) {

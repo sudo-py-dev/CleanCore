@@ -379,7 +379,7 @@ impl TracedTab {
             }
             ui.with_layout(crate::gui::style::far_layout(egui::Align::Center), |ui| {
                 let r = style::secondary(ui, icon::DOTS, "More");
-                egui::Popup::menu(&r).width(380.0).show(|ui| {
+                style::menu(&r).width(380.0).show(|ui| {
                     ui.add(style::Label::new(style::muted(ui, tr("Import a .cptrace log"))));
                     crate::gui::style::row(ui, |ui| {
                         style::text_input(ui, &mut self.import_path, "path/to/log.cptrace", 260.0 - style::CONTROL_H - 8.0);
@@ -472,7 +472,7 @@ impl TracedTab {
                         });
                         ui.with_layout(crate::gui::style::far_layout(egui::Align::Center), |ui| {
                             let r = style::icon_button(ui, icon::DOTS, "More");
-                            egui::Popup::menu(&r).width(360.0).show(|ui| {
+                            style::menu(&r).width(360.0).show(|ui| {
                                 if style::ghost(ui, icon::CHAT, "Rename").clicked() {
                                     self.rename = Some((l.id.clone(), l.name.clone()));
                                     ui.close();

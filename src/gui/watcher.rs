@@ -28,7 +28,6 @@ pub struct WatcherView {
     rows: Vec<usize>,
     rows_for: Option<(String, usize)>,
     filter: String,
-    highlight: String,
     export_path: String,
     export_dir: String,
     in_app: bool,
@@ -66,7 +65,6 @@ impl WatcherView {
             rows: Vec::new(),
             rows_for: None,
             filter: String::new(),
-            highlight: String::new(),
             export_path: dir.join("cleancore-watch.csv").display().to_string(),
             export_dir: dir.join("cleancore-watch-logs").display().to_string(),
             in_app: false,
@@ -383,7 +381,7 @@ impl WatcherView {
             style::badge(ui, &self.watches.len().to_string(), p.accent);
             ui.with_layout(crate::gui::style::far_layout(egui::Align::Center), |ui| {
                 let r = style::icon_button(ui, icon::EXPORT, "Export all");
-                egui::Popup::menu(&r).width(360.0).show(|ui| {
+                style::menu(&r).width(360.0).show(|ui| {
                     ui.add(style::Label::new(style::muted(ui, tr("Folder (one CSV per watched place)"))));
                     style::path_input(ui, "watch-export-dir", &mut self.export_dir, "", 340.0, style::Pick::Folder);
                     if style::primary(ui, icon::EXPORT, "Export all").clicked() {
@@ -418,7 +416,7 @@ impl WatcherView {
 
     fn watch_row(&mut self, ui: &mut Ui, w: &Watch, sel: bool, p: Palette, cx: &mut Cx) -> Option<RowAction> {
         let mut out = None;
-        let fill = if sel { p.accent_soft } else { Color32::TRANSPARENT };
+        let fill = if sel { p.selected } else { Color32::TRANSPARENT };
         let resp = egui::Frame::new().fill(fill).corner_radius(8).inner_margin(egui::Margin::symmetric(10, 6)).show(ui, |ui| {
             ui.set_width(ui.available_width());
             crate::gui::style::row(ui, |ui| {
@@ -426,12 +424,15 @@ impl WatcherView {
                 ui.add(style::Label::new(style::rich(dot).color(col))).on_hover_text(style::vis(state));
                 crate::gui::style::column(ui, |ui| {
                     // Leave room for the action icons of the selected row.
-                    ui.set_max_width((ui.available_width() - if sel { 150.0 } else { 0.0 }).max(60.0));
-                    ui.add(style::Label::new(style::rich(watch_name(&w.path)).color(if sel { p.accent } else { p.text })).truncate());
+                    ui.set_max_width((ui.available_width() - if sel { 140.0 } else { 0.0 }).max(60.0));
+                    ui.add(style::Label::new(style::strong(watch_name(&w.path)).color(p.text)).truncate());
                     ui.add(style::Label::new(style::rich(friendly_path(&w.path)).size(11.5).color(p.muted)).truncate());
                 });
                 if sel {
                     ui.with_layout(crate::gui::style::far_layout(egui::Align::Center), |ui| {
+                        // Four even, compact buttons: the row keeps its room for the name.
+                        ui.spacing_mut().button_padding.x = 6.0;
+                        ui.spacing_mut().item_spacing.x = 2.0;
                         if style::icon_button(ui, icon::TRASH, "Stop watching").clicked() {
                             out = Some(RowAction::Delete(w.clone()));
                         }
@@ -553,31 +554,32 @@ impl WatcherView {
                 }
                 return;
             }
-            crate::gui::style::row(ui, |ui| {
-                style::search_field(ui, &mut self.highlight, "Highlight rows", 160.0);
-            });
-            let h = self.highlight.to_lowercase();
-            let hl = Color32::from_rgba_unmultiplied(p.warning.r(), p.warning.g(), p.warning.b(), 40);
             let mut open: Option<String> = None;
             let mut clear = false;
-            egui::ScrollArea::horizontal().id_salt("events-h").show(ui, |ui| {
+            // The fields of each change; a column empty in every row (a process on Linux, a data
+            // type for files) is left out, and the key takes the room that is left.
+            type Field = fn(&WatchEvent) -> String;
+            let fields: [(&str, Column, Field); 9] = [
+                ("Time", Column::exact(95.0), |e| e.time.format("%H:%M:%S%.3f").to_string()),
+                ("Process", Column::initial(110.0).clip(true), |e| e.process.clone()),
+                ("PID", Column::exact(55.0), |e| e.pid.map(|p| p.to_string()).unwrap_or_default()),
+                ("Operation", Column::exact(110.0).clip(true), |e| tr(e.op.label()).to_string()),
+                ("Key", Column::remainder().at_least(160.0).clip(true), |e| e.key.clone()),
+                ("Value", Column::initial(110.0).clip(true), |e| e.value.clone().map(|v| if v.is_empty() { tr("(Default)").to_string() } else { v }).unwrap_or_default()),
+                ("New data", Column::initial(100.0).clip(true), |e| e.new_data.clone().unwrap_or_default()),
+                ("Old data", Column::initial(100.0).clip(true), |e| e.old_data.clone().unwrap_or_default()),
+                ("Type", Column::initial(80.0).clip(true), |e| e.data_type.clone().unwrap_or_default()),
+            ];
+            let fields: Vec<_> = fields.into_iter().filter(|f| matches!(f.0, "Time" | "Operation" | "Key") || rows.iter().any(|e| !(f.2)(e).is_empty())).collect();
+            // Right to left, the table starts scrolled to its right end, where its first columns are.
+            egui::ScrollArea::horizontal().id_salt("events-h").stick_to_right(crate::gui::style::rtl()).show(ui, |ui| {
                 TableBuilder::new(ui)
                     .striped(true)
                     .auto_shrink([false, false])
                     .sense(egui::Sense::click())
-                    .columns_in_order(vec![
-                        Column::exact(95.0),
-                        Column::initial(110.0).clip(true),
-                        Column::exact(55.0),
-                        Column::exact(110.0),
-                        Column::initial(230.0).clip(true),
-                        Column::initial(120.0).clip(true),
-                        Column::initial(110.0).clip(true),
-                        Column::initial(110.0).clip(true),
-                        Column::remainder().at_least(80.0),
-                    ])
+                    .columns_in_order(fields.iter().map(|f| f.1).collect())
                     .header(26.0, |mut hd| {
-                        for t in crate::gui::style::ordered(vec!["Time", "Process", "PID", "Operation", "Key", "Value", "New data", "Old data", "Type"]) {
+                        for t in crate::gui::style::ordered(fields.iter().map(|f| f.0).collect()) {
                             hd.col(|ui| {
                                 ui.add(style::Label::new(style::rich(tr(t)).size(12.5).color(p.muted)));
                             });
@@ -586,35 +588,28 @@ impl WatcherView {
                     .body(|body| {
                         body.rows(26.0, rows.len(), |mut row| {
                             let e = rows[row.index()];
-                            let lit = !h.is_empty() && e.haystack().contains(&h);
                             let op_color = match e.op {
                                 watcher::Op::DeletedKey | watcher::Op::DeletedValue => p.danger,
                                 watcher::Op::CreatedKey => p.success,
                                 _ => p.text,
                             };
-                            let cells = [
-                                (e.time.format("%H:%M:%S%.3f").to_string(), p.muted),
-                                (e.process.clone(), p.text),
-                                (e.pid.map(|p| p.to_string()).unwrap_or_default(), p.muted),
-                                (tr(e.op.label()).to_string(), op_color),
-                                (e.key.clone(), p.text),
-                                (e.value.clone().map(|v| if v.is_empty() { tr("(Default)").to_string() } else { v }).unwrap_or_default(), p.text),
-                                (e.new_data.clone().unwrap_or_default(), p.text),
-                                (e.old_data.clone().unwrap_or_default(), p.muted),
-                                (e.data_type.clone().unwrap_or_default(), p.muted),
-                            ];
-                            for (c, col) in cells {
-                                crate::gui::style::cells_in_order(
-                                    &mut row,
-                                    vec![Box::new(|ui: &mut Ui| {
-                                        if lit {
-                                            ui.painter().rect_filled(ui.max_rect(), 0.0, hl);
-                                        }
-                                        ui.add(style::Label::new(style::rich(c).color(col)).truncate()).on_hover_text(style::vis(&e.key));
-                                    })],
-                                );
-                            }
-                            row.response().context_menu(|ui| {
+                            let cells: Vec<style::Cell> = fields
+                                .iter()
+                                .map(|&(t, _, get)| {
+                                    let color = match t {
+                                        "Operation" => op_color,
+                                        "Time" | "PID" | "Old data" | "Type" => p.muted,
+                                        _ => p.text,
+                                    };
+                                    let text = get(e);
+                                    Box::new(move |ui: &mut Ui| {
+                                        ui.add(style::Label::new(style::rich(text).color(color)).truncate());
+                                    }) as style::Cell
+                                })
+                                .collect();
+                            // All of a row's cells at once, so they follow the headers in either reading direction.
+                            crate::gui::style::cells_in_order(&mut row, cells);
+                            style::context_menu(&row.response(), |ui| {
                                 if style::ghost(ui, icon::FOLDER_OPEN, if cfg!(windows) { tr("Open in Registry Editor") } else { tr("Open containing folder") }).clicked() {
                                     open = Some(e.key.clone());
                                     ui.close();
@@ -814,7 +809,7 @@ fn change_row(ui: &mut Ui, e: &WatchEvent, p: Palette) -> bool {
         });
     })
     .response;
-    r.interact(egui::Sense::click()).context_menu(|ui| {
+    style::context_menu(&r.interact(egui::Sense::click()), |ui| {
         if style::ghost(ui, icon::FOLDER_OPEN, if cfg!(windows) { tr("Open in Registry Editor") } else { tr("Open containing folder") }).clicked() {
             open = true;
             ui.close();

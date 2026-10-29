@@ -154,7 +154,7 @@ pub use crate::backup::human_size as human;
 /// The inside of an export menu: what can be written, a path field and the button. On click it
 /// runs `export` (which returns the success message), reports the outcome and closes the menu.
 pub fn export_fields(ui: &mut Ui, cx: &mut Cx, path: &mut String, formats: &str, export: impl FnOnce(&std::path::Path) -> anyhow::Result<String>) {
-    ui.add(style::Label::new(style::muted(ui, formats)));
+    ui.add(style::Label::new(style::muted(ui, tr(formats))));
     style::path_input(ui, "export", path, "", 340.0, style::Pick::Save);
     if style::primary(ui, icon::EXPORT, "Export").clicked() {
         match export(std::path::Path::new(path.as_str())) {
@@ -167,7 +167,7 @@ pub fn export_fields(ui: &mut Ui, cx: &mut Cx, path: &mut String, formats: &str,
 
 /// An export menu opened by `button`; see `export_fields`.
 pub fn export_menu(button: &egui::Response, cx: &mut Cx, path: &mut String, formats: &str, export: impl FnOnce(&std::path::Path) -> anyhow::Result<String>) {
-    egui::Popup::menu(button).width(360.0).show(|ui| export_fields(ui, cx, path, formats, export));
+    style::menu(button).width(360.0).show(|ui| export_fields(ui, cx, path, formats, export));
 }
 
 pub fn export_dir() -> std::path::PathBuf {

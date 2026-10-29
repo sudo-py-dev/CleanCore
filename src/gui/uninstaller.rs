@@ -670,7 +670,7 @@ impl UninstallerView {
                 self.groups_dlg = Some(GroupsDialog::default());
             }
             let r = style::icon_button(ui, icon::FUNNEL, "Filters");
-            egui::Popup::menu(&r).width(260.0).show(|ui| {
+            style::menu(&r).width(260.0).show(|ui| {
                 crate::gui::style::row(ui, |ui| {
                     if style::toggle(ui, &mut cx.settings.show_system_components, "Show system components").changed() {
                         cx.save_settings();
@@ -834,7 +834,7 @@ impl UninstallerView {
                         ];
                         crate::gui::style::cells_in_order(&mut row, only(cells, show));
                         // Clicking a row selects nothing: only its checkbox does.
-                        row.response().context_menu(|ui| {
+                        style::context_menu(&row.response(), |ui| {
                             if let Some(a) = context_menu(ui, prog, ticked, &self.meta, &mut self.new_group) {
                                 action = Some(a);
                             }

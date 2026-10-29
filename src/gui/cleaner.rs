@@ -242,7 +242,7 @@ impl CleanerView {
         let mut start = false;
         style::hero(ui, |ui| {
             crate::gui::style::row(ui, |ui| {
-                style::logo(ui, glyph, 60.0);
+                style::icon_tile(ui, glyph, p.accent, 56.0);
                 ui.add_space(8.0);
                 crate::gui::style::column(ui, |ui| {
                     ui.spacing_mut().item_spacing.y = 4.0;
@@ -270,8 +270,9 @@ impl CleanerView {
                             let label = if self.clean_now { "Scan and clean" } else { "Start scan" };
                             start = style::primary(ui, if self.clean_now { icon::LIGHTNING } else { icon::PLAY }, label).clicked();
                         });
-                        ui.add_space(4.0);
-                        crate::gui::style::row(ui, |ui| {
+                        ui.add_space(6.0);
+                        // From the far edge, like the button above it: the switch lines up under its edge.
+                        ui.with_layout(crate::gui::style::far_layout(egui::Align::Min), |ui| {
                             style::toggle(ui, &mut self.clean_now, "Clean without reviewing");
                             ui.add(style::Label::new(style::muted(ui, tr("Clean without reviewing")).size(12.5)).extend())
                                 .on_hover_text(style::vis(tr("Remove everything the scan finds right away (a backup is made first)")));
@@ -617,7 +618,7 @@ impl CleanerView {
                                         ui.spacing_mut().item_spacing.y = 1.0;
                                         let r = ui.add(style::Label::new(style::rich(friendly(&issue.location)).monospace().size(12.5)).sense(egui::Sense::click()).truncate());
                                         let r = r.on_hover_text(style::vis(crate::tf!("{}\n{}", issue.location, issue.detail)));
-                                        r.context_menu(|ui| item_menu(ui, i, self.checked[i], &issue.location, &mut action));
+                                        style::context_menu(&r, |ui| item_menu(ui, i, self.checked[i], &issue.location, &mut action));
                                         // Why it was flagged: one line, or all of it with "Show details".
                                         if !issue.detail.is_empty() {
                                             let l = style::Label::new(style::rich(&issue.detail).size(12.0).color(p.muted));

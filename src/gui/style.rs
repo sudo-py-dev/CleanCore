@@ -1061,27 +1061,20 @@ pub fn eyebrow(ui: &mut Ui, text: &str) {
     ui.add_space(2.0);
 }
 
-/// A featured card: the normal card with a faint accent gradient washed over it.
+/// The card at the top of a page: a plain card with more room around its contents.
 pub fn hero<R>(ui: &mut Ui, add: impl FnOnce(&mut Ui) -> R) -> R {
     let p = Palette::get(ui.ctx());
-    let slot = ui.painter().add(egui::Shape::Noop);
-    let r = egui::Frame::new().corner_radius(16).inner_margin(Margin::same(22)).show(ui, |ui| {
-        ui.set_width(ui.available_width());
-        add(ui)
-    });
-    let rect = r.response.rect;
-    let tex = accent_gradient(ui.ctx(), &p);
-    let uv = egui::Rect::from_min_max(egui::pos2(0.25, 0.25), egui::pos2(0.75, 0.75));
-    let wash = Color32::from_white_alpha(if p.dark { 34 } else { 24 });
-    ui.painter().set(
-        slot,
-        egui::Shape::Vec(vec![
-            card_shade(&p).as_shape(rect, 16).into(),
-            egui::Shape::Rect(egui::epaint::RectShape::new(rect, 16.0, p.surface, Stroke::new(1.0, card_rim(&p)), egui::StrokeKind::Inside)),
-            egui::Shape::Rect(egui::epaint::RectShape::filled(rect.shrink(1.0), 15.0, wash).with_texture(tex.id(), uv)),
-        ]),
-    );
-    r.inner
+    egui::Frame::new()
+        .fill(p.surface)
+        .stroke(Stroke::new(1.0, card_rim(&p)))
+        .shadow(card_shade(&p))
+        .corner_radius(12)
+        .inner_margin(Margin::same(20))
+        .show(ui, |ui| {
+            ui.set_width(ui.available_width());
+            add(ui)
+        })
+        .inner
 }
 
 /// Circular progress around a glyph: `frac` 0..1, or `None` for a spinning arc. Use a new
@@ -1388,6 +1381,21 @@ pub fn dialog_intro(ctx: &egui::Context, id: egui::Id) -> f32 {
         ctx.request_repaint();
     }
     t
+}
+
+/// Menu items line up at the start of the reading direction (egui's menus always start left).
+fn menu_layout() -> egui::Layout {
+    egui::Layout::top_down_justified(if rtl() { egui::Align::Max } else { egui::Align::Min })
+}
+
+/// `egui::Popup::menu`, laid out in reading order.
+pub fn menu(button: &egui::Response) -> egui::Popup<'_> {
+    egui::Popup::menu(button).layout(menu_layout())
+}
+
+/// `Response::context_menu`, laid out in reading order.
+pub fn context_menu(response: &egui::Response, add: impl FnOnce(&mut Ui)) {
+    egui::Popup::context_menu(response).layout(menu_layout()).show(add);
 }
 
 /// A modal dialog `width` wide whose contents line up at the start of the reading direction.
@@ -1707,17 +1715,16 @@ pub fn browse_button(ui: &mut Ui, salt: &str, pick: Pick, current: &str) -> Opti
 /// a path fills the field and marks the response changed.
 pub fn path_input(ui: &mut Ui, salt: &str, text: &mut String, hint: &str, width: f32, pick: Pick) -> egui::Response {
     let buttons = if pick == Pick::Any { 2.0 } else { 1.0 };
-    let r = ui
-        .horizontal(|ui| {
-            ui.spacing_mut().item_spacing.x = 6.0;
-            let mut r = text_input(ui, text, hint, (width - buttons * (CONTROL_H + 6.0)).max(120.0));
-            if let Some(p) = browse_button(ui, salt, pick, text) {
-                *text = p;
-                r.mark_changed();
-            }
-            r
-        })
-        .inner;
+    let r = row(ui, |ui| {
+        ui.spacing_mut().item_spacing.x = 6.0;
+        let mut r = text_input(ui, text, hint, (width - buttons * (CONTROL_H + 6.0)).max(120.0));
+        if let Some(p) = browse_button(ui, salt, pick, text) {
+            *text = p;
+            r.mark_changed();
+        }
+        r
+    })
+    .inner;
     r
 }
 
