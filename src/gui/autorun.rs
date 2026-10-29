@@ -353,7 +353,7 @@ impl AutorunView {
         let wide = ui.available_width() >= 960.0;
         let mut columns = vec![
             Column::exact(56.0),
-            Column::remainder().at_least(240.0).clip(true),
+            Column::remainder().at_least(180.0).clip(true),
             Column::exact(140.0).clip(true),
             Column::exact(150.0).clip(true),
             Column::exact(160.0).clip(true),
@@ -393,7 +393,15 @@ impl AutorunView {
                                 ui.spacing_mut().item_spacing.y = 2.0;
                                 ui.spacing_mut().interact_size.y = 18.0;
                                 crate::gui::style::row(ui, |ui| {
-                                    ui.add(style::Label::new(style::strong(e.display_name()).color(if e.enabled { p.text } else { p.faint })));
+                                    // A long name is cut short, leaving room for the badges, so the cell keeps to its column.
+                                    let gap = ui.spacing().item_spacing.x;
+                                    let badges =
+                                        [(e.running, "Running"), (!e.valid, "Program missing")].iter().filter(|b| b.0).map(|b| style::badge_width(ui, b.1) + gap).sum::<f32>()
+                                            + if e.all_users { 14.0 + gap } else { 0.0 };
+                                    ui.scope(|ui| {
+                                        ui.set_max_width((ui.available_width() - badges).max(60.0));
+                                        ui.add(style::Label::new(style::strong(e.display_name()).color(if e.enabled { p.text } else { p.faint })).truncate());
+                                    });
                                     if e.running {
                                         style::badge(ui, "Running", p.success);
                                     }
@@ -417,6 +425,9 @@ impl AutorunView {
                         }),
                         Box::new(|ui: &mut Ui| {
                             crate::gui::style::row(ui, |ui| {
+                                // Three 32-point buttons fit the 120-point column only without their text padding.
+                                ui.spacing_mut().button_padding.x = 6.0;
+                                ui.spacing_mut().item_spacing.x = 4.0;
                                 let tip = if e.removable { tr("Remove (backed up)") } else { tr("Can't be deleted: disable it instead") };
                                 ui.add_enabled_ui(e.removable, |ui| {
                                     if style::icon_button(ui, icon::TRASH, tip).clicked() {
