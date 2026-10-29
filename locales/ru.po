@@ -161,7 +161,7 @@ msgid "/usr/bin/app --minimized"
 msgstr "/usr/bin/app --minimized"
 
 msgid "Registry Run"
-msgstr "Registry Run"
+msgstr "Раздел Run в реестре"
 
 msgid "Run once"
 msgstr "Запустить один раз"
@@ -3389,7 +3389,7 @@ msgid "Traced Uninstall"
 msgstr "Удаление по журналу"
 
 msgid "Registry RunOnce"
-msgstr "Registry RunOnce"
+msgstr "Раздел RunOnce в реестре"
 
 msgid "Autostart"
 msgstr "Автозапуск"
@@ -4963,3 +4963,68 @@ msgstr "Отключить Copilot и покупки в Microsoft Edge"
 msgid "Hides Edge's sidebar (Copilot), shopping assistant and Microsoft Rewards."
 msgstr "Скрывает боковую панель Edge (Copilot), помощника покупок и Microsoft Rewards."
 
+msgid "Not measured"
+msgstr "Не измерено"
+
+msgid "Low"
+msgstr "Низкое"
+
+msgid "Medium"
+msgstr "Среднее"
+
+msgid "High"
+msgstr "Высокое"
+
+msgid "Startup impact"
+msgstr "Влияние на запуск"
+
+msgid "{enabled} start with your computer · {heavy} slow it down"
+msgstr "{enabled} запускаются с компьютером · {heavy} замедляют его"
+
+msgid "{enabled} start with your computer"
+msgstr "{enabled} запускаются с компьютером"
+
+msgid "Search name or publisher"
+msgstr "Поиск по имени или издателю"
+
+msgid "Show where each entry comes from, its command and more actions"
+msgstr "Показывает, откуда каждая запись, её команду и другие действия"
+
+msgid "≈ marks an estimate from the program's size. Open CleanCore as administrator to use the startup times Windows records."
+msgstr "≈ — оценка по размеру программы. Откройте CleanCore от имени администратора, чтобы использовать время запуска, которое записывает Windows."
+
+msgid "≈ marks an estimate from the program's size. Services show the startup times systemd records."
+msgstr "≈ — оценка по размеру программы. Для служб показано время запуска, которое записывает systemd."
+
+msgid "Its program is gone: you can remove this"
+msgstr "Программы больше нет: запись можно удалить"
+
+msgid "Windows needs this: leave it on"
+msgstr "Это нужно Windows: оставьте включённым"
+
+msgid "Your system needs this: leave it on"
+msgstr "Это нужно системе: оставьте включённым"
+
+msgid "Helps your hardware work: best left on"
+msgstr "Помогает работе оборудования: лучше оставить включённым"
+
+msgid "Turning this off makes startup faster"
+msgstr "Отключение ускорит запуск"
+
+msgid "Turning this off makes startup a bit faster"
+msgstr "Отключение немного ускорит запуск"
+
+msgid "Delayed startup by {:.1} s"
+msgstr "Задержал запуск на {:.1} с"
+
+msgid "CPU {cpu} ms at startup"
+msgstr "ЦП {cpu} мс при запуске"
+
+msgid "{} read from disk"
+msgstr "{} прочитано с диска"
+
+msgid "Estimated from the program's size ({})"
+msgstr "Оценка по размеру программы ({})"
+
+msgid "No startup measurements for this entry"
+msgstr "Нет измерений запуска для этой записи"

@@ -114,6 +114,47 @@ pub fn file_publishers(paths: &[String]) -> std::collections::HashMap<String, St
 }
 
 pub fn file_publisher(path: &str) -> Option<String> {
+    version_string(path, "CompanyName")
+}
+
+/// The program's own name (FileDescription): "Microsoft OneDrive" for OneDrive.exe.
+pub fn file_description(path: &str) -> Option<String> {
+    version_string(path, "FileDescription")
+}
+
+/// Milliseconds since Windows started.
+pub fn uptime_ms() -> Option<u64> {
+    // SAFETY: no arguments.
+    Some(unsafe { windows_sys::Win32::System::SystemInformation::GetTickCount64() })
+}
+
+/// Age, CPU time and disk/IO bytes of a process.
+pub fn process_usage(pid: u32) -> Option<crate::autorun::ProcUsage> {
+    use windows_sys::Win32::Foundation::FILETIME;
+    use windows_sys::Win32::System::SystemInformation::GetSystemTimeAsFileTime;
+    use windows_sys::Win32::System::Threading::{GetProcessIoCounters, GetProcessTimes, IO_COUNTERS};
+    let ft = |f: FILETIME| ((f.dwHighDateTime as u64) << 32 | f.dwLowDateTime as u64) / 10_000;
+    // SAFETY: handle opened and closed here; the out structs are plain data.
+    unsafe {
+        let h = OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION, 0, pid);
+        if h.is_null() {
+            return None;
+        }
+        let z = || FILETIME { dwLowDateTime: 0, dwHighDateTime: 0 };
+        let (mut created, mut exited, mut kernel, mut user, mut now) = (z(), z(), z(), z(), z());
+        let mut io: IO_COUNTERS = std::mem::zeroed();
+        let ok = GetProcessTimes(h, &mut created, &mut exited, &mut kernel, &mut user) != 0;
+        let io_ok = GetProcessIoCounters(h, &mut io) != 0;
+        CloseHandle(h);
+        if !ok {
+            return None;
+        }
+        GetSystemTimeAsFileTime(&mut now);
+        Some(crate::autorun::ProcUsage { age_ms: ft(now).saturating_sub(ft(created)), cpu_ms: ft(kernel) + ft(user), io_bytes: if io_ok { io.ReadTransferCount } else { 0 } })
+    }
+}
+
+fn version_string(path: &str, field: &str) -> Option<String> {
     use windows_sys::Win32::Storage::FileSystem::{GetFileVersionInfoSizeW, GetFileVersionInfoW, VerQueryValueW};
     let wide: Vec<u16> = path.encode_utf16().chain([0]).collect();
     // SAFETY: buffers sized by the API; pointers returned by VerQueryValueW point into `data`.
@@ -136,7 +177,7 @@ pub fn file_publisher(path: &str) -> Option<String> {
         } else {
             (0x0409, 0x04b0)
         };
-        let key: Vec<u16> = format!("\\StringFileInfo\\{lang:04x}{cp:04x}\\CompanyName").encode_utf16().chain([0]).collect();
+        let key: Vec<u16> = format!("\\StringFileInfo\\{lang:04x}{cp:04x}\\{field}").encode_utf16().chain([0]).collect();
         if VerQueryValueW(data.as_ptr() as *const _, key.as_ptr(), &mut ptr, &mut len) == 0 || len == 0 {
             return None;
         }

@@ -209,6 +209,7 @@ pub fn autorun_list(show_system: bool) -> Vec<AutorunEntry> {
                 valid: true,
                 removable: !is_system,
                 system: is_system,
+                startup: Default::default(),
             });
         }
     }
@@ -241,6 +242,7 @@ pub fn autorun_list(show_system: bool) -> Vec<AutorunEntry> {
             valid: true,
             removable: own,
             system: !own,
+            startup: Default::default(),
         });
     }
     // systemd system services (only with "show system", except custom units in /etc)
@@ -267,6 +269,7 @@ pub fn autorun_list(show_system: bool) -> Vec<AutorunEntry> {
             valid: true,
             removable: false,
             system: !custom,
+            startup: Default::default(),
         });
     }
     for user in [true, false] {
@@ -302,6 +305,7 @@ pub fn autorun_list(show_system: bool) -> Vec<AutorunEntry> {
                 valid: true,
                 removable: true,
                 system: false,
+                startup: Default::default(),
             });
         }
     }
@@ -328,6 +332,7 @@ pub fn autorun_list(show_system: bool) -> Vec<AutorunEntry> {
                 valid: true,
                 removable: true,
                 system: false,
+                startup: Default::default(),
             });
         }
     }
@@ -477,4 +482,64 @@ pub fn autorun_add(name: &str, command: &str, all_users: bool, method: AddMethod
     crate::config::ensure_dir(&user_autostart())?;
     fs::write(&path, format!("[Desktop Entry]\nType=Application\nName={name}\nExec={command}\nX-GNOME-Autostart-enabled=true\n"))?;
     Ok(())
+}
+
+/// `systemd-analyze blame` lines (`1min 2.345s foo.service`, `812ms bar.service`) → unit → ms.
+fn parse_blame(text: &str) -> std::collections::HashMap<String, u64> {
+    let mut out = std::collections::HashMap::new();
+    for l in text.lines() {
+        let words: Vec<&str> = l.split_whitespace().collect();
+        let Some((unit, times)) = words.split_last() else { continue };
+        let mut ms = 0.0;
+        for t in times {
+            let (n, scale) = if let Some(n) = t.strip_suffix("ms") {
+                (n, 1.0)
+            } else if let Some(n) = t.strip_suffix("us").or_else(|| t.strip_suffix("µs")) {
+                (n, 0.001)
+            } else if let Some(n) = t.strip_suffix("min") {
+                (n, 60_000.0)
+            } else if let Some(n) = t.strip_suffix('s') {
+                (n, 1000.0)
+            } else if let Some(n) = t.strip_suffix('h') {
+                (n, 3_600_000.0)
+            } else {
+                (*t, f64::NAN)
+            };
+            ms += n.parse::<f64>().unwrap_or(f64::NAN) * scale;
+        }
+        if !times.is_empty() && ms.is_finite() {
+            out.insert(unit.to_lowercase(), ms.round() as u64);
+        }
+    }
+    out
+}
+
+/// How long each systemd unit took at the last startup. Autostart entries have no record; they
+/// are estimated from their program's size.
+pub fn boot_data() -> crate::autorun::BootData {
+    let mut d = crate::autorun::BootData::default();
+    for user in [false, true] {
+        let mut c = Command::new("systemd-analyze");
+        if user {
+            c.arg("--user");
+        }
+        if let Ok(o) = c.args(["blame", "--no-pager"]).output() {
+            d.delay.extend(parse_blame(&String::from_utf8_lossy(&o.stdout)));
+        }
+    }
+    d
+}
+
+#[cfg(test)]
+mod boot_tests {
+    use super::*;
+
+    #[test]
+    fn reads_systemd_blame() {
+        let m = parse_blame("1min 2.500s apt-daily.service\n    812ms docker.service\n  950us foo.service\nbroken line here\n");
+        assert_eq!(m.get("apt-daily.service"), Some(&62_500));
+        assert_eq!(m.get("docker.service"), Some(&812));
+        assert_eq!(m.get("foo.service"), Some(&1));
+        assert!(!m.contains_key("here"));
+    }
 }

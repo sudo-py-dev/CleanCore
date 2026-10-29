@@ -150,3 +150,30 @@ pub fn file_publisher(path: &str) -> Option<String> {
     let line = String::from_utf8_lossy(&o.stdout);
     line.split(':').next().map(|p| format!("package {}", p.trim()))
 }
+
+/// Linux programs have no version resource; desktop entries already give a name.
+pub fn file_description(_path: &str) -> Option<String> {
+    None
+}
+
+/// Milliseconds since the system started.
+pub fn uptime_ms() -> Option<u64> {
+    let s = std::fs::read_to_string("/proc/uptime").ok()?;
+    s.split_whitespace().next()?.parse::<f64>().ok().map(|secs| (secs * 1000.0) as u64)
+}
+
+/// Age, CPU time and disk reads of a process, from `/proc/<pid>/stat` and `io`.
+pub fn process_usage(pid: u32) -> Option<crate::autorun::ProcUsage> {
+    // Clock ticks per second (USER_HZ), 100 on every common kernel.
+    const HZ: u64 = 100;
+    let stat = std::fs::read_to_string(format!("/proc/{pid}/stat")).ok()?;
+    // Fields after the command name, which is in brackets and may hold spaces.
+    let f: Vec<&str> = stat.rsplit_once(')')?.1.split_whitespace().collect();
+    let num = |i: usize| f.get(i).and_then(|v| v.parse::<u64>().ok());
+    // utime, stime and starttime are fields 14, 15 and 22 (1-based) of the whole line.
+    let cpu = num(11)? + num(12)?;
+    let start = num(19)?;
+    let io = std::fs::read_to_string(format!("/proc/{pid}/io")).ok();
+    let read = io.as_deref().and_then(|t| t.lines().find_map(|l| l.strip_prefix("read_bytes:")).and_then(|v| v.trim().parse().ok())).unwrap_or(0);
+    Some(crate::autorun::ProcUsage { age_ms: uptime_ms()?.saturating_sub(start * 1000 / HZ), cpu_ms: cpu * 1000 / HZ, io_bytes: read })
+}

@@ -161,7 +161,7 @@ msgid "/usr/bin/app --minimized"
 msgstr "/usr/bin/app --minimized"
 
 msgid "Registry Run"
-msgstr "Registry Run"
+msgstr "Розділ Run у реєстрі"
 
 msgid "Run once"
 msgstr "Запустити один раз"
@@ -3389,7 +3389,7 @@ msgid "Traced Uninstall"
 msgstr "Видалення за журналом"
 
 msgid "Registry RunOnce"
-msgstr "Registry RunOnce"
+msgstr "Розділ RunOnce у реєстрі"
 
 msgid "Autostart"
 msgstr "Автозапуск"
@@ -4963,3 +4963,68 @@ msgstr "Вимкнути Copilot і покупки в Microsoft Edge"
 msgid "Hides Edge's sidebar (Copilot), shopping assistant and Microsoft Rewards."
 msgstr "Приховує бічну панель Edge (Copilot), помічника покупок і Microsoft Rewards."
 
+msgid "Not measured"
+msgstr "Не виміряно"
+
+msgid "Low"
+msgstr "Низький"
+
+msgid "Medium"
+msgstr "Середній"
+
+msgid "High"
+msgstr "Високий"
+
+msgid "Startup impact"
+msgstr "Вплив на запуск"
+
+msgid "{enabled} start with your computer · {heavy} slow it down"
+msgstr "{enabled} запускаються з комп'ютером · {heavy} сповільнюють його"
+
+msgid "{enabled} start with your computer"
+msgstr "{enabled} запускаються з комп'ютером"
+
+msgid "Search name or publisher"
+msgstr "Пошук за назвою або видавцем"
+
+msgid "Show where each entry comes from, its command and more actions"
+msgstr "Показує, звідки кожен запис, його команду та інші дії"
+
+msgid "≈ marks an estimate from the program's size. Open CleanCore as administrator to use the startup times Windows records."
+msgstr "≈ — оцінка за розміром програми. Відкрийте CleanCore від імені адміністратора, щоб використати час запуску, який записує Windows."
+
+msgid "≈ marks an estimate from the program's size. Services show the startup times systemd records."
+msgstr "≈ — оцінка за розміром програми. Для служб показано час запуску, який записує systemd."
+
+msgid "Its program is gone: you can remove this"
+msgstr "Програми більше немає: запис можна видалити"
+
+msgid "Windows needs this: leave it on"
+msgstr "Це потрібно Windows: залиште увімкненим"
+
+msgid "Your system needs this: leave it on"
+msgstr "Це потрібно системі: залиште увімкненим"
+
+msgid "Helps your hardware work: best left on"
+msgstr "Допомагає роботі обладнання: краще залишити увімкненим"
+
+msgid "Turning this off makes startup faster"
+msgstr "Вимкнення пришвидшить запуск"
+
+msgid "Turning this off makes startup a bit faster"
+msgstr "Вимкнення трохи пришвидшить запуск"
+
+msgid "Delayed startup by {:.1} s"
+msgstr "Затримав запуск на {:.1} с"
+
+msgid "CPU {cpu} ms at startup"
+msgstr "ЦП {cpu} мс під час запуску"
+
+msgid "{} read from disk"
+msgstr "{} прочитано з диска"
+
+msgid "Estimated from the program's size ({})"
+msgstr "Оцінка за розміром програми ({})"
+
+msgid "No startup measurements for this entry"
+msgstr "Немає вимірювань запуску для цього запису"

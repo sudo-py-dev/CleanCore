@@ -237,7 +237,7 @@ fn walk_through_every_tool() {
 
     // ---- Autorun: switch an autostart entry off
     h.get_by_role_and_label(Role::Button, "Autorun").click();
-    wait_for(&mut h, "start automatically");
+    wait_for(&mut h, "start with your computer");
     wait_for(&mut h, "Keep Me");
     shot(&mut h, "01p-autorun");
     h.get_by_role_and_label(Role::Switch, "Start Keep Me automatically").click();

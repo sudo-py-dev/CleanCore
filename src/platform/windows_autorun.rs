@@ -7,6 +7,7 @@ use crate::autorun::{AddMethod, AutorunEntry, Source};
 use crate::model::{Fix, Issue};
 use crate::tuner::RawValue;
 use anyhow::{bail, Context, Result};
+use std::collections::HashMap;
 use std::os::windows::process::CommandExt;
 use std::path::{Path, PathBuf};
 use std::process::Command;
@@ -47,7 +48,23 @@ fn is_microsoft(publisher: &Option<String>) -> bool {
 }
 
 fn entry(id: String, name: String, command: String, location: String, source: Source, all_users: bool, enabled: bool, removable: bool) -> AutorunEntry {
-    AutorunEntry { id, name, command, location, source, all_users, enabled, publisher: None, description: None, exe: None, running: false, valid: true, removable, system: false }
+    AutorunEntry {
+        id,
+        name,
+        command,
+        location,
+        source,
+        all_users,
+        enabled,
+        publisher: None,
+        description: None,
+        exe: None,
+        running: false,
+        valid: true,
+        removable,
+        system: false,
+        startup: Default::default(),
+    }
 }
 
 fn task_entries(show_system: bool, out: &mut Vec<AutorunEntry>) {
@@ -278,5 +295,123 @@ pub fn autorun_add(name: &str, command: &str, all_users: bool, method: AddMethod
             std::fs::write(&path, format!("@echo off\r\nstart \"\" {command}\r\n"))?;
             Ok(())
         }
+    }
+}
+
+/// UTF-16 (with BOM) or UTF-8 text.
+fn read_text(p: &Path) -> Option<String> {
+    let bytes = std::fs::read(p).ok()?;
+    Some(if bytes.starts_with(&[0xFF, 0xFE]) {
+        let w: Vec<u16> = bytes[2..].chunks_exact(2).map(|c| u16::from_le_bytes([c[0], c[1]])).collect();
+        String::from_utf16_lossy(&w)
+    } else {
+        String::from_utf8_lossy(&bytes).into_owned()
+    })
+}
+
+/// Text of the first `<tag>…</tag>` in `xml`.
+fn tag<'a>(xml: &'a str, t: &str) -> Option<&'a str> {
+    xml.split(&format!("<{t}>")).nth(1).and_then(|r| r.split(&format!("</{t}>")).next()).map(str::trim)
+}
+
+/// Value of `<Data Name='name'>…</Data>` in an event (either quote style).
+fn event_data<'a>(xml: &'a str, name: &str) -> Option<&'a str> {
+    ['\'', '"'].iter().find_map(|q| xml.split(&format!("<Data Name={q}{name}{q}>")).nth(1)).and_then(|r| r.split("</Data>").next()).map(str::trim)
+}
+
+/// Task Manager's startup data (`wdi\LogFiles\StartupInfo\<SID>_StartupInfo<N>.xml`, the newest
+/// file): program path → CPU ms and disk bytes. Only readable by administrators.
+fn parse_startup_info(xml: &str) -> HashMap<String, (u64, u64)> {
+    let mut out = HashMap::new();
+    for block in xml.split("<Process ").skip(1) {
+        let Some(name) = block.split("Name=\"").nth(1).and_then(|r| r.split('"').next()) else {
+            continue;
+        };
+        let num = |t| tag(block, t).and_then(|v| v.parse::<u64>().ok()).unwrap_or(0);
+        let e: &mut (u64, u64) = out.entry(name.to_lowercase()).or_default();
+        // A program started twice counts both.
+        e.0 += num("CpuUsage");
+        e.1 += num("DiskUsage");
+    }
+    out
+}
+
+/// Diagnostics-Performance events 101 (an app slowed startup) and 103 (a service did):
+/// program or service name (lower case) → the newest delay, ms.
+fn parse_boot_events(xml: &str) -> HashMap<String, u64> {
+    let mut out = HashMap::new();
+    // Newest first, so the first one seen for a name is kept.
+    for ev in xml.split("<Event ").skip(1) {
+        let Some(name) = event_data(ev, "Name").filter(|n| !n.is_empty()) else {
+            continue;
+        };
+        let ms = event_data(ev, "TotalTime").or_else(|| event_data(ev, "DegradationTime")).and_then(|v| v.parse().ok());
+        if let Some(ms) = ms {
+            out.entry(name.to_lowercase()).or_insert(ms);
+        }
+    }
+    out
+}
+
+fn current_sid() -> Option<String> {
+    let o = Command::new("whoami").args(["/user", "/fo", "csv", "/nh"]).creation_flags(NO_WINDOW).output().ok()?;
+    String::from_utf8_lossy(&o.stdout).split(',').nth(1).map(|s| s.trim().trim_matches('"').to_string()).filter(|s| s.starts_with("S-"))
+}
+
+pub fn boot_data() -> crate::autorun::BootData {
+    let mut d = crate::autorun::BootData::default();
+    if let Some(dir) = env("SystemRoot").map(|r| r.join(r"System32\wdi\LogFiles\StartupInfo")) {
+        // Listing it fails without administrator rights; then there's nothing to read.
+        if let Ok(rd) = std::fs::read_dir(&dir) {
+            let files: Vec<_> = rd.flatten().collect();
+            if let Some(sid) = current_sid() {
+                let newest = files
+                    .iter()
+                    .filter(|f| f.file_name().to_string_lossy().starts_with(&format!("{sid}_StartupInfo")))
+                    .max_by_key(|f| f.metadata().and_then(|m| m.modified()).ok());
+                if let Some(text) = newest.and_then(|f| read_text(&f.path())) {
+                    d.usage = parse_startup_info(&text);
+                }
+            }
+        }
+    }
+    let o = Command::new("wevtutil")
+        .args(["qe", "Microsoft-Windows-Diagnostics-Performance/Operational", "/q:*[System[(EventID=101 or EventID=103)]]", "/f:xml", "/c:300", "/rd:true"])
+        .creation_flags(NO_WINDOW)
+        .output()
+        .ok();
+    if let Some(o) = o.filter(|o| o.status.success()) {
+        d.delay = parse_boot_events(&String::from_utf8_lossy(&o.stdout));
+    }
+    d
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn reads_task_manager_startup_info() {
+        let xml = r#"<?xml version="1.0"?><StartupData Version="1">
+            <Process Name="C:\Program Files\Microsoft OneDrive\OneDrive.exe" PID="1">
+              <StartTime>2000</StartTime><DiskUsage>4500000</DiskUsage><CpuUsage>850</CpuUsage></Process>
+            <Process Name="C:\Windows\System32\ctfmon.exe" PID="2"><DiskUsage>1000</DiskUsage><CpuUsage>15</CpuUsage></Process>
+            <Process Name="C:\Windows\System32\ctfmon.exe" PID="3"><DiskUsage>1000</DiskUsage><CpuUsage>15</CpuUsage></Process>
+        </StartupData>"#;
+        let m = parse_startup_info(xml);
+        assert_eq!(m.get(r"c:\program files\microsoft onedrive\onedrive.exe"), Some(&(850, 4_500_000)));
+        assert_eq!(m.get(r"c:\windows\system32\ctfmon.exe"), Some(&(30, 2000)));
+    }
+
+    #[test]
+    fn reads_boot_delay_events() {
+        let xml = "<Event xmlns='x'><System><EventID>101</EventID></System><EventData>\
+            <Data Name='Name'>Teams.exe</Data><Data Name='FriendlyName'>Microsoft Teams</Data>\
+            <Data Name='TotalTime'>5120</Data><Data Name='DegradationTime'>3100</Data></EventData></Event>\
+            <Event xmlns='x'><EventData><Data Name='Name'>Teams.exe</Data><Data Name='TotalTime'>900</Data></EventData></Event>\
+            <Event xmlns='x'><EventData><Data Name=\"Name\">Spooler</Data><Data Name=\"TotalTime\">640</Data></EventData></Event>";
+        let m = parse_boot_events(xml);
+        assert_eq!(m.get("teams.exe"), Some(&5120));
+        assert_eq!(m.get("spooler"), Some(&640));
     }
 }

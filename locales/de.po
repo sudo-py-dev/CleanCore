@@ -161,7 +161,7 @@ msgid "/usr/bin/app --minimized"
 msgstr "/usr/bin/app --minimized"
 
 msgid "Registry Run"
-msgstr "Registry Run"
+msgstr "Run-Schlüssel der Registrierung"
 
 msgid "Run once"
 msgstr "Einmal ausführen"
@@ -3389,7 +3389,7 @@ msgid "Traced Uninstall"
 msgstr "Aufgezeichnete Deinstallation"
 
 msgid "Registry RunOnce"
-msgstr "Registry RunOnce"
+msgstr "RunOnce-Schlüssel der Registrierung"
 
 msgid "Autostart"
 msgstr "Autostart"
@@ -4963,3 +4963,68 @@ msgstr "Copilot und Shopping in Microsoft Edge ausschalten"
 msgid "Hides Edge's sidebar (Copilot), shopping assistant and Microsoft Rewards."
 msgstr "Blendet die Edge-Seitenleiste (Copilot), den Shopping-Assistenten und Microsoft Rewards aus."
 
+msgid "Not measured"
+msgstr "Nicht gemessen"
+
+msgid "Low"
+msgstr "Gering"
+
+msgid "Medium"
+msgstr "Mittel"
+
+msgid "High"
+msgstr "Hoch"
+
+msgid "Startup impact"
+msgstr "Einfluss auf den Start"
+
+msgid "{enabled} start with your computer · {heavy} slow it down"
+msgstr "{enabled} starten mit dem Computer · {heavy} bremsen ihn"
+
+msgid "{enabled} start with your computer"
+msgstr "{enabled} starten mit dem Computer"
+
+msgid "Search name or publisher"
+msgstr "Name oder Herausgeber suchen"
+
+msgid "Show where each entry comes from, its command and more actions"
+msgstr "Zeigt, woher jeder Eintrag stammt, seinen Befehl und weitere Aktionen"
+
+msgid "≈ marks an estimate from the program's size. Open CleanCore as administrator to use the startup times Windows records."
+msgstr "≈ kennzeichnet eine Schätzung anhand der Programmgröße. Öffnen Sie CleanCore als Administrator, um die von Windows aufgezeichneten Startzeiten zu nutzen."
+
+msgid "≈ marks an estimate from the program's size. Services show the startup times systemd records."
+msgstr "≈ kennzeichnet eine Schätzung anhand der Programmgröße. Dienste zeigen die von systemd aufgezeichneten Startzeiten."
+
+msgid "Its program is gone: you can remove this"
+msgstr "Das Programm fehlt: Sie können den Eintrag entfernen"
+
+msgid "Windows needs this: leave it on"
+msgstr "Windows braucht das: eingeschaltet lassen"
+
+msgid "Your system needs this: leave it on"
+msgstr "Ihr System braucht das: eingeschaltet lassen"
+
+msgid "Helps your hardware work: best left on"
+msgstr "Hilft Ihrer Hardware: besser eingeschaltet lassen"
+
+msgid "Turning this off makes startup faster"
+msgstr "Ausschalten beschleunigt den Start"
+
+msgid "Turning this off makes startup a bit faster"
+msgstr "Ausschalten beschleunigt den Start etwas"
+
+msgid "Delayed startup by {:.1} s"
+msgstr "Hat den Start um {:.1} s verzögert"
+
+msgid "CPU {cpu} ms at startup"
+msgstr "CPU {cpu} ms beim Start"
+
+msgid "{} read from disk"
+msgstr "{} vom Datenträger gelesen"
+
+msgid "Estimated from the program's size ({})"
+msgstr "Geschätzt anhand der Programmgröße ({})"
+
+msgid "No startup measurements for this entry"
+msgstr "Keine Startmessungen für diesen Eintrag"

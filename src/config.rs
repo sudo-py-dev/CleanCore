@@ -67,6 +67,8 @@ pub struct Settings {
     pub logs_db_url: Option<String>,
     /// Autorun Manager: also list entries that belong to the operating system.
     pub autorun_show_system: bool,
+    /// Autorun Manager: show the full professional view (source, command, location).
+    pub autorun_details: bool,
     /// Junk Files Cleaner: file name patterns (`*.tmp`, `~*`, …) that are junk.
     pub junk_patterns: Vec<Toggle>,
     /// Junk Files Cleaner: where to look (empty: the home folder on Linux, all fixed drives on Windows).
@@ -158,6 +160,7 @@ impl Default for Settings {
             logs_db_folder: None,
             logs_db_url: None,
             autorun_show_system: false,
+            autorun_details: false,
             junk_patterns: crate::junk::DEFAULT_PATTERNS.iter().map(|p| Toggle { value: p.to_string(), enabled: true }).collect(),
             junk_locations: Vec::new(),
             junk_exclude: Vec::new(),
