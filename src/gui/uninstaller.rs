@@ -37,6 +37,9 @@ enum Step {
     Done,
 }
 
+/// What removing the leftovers came to: how many went, the backup they went to, and what failed.
+type Summary = (usize, String, Vec<(String, String)>);
+
 struct Wizard {
     program: Option<Program>,
     label: String,
@@ -57,7 +60,7 @@ struct Wizard {
     leftovers: Vec<Issue>,
     checked: Vec<bool>,
     removing: Option<Pending<Result<CleanReport, String>>>,
-    summary: Option<(usize, String, Vec<(String, String)>)>,
+    summary: Option<Summary>,
     /// Uninstalling with a trace log (deleted afterwards if so configured).
     log_id: Option<String>,
     /// The Advanced Uninstall follow-up scan was already offered and run.
@@ -773,7 +776,7 @@ impl UninstallerView {
                         let prog = &self.programs[visible[row.index()]];
                         let ticked = self.checked.contains(&prog.id);
                         row.set_selected(ticked);
-                        let cells: Vec<Box<dyn FnOnce(&mut Ui) + '_>> = vec![
+                        let cells: Vec<style::Cell> = vec![
                             Box::new(|ui: &mut Ui| {
                                 let mut c = self.checked.contains(&prog.id);
                                 let r = ui.checkbox(&mut c, style::vis(""));

@@ -20,7 +20,7 @@ pub enum TracedAction {
 
 enum TraceStep {
     Snapshot(Pending<Session>),
-    Tracing(Option<Session>),
+    Tracing(Option<Box<Session>>),
     Analyzing(Pending<(Vec<TraceItem>, usize)>),
     Review(Vec<TraceItem>),
 }
@@ -84,7 +84,7 @@ impl TraceScreen {
         // Advance background steps
         if let TraceStep::Snapshot(pend) = &mut self.step {
             if let Some(session) = pend.poll() {
-                self.step = TraceStep::Tracing(Some(session));
+                self.step = TraceStep::Tracing(Some(Box::new(session)));
             }
         }
         if let TraceStep::Analyzing(pend) = &mut self.step {

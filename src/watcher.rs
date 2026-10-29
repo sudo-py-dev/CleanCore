@@ -499,7 +499,8 @@ mod tests {
     fn diff_detects_all_kinds() {
         let old = snap(&[("A", &[("x", "1"), ("y", "2")]), ("B", &[])]);
         let new = snap(&[("A", &[("x", "1"), ("y", "3"), ("z", "9")]), ("C", &[("q", "0")])]);
-        let ev: Vec<(Op, String, Option<String>, Option<String>, Option<String>)> = diff(&old, &new).into_iter().map(|e| (e.op, e.key, e.value, e.old_data, e.new_data)).collect();
+        type Event = (Op, String, Option<String>, Option<String>, Option<String>);
+        let ev: Vec<Event> = diff(&old, &new).into_iter().map(|e| (e.op, e.key, e.value, e.old_data, e.new_data)).collect();
         let s = |x: &str| Some(x.to_string());
         assert!(ev.contains(&(Op::ValueSet, "A".into(), s("y"), s("2"), s("3"))));
         assert!(ev.contains(&(Op::ValueSet, "A".into(), s("z"), None, s("9"))));

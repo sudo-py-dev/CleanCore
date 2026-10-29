@@ -354,7 +354,7 @@ impl App {
             ui.add_space(8.0);
             let rec = crate::watcher::recorder_running();
             // The recorder's state, with the theme switch at its far end.
-            egui::Frame::new().fill(p.surface_alt).corner_radius(10).inner_margin(egui::Margin { left: 10, right: 2, top: 1, bottom: 1 }).show(ui, |ui| {
+            egui::Frame::new().fill(p.hover).corner_radius(10).inner_margin(egui::Margin { left: 10, right: 2, top: 1, bottom: 1 }).show(ui, |ui| {
                 ui.set_width(ui.available_width());
                 crate::gui::style::row(ui, |ui| {
                     ui.spacing_mut().item_spacing.x = 6.0;
@@ -483,7 +483,7 @@ impl eframe::App for App {
         let side = if style::rtl() { egui::Panel::right("sidebar") } else { egui::Panel::left("sidebar") };
         side.resizable(false)
             .exact_size(236.0)
-            .frame(egui::Frame::new().fill(p.surface).stroke(egui::Stroke::new(1.0, p.border)).inner_margin(egui::Margin::symmetric(12, 0)))
+            .frame(egui::Frame::new().fill(p.sidebar).stroke(egui::Stroke::new(1.0, p.border)).inner_margin(egui::Margin::symmetric(12, 0)))
             .show(ui, |ui| self.sidebar(ui));
 
         egui::CentralPanel::default().frame(egui::Frame::new().fill(p.bg).inner_margin(egui::Margin { left: 28, right: 28, top: 22, bottom: 18 })).show(ui, |ui| {

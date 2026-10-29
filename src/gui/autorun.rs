@@ -353,7 +353,7 @@ impl AutorunView {
         let wide = ui.available_width() >= 960.0;
         let mut columns = vec![
             Column::exact(56.0),
-            Column::remainder().at_least(240.0).clip(true),
+            Column::remainder().at_least(180.0).clip(true),
             Column::exact(140.0).clip(true),
             Column::exact(150.0).clip(true),
             Column::exact(160.0).clip(true),
@@ -379,7 +379,7 @@ impl AutorunView {
                 body.rows(66.0, rows.len(), |mut row| {
                     let e = &rows[row.index()];
                     row.set_selected(self.focus.as_deref() == Some(&e.id));
-                    let mut cells: Vec<Box<dyn FnOnce(&mut Ui) + '_>> = vec![
+                    let mut cells: Vec<style::Cell> = vec![
                         Box::new(|ui: &mut Ui| {
                             let mut on = e.enabled;
                             ui.add_enabled_ui(e.source != Source::RunOnce, |ui| {
@@ -393,12 +393,27 @@ impl AutorunView {
                                 ui.spacing_mut().item_spacing.y = 2.0;
                                 ui.spacing_mut().interact_size.y = 18.0;
                                 crate::gui::style::row(ui, |ui| {
-                                    ui.add(style::Label::new(style::strong(e.display_name()).color(if e.enabled { p.text } else { p.faint })));
-                                    if e.running {
-                                        style::badge(ui, "Running", p.success);
-                                    }
-                                    if !e.valid {
-                                        style::badge(ui, "Program missing", p.danger);
+                                    // A long name is cut short, leaving room for the badges, so the cell keeps to its column.
+                                    // When even the badges don't fit, they shrink to icons that name themselves on hover.
+                                    let gap = ui.spacing().item_spacing.x;
+                                    let marks = [(e.running, "Running", icon::CHECK_CIRCLE, p.success), (!e.valid, "Program missing", icon::WARNING, p.danger)];
+                                    let marks: Vec<_> = marks.into_iter().filter(|m| m.0).collect();
+                                    let users = if e.all_users { 14.0 + gap } else { 0.0 };
+                                    let full = marks.iter().map(|m| style::badge_width(ui, m.1) + gap).sum::<f32>() + users;
+                                    let compact = ui.available_width() - full < 100.0;
+                                    let badges = if compact { marks.len() as f32 * (16.0 + gap) + users } else { full };
+                                    ui.scope(|ui| {
+                                        ui.set_max_width((ui.available_width() - badges).max(40.0));
+                                        ui.add(style::Label::new(style::strong(e.display_name()).color(if e.enabled { p.text } else { p.faint })).truncate());
+                                    });
+                                    for (_, label, glyph, color) in marks {
+                                        if compact {
+                                            let r = ui.add(style::Label::new(style::rich(glyph).color(color).size(14.0)));
+                                            r.widget_info(|| egui::WidgetInfo::labeled(egui::Role::Label, true, tr(label)));
+                                            r.on_hover_text(style::vis(tr(label)));
+                                        } else {
+                                            style::badge(ui, label, color);
+                                        }
                                     }
                                     if e.all_users {
                                         ui.add(style::Label::new(style::rich(icon::USERS).color(p.faint).size(13.0))).on_hover_text(style::vis(tr("For all users")));
@@ -417,6 +432,9 @@ impl AutorunView {
                         }),
                         Box::new(|ui: &mut Ui| {
                             crate::gui::style::row(ui, |ui| {
+                                // Three 32-point buttons fit the 120-point column only without their text padding.
+                                ui.spacing_mut().button_padding.x = 6.0;
+                                ui.spacing_mut().item_spacing.x = 4.0;
                                 let tip = if e.removable { tr("Remove (backed up)") } else { tr("Can't be deleted: disable it instead") };
                                 ui.add_enabled_ui(e.removable, |ui| {
                                     if style::icon_button(ui, icon::TRASH, tip).clicked() {
