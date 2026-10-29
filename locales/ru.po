@@ -5028,3 +5028,9 @@ msgstr "Оценка по размеру программы ({})"
 
 msgid "No startup measurements for this entry"
 msgstr "Нет измерений запуска для этой записи"
+
+msgid "General"
+msgstr "Общие"
+
+msgid "Lists"
+msgstr "Списки"

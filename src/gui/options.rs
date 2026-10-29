@@ -5,7 +5,7 @@ use super::{apply_theme, Cx};
 use crate::config::{ListEntry, Settings};
 use crate::i18n::tr;
 use crate::model::ScanMode;
-use eframe::egui::{self, Ui, Vec2};
+use eframe::egui::{self, Color32, Ui, Vec2};
 
 pub struct SettingsView {
     draft: Settings,
@@ -62,56 +62,92 @@ impl SettingsView {
         let before = serde_json::to_string(&self.finished()).ok();
         style::page_header(ui, "Settings", "Appearance, safety options, lists and storage", |_| {});
 
-        egui::ScrollArea::vertical().auto_shrink([false, false]).show(ui, |ui| {
-            self.appearance(ui, cx);
-            ui.add_space(14.0);
-            self.uninstaller(ui, cx);
-            ui.add_space(14.0);
-            self.cleaner(ui);
-            ui.add_space(14.0);
-            style::card(ui, |ui| {
-                list_editor(ui, &mut self.draft.exclude_list, &mut self.new_exclude, "Exclude list", "Never reported or deleted. Subkeys / subfolders can be included.");
+        // The category list on the side, the chosen category's settings next to it. The choice
+        // outlives the page, which is rebuilt each time it is opened.
+        let id = egui::Id::unique("settings-section");
+        let mut section = ui.ctx().data(|d| d.get_temp::<Section>(id)).unwrap_or(Section::General);
+        let p = Palette::get(ui.ctx());
+        let side = if ui.available_width() < 720.0 { 168.0 } else { 210.0 };
+        let page_h = ui.available_height();
+        crate::gui::style::row_top(ui, |ui| {
+            ui.set_min_height(page_h);
+            crate::gui::style::column(ui, |ui| {
+                ui.set_width(side);
+                ui.spacing_mut().item_spacing.y = 4.0;
+                for s in Section::ALL {
+                    if category(ui, s, s == section, p).clicked() {
+                        section = s;
+                    }
+                }
             });
-            ui.add_space(14.0);
-            style::card(ui, |ui| {
-                list_editor(
-                    ui,
-                    &mut self.draft.include_list,
-                    &mut self.new_include,
-                    "Include list",
-                    "Contents are always deleted by a Custom Scan with the \"Include list\" category. Be careful.",
-                );
+            ui.add(egui::Separator::default().vertical().spacing(20.0));
+            egui::ScrollArea::vertical().id_salt(section.title()).auto_shrink([false, false]).min_scrolled_height(page_h).max_height(page_h).show(ui, |ui| {
+                crate::gui::style::column(ui, |ui| self.section(ui, cx, updates, section));
             });
-            ui.add_space(14.0);
-            self.backups(ui);
-            ui.add_space(14.0);
-            updates.card(ui, cx, &mut self.draft.check_updates);
-            ui.add_space(14.0);
-            style::card(ui, |ui| {
-                style::section_title(ui, "Watcher and notifications");
-                style::setting_row(ui, "Maximum log folder size", "When the logs reach this size, all watches pause. 0 means no limit.", |ui| {
-                    ui.add(egui::DragValue::new(&mut self.draft.watcher_max_log_mb).range(0..=100_000).suffix(" MB"));
-                });
-                style::divider(ui);
-                style::setting_row(ui, "Notify after Auto Clean", "Failures always notify.", |ui| {
-                    style::toggle(ui, &mut self.draft.notify_auto_clean, "Notify after Auto Clean");
-                });
-                style::setting_row(ui, "Notify after Auto Backup", "", |ui| {
-                    style::toggle(ui, &mut self.draft.notify_auto_backup, "Notify after Auto Backup");
-                });
-                style::setting_row(ui, "Skip confirmation dialogs", "Clean without asking. Backups are still made.", |ui| {
-                    style::toggle(ui, &mut self.draft.skip_warnings, "Skip confirmation dialogs");
-                });
-            });
-            ui.add_space(10.0);
-            ui.add(style::Label::new(style::muted(ui, crate::tf!("Data folder: {}", crate::config::data_dir().display())).size(12.0)));
         });
+        ui.ctx().data_mut(|d| d.insert_temp(id, section));
         let after = self.finished();
         if serde_json::to_string(&after).ok() != before {
             *cx.settings = after;
             cx.save_settings();
         }
         self.synced = serde_json::to_string(&*cx.settings).unwrap_or_default();
+    }
+
+    /// One category's heading and settings.
+    fn section(&mut self, ui: &mut Ui, cx: &mut Cx, updates: &mut super::updates::Updates, section: Section) {
+        ui.set_width(ui.available_width());
+        ui.add(style::Label::new(style::strong(tr(section.title())).size(20.0)));
+        ui.add_space(10.0);
+        match section {
+            Section::General => self.general(ui, cx),
+            Section::Uninstaller => self.uninstaller(ui, cx),
+            Section::Cleaner => self.cleaner(ui),
+            Section::Lists => self.lists(ui),
+            Section::Backups => self.backups(ui),
+            Section::Updates => updates.card(ui, cx, &mut self.draft.check_updates),
+        }
+    }
+
+    /// Appearance, notifications and where CleanCore keeps its data.
+    fn general(&mut self, ui: &mut Ui, cx: &mut Cx) {
+        self.appearance(ui, cx);
+        ui.add_space(14.0);
+        style::card(ui, |ui| {
+            style::section_title(ui, "Watcher and notifications");
+            style::setting_row(ui, "Maximum log folder size", "When the logs reach this size, all watches pause. 0 means no limit.", |ui| {
+                ui.add(egui::DragValue::new(&mut self.draft.watcher_max_log_mb).range(0..=100_000).suffix(" MB"));
+            });
+            style::divider(ui);
+            style::setting_row(ui, "Notify after Auto Clean", "Failures always notify.", |ui| {
+                style::toggle(ui, &mut self.draft.notify_auto_clean, "Notify after Auto Clean");
+            });
+            style::setting_row(ui, "Notify after Auto Backup", "", |ui| {
+                style::toggle(ui, &mut self.draft.notify_auto_backup, "Notify after Auto Backup");
+            });
+            style::setting_row(ui, "Skip confirmation dialogs", "Clean without asking. Backups are still made.", |ui| {
+                style::toggle(ui, &mut self.draft.skip_warnings, "Skip confirmation dialogs");
+            });
+        });
+        ui.add_space(10.0);
+        ui.add(style::Label::new(style::muted(ui, crate::tf!("Data folder: {}", crate::config::data_dir().display())).size(12.0)));
+    }
+
+    /// The exclude and include lists.
+    fn lists(&mut self, ui: &mut Ui) {
+        style::card(ui, |ui| {
+            list_editor(ui, &mut self.draft.exclude_list, &mut self.new_exclude, "Exclude list", "Never reported or deleted. Subkeys / subfolders can be included.");
+        });
+        ui.add_space(14.0);
+        style::card(ui, |ui| {
+            list_editor(
+                ui,
+                &mut self.draft.include_list,
+                &mut self.new_include,
+                "Include list",
+                "Contents are always deleted by a Custom Scan with the \"Include list\" category. Be careful.",
+            );
+        });
     }
 
     fn appearance(&mut self, ui: &mut Ui, cx: &mut Cx) {
@@ -191,7 +227,6 @@ impl SettingsView {
     fn uninstaller(&mut self, ui: &mut Ui, cx: &mut Cx) {
         let d = &mut self.draft;
         style::card(ui, |ui| {
-            style::section_title(ui, "Uninstaller");
             style::setting_row(
                 ui,
                 if cfg!(windows) { tr("Add to Explorer's right-click menu") } else { tr("Add to the file manager's right-click menu") },
@@ -275,7 +310,6 @@ impl SettingsView {
     fn cleaner(&mut self, ui: &mut Ui) {
         let d = &mut self.draft;
         style::card(ui, |ui| {
-            style::section_title(ui, "Cleaner");
             style::setting_row(ui, "Skip paths on external drives", "Items on drives that are not plugged in are never reported.", |ui| {
                 style::toggle(ui, &mut d.exclude_external_drives, "Skip paths on external drives");
             });
@@ -317,7 +351,6 @@ impl SettingsView {
 
     fn backups(&mut self, ui: &mut Ui) {
         style::card(ui, |ui| {
-            style::section_title(ui, "Backups");
             ui.add(style::Label::new(style::muted(ui, tr("Backup folder"))));
             style::path_input(ui, "backup-dir", &mut self.backup_dir, "", ui.available_width(), style::Pick::Folder);
             ui.add_space(6.0);
@@ -391,4 +424,66 @@ fn list_editor(ui: &mut Ui, list: &mut Vec<ListEntry>, new: &mut String, title: 
 
 fn tf_icon(icon: &str, text: &str) -> String {
     format!("{icon}  {text}")
+}
+
+/// A group of settings in the side list.
+#[derive(Clone, Copy, PartialEq, Eq)]
+enum Section {
+    General,
+    Uninstaller,
+    Cleaner,
+    Lists,
+    Backups,
+    Updates,
+}
+
+impl Section {
+    const ALL: [Section; 6] = [Self::General, Self::Uninstaller, Self::Cleaner, Self::Lists, Self::Backups, Self::Updates];
+
+    fn title(self) -> &'static str {
+        match self {
+            Self::General => "General",
+            Self::Uninstaller => "Uninstaller",
+            Self::Cleaner => "Cleaner",
+            Self::Lists => "Lists",
+            Self::Backups => "Backups",
+            Self::Updates => "Updates",
+        }
+    }
+
+    fn icon(self) -> (&'static str, Color32) {
+        match self {
+            Self::General => (icon::SLIDERS, Color32::from_rgb(37, 99, 235)),
+            Self::Uninstaller => (icon::TRASH, Color32::from_rgb(225, 29, 72)),
+            Self::Cleaner => (icon::BROOM, Color32::from_rgb(22, 163, 74)),
+            Self::Lists => (icon::FUNNEL, Color32::from_rgb(217, 119, 6)),
+            Self::Backups => (icon::ARCHIVE, Color32::from_rgb(124, 58, 237)),
+            Self::Updates => (icon::DOWNLOAD, Color32::from_rgb(13, 148, 136)),
+        }
+    }
+}
+
+/// A side-list entry: a coloured icon tile and the name, highlighted when chosen.
+fn category(ui: &mut Ui, s: Section, selected: bool, p: Palette) -> egui::Response {
+    let label = tr(s.title());
+    let (glyph, color) = s.icon();
+    let (rect, resp) = ui.allocate_exact_size(Vec2::new(ui.available_width(), 46.0), egui::Sense::click());
+    resp.widget_info(|| egui::WidgetInfo::selected(egui::Role::Button, true, selected, label));
+    if selected {
+        ui.painter().rect_filled(rect, 10.0, p.accent_soft);
+    } else if resp.hovered() {
+        ui.painter().rect_filled(rect, 10.0, p.hover);
+    }
+    let m = style::Mirror::new(rect);
+    let tile = m.rect(10.0, rect.center().y - 15.0, Vec2::splat(30.0));
+    let fill = if selected { color } else { Color32::from_rgba_unmultiplied(color.r(), color.g(), color.b(), if p.dark { 52 } else { 32 }) };
+    ui.painter().rect_filled(tile, 8.0, fill);
+    let fg = if selected { Color32::WHITE } else { color };
+    ui.painter().text(tile.center(), egui::Align2::CENTER_CENTER, style::vstr(glyph), egui::FontId::new(16.0, style::icon_fill()), fg);
+    let font = egui::FontId::new(15.0, if selected { style::semibold() } else { egui::FontFamily::Proportional });
+    ui.painter().text(m.pos(52.0, rect.center().y), m.start(egui::Align::Center), style::vstr(label), font, if selected { p.text } else { p.muted.lerp_to_gamma(p.text, 0.5) });
+    if resp.hovered() {
+        ui.ctx().set_cursor_icon(egui::CursorIcon::PointingHand);
+    }
+    resp
 }

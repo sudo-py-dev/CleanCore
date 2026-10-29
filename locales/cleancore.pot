@@ -5027,3 +5027,9 @@ msgstr ""
 
 msgid "No startup measurements for this entry"
 msgstr ""
+
+msgid "General"
+msgstr ""
+
+msgid "Lists"
+msgstr ""

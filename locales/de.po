@@ -5028,3 +5028,9 @@ msgstr "Geschätzt anhand der Programmgröße ({})"
 
 msgid "No startup measurements for this entry"
 msgstr "Keine Startmessungen für diesen Eintrag"
+
+msgid "General"
+msgstr "Allgemein"
+
+msgid "Lists"
+msgstr "Listen"
