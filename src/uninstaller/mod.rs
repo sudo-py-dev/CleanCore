@@ -1025,8 +1025,7 @@ mod tests {
     fn store_apps_alone_make_no_restore_point() {
         let app = Program::new("a", "Quick Assist", ProgramKind::WindowsApp);
         let win32 = Program::new("w", "Notepad++", ProgramKind::Win32);
-        let mut s = Settings::default();
-        s.uninstall_restore_point = true;
+        let mut s = Settings { uninstall_restore_point: true, ..Settings::default() };
         assert!(!settings_for(&s, [&app]).uninstall_restore_point);
         assert!(!settings_for(&s, &vec![app.clone(), app.clone()]).uninstall_restore_point);
         assert!(settings_for(&s, [&app, &win32]).uninstall_restore_point);

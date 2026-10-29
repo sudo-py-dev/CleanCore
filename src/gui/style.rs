@@ -39,7 +39,6 @@ pub mod icon {
     pub const WARNING: &str = "\u{E4E0}";
     pub const X_CIRCLE: &str = "\u{E4F8}";
     pub const INFO: &str = "\u{E2CE}";
-    pub const BELL: &str = "\u{E0CE}";
     pub const PLAY: &str = "\u{E3D0}";
     pub const PAUSE: &str = "\u{E39E}";
     pub const RECORD: &str = "\u{E3EE}";
@@ -661,8 +660,11 @@ impl ColumnsInOrder for egui_extras::TableBuilder<'_> {
     }
 }
 
+/// What draws one table cell.
+pub type Cell<'a> = Box<dyn FnOnce(&mut Ui) + 'a>;
+
 /// A table row's cells, given in left-to-right order, added in reading order.
-pub fn cells_in_order<'a>(row: &mut egui_extras::TableRow<'_, '_>, cells: Vec<Box<dyn FnOnce(&mut Ui) + 'a>>) {
+pub fn cells_in_order(row: &mut egui_extras::TableRow<'_, '_>, cells: Vec<Cell<'_>>) {
     for c in ordered(cells) {
         row.col(c);
     }
@@ -965,8 +967,9 @@ pub fn icon_button(ui: &mut Ui, icon: &str, tip: &str) -> egui::Response {
     let p = Palette::get(ui.ctx());
     let (t, pressed) = interaction(ui, ui.next_auto_id());
     let color = p.muted.lerp_to_gamma(p.text, t);
-    let r =
-        ui.add(egui::Button::new(vis(rich(icon).size(17.0).color(color))).fill(hover_fill(&p, t, pressed)).stroke(Stroke::NONE).corner_radius(RADIUS).min_size(Vec2::new(32.0, 32.0)));
+    let r = ui.add(
+        egui::Button::new(vis(rich(icon).size(17.0).color(color))).fill(hover_fill(&p, t, pressed)).stroke(Stroke::NONE).corner_radius(RADIUS).min_size(Vec2::new(32.0, 32.0)),
+    );
     r.widget_info(|| egui::WidgetInfo::labeled(egui::Role::Button, true, tip));
     r.on_hover_text(vis(tip))
 }
@@ -976,7 +979,8 @@ pub fn close_button(ui: &mut Ui, tip: &str) -> egui::Response {
     let tip = tr(tip);
     let p = Palette::get(ui.ctx());
     let (t, pressed) = interaction(ui, ui.next_auto_id());
-    let r = ui.add(egui::Button::new(vis(rich(icon::X).size(13.0).color(p.text))).fill(control_fill(&p, t, pressed)).stroke(Stroke::NONE).corner_radius(12).min_size(Vec2::splat(24.0)));
+    let r = ui
+        .add(egui::Button::new(vis(rich(icon::X).size(13.0).color(p.text))).fill(control_fill(&p, t, pressed)).stroke(Stroke::NONE).corner_radius(12).min_size(Vec2::splat(24.0)));
     r.widget_info(|| egui::WidgetInfo::labeled(egui::Role::Button, true, tip));
     r.on_hover_text(vis(tip))
 }
@@ -1547,7 +1551,11 @@ pub fn toggle(ui: &mut Ui, on: &mut bool, label: &str) -> egui::Response {
     if ui.is_rect_visible(rect) {
         let t = ui.ctx().animate_bool_responsive(resp.id, *on);
         let h = ui.ctx().animate_bool_with_time(resp.id.with("hover"), resp.hovered() && ui.is_enabled(), FADE);
-        let off_bg = if p.dark { Color32::from_rgb(70, 70, 75).lerp_to_gamma(Color32::from_rgb(84, 84, 90), h) } else { Color32::from_rgb(214, 214, 218).lerp_to_gamma(Color32::from_rgb(200, 200, 205), h) };
+        let off_bg = if p.dark {
+            Color32::from_rgb(70, 70, 75).lerp_to_gamma(Color32::from_rgb(84, 84, 90), h)
+        } else {
+            Color32::from_rgb(214, 214, 218).lerp_to_gamma(Color32::from_rgb(200, 200, 205), h)
+        };
         let mut bg = off_bg.lerp_to_gamma(p.accent.lerp_to_gamma(Color32::WHITE, 0.08 * h), t);
         if !ui.is_enabled() {
             bg = bg.gamma_multiply(0.5);

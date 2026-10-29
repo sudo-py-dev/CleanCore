@@ -379,7 +379,7 @@ impl AutorunView {
                 body.rows(66.0, rows.len(), |mut row| {
                     let e = &rows[row.index()];
                     row.set_selected(self.focus.as_deref() == Some(&e.id));
-                    let mut cells: Vec<Box<dyn FnOnce(&mut Ui) + '_>> = vec![
+                    let mut cells: Vec<style::Cell> = vec![
                         Box::new(|ui: &mut Ui| {
                             let mut on = e.enabled;
                             ui.add_enabled_ui(e.source != Source::RunOnce, |ui| {

@@ -591,7 +591,7 @@ impl CleanerView {
                             let mut all = n_sel == idx.len();
                             let cb = egui::Checkbox::new(&mut all, style::vis("")).indeterminate(n_sel > 0 && n_sel < idx.len());
                             let r = ui.add(cb);
-                            r.widget_info(|| egui::WidgetInfo::selected(egui::Role::CheckBox, ui.is_enabled(), all, &name));
+                            r.widget_info(|| egui::WidgetInfo::selected(egui::Role::CheckBox, ui.is_enabled(), all, name));
                             if r.changed() {
                                 idx.iter().for_each(|i| checked[*i] = all);
                             }

@@ -120,28 +120,7 @@ enum Cmd {
     #[command(subcommand)]
     Autorun(AutorunCmd),
     /// Hunter Mode: identify a running program and act on it
-    Hunter {
-        /// List programs with a window
-        #[arg(long)]
-        list: bool,
-        /// With --list: every process of the desktop session, not just applications
-        #[arg(long)]
-        all: bool,
-        /// Open Hunter Mode in the GUI (falls back to --list without the GUI)
-        #[arg(long)]
-        gui: bool,
-        /// Target process id
-        #[arg(long)]
-        pid: Option<u32>,
-        /// Use the window under the mouse pointer (Windows; Linux on X11)
-        #[arg(long)]
-        at_pointer: bool,
-        /// info | uninstall | stop-autorun | kill | kill-delete | folder | search
-        #[arg(long, default_value = "info")]
-        action: String,
-        #[arg(short, long)]
-        yes: bool,
-    },
+    Hunter(HunterArgs),
     /// Logs database: shared trace logs
     #[command(subcommand)]
     Logsdb(LogsDbCmd),
@@ -571,6 +550,30 @@ enum TraceCmd {
     Restore {
         file: PathBuf,
     },
+}
+
+#[derive(Args)]
+struct HunterArgs {
+    /// List programs with a window
+    #[arg(long)]
+    list: bool,
+    /// With --list: every process of the desktop session, not just applications
+    #[arg(long)]
+    all: bool,
+    /// Open Hunter Mode in the GUI (falls back to --list without the GUI)
+    #[arg(long)]
+    gui: bool,
+    /// Target process id
+    #[arg(long)]
+    pid: Option<u32>,
+    /// Use the window under the mouse pointer (Windows; Linux on X11)
+    #[arg(long)]
+    at_pointer: bool,
+    /// info | uninstall | stop-autorun | kill | kill-delete | folder | search
+    #[arg(long, default_value = "info")]
+    action: String,
+    #[arg(short, long)]
+    yes: bool,
 }
 
 #[derive(Args)]
@@ -1268,7 +1271,7 @@ fn run(cli: Cli) -> Result<()> {
         Cmd::Trace(t) => run_trace(&settings, t)?,
         Cmd::Extensions(c) => run_extensions(&settings, c)?,
         Cmd::Autorun(c) => run_autorun(&settings, c)?,
-        Cmd::Hunter { list, all, gui, pid, at_pointer, action, yes } => run_hunter(gui, &settings, list, all, pid, at_pointer, &action, yes)?,
+        Cmd::Hunter(a) => run_hunter(&settings, a)?,
         Cmd::Logsdb(c) => run_logsdb(&settings, c)?,
         Cmd::Junk(c) => run_junk(&settings, c)?,
         Cmd::Dupes(c) => run_dupes(&settings, c)?,
@@ -1598,7 +1601,8 @@ fn run_autorun(settings: &Settings, cmd: AutorunCmd) -> Result<()> {
     Ok(())
 }
 
-fn run_hunter(gui: bool, settings: &Settings, list: bool, all: bool, pid: Option<u32>, at_pointer: bool, action: &str, yes: bool) -> Result<()> {
+fn run_hunter(settings: &Settings, a: HunterArgs) -> Result<()> {
+    let HunterArgs { list, all, gui, pid, at_pointer, action, yes } = a;
     use cleancore::hunter;
     if gui {
         if cfg!(feature = "gui") {
@@ -1629,7 +1633,7 @@ fn run_hunter(gui: bool, settings: &Settings, list: bool, all: bool, pid: Option
     for a in &t.autoruns {
         println!("  Starts automatically: {} [{}]{}", a.name, a.source.label(), if a.enabled { "" } else { " (disabled)" });
     }
-    match action {
+    match action.as_str() {
         "info" => {}
         "folder" => hunter::open_folder(&t)?,
         "search" => hunter::search_online(&t)?,

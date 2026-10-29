@@ -520,7 +520,7 @@ msgstr "Zeile \"eins\"\n"
             for marker in ["tr(\"", "tf!(\""] {
                 for (at, _) in text.match_indices(marker) {
                     let rest = &text[at + marker.len()..];
-                    let Some(end) = rest.find(|c| c == '"').filter(|_| !rest.starts_with('"')) else { continue };
+                    let Some(end) = rest.find('"').filter(|_| !rest.starts_with('"')) else { continue };
                     // Find the closing quote, skipping escaped ones.
                     let mut j = 0;
                     let b = rest.as_bytes();
