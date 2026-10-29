@@ -5029,3 +5029,9 @@ msgstr "הערכה לפי גודל התוכנה ({})"
 
 msgid "No startup measurements for this entry"
 msgstr "אין מדידות הפעלה לרשומה זו"
+
+msgid "General"
+msgstr "כללי"
+
+msgid "Lists"
+msgstr "רשימות"

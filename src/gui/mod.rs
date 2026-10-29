@@ -255,6 +255,8 @@ pub struct App {
     daily: Option<Pending<anyhow::Result<Option<String>>>>,
     updates: updates::Updates,
     options: options::SettingsView,
+    /// The Settings dialog is open over the page.
+    settings_open: bool,
     /// The page drawn last frame and when it appeared, for the page fade-in.
     shown: Option<Tool>,
     page_since: f64,
@@ -276,6 +278,7 @@ impl App {
         updates.startup(&cc.egui_ctx, &settings);
         Self {
             options: options::SettingsView::new(&settings),
+            settings_open: false,
             settings,
             // `cleancore --hunter` (or /hunter) opens Hunter Mode.
             tool: if Tool::Hunter.supported() && std::env::args().skip(1).any(|a| a == "--hunter" || a.eq_ignore_ascii_case("/hunter")) { Tool::Hunter } else { Tool::Uninstaller },
@@ -380,13 +383,14 @@ impl App {
             });
             ui.add_space(4.0);
             // Settings: a full-width entry like the ones above, so it lines up with them.
-            let r = style::nav_item(ui, Tool::Settings.icon(), Tool::Settings.label(), self.tool == Tool::Settings);
-            if self.tool == Tool::Settings {
+            let r = style::nav_item(ui, Tool::Settings.icon(), Tool::Settings.label(), self.settings_open);
+            if self.settings_open {
                 selected_rect = Some(r.rect);
                 selected_clip = ui.clip_rect();
             }
             if r.clicked() {
-                self.switch(Tool::Settings);
+                self.options = options::SettingsView::new(&self.settings);
+                self.settings_open = true;
             }
             ui.add_space(8.0);
         });
@@ -402,8 +406,8 @@ impl App {
                 });
                 ui.add_space(4.0);
                 for t in tools {
-                    let r = style::nav_item(ui, t.icon(), t.label(), self.tool == t);
-                    if self.tool == t {
+                    let r = style::nav_item(ui, t.icon(), t.label(), self.tool == t && !self.settings_open);
+                    if self.tool == t && !self.settings_open {
                         selected_rect = Some(r.rect);
                         selected_clip = ui.clip_rect();
                     }
@@ -527,7 +531,7 @@ impl eframe::App for App {
                 Tool::Watcher => self.watcher.main(ui, &mut cx),
                 Tool::Backups => self.backups.main(ui, &mut cx),
                 Tool::Tools => self.tools.main(ui, &mut cx),
-                Tool::Settings => self.options.main(ui, &mut cx, &mut self.updates),
+                Tool::Settings => {}
             }
             self.updates.poll(&mut cx);
         });
@@ -541,6 +545,10 @@ impl eframe::App for App {
             if self.hunter.floating_ui(&ctx, &mut cx) {
                 self.tool = Tool::Hunter;
             }
+        }
+        if self.settings_open {
+            let mut cx = Cx { settings: &mut self.settings, notices: &mut self.notices };
+            self.settings_open = self.options.dialog(&ctx, &mut cx, &mut self.updates);
         }
         self.toasts(&ctx);
         if self.settings.gui_theme.is_none() {

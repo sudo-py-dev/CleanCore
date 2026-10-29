@@ -120,7 +120,6 @@ impl Updates {
     pub fn card(&mut self, ui: &mut Ui, cx: &mut Cx, check_updates: &mut bool) {
         let p = Palette::get(ui.ctx());
         style::card(ui, |ui| {
-            style::section_title(ui, "Updates");
             crate::gui::style::row(ui, |ui| {
                 crate::gui::style::column(ui, |ui| {
                     ui.add(style::Label::new(crate::tf!("CleanCore {}", update::CURRENT)));
