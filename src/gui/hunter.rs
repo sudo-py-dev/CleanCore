@@ -113,7 +113,8 @@ impl HunterView {
             if ui.input(|i| i.viewport().close_requested()) {
                 close = true;
             }
-            egui::CentralPanel::default().frame(egui::Frame::new().fill(p.surface).stroke(egui::Stroke::new(1.0, p.border)).inner_margin(egui::Margin::symmetric(6, 4))).show(ui, |ui| {
+            let frame = egui::Frame::new().fill(p.surface).stroke(egui::Stroke::new(1.0, p.border)).inner_margin(egui::Margin::symmetric(6, 4));
+            egui::CentralPanel::default().frame(frame).show(ui, |ui| {
                 // Title bar: all of it moves the window, except its two small buttons at the far end.
                 let (bar, r) = ui.allocate_exact_size(egui::vec2(ui.available_width(), 26.0), egui::Sense::drag());
                 if r.hovered() {

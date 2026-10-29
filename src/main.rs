@@ -2452,7 +2452,7 @@ fn run_uninstall(settings: &Settings, a: UninstallArgs) -> Result<()> {
         return leftovers_step(settings, &t, &a, &p.name, &p.version, Operation::LeftoversOnly);
     }
     prepare_uninstall(&uninst::settings_for(settings, [p]), &p.name, a.yes)?;
-    let mode =if a.msi { RunMode::ForcedMsi } else { RunMode::Normal };
+    let mode = if a.msi { RunMode::ForcedMsi } else { RunMode::Normal };
     if p.uninstall_string.is_none() && !a.msi {
         println!("No built-in uninstaller: removing the program's files and leftovers.");
         return leftovers_step(settings, &target, &a, &p.name, &p.version, Operation::Uninstall);
