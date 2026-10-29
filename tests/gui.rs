@@ -457,6 +457,9 @@ fn walk_through_every_tool() {
     shot(&mut h, "11-settings");
     h.get_by_label("Violet").click();
     h.run_steps(3);
+    // Settings is a dialog: close it to reach the sidebar again.
+    h.query_all_by_role_and_label(Role::Button, "Close").next().unwrap().click();
+    h.run_steps(3);
     h.get_by_label("Switch to dark").click();
     h.run_steps(3);
     shot(&mut h, "12-settings-dark-violet");

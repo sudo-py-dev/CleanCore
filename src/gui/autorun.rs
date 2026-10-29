@@ -37,6 +37,8 @@ pub struct AutorunView {
     add: Option<AddForm>,
     export_path: String,
     icons: super::appicons::IconCache,
+    /// The full view (source, command, location). Off each time the page opens: it starts simple.
+    details: bool,
 }
 
 impl AutorunView {
@@ -52,11 +54,13 @@ impl AutorunView {
             add: None,
             export_path: super::export_dir().join("autorun.html").display().to_string(),
             icons: Default::default(),
+            details: false,
         }
     }
 
     pub fn refresh(&mut self) {
         self.loaded = false;
+        self.details = false;
     }
 
     fn load(&mut self, ctx: &egui::Context, cx: &Cx) {
@@ -103,7 +107,7 @@ impl AutorunView {
         }
         self.icons.poll(ui.ctx());
         let p = Palette::get(ui.ctx());
-        let details = cx.settings.autorun_details;
+        let details = self.details;
         let enabled = self.list.iter().filter(|e| e.enabled).count();
         let heavy = self.list.iter().filter(|e| e.enabled && e.startup.impact == Impact::High).count();
         let subtitle = if self.loading.is_some() {
@@ -163,23 +167,8 @@ impl AutorunView {
         }
         crate::gui::style::row(ui, |ui| {
             style::search_field(ui, &mut self.search, if details { "Search name, command or publisher" } else { "Search name or publisher" }, 250.0);
-            if details {
-                ui.add_space(6.0);
-                if style::segment(ui, self.source.is_none(), "All").clicked() {
-                    self.source = None;
-                }
-                for s in sources {
-                    let n = self.list.iter().filter(|e| e.source == s).count();
-                    if style::segment(ui, self.source == Some(s), &crate::tf!("{}  {n}", tr(s.label()))).clicked() {
-                        self.source = Some(s);
-                    }
-                }
-            }
             ui.with_layout(crate::gui::style::far_layout(egui::Align::Center), |ui| {
-                let r = style::toggle(ui, &mut cx.settings.autorun_details, "Details");
-                if r.on_hover_text(style::vis(tr("Show where each entry comes from, its command and more actions"))).changed() {
-                    cx.save_settings();
-                }
+                style::toggle(ui, &mut self.details, "Details").on_hover_text(style::vis(tr("Show where each entry comes from, its command and more actions")));
                 ui.add(style::Label::new(style::muted(ui, tr("Details"))));
                 if details {
                     ui.add_space(12.0);
@@ -195,6 +184,21 @@ impl AutorunView {
                 }
             });
         });
+        // Details: the sources on a line of their own, so they never run into the switches.
+        if details {
+            ui.add_space(6.0);
+            crate::gui::style::row_wrapped(ui, |ui| {
+                if style::segment(ui, self.source.is_none(), "All").clicked() {
+                    self.source = None;
+                }
+                for s in sources {
+                    let n = self.list.iter().filter(|e| e.source == s).count();
+                    if style::segment(ui, self.source == Some(s), &crate::tf!("{}  {n}", tr(s.label()))).clicked() {
+                        self.source = Some(s);
+                    }
+                }
+            });
+        }
         ui.add_space(8.0);
 
         if let Some((l, _)) = &self.loading {
@@ -407,14 +411,7 @@ impl AutorunView {
                         Box::new(|ui: &mut Ui| {
                             ui.add(style::Label::new(style::muted(ui, tr(e.source.label()))).truncate()).on_hover_text(style::vis(tr(e.source.label())));
                         }),
-                        Box::new(|ui: &mut Ui| {
-                            crate::gui::style::column(ui, |ui| {
-                                ui.spacing_mut().item_spacing.y = 2.0;
-                                ui.spacing_mut().interact_size.y = 18.0;
-                                impact_badge(ui, e, p);
-                                ui.add(style::Label::new(style::muted(ui, impact_detail(e)).size(11.5)).truncate());
-                            });
-                        }),
+                        Box::new(|ui: &mut Ui| impact_badge(ui, e, p)),
                         Box::new(|ui: &mut Ui| {
                             ui.add(style::Label::new(style::muted(ui, e.publisher.as_deref().unwrap_or(""))).truncate());
                         }),

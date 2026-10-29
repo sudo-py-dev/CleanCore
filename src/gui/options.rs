@@ -20,6 +20,8 @@ pub struct SettingsView {
     db_url: String,
     /// The settings the form was last in step with, to notice changes made on other pages.
     synced: String,
+    /// The dialog was just opened: the click that opened it must not close it again.
+    fresh: bool,
 }
 
 impl SettingsView {
@@ -36,6 +38,7 @@ impl SettingsView {
             db_folder: crate::tracer::db_folder(s).display().to_string(),
             db_url: s.logs_db_url.clone().unwrap_or_default(),
             synced: serde_json::to_string(s).unwrap_or_default(),
+            fresh: true,
         }
     }
 
@@ -52,7 +55,9 @@ impl SettingsView {
         d
     }
 
-    pub fn main(&mut self, ui: &mut Ui, cx: &mut Cx, updates: &mut super::updates::Updates) {
+    /// The Settings dialog over the app. Returns false once it is closed (the close button,
+    /// Escape or a click outside it).
+    pub fn dialog(&mut self, ctx: &egui::Context, cx: &mut Cx, updates: &mut super::updates::Updates) -> bool {
         // Settings changed elsewhere (another page, a newer copy) are taken in first, so the form
         // never writes back stale values.
         if serde_json::to_string(&*cx.settings).unwrap_or_default() != self.synced {
@@ -60,14 +65,51 @@ impl SettingsView {
             *self = SettingsView { new_exclude, new_include, ..SettingsView::new(cx.settings) };
         }
         let before = serde_json::to_string(&self.finished()).ok();
-        style::page_header(ui, "Settings", "Appearance, safety options, lists and storage", |_| {});
+        let p = Palette::get(ctx);
+        let screen = ctx.content_rect();
+        let size = Vec2::new((screen.width() - 64.0).clamp(520.0, 980.0), (screen.height() - 150.0).clamp(320.0, 620.0));
+        let mut close = false;
+        let frame = egui::Frame::new().fill(p.surface).stroke(egui::Stroke::new(1.0, p.border)).corner_radius(14);
+        let shown = egui::Modal::new(egui::Id::unique("settings-dialog")).frame(frame).show(ctx, |ui| {
+            ui.set_width(size.x);
+            ui.spacing_mut().item_spacing.y = 0.0;
+            // Title bar: the name in the middle, the close button at the far end.
+            egui::Frame::new().fill(p.bg).corner_radius(egui::CornerRadius { nw: 14, ne: 14, sw: 0, se: 0 }).show(ui, |ui| {
+                let (rect, _) = ui.allocate_exact_size(Vec2::new(size.x, 56.0), egui::Sense::hover());
+                let title = crate::tf!("{}  {}", icon::GEAR, tr("Settings"));
+                ui.painter().text(rect.center(), egui::Align2::CENTER_CENTER, style::vstr(title), egui::FontId::new(19.0, style::semibold()), p.text);
+                let m = style::Mirror::new(rect);
+                let x = m.rect(size.x - 52.0, rect.center().y - 16.0, Vec2::splat(32.0));
+                if ui.put(x, |ui: &mut Ui| style::icon_button(ui, icon::X, "Close")).clicked() {
+                    close = true;
+                }
+            });
+            ui.add(egui::Separator::default().spacing(0.0));
+            egui::Frame::new().inner_margin(egui::Margin::same(16)).show(ui, |ui| {
+                ui.spacing_mut().item_spacing.y = 8.0;
+                ui.set_height(size.y);
+                self.body(ui, cx, updates, p);
+            });
+        });
+        if shown.should_close() && !self.fresh {
+            close = true;
+        }
+        self.fresh = false;
+        let after = self.finished();
+        if serde_json::to_string(&after).ok() != before {
+            *cx.settings = after;
+            cx.save_settings();
+        }
+        self.synced = serde_json::to_string(&*cx.settings).unwrap_or_default();
+        !close
+    }
 
-        // The category list on the side, the chosen category's settings next to it. The choice
-        // outlives the page, which is rebuilt each time it is opened.
+    /// The category list on the side, the chosen category's settings next to it. The choice
+    /// outlives the dialog, which is rebuilt each time it is opened.
+    fn body(&mut self, ui: &mut Ui, cx: &mut Cx, updates: &mut super::updates::Updates, p: Palette) {
         let id = egui::Id::unique("settings-section");
         let mut section = ui.ctx().data(|d| d.get_temp::<Section>(id)).unwrap_or(Section::General);
-        let p = Palette::get(ui.ctx());
-        let side = if ui.available_width() < 720.0 { 168.0 } else { 210.0 };
+        let side = if ui.available_width() < 700.0 { 168.0 } else { 210.0 };
         let page_h = ui.available_height();
         crate::gui::style::row_top(ui, |ui| {
             ui.set_min_height(page_h);
@@ -86,12 +128,6 @@ impl SettingsView {
             });
         });
         ui.ctx().data_mut(|d| d.insert_temp(id, section));
-        let after = self.finished();
-        if serde_json::to_string(&after).ok() != before {
-            *cx.settings = after;
-            cx.save_settings();
-        }
-        self.synced = serde_json::to_string(&*cx.settings).unwrap_or_default();
     }
 
     /// One category's heading and settings.
@@ -468,7 +504,8 @@ fn category(ui: &mut Ui, s: Section, selected: bool, p: Palette) -> egui::Respon
     let label = tr(s.title());
     let (glyph, color) = s.icon();
     let (rect, resp) = ui.allocate_exact_size(Vec2::new(ui.available_width(), 46.0), egui::Sense::click());
-    resp.widget_info(|| egui::WidgetInfo::selected(egui::Role::Button, true, selected, label));
+    // Tabs, so assistive tools (and the translation audit) see them as one group.
+    resp.widget_info(|| egui::WidgetInfo::selected(egui::Role::Tab, true, selected, label));
     if selected {
         ui.painter().rect_filled(rect, 10.0, p.accent_soft);
     } else if resp.hovered() {
