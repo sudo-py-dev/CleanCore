@@ -394,19 +394,26 @@ impl AutorunView {
                                 ui.spacing_mut().interact_size.y = 18.0;
                                 crate::gui::style::row(ui, |ui| {
                                     // A long name is cut short, leaving room for the badges, so the cell keeps to its column.
+                                    // When even the badges don't fit, they shrink to icons that name themselves on hover.
                                     let gap = ui.spacing().item_spacing.x;
-                                    let badges =
-                                        [(e.running, "Running"), (!e.valid, "Program missing")].iter().filter(|b| b.0).map(|b| style::badge_width(ui, b.1) + gap).sum::<f32>()
-                                            + if e.all_users { 14.0 + gap } else { 0.0 };
+                                    let marks = [(e.running, "Running", icon::CHECK_CIRCLE, p.success), (!e.valid, "Program missing", icon::WARNING, p.danger)];
+                                    let marks: Vec<_> = marks.into_iter().filter(|m| m.0).collect();
+                                    let users = if e.all_users { 14.0 + gap } else { 0.0 };
+                                    let full = marks.iter().map(|m| style::badge_width(ui, m.1) + gap).sum::<f32>() + users;
+                                    let compact = ui.available_width() - full < 100.0;
+                                    let badges = if compact { marks.len() as f32 * (16.0 + gap) + users } else { full };
                                     ui.scope(|ui| {
-                                        ui.set_max_width((ui.available_width() - badges).max(60.0));
+                                        ui.set_max_width((ui.available_width() - badges).max(40.0));
                                         ui.add(style::Label::new(style::strong(e.display_name()).color(if e.enabled { p.text } else { p.faint })).truncate());
                                     });
-                                    if e.running {
-                                        style::badge(ui, "Running", p.success);
-                                    }
-                                    if !e.valid {
-                                        style::badge(ui, "Program missing", p.danger);
+                                    for (_, label, glyph, color) in marks {
+                                        if compact {
+                                            let r = ui.add(style::Label::new(style::rich(glyph).color(color).size(14.0)));
+                                            r.widget_info(|| egui::WidgetInfo::labeled(egui::Role::Label, true, tr(label)));
+                                            r.on_hover_text(style::vis(tr(label)));
+                                        } else {
+                                            style::badge(ui, label, color);
+                                        }
                                     }
                                     if e.all_users {
                                         ui.add(style::Label::new(style::rich(icon::USERS).color(p.faint).size(13.0))).on_hover_text(style::vis(tr("For all users")));
