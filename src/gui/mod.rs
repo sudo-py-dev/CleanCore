@@ -347,53 +347,17 @@ impl App {
         });
         ui.add_space(12.0);
 
-        // Bottom block first, as its own panel: the tool list above it scrolls when the window
-        // is short instead of running underneath it.
+        // Keep preferences beside the application identity, above the destinations.
         let mut selected_clip = ui.clip_rect();
-        egui::Panel::bottom("sidebar-bottom").frame(egui::Frame::NONE).show_separator_line(false).resizable(false).show(ui, |ui| {
-            ui.add_space(8.0);
-            let rec = crate::watcher::recorder_running();
-            // The recorder's state, with the theme switch at its far end.
-            egui::Frame::new().fill(p.hover).corner_radius(10).inner_margin(egui::Margin { left: 10, right: 2, top: 1, bottom: 1 }).show(ui, |ui| {
-                ui.set_width(ui.available_width());
-                crate::gui::style::row(ui, |ui| {
-                    ui.spacing_mut().item_spacing.x = 6.0;
-                    let (r, _) = ui.allocate_exact_size(Vec2::splat(8.0), egui::Sense::hover());
-                    if rec {
-                        // A slow pulse while recording.
-                        let phase = (ui.input(|i| i.time) / 1.6).fract() as f32;
-                        let a = ((1.0 - phase) * 90.0) as u8;
-                        ui.painter().circle_filled(r.center(), 4.0 + 5.0 * phase, egui::Color32::from_rgba_unmultiplied(p.success.r(), p.success.g(), p.success.b(), a));
-                        ui.ctx().request_repaint_after(Duration::from_millis(33));
-                    }
-                    ui.painter().circle_filled(r.center(), 4.0, if rec { p.success } else { p.faint });
-                    ui.with_layout(crate::gui::style::far_layout(egui::Align::Center), |ui| {
-                        ui.spacing_mut().item_spacing.x = 0.0;
-                        let dark = p.dark;
-                        if style::icon_button(ui, if dark { icon::SUN } else { icon::MOON }, if dark { tr("Switch to light") } else { tr("Switch to dark") }).clicked() {
-                            self.settings.gui_theme = Some(if dark { "light" } else { "dark" }.into());
-                            apply_theme(ui.ctx(), &self.settings);
-                            let _ = self.settings.save();
-                        }
-                        ui.with_layout(crate::gui::style::near_layout(egui::Align::Center), |ui| {
-                            ui.add(style::Label::new(style::rich(if rec { tr("Recorder running") } else { tr("Recorder stopped") }).size(12.0).color(p.muted)).truncate());
-                        });
-                    });
-                });
-            });
-            ui.add_space(4.0);
-            // Settings: a full-width entry like the ones above, so it lines up with them.
-            let r = style::nav_item(ui, Tool::Settings.icon(), Tool::Settings.label(), self.settings_open);
-            if self.settings_open {
-                selected_rect = Some(r.rect);
-                selected_clip = ui.clip_rect();
-            }
-            if r.clicked() {
-                self.options = options::SettingsView::new(&self.settings);
-                self.settings_open = true;
-            }
-            ui.add_space(8.0);
-        });
+        let r = style::nav_item(ui, Tool::Settings.icon(), Tool::Settings.label(), self.settings_open);
+        if self.settings_open {
+            selected_rect = Some(r.rect);
+        }
+        if r.clicked() {
+            self.options = options::SettingsView::new(&self.settings);
+            self.settings_open = true;
+        }
+        ui.add_space(8.0);
 
         egui::ScrollArea::vertical().auto_shrink([false, false]).show(ui, |ui| {
             ui.spacing_mut().item_spacing.y = 2.0;
@@ -402,7 +366,7 @@ impl App {
                 ui.add_space(10.0);
                 crate::gui::style::row(ui, |ui| {
                     ui.add_space(14.0);
-                    ui.add(style::Label::new(style::rich(crate::i18n::tr(section).to_uppercase()).size(11.0).family(style::semibold()).color(p.faint)));
+                    ui.add(style::Label::new(style::rich(crate::i18n::tr(section)).size(12.0).family(style::semibold()).color(p.muted)));
                 });
                 ui.add_space(4.0);
                 for t in tools {

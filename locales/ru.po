@@ -5034,3 +5034,6 @@ msgstr "Общие"
 
 msgid "Lists"
 msgstr "Списки"
+
+msgid "Scan options"
+msgstr "Параметры сканирования"

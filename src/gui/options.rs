@@ -125,9 +125,23 @@ impl SettingsView {
                     }
                 }
             });
-            ui.add(egui::Separator::default().vertical().spacing(20.0));
-            egui::ScrollArea::vertical().id_salt(section.title()).auto_shrink([false, false]).min_scrolled_height(page_h).max_height(page_h).show(ui, |ui| {
-                crate::gui::style::column(ui, |ui| self.section(ui, cx, updates, section));
+            ui.add(egui::Separator::default().vertical().spacing(28.0));
+            ui.scope(|ui| {
+                // Keep the scrollbar quiet at rest and reserve a gutter so it cannot
+                // sit against settings text, cards, or the category-pane separator.
+                let scroll = &mut ui.spacing_mut().scroll;
+                scroll.bar_width = 6.0;
+                scroll.floating_width = 3.0;
+                scroll.floating_allocated_width = 18.0;
+                scroll.bar_inner_margin = 6.0;
+                scroll.bar_outer_margin = 4.0;
+                scroll.dormant_handle_opacity = 0.0;
+                scroll.active_handle_opacity = 0.5;
+                scroll.interact_handle_opacity = 0.8;
+                scroll.interact_background_opacity = 0.0;
+                egui::ScrollArea::vertical().id_salt(section.title()).auto_shrink([false, false]).min_scrolled_height(page_h).max_height(page_h).show(ui, |ui| {
+                    crate::gui::style::column(ui, |ui| self.section(ui, cx, updates, section));
+                });
             });
         });
         ui.ctx().data_mut(|d| d.insert_temp(id, section));

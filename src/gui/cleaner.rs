@@ -230,57 +230,27 @@ impl CleanerView {
     fn home(&mut self, ui: &mut Ui, cx: &mut Cx) {
         let busy = self.busy();
         let subtitle = if cfg!(windows) { tr("Find and remove invalid and leftover registry entries") } else { tr("Find and remove settings left behind by removed apps") };
-        style::page_header(ui, "Cleaner", subtitle, |_| {});
-
-        let p = Palette::get(ui.ctx());
-        let checks = engine::all_checks();
-        let count = |m: ScanMode| checks.iter().filter(|c| c.min_mode <= m && c.id != "include_list").count();
-        let (glyph, title, _, _) = mode_meta(self.mode);
-        let scope = if self.all_users { tr("every account") } else { tr("your account") };
-
-        // Hero: what will be scanned, where, and the button that starts it.
         let mut start = false;
-        style::hero(ui, |ui| {
-            crate::gui::style::row(ui, |ui| {
-                style::icon_tile(ui, glyph, p.accent, 56.0);
-                ui.add_space(8.0);
-                crate::gui::style::column(ui, |ui| {
-                    ui.spacing_mut().item_spacing.y = 4.0;
-                    ui.add_space(2.0);
-                    ui.add(style::Label::new(style::strong(tr("Ready to scan")).size(21.0)));
-                    ui.add(style::Label::new(style::muted(ui, crate::tf!("{title} · {} categories · {scope}", count(self.mode)))));
-                    ui.add_space(2.0);
-                    crate::gui::style::row(ui, |ui| {
-                        ui.spacing_mut().item_spacing.x = 4.0;
-                        if style::segment(ui, !self.all_users, &crate::tf!("{}  Current account", icon::USER)).clicked() {
-                            self.all_users = false;
-                        }
-                        if style::segment(ui, self.all_users, &crate::tf!("{}  All accounts", icon::USERS)).clicked() {
-                            self.all_users = true;
-                        }
-                    });
+        // One title and one primary action; keep the action in the header even at
+        // the minimum window width instead of adding a second hero section.
+        style::row(ui, |ui| {
+            ui.with_layout(style::far_layout(egui::Align::Center), |ui| {
+                ui.add_enabled_ui(!busy, |ui| {
+                    let label = if self.clean_now { "Scan and clean" } else { "Start scan" };
+                    start = style::primary(ui, if self.clean_now { icon::LIGHTNING } else { icon::PLAY }, label).clicked();
                 });
-                // The one main action, and under it whether to clean straight away
-                // (Quick Clean) instead of reviewing what was found first.
-                ui.with_layout(crate::gui::style::far_layout(egui::Align::Center), |ui| {
-                    let far = if crate::gui::style::rtl() { egui::Align::Min } else { egui::Align::Max };
-                    ui.with_layout(egui::Layout::top_down(far), |ui| {
-                        ui.add_enabled_ui(!busy, |ui| {
-                            ui.spacing_mut().button_padding = Vec2::new(24.0, 12.0);
-                            let label = if self.clean_now { "Scan and clean" } else { "Start scan" };
-                            start = style::primary(ui, if self.clean_now { icon::LIGHTNING } else { icon::PLAY }, label).clicked();
-                        });
-                        ui.add_space(6.0);
-                        // From the far edge, like the button above it: the switch lines up under its edge.
-                        ui.with_layout(crate::gui::style::far_layout(egui::Align::Min), |ui| {
-                            style::toggle(ui, &mut self.clean_now, "Clean without reviewing");
-                            ui.add(style::Label::new(style::muted(ui, tr("Clean without reviewing")).size(12.5)).extend())
-                                .on_hover_text(style::vis(tr("Remove everything the scan finds right away (a backup is made first)")));
-                        });
+                ui.add_space(12.0);
+                ui.with_layout(style::near_layout(egui::Align::Center), |ui| {
+                    style::column(ui, |ui| {
+                        ui.add(style::Label::new(style::strong(tr("Cleaner")).size(20.0)));
+                        ui.add(style::Label::new(style::muted(ui, subtitle)).wrap());
                     });
                 });
             });
         });
+        let p = Palette::get(ui.ctx());
+        let checks = engine::all_checks();
+        let count = |m: ScanMode| checks.iter().filter(|c| c.min_mode <= m && c.id != "include_list").count();
         if start {
             let m = self.mode;
             self.quick = self.clean_now;
@@ -288,58 +258,75 @@ impl CleanerView {
             self.start_scan(ui.ctx(), cx, Selection::Mode(m), label);
             return;
         }
-        ui.add_space(18.0);
+        egui::ScrollArea::vertical().id_salt("cleaner-home").auto_shrink([false, false]).show(ui, |ui| {
+            ui.add_space(18.0);
 
-        // Depth: pick one; a double click starts it straight away.
-        style::eyebrow(ui, "Scan depth");
-        let gap = 14.0;
-        let w = ((ui.available_width() - gap * 2.0) / 3.0).max(200.0);
-        let mut go = None;
-        crate::gui::style::row(ui, |ui| {
-            ui.spacing_mut().item_spacing.x = gap;
-            for m in [ScanMode::Safe, ScanMode::Moderate, ScanMode::Advanced] {
-                let r = depth_card(ui, Vec2::new(w, if w < 260.0 { 190.0 } else { 168.0 }), m, self.mode == m, count(m), p);
-                if r.clicked() {
-                    self.mode = m;
+            // Depth: pick one; a double click starts it straight away.
+            style::eyebrow(ui, "Scan depth");
+            let gap = 14.0;
+            let w = ((ui.available_width() - gap * 2.0) / 3.0).max(200.0);
+            let mut go = None;
+            crate::gui::style::row(ui, |ui| {
+                ui.spacing_mut().item_spacing.x = gap;
+                for m in [ScanMode::Safe, ScanMode::Moderate, ScanMode::Advanced] {
+                    let r = depth_card(ui, Vec2::new(w, if w < 260.0 { 190.0 } else { 168.0 }), m, self.mode == m, count(m), p);
+                    if r.clicked() {
+                        self.mode = m;
+                    }
+                    if r.double_clicked() && !busy {
+                        go = Some(m);
+                    }
                 }
-                if r.double_clicked() && !busy {
-                    go = Some(m);
+            });
+            if let Some(m) = go {
+                self.mode = m;
+                self.start_scan(ui.ctx(), cx, Selection::Mode(m), mode_meta(m).1.to_string());
+                return;
+            }
+            ui.add_space(20.0);
+
+            egui::CollapsingHeader::new(style::vis(tr("Scan options"))).id_salt("cleaner-scan-options").show(ui, |ui| {
+                style::row_wrapped(ui, |ui| {
+                    if style::segment(ui, !self.all_users, &crate::tf!("{}  Current account", icon::USER)).clicked() {
+                        self.all_users = false;
+                    }
+                    if style::segment(ui, self.all_users, &crate::tf!("{}  All accounts", icon::USERS)).clicked() {
+                        self.all_users = true;
+                    }
+                });
+                style::setting_row(ui, "Clean without reviewing", "Remove everything the scan finds right away (a backup is made first)", |ui| {
+                    style::toggle(ui, &mut self.clean_now, "Clean without reviewing");
+                });
+            });
+            ui.add_space(12.0);
+
+            // One card, a row each: fits any width.
+            style::eyebrow(ui, "Other ways to scan");
+            let mut open = None;
+            style::card(ui, |ui| {
+                ui.spacing_mut().item_spacing.y = 0.0;
+                let rows = [
+                    (icon::SLIDERS, "Custom Scan", "Choose exactly which categories to scan.", Screen::Managed),
+                    (icon::SEARCH, "Forced Scan", "Find every entry that mentions a program or vendor.", Screen::Forced),
+                    (icon::CALENDAR, "Auto Clean", "Scan and clean automatically on a schedule", Screen::Auto),
+                ];
+                let n = rows.len();
+                for (i, (ic, title, desc, screen)) in rows.into_iter().enumerate() {
+                    if other_row(ui, ic, title, desc, p).clicked() && !busy {
+                        open = Some(screen);
+                    }
+                    if i + 1 < n {
+                        style::divider(ui);
+                    }
                 }
+            });
+            if let Some(screen) = open {
+                if matches!(screen, Screen::Auto) {
+                    self.auto.refresh(cx);
+                }
+                self.screen = screen;
             }
         });
-        if let Some(m) = go {
-            self.mode = m;
-            self.start_scan(ui.ctx(), cx, Selection::Mode(m), mode_meta(m).1.to_string());
-            return;
-        }
-        ui.add_space(20.0);
-
-        // One card, a row each: fits any width.
-        style::eyebrow(ui, "Other ways to scan");
-        let mut open = None;
-        style::card(ui, |ui| {
-            ui.spacing_mut().item_spacing.y = 0.0;
-            let rows = [
-                (icon::SLIDERS, "Custom Scan", "Choose exactly which categories to scan.", Screen::Managed),
-                (icon::SEARCH, "Forced Scan", "Find every entry that mentions a program or vendor.", Screen::Forced),
-                (icon::CALENDAR, "Auto Clean", "Scan and clean automatically on a schedule", Screen::Auto),
-            ];
-            let n = rows.len();
-            for (i, (ic, title, desc, screen)) in rows.into_iter().enumerate() {
-                if other_row(ui, ic, title, desc, p).clicked() && !busy {
-                    open = Some(screen);
-                }
-                if i + 1 < n {
-                    style::divider(ui);
-                }
-            }
-        });
-        if let Some(screen) = open {
-            if matches!(screen, Screen::Auto) {
-                self.auto.refresh(cx);
-            }
-            self.screen = screen;
-        }
     }
 
     fn scanning_ui(&self, ui: &mut Ui, p: Palette) {
@@ -606,7 +593,10 @@ impl CleanerView {
                         })
                         .body(|ui| {
                             ui.add_space(2.0);
-                            for &i in idx {
+                            for (position, &i) in idx.iter().enumerate() {
+                                if position > 0 {
+                                    style::divider(ui);
+                                }
                                 let issue = &self.results[i];
                                 // The hover background goes behind the row, painted once its size is known.
                                 let bg = ui.painter().add(egui::Shape::Noop);

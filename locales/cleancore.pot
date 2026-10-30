@@ -5033,3 +5033,7 @@ msgstr ""
 
 msgid "Lists"
 msgstr ""
+
+#: src/gui/cleaner.rs
+msgid "Scan options"
+msgstr ""

@@ -5035,3 +5035,6 @@ msgstr "כללי"
 
 msgid "Lists"
 msgstr "רשימות"
+
+msgid "Scan options"
+msgstr "אפשרויות סריקה"

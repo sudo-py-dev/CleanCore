@@ -5034,3 +5034,6 @@ msgstr "General"
 
 msgid "Lists"
 msgstr "Listas"
+
+msgid "Scan options"
+msgstr "Opciones de análisis"

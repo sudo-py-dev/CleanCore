@@ -5034,3 +5034,6 @@ msgstr "Allgemein"
 
 msgid "Lists"
 msgstr "Listen"
+
+msgid "Scan options"
+msgstr "Scan-Optionen"

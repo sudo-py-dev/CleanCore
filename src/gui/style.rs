@@ -1053,11 +1053,11 @@ pub fn stat_tile(ui: &mut Ui, width: f32, glyph: &str, value: &str, label: &str,
     ui.painter().with_clip_rect(rect).text(m.pos(d, rect.top() + 18.0 + vg_h), m.start(egui::Align::Min), vstr(label), FontId::proportional(12.0), p.muted);
 }
 
-/// Small uppercase label above a group of cards.
+/// Secondary heading above a group of cards.
 pub fn eyebrow(ui: &mut Ui, text: &str) {
     let text = tr(text);
     let p = Palette::get(ui.ctx());
-    ui.add(Label::new(rich(text.to_uppercase()).size(11.5).family(semibold()).color(p.faint)));
+    ui.add(Label::new(rich(text).size(13.0).family(semibold()).color(p.muted)));
     ui.add_space(2.0);
 }
 
@@ -1216,36 +1216,39 @@ pub fn page_header(ui: &mut Ui, title: &str, subtitle: &str, actions: impl FnOnc
     header_row(ui, title, subtitle, |_| {}, actions);
 }
 
-/// Title row shared by the page headers. The title column is kept clear of the actions (their
-/// width from the previous frame), so a long subtitle is cut short instead of running under them.
+/// Reserve actions before laying out the title, so changing counts and translations
+/// cannot overlap it. Compact pages put actions on their own wrapping row.
 fn header_row(ui: &mut Ui, title: &str, subtitle: &str, lead: impl FnOnce(&mut Ui), actions: impl FnOnce(&mut Ui)) {
     let title = tr(title);
     let subtitle = tr(subtitle);
-    let key = egui::Id::unique(("header-actions", title));
-    let actions_w = ui.ctx().data(|d| d.get_temp::<f32>(key)).unwrap_or(0.0);
-    row(ui, |ui| {
-        ui.set_min_height(52.0);
-        lead(ui);
-        let title_w = (ui.available_width() - actions_w - 16.0).max(120.0);
-        column(ui, |ui| {
-            ui.set_max_width(title_w);
-            ui.spacing_mut().item_spacing.y = 2.0;
-            ui.add(Label::new(rich(title).size(24.0).family(semibold())).truncate());
-            if !subtitle.is_empty() {
-                ui.add(Label::new(muted(ui, subtitle)).truncate());
-            }
+    let compact = ui.available_width() < 720.0;
+    let heading = |ui: &mut Ui| {
+        row(ui, |ui| {
+            lead(ui);
+            column(ui, |ui| {
+                ui.set_max_width(ui.available_width());
+                ui.spacing_mut().item_spacing.y = 2.0;
+                ui.add(Label::new(rich(title).size(20.0).family(semibold())).truncate());
+                if !subtitle.is_empty() {
+                    ui.add(Label::new(muted(ui, subtitle)).wrap());
+                }
+            });
         });
-        let r = ui.with_layout(far_layout(egui::Align::Center), |ui| {
-            ui.spacing_mut().item_spacing.x = 8.0;
-            actions(ui);
-            ui.min_rect().width()
+    };
+    if compact {
+        heading(ui);
+        row(ui, |ui| {
+            ui.with_layout(far_layout(egui::Align::Center).with_main_wrap(true), actions);
         });
-        let w = r.inner.max(0.0);
-        if (w - actions_w).abs() > 0.5 {
-            ui.ctx().data_mut(|d| d.insert_temp(key, w));
-            ui.ctx().request_repaint();
-        }
-    });
+    } else {
+        row(ui, |ui| {
+            ui.with_layout(far_layout(egui::Align::Center), |ui| {
+                actions(ui);
+                ui.add_space(8.0);
+                ui.with_layout(near_layout(egui::Align::Center), heading);
+            });
+        });
+    }
     ui.add_space(12.0);
 }
 
@@ -1335,6 +1338,7 @@ pub fn tabs<T: PartialEq + Copy>(ui: &mut Ui, current: &mut T, items: &[(T, &str
                 if sel {
                     underline = Some(egui::Rect::from_min_max(egui::pos2(rect.left() + 8.0, rect.bottom() - 2.0), egui::pos2(rect.right() - 8.0, rect.bottom())));
                 }
+                focus_ring(ui, &r, rect.shrink2(Vec2::new(2.0, 3.0)), 8.0);
                 if r.clicked() && !sel {
                     *current = *value;
                     changed = true;
@@ -1482,8 +1486,13 @@ pub fn section_title(ui: &mut Ui, text: &str) {
     ui.add_space(2.0);
 }
 
-/// Side navigation entry. The selected entry's background is painted by `nav_indicator`, so it
-/// can slide between entries.
+fn focus_ring(ui: &Ui, response: &egui::Response, rect: egui::Rect, radius: f32) {
+    if response.has_focus() && ui.is_enabled() {
+        ui.painter().rect_stroke(rect.expand(2.0), radius, Stroke::new(2.0, Palette::get(ui.ctx()).accent), egui::StrokeKind::Inside);
+    }
+}
+
+/// Side navigation entry. Its selected background is painted by `nav_indicator`.
 pub fn nav_item(ui: &mut Ui, icon: &str, label: &str, selected: bool) -> egui::Response {
     let label = tr(label);
     let p = Palette::get(ui.ctx());
@@ -1511,6 +1520,7 @@ pub fn nav_item(ui: &mut Ui, icon: &str, label: &str, selected: bool) -> egui::R
     let family = if selected { icon_fill() } else { FontFamily::Proportional };
     ui.painter().text(m.pos(14.0 + 2.0 * t, cy), m.start(egui::Align::Center), vstr(icon), FontId::new(18.0, family), icon_color);
     ui.painter().text(m.pos(44.0 + 2.0 * t, cy), m.start(egui::Align::Center), vstr(label), FontId::new(14.5, if selected { semibold() } else { FontFamily::Proportional }), fg);
+    focus_ring(ui, &resp, rect, 8.0);
     if resp.hovered() {
         ui.ctx().set_cursor_icon(egui::CursorIcon::PointingHand);
     }
@@ -1569,6 +1579,7 @@ pub fn toggle(ui: &mut Ui, on: &mut bool, label: &str) -> egui::Response {
             bg = bg.gamma_multiply(0.5);
         }
         ui.painter().rect_filled(rect, 11.0, bg);
+        focus_ring(ui, &resp, rect, 11.0);
         // Off sits at the start of the reading direction, on at the far end.
         let (off, on_x) = if rtl() { (rect.right() - 11.0, rect.left() + 11.0) } else { (rect.left() + 11.0, rect.right() - 11.0) };
         let x = egui::lerp(off..=on_x, t);
@@ -1752,21 +1763,30 @@ pub fn setting_row(ui: &mut Ui, title: &str, help: &str, control: impl FnOnce(&m
     let title = tr(title);
     let help = tr(help);
     ui.add_space(2.0);
-    row(ui, |ui| {
-        ui.set_min_height(42.0);
+    let compact = ui.available_width() < 440.0;
+    let labels = |ui: &mut Ui| {
         column(ui, |ui| {
+            ui.set_max_width(ui.available_width());
             ui.spacing_mut().item_spacing.y = 2.0;
-            ui.set_width((ui.available_width() - 260.0).max(200.0));
-            if help.is_empty() {
-                ui.add_space(10.0); // centre a lone title in the row
-            }
-            ui.add(Label::new(title));
+            ui.add(Label::new(title).wrap());
             if !help.is_empty() {
                 ui.add(Label::new(muted(ui, help).size(12.5)).wrap());
             }
         });
-        ui.with_layout(far_layout(egui::Align::Center), control);
-    });
+    };
+    if compact {
+        labels(ui);
+        row_wrapped(ui, control);
+    } else {
+        row(ui, |ui| {
+            ui.with_layout(far_layout(egui::Align::Center), |ui| {
+                ui.set_min_height(42.0);
+                control(ui);
+                ui.add_space(12.0);
+                ui.with_layout(near_layout(egui::Align::Center), labels);
+            });
+        });
+    }
     ui.add_space(2.0);
 }
 
@@ -1774,4 +1794,34 @@ pub fn divider(ui: &mut Ui) {
     let p = Palette::get(ui.ctx());
     let (rect, _) = ui.allocate_exact_size(Vec2::new(ui.available_width(), 1.0), egui::Sense::hover());
     ui.painter().rect_filled(rect, 0.0, p.border);
+}
+
+#[cfg(test)]
+mod layout_tests {
+    use super::*;
+
+    #[test]
+    fn headers_and_settings_keep_content_in_bounds() {
+        for width in [400.0, 668.0, 1000.0] {
+            for theme in ["light", "dark"] {
+                let mut harness = egui_kittest::Harness::builder().with_size(Vec2::new(width, 600.0)).with_context_setup(install_fonts).build_ui(move |ui| {
+                    apply(ui.ctx(), theme, "blue");
+                    let start = ui.cursor().top();
+                    page_header(ui, "Uninstaller", "Programs installed on this computer", |ui| {
+                        secondary(ui, icon::CROSSHAIR, "Forced Uninstall");
+                        secondary(ui, icon::RECORD, "Install & trace");
+                    });
+                    assert!(ui.cursor().top() - start < 150.0, "header consumed the page at width {width}");
+                    let start = ui.cursor().top();
+                    setting_row(ui, "Maximum log folder size", "When the logs reach this size, all watches pause. Zero means no limit.", |ui| {
+                        let response = ui.button("100 MB");
+                        assert!(response.rect.left() >= ui.clip_rect().left());
+                        assert!(response.rect.right() <= ui.clip_rect().right());
+                    });
+                    assert!(ui.cursor().top() - start < 180.0, "setting consumed the page at width {width}");
+                });
+                harness.run_steps(2);
+            }
+        }
+    }
 }

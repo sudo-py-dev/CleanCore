@@ -84,5 +84,32 @@ fn every_page_fits_a_small_window() {
         h.get_by_role_and_label(Role::Button, cleancore::i18n::tr(tool)).click();
         shot(&mut h, &tool.to_lowercase());
     }
+    if english {
+        h.get_by_role_and_label(Role::Button, "Close").click();
+        h.run_steps(3);
+        h.get_by_role_and_label(Role::Button, "Tools").click();
+        h.run_steps(3);
+        use cleancore::gui::style::icon;
+        for (tab, glyph) in [
+            ("Duplicates", icon::COPY),
+            ("History", icon::HISTORY),
+            ("Unrecoverable delete", icon::SHIELD_WARNING),
+            ("Evidence remover", icon::DRIVES),
+            ("System tools", icon::WRENCH),
+        ] {
+            h.get_by_role_and_label(Role::Tab, &format!("{glyph}  {tab}")).click();
+            shot(&mut h, &format!("tools-{}", tab.split(' ').next().unwrap().to_lowercase()));
+        }
+        h.query_all_by_role_and_label(Role::Button, "Settings").next().unwrap().click();
+        h.run_steps(3);
+        h.get_by_label_contains("Dark").click();
+        h.run_steps(3);
+        h.get_by_role_and_label(Role::Button, "Close").click();
+        h.run_steps(3);
+        for tool in ["Uninstaller", "Cleaner", "Tuner", "Watcher", "Settings"] {
+            h.get_by_role_and_label(Role::Button, tool).click();
+            shot(&mut h, &format!("dark-{}", tool.to_lowercase()));
+        }
+    }
     let _ = std::fs::remove_dir_all(&root);
 }

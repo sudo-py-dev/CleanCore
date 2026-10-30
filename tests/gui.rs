@@ -460,7 +460,11 @@ fn walk_through_every_tool() {
     // Settings is a dialog: close it to reach the sidebar again.
     h.query_all_by_role_and_label(Role::Button, "Close").next().unwrap().click();
     h.run_steps(3);
-    h.get_by_label("Switch to dark").click();
+    h.query_all_by_role_and_label(Role::Button, "Settings").next().unwrap().click();
+    h.run_steps(3);
+    h.get_by_label_contains("Dark").click();
+    h.run_steps(3);
+    h.get_by_role_and_label(Role::Button, "Close").click();
     h.run_steps(3);
     h.query_all_by_role_and_label(Role::Button, "Settings").next().unwrap().click();
     h.run_steps(3);

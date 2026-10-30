@@ -49,16 +49,16 @@ impl ToolsView {
     }
 
     pub fn main(&mut self, ui: &mut Ui, cx: &mut Cx) {
-        let (title, subtitle) = match self.tab {
-            Tab::Junk => ("Junk Files", "Temporary files, editor backups and crash dumps left on your drives"),
-            Tab::Dupes => ("Duplicate Finder", "Identical files in your folders, and deleting the extra copies"),
-            Tab::History => ("History Cleaner", "Browser history and caches, recent files and other traces"),
-            Tab::Shred => ("Unrecoverable Delete", "Overwrite files and folders so they can't be recovered"),
-            Tab::Evidence => ("Evidence Remover", "Overwrite free space so already-deleted files can't be recovered"),
-            Tab::System => (if cfg!(windows) { tr("Windows Tools") } else { tr("System Tools") }, "The operating system's own utilities in one place"),
-            Tab::Slop => ("Microsoft Slop Cleaner", "Remove preinstalled apps and turn off Copilot, ads and telemetry"),
+        let subtitle = match self.tab {
+            Tab::Junk => "Temporary files, editor backups and crash dumps left on your drives",
+            Tab::Dupes => "Identical files in your folders, and deleting the extra copies",
+            Tab::History => "Browser history and caches, recent files and other traces",
+            Tab::Shred => "Overwrite files and folders so they can't be recovered",
+            Tab::Evidence => "Overwrite free space so already-deleted files can't be recovered",
+            Tab::System => "The operating system's own utilities in one place",
+            Tab::Slop => "Remove preinstalled apps and turn off Copilot, ads and telemetry",
         };
-        style::page_header(ui, title, subtitle, |_| {});
+        style::page_header(ui, "Tools", subtitle, |_| {});
         let mut items = vec![
             (Tab::Junk, icon::BROOM, "Junk files", None),
             (Tab::Dupes, icon::COPY, "Duplicates", None),
