@@ -312,12 +312,12 @@ impl BackupView {
             let text = match c {
                 Confirm::Restore(id) => crate::tf!("Restore everything in backup {id}?"),
                 Confirm::Delete(id) => crate::tf!("Are you sure you want to delete \"{id}\"?"),
-                Confirm::DeleteAll => "Are you sure you want to delete all backups?".to_string(),
+                Confirm::DeleteAll => tr("Are you sure you want to delete all backups?").to_string(),
             };
+            let restore = matches!(c, Confirm::Restore(_));
             let mut answer = None;
             let r = crate::gui::style::modal("backup-confirm", 420.0, ctx, |ui| {
                 let p = Palette::get(ui.ctx());
-                let restore = text.starts_with("Restore");
                 style::icon_tile(ui, if restore { icon::UNDO } else { icon::TRASH }, if restore { p.accent } else { p.danger }, 44.0);
                 ui.add_space(8.0);
                 ui.add(style::Label::new(style::strong(text).size(17.0)));

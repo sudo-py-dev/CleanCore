@@ -255,47 +255,60 @@ pub enum AddMethod {
 
 /// All entries with exe, publisher, running and validity filled in.
 pub fn list(show_system: bool) -> Vec<AutorunEntry> {
-    let mut v = crate::platform::autorun_list(show_system);
-    let mut running: HashMap<String, Vec<u32>> = HashMap::new();
-    for p in crate::platform::list_processes() {
-        if let Some(exe) = p.exe {
-            running.entry(exe.to_lowercase()).or_default().push(p.pid);
-        }
-    }
-    for e in &mut v {
-        if e.exe.is_none() {
-            e.exe = exe_of(&e.command);
-        }
-    }
-    let exes: Vec<String> = v.iter().filter(|e| e.publisher.is_none()).filter_map(|e| e.exe.clone()).collect();
-    let publishers = crate::platform::file_publishers(&exes);
-    for e in &mut v {
-        if let Some(exe) = &e.exe {
-            e.valid = Path::new(exe).exists();
-            e.running = running.contains_key(&exe.to_lowercase());
-            if e.publisher.is_none() {
-                e.publisher = publishers.get(exe).cloned();
+    list_with_snapshot(show_system, |_| {})
+}
+
+/// Publish discovered entries before collecting optional publisher and startup details.
+/// The callback runs on the caller's thread; GUI callers run this scan in a worker.
+pub fn list_with_snapshot(show_system: bool, discovered: impl FnOnce(&[AutorunEntry])) -> Vec<AutorunEntry> {
+    std::thread::scope(|scope| {
+        let processes = scope.spawn(crate::platform::list_processes);
+        let boot = scope.spawn(crate::platform::boot_data);
+        let mut v = crate::platform::autorun_list(show_system);
+        let mut running: HashMap<String, Vec<u32>> = HashMap::new();
+        for p in processes.join().expect("process scan panicked") {
+            if let Some(exe) = p.exe {
+                running.entry(exe.to_lowercase()).or_default().push(p.pid);
             }
-        } else {
-            e.valid = true; // can't tell (e.g. a shell command)
         }
-    }
-    let boot = crate::platform::boot_data();
-    let uptime = crate::platform::uptime_ms();
-    for e in &mut v {
-        let pids = e.exe.as_deref().and_then(|x| running.get(&x.to_lowercase()));
-        let early = pids.zip(uptime).and_then(|(p, up)| early_usage(p, up));
-        let size = e.exe.as_deref().and_then(|x| std::fs::metadata(x).ok()).filter(|m| m.is_file()).map(|m| m.len());
-        let mut s = measure(e, &boot, early, size);
-        s.need = need_of(e);
-        // Services and tasks already have a display name; Run values and shortcuts often don't.
-        if matches!(e.source, Source::Run | Source::RunOnce | Source::StartupFolder) {
-            s.friendly = e.exe.as_deref().and_then(crate::platform::file_description).filter(|d| d.chars().count() >= 3 && *d != e.name);
+        for e in &mut v {
+            if e.exe.is_none() {
+                e.exe = exe_of(&e.command);
+            }
         }
-        e.startup = s;
-    }
-    v.sort_by(|a, b| (!a.enabled, a.source.label(), a.name.to_lowercase()).cmp(&(!b.enabled, b.source.label(), b.name.to_lowercase())));
-    v
+        for e in &mut v {
+            if let Some(exe) = &e.exe {
+                e.valid = Path::new(exe).exists();
+                e.running = running.contains_key(&exe.to_lowercase());
+            } else {
+                e.valid = true; // can't tell (e.g. a shell command)
+            }
+        }
+        discovered(&v);
+        let exes: Vec<String> = v.iter().filter(|e| e.publisher.is_none()).filter_map(|e| e.exe.clone()).collect::<std::collections::HashSet<_>>().into_iter().collect();
+        let publishers = crate::platform::file_publishers(&exes);
+        for e in &mut v {
+            if e.publisher.is_none() {
+                e.publisher = e.exe.as_ref().and_then(|exe| publishers.get(exe)).cloned();
+            }
+        }
+        let boot = boot.join().expect("startup impact scan panicked");
+        let uptime = crate::platform::uptime_ms();
+        for e in &mut v {
+            let pids = e.exe.as_deref().and_then(|x| running.get(&x.to_lowercase()));
+            let early = pids.zip(uptime).and_then(|(p, up)| early_usage(p, up));
+            let size = e.exe.as_deref().and_then(|x| std::fs::metadata(x).ok()).filter(|m| m.is_file()).map(|m| m.len());
+            let mut s = measure(e, &boot, early, size);
+            s.need = need_of(e);
+            // Services and tasks already have a display name; Run values and shortcuts often don't.
+            if matches!(e.source, Source::Run | Source::RunOnce | Source::StartupFolder) {
+                s.friendly = e.exe.as_deref().and_then(crate::platform::file_description).filter(|d| d.chars().count() >= 3 && *d != e.name);
+            }
+            e.startup = s;
+        }
+        v.sort_by(|a, b| (!a.enabled, a.source.label(), a.name.to_lowercase()).cmp(&(!b.enabled, b.source.label(), b.name.to_lowercase())));
+        v
+    })
 }
 
 /// The program a command line starts.

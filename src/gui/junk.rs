@@ -91,6 +91,14 @@ impl JunkView {
     }
 
     fn setup(&mut self, ui: &mut Ui, cx: &mut Cx, p: Palette) {
+        // Keep related controls together on wide windows, in either reading direction.
+        ui.vertical_centered(|ui| {
+            ui.set_width(ui.available_width().min(1120.0));
+            style::column(ui, |ui| self.setup_form(ui, cx, p));
+        });
+    }
+
+    fn setup_form(&mut self, ui: &mut Ui, cx: &mut Cx, p: Palette) {
         let mut changed = false;
         // Toolbar: what will be scanned, and the scan button.
         let any = cx.settings.junk_patterns.iter().any(|t| t.enabled);
@@ -109,141 +117,202 @@ impl JunkView {
         });
         ui.add_space(10.0);
         egui::ScrollArea::vertical().auto_shrink([false, false]).show(ui, |ui| {
-            style::card(ui, |ui| {
-                style::section_title(ui, "Where to look");
-                let defaults: Vec<String> = junk::default_locations().iter().map(|d| d.display().to_string()).collect();
-                if cx.settings.junk_locations.is_empty() {
-                    ui.add(style::Label::new(style::muted(ui, crate::tf!("{} (default)", defaults.join(", "))).size(12.5)));
-                }
-                let mut remove = None;
-                for (i, l) in cx.settings.junk_locations.iter().enumerate() {
-                    crate::gui::style::row(ui, |ui| {
-                        ui.add(style::Label::new(style::rich(icon::FOLDER).color(p.accent)));
-                        ui.add(style::Label::new(style::rich(l).monospace()));
-                        if style::icon_button(ui, icon::X, "Remove location").clicked() {
-                            remove = Some(i);
-                        }
+            if ui.available_width() >= 940.0 {
+                let width = (ui.available_width() - 16.0) / 2.0;
+                style::row_top(ui, |ui| {
+                    ui.allocate_ui_with_layout(egui::vec2(width, 0.0), egui::Layout::top_down(if style::rtl() { egui::Align::Max } else { egui::Align::Min }), |ui| {
+                        ui.set_width(width);
+                        changed |= self.locations(ui, cx, p);
                     });
-                }
-                if let Some(i) = remove {
-                    cx.settings.junk_locations.remove(i);
-                    changed = true;
-                }
-                crate::gui::style::row_wrapped(ui, |ui| {
-                    let w = (ui.available_width() - 200.0).clamp(180.0, 420.0);
-                    style::text_input(ui, &mut self.new_location, if cfg!(windows) { r"D:\ or C:\Users\me\Downloads" } else { tr("/home/me/Downloads or /media/disk") }, w);
-                    if let Some(p) = style::browse_button(ui, "junk-location", style::Pick::Folder, &self.new_location) {
-                        if !cx.settings.junk_locations.contains(&p) {
-                            cx.settings.junk_locations.push(p);
-                            changed = true;
-                        }
-                    }
-                    if style::secondary(ui, icon::PLUS, "Add location").clicked() && !self.new_location.trim().is_empty() {
-                        cx.settings.junk_locations.push(self.new_location.trim().to_string());
-                        self.new_location.clear();
-                        changed = true;
-                    }
-                    for d in self.drives.get_or_insert_with(crate::platform::drives).iter() {
-                        let path = d.path.display().to_string();
-                        if !cx.settings.junk_locations.contains(&path) && style::ghost(ui, icon::DRIVES, &d.label).on_hover_text(style::vis(crate::tf!("Add {path}"))).clicked() {
-                            cx.settings.junk_locations.push(path);
-                            changed = true;
-                        }
-                    }
-                });
-                ui.add_space(8.0);
-                style::section_title(ui, "Never look in");
-                let mut remove = None;
-                for (i, l) in cx.settings.junk_exclude.iter().enumerate() {
-                    crate::gui::style::row(ui, |ui| {
-                        ui.add(style::Label::new(style::rich(icon::LOCK).color(p.muted)));
-                        ui.add(style::Label::new(style::rich(l).monospace()));
-                        if style::icon_button(ui, icon::X, "Remove").clicked() {
-                            remove = Some(i);
-                        }
+                    ui.add_space(8.0);
+                    ui.allocate_ui_with_layout(egui::vec2(width, 0.0), egui::Layout::top_down(if style::rtl() { egui::Align::Max } else { egui::Align::Min }), |ui| {
+                        ui.set_width(width);
+                        changed |= self.patterns(ui, cx, p);
                     });
-                }
-                if let Some(i) = remove {
-                    cx.settings.junk_exclude.remove(i);
-                    changed = true;
-                }
-                crate::gui::style::row(ui, |ui| {
-                    let w = (ui.available_width() - 140.0).clamp(180.0, 420.0);
-                    style::text_input(ui, &mut self.new_exclude, "A folder to skip", w);
-                    if let Some(p) = style::browse_button(ui, "junk-exclude", style::Pick::Folder, &self.new_exclude) {
-                        if !cx.settings.junk_exclude.contains(&p) {
-                            cx.settings.junk_exclude.push(p);
-                            changed = true;
-                        }
-                    }
-                    if style::secondary(ui, icon::PLUS, "Add").clicked() && !self.new_exclude.trim().is_empty() {
-                        cx.settings.junk_exclude.push(self.new_exclude.trim().to_string());
-                        self.new_exclude.clear();
-                        changed = true;
-                    }
                 });
-                ui.add(style::Label::new(
-                    style::muted(
-                        ui,
-                        if cfg!(windows) {
-                            tr("The Windows component store, Installer folder, Recycle Bin and CleanCore's backups are always skipped.")
-                        } else {
-                            tr("System folders (/usr, /proc, /var/lib, …), the Trash and CleanCore's backups are always skipped.")
-                        },
-                    )
-                    .size(12.0),
-                ));
-            });
+            } else {
+                changed |= self.locations(ui, cx, p);
+                ui.add_space(12.0);
+                changed |= self.patterns(ui, cx, p);
+            }
             ui.add_space(12.0);
             style::card(ui, |ui| {
-                crate::gui::style::row(ui, |ui| {
-                    style::section_title(ui, "What counts as junk");
-                    ui.with_layout(crate::gui::style::far_layout(egui::Align::Center), |ui| {
-                        if style::ghost(ui, icon::UNDO, "Reset to defaults").clicked() {
-                            cx.settings.junk_patterns = junk::DEFAULT_PATTERNS.iter().map(|p| Toggle { value: p.to_string(), enabled: true }).collect();
-                            changed = true;
-                        }
+                let columns = if ui.available_width() >= 900.0 { 2 } else { 1 };
+                ui.columns(columns, |cols| {
+                    let recent_col = if style::rtl() { columns - 1 } else { 0 };
+                    style::setting_row(&mut cols[recent_col], "Skip files changed in the last 24 hours", "They may still be in use.", |ui| {
+                        changed |= style::toggle(ui, &mut cx.settings.junk_skip_recent, "Skip files changed in the last 24 hours").changed();
                     });
-                });
-                ui.add(style::Label::new(style::muted(ui, tr("File name patterns: * matches anything, ? one character. Click a pattern to switch it off.")).size(12.5)));
-                ui.add_space(4.0);
-                let mut remove = None;
-                crate::gui::style::row_wrapped(ui, |ui| {
-                    for (i, t) in cx.settings.junk_patterns.iter_mut().enumerate() {
-                        let r = style::segment(ui, t.enabled, &t.value).on_hover_text(style::vis(tr("Click to switch on/off · right-click to remove")));
-                        if r.clicked() {
-                            t.enabled = !t.enabled;
-                            changed = true;
-                        }
-                        if r.secondary_clicked() {
-                            remove = Some(i);
-                        }
+                    if columns == 1 {
+                        style::divider(&mut cols[0]);
                     }
-                });
-                if let Some(i) = remove {
-                    cx.settings.junk_patterns.remove(i);
-                    changed = true;
-                }
-                crate::gui::style::row(ui, |ui| {
-                    style::text_input(ui, &mut self.new_pattern, "*.ext", 160.0);
-                    if style::secondary(ui, icon::PLUS, "Add pattern").clicked() && !self.new_pattern.trim().is_empty() {
-                        cx.settings.junk_patterns.push(Toggle { value: self.new_pattern.trim().to_string(), enabled: true });
-                        self.new_pattern.clear();
-                        changed = true;
-                    }
-                });
-                ui.add_space(8.0);
-                style::setting_row(ui, "Skip files changed in the last 24 hours", "They may still be in use.", |ui| {
-                    changed |= style::toggle(ui, &mut cx.settings.junk_skip_recent, "Skip files changed in the last 24 hours").changed();
-                });
-                style::setting_row(ui, if cfg!(windows) { tr("Delete to the Recycle Bin") } else { tr("Delete to the Trash") }, "Otherwise files are deleted permanently.", |ui| {
-                    changed |= style::toggle(ui, &mut cx.settings.junk_to_trash, "Delete to the trash").changed();
+                    let trash_col = if style::rtl() { 0 } else { columns - 1 };
+                    style::setting_row(
+                        &mut cols[trash_col],
+                        if cfg!(windows) { tr("Delete to the Recycle Bin") } else { tr("Delete to the Trash") },
+                        "Otherwise files are deleted permanently.",
+                        |ui| {
+                            changed |= style::toggle(ui, &mut cx.settings.junk_to_trash, "Delete to the trash").changed();
+                        },
+                    );
                 });
             });
         });
         if changed {
             cx.save_settings();
         }
+    }
+
+    fn locations(&mut self, ui: &mut Ui, cx: &mut Cx, p: Palette) -> bool {
+        let mut changed = false;
+        style::card(ui, |ui| {
+            style::section_title(ui, "Where to look");
+            let defaults: Vec<String> = junk::default_locations().iter().map(|d| d.display().to_string()).collect();
+            if cx.settings.junk_locations.is_empty() {
+                ui.add(style::Label::new(style::muted(ui, crate::tf!("{} (default)", defaults.join(", "))).size(12.5)));
+            }
+            let mut remove = None;
+            for (i, l) in cx.settings.junk_locations.iter().enumerate() {
+                crate::gui::style::row(ui, |ui| {
+                    ui.add(style::Label::new(style::rich(icon::FOLDER).color(p.accent)));
+                    ui.add(style::Label::new(style::rich(l).monospace()));
+                    if style::icon_button(ui, icon::X, "Remove location").clicked() {
+                        remove = Some(i);
+                    }
+                });
+            }
+            if let Some(i) = remove {
+                cx.settings.junk_locations.remove(i);
+                changed = true;
+            }
+            crate::gui::style::row_wrapped(ui, |ui| {
+                let w = (ui.available_width() - 200.0).clamp(100.0, 420.0);
+                style::text_input(ui, &mut self.new_location, if cfg!(windows) { r"D:\ or C:\Users\me\Downloads" } else { tr("/home/me/Downloads or /media/disk") }, w);
+                if let Some(p) = style::browse_button(ui, "junk-location", style::Pick::Folder, &self.new_location) {
+                    if !cx.settings.junk_locations.contains(&p) {
+                        cx.settings.junk_locations.push(p);
+                        changed = true;
+                    }
+                }
+                if style::secondary(ui, icon::PLUS, "Add location").clicked() && !self.new_location.trim().is_empty() {
+                    cx.settings.junk_locations.push(self.new_location.trim().to_string());
+                    self.new_location.clear();
+                    changed = true;
+                }
+            });
+            style::row_wrapped(ui, |ui| {
+                for d in self.drives.get_or_insert_with(crate::platform::drives).iter() {
+                    let path = d.path.display().to_string();
+                    if !cx.settings.junk_locations.contains(&path) && style::ghost(ui, icon::DRIVES, &d.label).on_hover_text(style::vis(crate::tf!("Add {path}"))).clicked() {
+                        cx.settings.junk_locations.push(path);
+                        changed = true;
+                    }
+                }
+            });
+            ui.add_space(6.0);
+            style::divider(ui);
+            ui.add_space(6.0);
+            style::section_title(ui, "Never look in");
+            let mut remove = None;
+            for (i, l) in cx.settings.junk_exclude.iter().enumerate() {
+                crate::gui::style::row(ui, |ui| {
+                    ui.add(style::Label::new(style::rich(icon::LOCK).color(p.muted)));
+                    ui.add(style::Label::new(style::rich(l).monospace()));
+                    if style::icon_button(ui, icon::X, "Remove").clicked() {
+                        remove = Some(i);
+                    }
+                });
+            }
+            if let Some(i) = remove {
+                cx.settings.junk_exclude.remove(i);
+                changed = true;
+            }
+            crate::gui::style::row_wrapped(ui, |ui| {
+                let w = (ui.available_width() - 160.0).clamp(100.0, 420.0);
+                style::text_input(ui, &mut self.new_exclude, "A folder to skip", w);
+                if let Some(p) = style::browse_button(ui, "junk-exclude", style::Pick::Folder, &self.new_exclude) {
+                    if !cx.settings.junk_exclude.contains(&p) {
+                        cx.settings.junk_exclude.push(p);
+                        changed = true;
+                    }
+                }
+                if style::secondary(ui, icon::PLUS, "Add").clicked() && !self.new_exclude.trim().is_empty() {
+                    cx.settings.junk_exclude.push(self.new_exclude.trim().to_string());
+                    self.new_exclude.clear();
+                    changed = true;
+                }
+            });
+            ui.add(style::Label::new(
+                style::muted(
+                    ui,
+                    if cfg!(windows) {
+                        tr("The Windows component store, Installer folder, Recycle Bin and CleanCore's backups are always skipped.")
+                    } else {
+                        tr("System folders (/usr, /proc, /var/lib, …), the Trash and CleanCore's backups are always skipped.")
+                    },
+                )
+                .size(12.0),
+            ));
+        });
+
+        changed
+    }
+
+    fn patterns(&mut self, ui: &mut Ui, cx: &mut Cx, p: Palette) -> bool {
+        let mut changed = false;
+        style::card(ui, |ui| {
+            crate::gui::style::row(ui, |ui| {
+                style::section_title(ui, "What counts as junk");
+                ui.with_layout(crate::gui::style::far_layout(egui::Align::Center), |ui| {
+                    if style::ghost(ui, icon::UNDO, "Reset to defaults").clicked() {
+                        cx.settings.junk_patterns = junk::DEFAULT_PATTERNS.iter().map(|p| Toggle { value: p.to_string(), enabled: true }).collect();
+                        changed = true;
+                    }
+                });
+            });
+            ui.add(style::Label::new(style::muted(ui, tr("File name patterns: * matches anything, ? one character. Click a pattern to switch it off.")).size(12.5)));
+            ui.add_space(4.0);
+            let mut remove = None;
+            style::row_wrapped(ui, |ui| {
+                ui.spacing_mut().item_spacing = egui::vec2(6.0, 6.0);
+                for (i, t) in cx.settings.junk_patterns.iter_mut().enumerate() {
+                    let label = format!("{} {}", if t.enabled { icon::CHECK } else { "−" }, t.value);
+                    let r = ui
+                        .add(
+                            egui::Button::new(style::vis(style::rich(label).monospace().size(12.5).color(if t.enabled { p.text } else { p.muted })))
+                                .fill(if t.enabled { p.selected } else { p.surface })
+                                .stroke(egui::Stroke::new(1.0, p.border))
+                                .corner_radius(6)
+                                .wrap_mode(egui::TextWrapMode::Extend)
+                                .min_size(egui::vec2(0.0, 28.0)),
+                        )
+                        .on_hover_text(style::vis(tr("Click to switch on/off · right-click to remove")));
+                    r.widget_info(|| egui::WidgetInfo::selected(egui::Role::CheckBox, ui.is_enabled(), t.enabled, &t.value));
+                    if r.clicked() {
+                        t.enabled = !t.enabled;
+                        changed = true;
+                    }
+                    if r.secondary_clicked() {
+                        remove = Some(i);
+                    }
+                }
+            });
+            ui.add_space(8.0);
+            if let Some(i) = remove {
+                cx.settings.junk_patterns.remove(i);
+                changed = true;
+            }
+            crate::gui::style::row(ui, |ui| {
+                style::text_input(ui, &mut self.new_pattern, "*.ext", 160.0);
+                if style::secondary(ui, icon::PLUS, "Add pattern").clicked() && !self.new_pattern.trim().is_empty() {
+                    cx.settings.junk_patterns.push(Toggle { value: self.new_pattern.trim().to_string(), enabled: true });
+                    self.new_pattern.clear();
+                    changed = true;
+                }
+            });
+        });
+
+        changed
     }
 
     fn results(&mut self, ui: &mut Ui, cx: &mut Cx, p: Palette) {

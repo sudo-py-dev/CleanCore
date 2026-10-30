@@ -30,6 +30,8 @@ pub struct AutorunView {
     /// The list being read, and whether it includes system entries.
     loading: Option<(Pending<Vec<AutorunEntry>>, bool)>,
     loaded: bool,
+    loaded_system: Option<bool>,
+    discovered: Option<std::sync::mpsc::Receiver<Vec<AutorunEntry>>>,
     search: String,
     source: Option<Source>,
     focus: Option<String>,
@@ -47,6 +49,8 @@ impl AutorunView {
             list: Vec::new(),
             loading: None,
             loaded: false,
+            loaded_system: None,
+            discovered: None,
             search: String::new(),
             source: None,
             focus: None,
@@ -59,7 +63,7 @@ impl AutorunView {
     }
 
     pub fn refresh(&mut self) {
-        self.loaded = false;
+        // Keep the last scan when navigating away and back. Refresh is explicit.
         self.details = false;
     }
 
@@ -69,9 +73,21 @@ impl AutorunView {
         let sys = cx.settings.autorun_show_system;
         if self.loading.as_ref().is_none_or(|(_, s)| *s != sys) {
             let label = if sys { tr("Reading startup entries, including system ones") } else { tr("Reading startup entries") };
-            self.loading = Some((Pending::spawn(ctx, label, move || autorun::list(sys)), sys));
+            let (tx, rx) = std::sync::mpsc::channel();
+            self.discovered = Some(rx);
+            let repaint = ctx.clone();
+            self.loading = Some((
+                Pending::spawn(ctx, label, move || {
+                    autorun::list_with_snapshot(sys, |entries| {
+                        let _ = tx.send(entries.to_vec());
+                        repaint.request_repaint();
+                    })
+                }),
+                sys,
+            ));
         }
         self.loaded = true;
+        self.loaded_system = Some(sys);
     }
 
     /// Entries matching the search (and in Details, the source filter). The simple view puts
@@ -96,15 +112,27 @@ impl AutorunView {
         v
     }
 
-    pub fn main(&mut self, ui: &mut Ui, cx: &mut Cx) {
-        if !self.loaded {
-            self.load(ui.ctx(), cx);
+    fn poll_loading(&mut self, ctx: &egui::Context) {
+        if let Some(entries) = self.discovered.as_ref().and_then(|rx| rx.try_recv().ok()) {
+            self.list = entries;
+            self.icons.load_autorun(ctx, &self.list);
         }
         if let Some(l) = self.loading.as_ref().and_then(|(l, _)| l.poll()) {
             self.loading = None;
+            self.discovered = None;
             self.list = l;
-            self.icons.load_autorun(ui.ctx(), &self.list);
+            self.icons.load_autorun(ctx, &self.list);
         }
+    }
+
+    pub fn main(&mut self, ui: &mut Ui, cx: &mut Cx) {
+        if !self.loaded || self.loaded_system != Some(cx.settings.autorun_show_system) {
+            if !cx.settings.autorun_show_system {
+                self.list.retain(|entry| !entry.system);
+            }
+            self.load(ui.ctx(), cx);
+        }
+        self.poll_loading(ui.ctx());
         self.icons.poll(ui.ctx());
         let p = Palette::get(ui.ctx());
         let details = self.details;
@@ -673,5 +701,60 @@ fn open_location(cx: &mut Cx, exe: &str) {
     let path = std::path::Path::new(exe);
     if let Err(err) = crate::platform::open_folder(path.parent().unwrap_or(path)) {
         cx.error(crate::tf!("{err:#}"));
+    }
+}
+
+#[cfg(test)]
+mod loading_tests {
+    use super::*;
+
+    #[test]
+    fn reopening_keeps_the_loaded_scan() {
+        let mut view = AutorunView::new();
+        view.loaded = true;
+        view.details = true;
+        view.refresh();
+        assert!(view.loaded);
+        assert!(!view.details);
+    }
+
+    #[test]
+    fn discovery_is_visible_before_details_and_final_result_wins() {
+        let ctx = egui::Context::default();
+        let mut view = AutorunView::new();
+        let (snap_tx, snap_rx) = std::sync::mpsc::channel();
+        let (done_tx, done_rx) = std::sync::mpsc::channel();
+        view.discovered = Some(snap_rx);
+        view.loading = Some((Pending { label: String::new(), rx: done_rx, started: std::time::Instant::now() }, false));
+        let entry = AutorunEntry {
+            id: "test".into(),
+            name: "Startup app".into(),
+            command: String::new(),
+            location: String::new(),
+            source: Source::Run,
+            all_users: false,
+            enabled: true,
+            publisher: None,
+            description: None,
+            exe: None,
+            running: false,
+            valid: true,
+            removable: true,
+            system: false,
+            startup: Default::default(),
+        };
+        snap_tx.send(vec![entry.clone()]).unwrap();
+        view.poll_loading(&ctx);
+        assert_eq!(view.list.len(), 1);
+        assert!(view.loading.is_some(), "entries must appear while details are still pending");
+        let mut enriched = entry.clone();
+        enriched.publisher = Some("Publisher".into());
+        // Even if a discovery message and completion arrive together, completion wins.
+        snap_tx.send(vec![entry]).unwrap();
+        done_tx.send(vec![enriched]).unwrap();
+        view.poll_loading(&ctx);
+        assert_eq!(view.list[0].publisher.as_deref(), Some("Publisher"));
+        assert!(view.loading.is_none());
+        assert!(view.discovered.is_none());
     }
 }

@@ -15,6 +15,8 @@ use std::collections::BTreeMap;
 use std::io::{BufRead, Write};
 use std::path::PathBuf;
 
+pub(crate) mod sources;
+
 // ---------------------------------------------------------------- model
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
@@ -28,6 +30,12 @@ pub enum ProgramKind {
     Deb,
     Rpm,
     Pacman,
+    Apk,
+    Xbps,
+    Portage,
+    Nix,
+    Homebrew,
+    Scoop,
     Flatpak,
     Snap,
     AppImage,
@@ -44,6 +52,12 @@ impl ProgramKind {
             Self::Deb => "deb",
             Self::Rpm => "rpm",
             Self::Pacman => "pacman",
+            Self::Apk => "apk",
+            Self::Xbps => "XBPS",
+            Self::Portage => "Portage",
+            Self::Nix => "Nix",
+            Self::Homebrew => "Homebrew",
+            Self::Scoop => "Scoop",
             Self::Flatpak => "Flatpak",
             Self::Snap => "Snap",
             Self::AppImage => "AppImage",
@@ -386,15 +400,43 @@ pub use crate::pathutil::wildcard;
 
 /// All installed programs, with comments from the metadata store applied, sorted by name.
 pub fn list_programs(settings: &Settings) -> Vec<Program> {
-    let mut v = crate::platform::list_programs(settings.show_system_components);
+    let mut programs = crate::platform::list_programs(settings.show_system_components);
+    prepare_inventory(&mut programs, &Meta::load());
+    programs
+}
+
+pub struct InventoryReport {
+    pub programs: Vec<Program>,
+    pub warnings: Vec<String>,
+}
+
+/// Source-by-source snapshots for interactive callers. Destructive operations and leftover
+/// protection use the separate, uncached platform inventory without interactive time limits.
+pub fn list_programs_with_snapshot(settings: &Settings, mut discovered: impl FnMut(Vec<Program>)) -> InventoryReport {
     let meta = Meta::load();
-    for p in &mut v {
+    let mut warnings = Vec::new();
+    let mut v = crate::platform::list_programs_with_snapshot(
+        settings.show_system_components,
+        |entries| {
+            let mut snapshot = entries.to_vec();
+            prepare_inventory(&mut snapshot, &meta);
+            discovered(snapshot);
+        },
+        |message| warnings.push(message),
+    );
+    prepare_inventory(&mut v, &meta);
+    InventoryReport { programs: v, warnings }
+}
+
+fn prepare_inventory(programs: &mut Vec<Program>, meta: &Meta) {
+    let mut seen = std::collections::HashSet::with_capacity(programs.len());
+    programs.retain(|p| seen.insert(p.id.clone()));
+    for p in programs.iter_mut() {
         if let Some(c) = meta.comments.get(&p.id) {
             p.comment = Some(c.clone());
         }
     }
-    v.sort_by_key(|p| p.name.to_lowercase());
-    v
+    programs.sort_by_cached_key(|p| (p.name.to_lowercase(), p.id.clone()));
 }
 
 // ---------------------------------------------------------------- groups and comments
@@ -1020,6 +1062,45 @@ pub fn export(programs: &[Program], path: &std::path::Path) -> Result<()> {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    #[ignore = "read-only host inventory timing; run explicitly"]
+    fn inventory_scan_latency() {
+        let started = std::time::Instant::now();
+        let mut first = None;
+        let mut previous = std::collections::HashSet::new();
+        let programs = list_programs_with_snapshot(&Settings::default(), |snapshot| {
+            let ids: std::collections::HashSet<_> = snapshot.iter().map(|p| p.id.clone()).collect();
+            assert!(previous.is_subset(&ids), "source snapshots must not lose discovered entries");
+            previous = ids;
+            if first.is_none() && !snapshot.is_empty() {
+                first = Some(started.elapsed());
+            }
+            eprintln!("snapshot: {} programs at {:?}", snapshot.len(), started.elapsed());
+        });
+        eprintln!("source warnings: {:?}", programs.warnings);
+        let programs = programs.programs;
+        let ids: std::collections::HashSet<_> = programs.iter().map(|p| p.id.clone()).collect();
+        assert!(previous.is_subset(&ids));
+        assert_eq!(programs.len(), ids.len());
+        eprintln!("inventory: {} programs; first results {:?}; complete {:?}", programs.len(), first, started.elapsed());
+    }
+
+    #[test]
+    fn inventory_is_deduplicated_by_identity_and_stably_sorted() {
+        let mut meta = Meta::default();
+        meta.comments.insert("b".into(), "Saved comment".into());
+        let mut programs = vec![
+            Program::new("b", "Editor", ProgramKind::Manual),
+            Program::new("a", "editor", ProgramKind::Deb),
+            Program::new("b", "Duplicate", ProgramKind::Manual),
+            Program::new("c", "Browser", ProgramKind::Flatpak),
+        ];
+        prepare_inventory(&mut programs, &meta);
+        assert_eq!(programs.iter().map(|p| p.id.as_str()).collect::<Vec<_>>(), ["c", "a", "b"]);
+        assert_eq!(programs[2].comment.as_deref(), Some("Saved comment"));
+        assert_eq!(programs[2].name, "Editor");
+    }
 
     #[test]
     fn store_apps_alone_make_no_restore_point() {

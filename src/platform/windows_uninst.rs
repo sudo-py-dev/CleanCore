@@ -186,18 +186,21 @@ fn in_windows_apps(path: &str) -> bool {
 }
 
 fn store_apps(show_system: bool) -> Vec<Program> {
+    read_store_apps(show_system, Duration::from_secs(600)).unwrap_or_default()
+}
+
+fn read_store_apps(show_system: bool, limit: Duration) -> Result<Vec<Program>> {
     // SignatureKind as its name: ConvertTo-Json writes enums as numbers.
     let script = "Get-AppxPackage | Select-Object Name,PackageFullName,PackageFamilyName,Version,Publisher,InstallLocation,IsFramework,@{n='SignatureKind';e={\"$($_.SignatureKind)\"}},NonRemovable | ConvertTo-Json -Compress";
-    let Ok(text) = powershell(script) else {
-        return Vec::new();
-    };
-    let Ok(v) = serde_json::from_str::<serde_json::Value>(text.trim()) else {
-        return Vec::new();
-    };
+    let text = powershell_within(script, limit)?;
+    if text.trim().is_empty() {
+        return Ok(Vec::new());
+    }
+    let v = serde_json::from_str::<serde_json::Value>(text.trim()).context("reading Windows Apps inventory")?;
     let items = match v {
         serde_json::Value::Array(a) => a,
         o @ serde_json::Value::Object(_) => vec![o],
-        _ => return Vec::new(),
+        _ => return Ok(Vec::new()),
     };
     let s = |o: &serde_json::Value, k: &str| o.get(k).and_then(|x| x.as_str()).unwrap_or("").to_string();
     let b = |o: &serde_json::Value, k: &str| o.get(k).and_then(|x| x.as_bool()).unwrap_or(false);
@@ -221,17 +224,53 @@ fn store_apps(show_system: bool) -> Vec<Program> {
         p.uninstall_string = Some(format!("Remove-AppxPackage {}", s(o, "PackageFullName")));
         out.push(p);
     }
-    out
+    Ok(out)
+}
+
+fn scoop_roots() -> Vec<(PathBuf, bool)> {
+    let user = env("SCOOP").or_else(|| dirs::home_dir().map(|p| p.join("scoop")));
+    let global = env("SCOOP_GLOBAL").or_else(|| env("ProgramData").map(|p| p.join("scoop")));
+    user.into_iter().map(|p| (p, true)).chain(global.into_iter().map(|p| (p, false))).collect()
+}
+
+fn desktop_programs(show_system: bool) -> Vec<Program> {
+    let mut programs = win32_programs(show_system);
+    for scoop in crate::uninstaller::sources::scoop_programs(&scoop_roots()) {
+        // Some Scoop installers also register an ARP entry: retain the registered
+        // uninstaller rather than showing two uninstall actions for the same directory.
+        if !programs
+            .iter()
+            .any(|p| p.install_location.as_ref().zip(scoop.install_location.as_ref()).is_some_and(|(a, b)| a.trim_end_matches('\\').eq_ignore_ascii_case(b.trim_end_matches('\\'))))
+        {
+            programs.push(scoop);
+        }
+    }
+    programs
 }
 
 pub fn list_programs(show_system: bool) -> Vec<Program> {
-    let mut v = win32_programs(show_system);
-    v.extend(store_apps(show_system));
-    v
+    let mut programs = desktop_programs(show_system);
+    programs.extend(store_apps(show_system));
+    programs
+}
+
+pub fn list_programs_with_snapshot(show_system: bool, mut discovered: impl FnMut(&[Program]), mut warning: impl FnMut(String)) -> Vec<Program> {
+    std::thread::scope(|scope| {
+        let store = scope.spawn(|| read_store_apps(show_system, Duration::from_secs(10)));
+        let mut v = desktop_programs(show_system);
+        discovered(&v);
+        match store.join() {
+            Ok(Ok(apps)) => v.extend(apps),
+            Ok(Err(error)) => warning(format!("Windows Apps: {error:#}")),
+            Err(_) => warning("Windows Apps: inventory worker failed".into()),
+        }
+        v
+    })
 }
 
 pub fn program_exists(p: &Program) -> bool {
     match p.kind {
+        ProgramKind::Scoop => crate::uninstaller::sources::scoop_programs(&scoop_roots()).iter().any(|app| app.id == p.id),
         ProgramKind::WindowsApp => {
             let name = p.package.as_deref().and_then(|f| f.split('_').next()).unwrap_or("");
             powershell_within(&format!("Get-AppxPackage -Name '{}'", name.replace('\'', "''")), Duration::from_secs(30)).is_ok_and(|o| !o.trim().is_empty())
@@ -241,6 +280,26 @@ pub fn program_exists(p: &Program) -> bool {
 }
 
 pub fn run_uninstaller(p: &Program, mode: RunMode) -> Result<RunResult> {
+    if p.kind == ProgramKind::Scoop {
+        let name = p.package.as_deref().context("Scoop package name unknown")?;
+        anyhow::ensure!(!name.is_empty() && name.chars().all(|c| c.is_ascii_alphanumeric() || "-_.".contains(c)), "invalid Scoop package name");
+        let script_path = scoop_roots()
+            .into_iter()
+            .filter(|(_, user)| *user)
+            .map(|(root, _)| root.join("shims/scoop.ps1"))
+            .find(|p| p.is_file())
+            .or_else(|| crate::pathutil::which("scoop.ps1", &crate::pathutil::PathCache::default()))
+            .context("Scoop executable missing")?;
+        let script = format!(
+            "& '{}' uninstall {}'{}'; if (-not $?) {{ throw 'Scoop uninstall failed' }}; if ($LASTEXITCODE) {{ exit $LASTEXITCODE }}",
+            script_path.display().to_string().replace('\'', "''"),
+            if p.user_scope { "" } else { "--global " },
+            name
+        );
+        powershell_within(&script, APPX_REMOVE).with_context(|| format!("removing {}", p.name))?;
+        return Ok(RunResult { command: script, exit_code: Some(0) });
+    }
+
     if p.kind == ProgramKind::WindowsApp {
         let full = p.package.clone().context("package name unknown")?;
         let script = format!("Remove-AppxPackage -Package '{}'", full.replace('\'', "''"));

@@ -1,4 +1,4 @@
-//! Uninstaller page: All Programs / Store apps / History, the uninstall
+//! Uninstaller page: Desktop programs / Store apps / History, the uninstall
 //! wizard (built-in uninstaller → scan mode → leftovers → summary), Quick / Multiple uninstall
 //! queue and Forced Uninstall.
 
@@ -17,7 +17,7 @@ use std::collections::BTreeSet;
 
 #[derive(Clone, Copy, PartialEq, Eq)]
 enum Tab {
-    All,
+    Desktop,
     Store,
     Traced,
     History,
@@ -207,7 +207,13 @@ pub struct UninstallerView {
     /// Lowercase search text of each program (same order), built when the list changes so
     /// filtering doesn't allocate per frame.
     haystacks: Vec<String>,
-    loading: Option<Pending<Vec<Program>>>,
+    search_query: Option<String>,
+    search_matches: Vec<usize>,
+    discovered: Option<std::sync::mpsc::Receiver<Vec<Program>>>,
+    loaded_system: Option<bool>,
+    last_scan: Option<std::time::Instant>,
+    scan_warnings: Vec<String>,
+    loading: Option<Pending<uninst::InventoryReport>>,
     loaded: bool,
     meta: Meta,
     search: String,
@@ -235,10 +241,16 @@ pub struct UninstallerView {
 impl UninstallerView {
     pub fn new() -> Self {
         Self {
-            tab: Tab::All,
+            tab: Tab::Desktop,
             screen: Screen::List,
             programs: Vec::new(),
             haystacks: Vec::new(),
+            search_query: None,
+            search_matches: Vec::new(),
+            discovered: None,
+            loaded_system: None,
+            last_scan: None,
+            scan_warnings: Vec::new(),
             loading: None,
             loaded: false,
             meta: Meta::load(),
@@ -262,14 +274,27 @@ impl UninstallerView {
     }
 
     pub fn refresh(&mut self) {
-        self.loaded = false;
+        // Reuse a recent inventory on navigation. Explicit refresh and mutations bypass it.
+        if self.loading.is_none() && self.last_scan.is_none_or(|at| at.elapsed() >= std::time::Duration::from_secs(30)) {
+            self.loaded = false;
+        }
+        self.traced.refresh();
+        self.logsdb.refresh();
     }
 
     fn load(&mut self, ctx: &egui::Context, cx: &Cx) {
-        if self.loading.is_none() {
-            let s = cx.settings.clone();
-            self.loading = Some(Pending::spawn(ctx, "Reading installed programs", move || uninst::list_programs(&s)));
-        }
+        let s = cx.settings.clone();
+        self.loaded_system = Some(s.show_system_components);
+        self.scan_warnings.clear();
+        let (tx, rx) = std::sync::mpsc::channel();
+        self.discovered = Some(rx);
+        let repaint = ctx.clone();
+        self.loading = Some(Pending::spawn(ctx, "Reading installed programs", move || {
+            uninst::list_programs_with_snapshot(&s, |entries| {
+                let _ = tx.send(entries);
+                repaint.request_repaint();
+            })
+        }));
         self.loaded = true;
         self.history = uninst::history();
         self.meta = Meta::load();
@@ -278,17 +303,24 @@ impl UninstallerView {
     }
 
     /// Indexes (into `programs`) of the rows the tab, search and group show.
-    fn visible(&self, cx: &Cx) -> Vec<usize> {
-        let q = self.search.to_lowercase();
-        self.programs
+    fn visible(&mut self, cx: &Cx) -> Vec<usize> {
+        let q = self.search.trim().to_lowercase();
+        if self.search_query.as_ref() != Some(&q) {
+            if self.search_query.as_ref().is_some_and(|previous| q.starts_with(previous)) {
+                // Extending a query can only remove matches; inspect that smaller set.
+                self.search_matches.retain(|&i| self.haystacks[i].contains(&q));
+            } else {
+                self.search_matches = self.haystacks.iter().enumerate().filter(|(_, text)| q.is_empty() || text.contains(&q)).map(|(i, _)| i).collect();
+            }
+            self.search_query = Some(q);
+        }
+        self.search_matches
             .iter()
-            .enumerate()
+            .map(|&i| (i, &self.programs[i]))
             .filter(|(_, p)| match self.tab {
                 Tab::Store => p.kind.is_store_app(),
-                // All programs includes apps from the Microsoft Store (also on their own tab).
-                _ => true,
+                _ => !p.kind.is_store_app(),
             })
-            .filter(|(i, _)| q.is_empty() || self.haystacks[*i].contains(&q))
             .filter(|(_, p)| match self.group.as_deref() {
                 None => true,
                 Some("New") => uninst::is_new(p, cx.settings.new_program_days),
@@ -299,6 +331,7 @@ impl UninstallerView {
     }
 
     fn set_programs(&mut self, list: Vec<Program>) {
+        self.search_query = None;
         self.haystacks = list.iter().map(Program::haystack).collect();
         self.programs = list;
     }
@@ -433,17 +466,35 @@ impl UninstallerView {
 
     // ------------------------------------------------------------ page
 
-    pub fn main(&mut self, ui: &mut Ui, cx: &mut Cx) {
-        self.app_icons.poll(ui.ctx());
-        if !self.loaded {
-            self.load(ui.ctx(), cx);
-        }
-        if let Some(list) = take(&mut self.loading) {
+    fn poll_inventory(&mut self, ctx: &egui::Context) {
+        // Drain intermediate snapshots, rendering only the newest available one.
+        let snapshot = self.discovered.as_ref().and_then(|rx| rx.try_iter().last());
+        if let Some(list) = snapshot {
             self.set_programs(list);
-            self.app_icons.load(ui.ctx(), &self.programs);
+            self.app_icons.load(ctx, &self.programs);
+        }
+        if let Some(report) = take(&mut self.loading) {
+            self.discovered = None;
+            self.last_scan = report.warnings.is_empty().then(std::time::Instant::now);
+            self.scan_warnings = report.warnings;
+            self.set_programs(report.programs);
+            self.app_icons.retain_ids(self.programs.iter().map(|p| p.id.as_str()));
+            self.app_icons.load(ctx, &self.programs);
             let ids: BTreeSet<&String> = self.programs.iter().map(|p| &p.id).collect();
             self.checked.retain(|i| ids.contains(i));
         }
+    }
+
+    pub fn main(&mut self, ui: &mut Ui, cx: &mut Cx) {
+        self.app_icons.poll(ui.ctx());
+        if !self.loaded || self.loaded_system != Some(cx.settings.show_system_components) {
+            if !cx.settings.show_system_components {
+                let visible = self.programs.iter().filter(|p| !p.system).cloned().collect();
+                self.set_programs(visible);
+            }
+            self.load(ui.ctx(), cx);
+        }
+        self.poll_inventory(ui.ctx());
         if let Some((owner, name, folder)) = take(&mut self.from_path) {
             match owner {
                 Some(p) => self.start_wizard(ui.ctx(), cx, p, RunMode::Normal),
@@ -497,12 +548,10 @@ impl UninstallerView {
 
     fn list_page(&mut self, ui: &mut Ui, cx: &mut Cx) {
         let p = Palette::get(ui.ctx());
-        let total: u64 = self.programs.iter().filter_map(|p| p.size).sum();
-        let subtitle = if self.loading.is_some() {
-            "Reading installed programs…".to_string()
-        } else {
-            crate::tf!("{} programs · {}", self.programs.len(), crate::backup::human_size(total))
-        };
+        let in_tab = |program: &&Program| program.kind.is_store_app() == (self.tab == Tab::Store);
+        let total: u64 = self.programs.iter().filter(in_tab).filter_map(|p| p.size).sum();
+        let count = self.programs.iter().filter(in_tab).count();
+        let subtitle = if self.loading.is_some() { "Reading installed programs…".to_string() } else { crate::tf!("{} programs · {}", count, crate::backup::human_size(total)) };
         let (mut forced, mut refresh, mut trace) = (false, false, false);
         style::page_header(ui, "Uninstaller", &subtitle, |ui| {
             forced = style::secondary(ui, icon::CROSSHAIR, "Forced Uninstall").on_hover_text(style::vis(tr("Remove a program that isn't listed or was partly removed"))).clicked();
@@ -601,7 +650,7 @@ impl UninstallerView {
             ui,
             &mut self.tab,
             &[
-                (Tab::All, icon::APP_WINDOW, "All programs", Some(self.programs.len())),
+                (Tab::Desktop, icon::APP_WINDOW, "Programs", Some(self.programs.len() - store_n)),
                 (Tab::Store, icon::STOREFRONT, store_label, Some(store_n)),
                 (Tab::Traced, icon::RECORD, "Traced programs", Some(n_logs)),
                 (Tab::Extensions, icon::GLOBE, "Browser extensions", Some(n_ext)),
@@ -609,6 +658,8 @@ impl UninstallerView {
                 (Tab::History, icon::HISTORY, "History", Some(n_hist)),
             ],
         ) {
+            // Selection belongs to the visible tab; hidden rows must never be uninstalled.
+            self.checked.clear();
             match self.tab {
                 Tab::Traced => self.traced.refresh(),
                 Tab::History => self.history = uninst::history(),
@@ -636,7 +687,6 @@ impl UninstallerView {
         }
 
         // Toolbar: search, group and filters on the left; actions for the selection on the right.
-        let visible: Vec<usize> = self.visible(cx);
         let n_checked = self.checked.len();
         // Only ticked programs are ever uninstalled: the single-program actions apply to the one
         // ticked program, and are off when none is.
@@ -720,18 +770,23 @@ impl UninstallerView {
             self.start_queue(ui.ctx(), cx, items);
             return;
         }
-        if let Some(pend) = &self.loading {
+        if !self.scan_warnings.is_empty() {
             style::card(ui, |ui| {
-                ui.add_space(24.0);
-                ui.vertical_centered(|ui| {
-                    ui.add(egui::Spinner::new().size(32.0).color(p.accent));
-                    ui.add(style::Label::new(style::muted(ui, tr(&pend.label))));
-                });
-                ui.add_space(24.0);
+                for e in &self.scan_warnings {
+                    ui.add(style::Label::new(style::rich(crate::tf!("Scan failed: {e}")).color(p.warning)).wrap());
+                }
             });
-            ui.ctx().request_repaint_after(std::time::Duration::from_millis(200));
-            return;
+            ui.add_space(8.0);
         }
+        if let Some(pend) = &self.loading {
+            pend.show_progress(ui);
+            ui.add_space(8.0);
+            if self.programs.is_empty() {
+                return;
+            }
+        }
+        // Compute after the search and group widgets so edits apply in this frame.
+        let visible = self.visible(cx);
 
         let mut action: Option<RowAction> = None;
         style::card(ui, |ui| {
@@ -942,6 +997,7 @@ impl UninstallerView {
                 if let Some(i) = self.programs.iter().position(|p| p.id == id) {
                     self.programs[i].comment = (!text.trim().is_empty()).then(|| text.trim().to_string());
                     self.haystacks[i] = self.programs[i].haystack();
+                    self.search_query = None;
                 }
                 cx.info(tr("Comment saved"));
             }
@@ -2034,7 +2090,16 @@ fn prog_icon(meta: &Meta, p: &Program) -> &'static str {
 fn kind_icon(k: ProgramKind) -> &'static str {
     match k {
         ProgramKind::Win32 => icon::APP_WINDOW,
-        ProgramKind::Msi | ProgramKind::Deb | ProgramKind::Rpm | ProgramKind::Pacman => icon::PACKAGE,
+        ProgramKind::Msi
+        | ProgramKind::Deb
+        | ProgramKind::Rpm
+        | ProgramKind::Pacman
+        | ProgramKind::Apk
+        | ProgramKind::Xbps
+        | ProgramKind::Portage
+        | ProgramKind::Nix
+        | ProgramKind::Homebrew
+        | ProgramKind::Scoop => icon::PACKAGE,
         ProgramKind::WindowsApp => icon::STOREFRONT,
         ProgramKind::Flatpak | ProgramKind::Snap => icon::CUBE,
         ProgramKind::AppImage => icon::FILE,
@@ -2180,5 +2245,129 @@ fn fix_kind(f: &crate::model::Fix) -> (&'static str, &'static str) {
         Fix::DconfResetDir { .. } | Fix::DconfResetKey { .. } => (icon::SLIDERS, "Setting"),
         Fix::RemoveXbelBookmark { .. } | Fix::RemoveMimeHandler { .. } | Fix::EditJson { .. } => (icon::FILE_TEXT, "Entry"),
         Fix::PurgePackage { .. } => (icon::PACKAGE, "Package"),
+    }
+}
+
+#[cfg(test)]
+mod inventory_tests {
+    use super::*;
+
+    #[test]
+    fn desktop_and_store_tabs_partition_every_program_kind() {
+        let mut view = UninstallerView::new();
+        let kinds = [
+            ProgramKind::Win32,
+            ProgramKind::Msi,
+            ProgramKind::WindowsApp,
+            ProgramKind::Deb,
+            ProgramKind::Rpm,
+            ProgramKind::Pacman,
+            ProgramKind::Apk,
+            ProgramKind::Xbps,
+            ProgramKind::Portage,
+            ProgramKind::Nix,
+            ProgramKind::Homebrew,
+            ProgramKind::Scoop,
+            ProgramKind::Flatpak,
+            ProgramKind::Snap,
+            ProgramKind::AppImage,
+            ProgramKind::Manual,
+        ];
+        view.set_programs(kinds.iter().enumerate().map(|(i, &kind)| Program::new(i.to_string(), "App", kind)).collect());
+        let mut settings = Settings::default();
+        let mut notices = Vec::new();
+        let cx = Cx { settings: &mut settings, notices: &mut notices };
+        view.tab = Tab::Desktop;
+        let desktop: BTreeSet<_> = view.visible(&cx).into_iter().collect();
+        assert_eq!(desktop.len(), 13);
+        assert!(desktop.iter().all(|&i| !view.programs[i].kind.is_store_app()));
+        view.tab = Tab::Store;
+        let store: BTreeSet<_> = view.visible(&cx).into_iter().collect();
+        assert_eq!(store.len(), 3);
+        assert!(store.iter().all(|&i| view.programs[i].kind.is_store_app()));
+        assert!(desktop.is_disjoint(&store));
+        assert_eq!(desktop.union(&store).count(), kinds.len());
+    }
+
+    #[test]
+    fn snapshots_are_visible_and_failed_sources_are_not_cached_as_complete() {
+        let ctx = egui::Context::default();
+        let mut view = UninstallerView::new();
+        let (snap_tx, snap_rx) = std::sync::mpsc::channel();
+        let (done_tx, done_rx) = std::sync::mpsc::channel();
+        view.discovered = Some(snap_rx);
+        view.loading = Some(Pending { label: String::new(), rx: done_rx, started: std::time::Instant::now() });
+        let app = Program::new("app", "App", ProgramKind::Manual);
+        snap_tx.send(vec![app.clone()]).unwrap();
+        view.poll_inventory(&ctx);
+        assert_eq!(view.programs.len(), 1);
+        assert!(view.loading.is_some());
+        snap_tx.send(vec![]).unwrap();
+        done_tx.send(uninst::InventoryReport { programs: vec![app], warnings: vec!["Snap: offline".into()] }).unwrap();
+        view.poll_inventory(&ctx);
+        assert_eq!(view.programs.len(), 1, "completion wins over queued snapshots");
+        assert!(view.loading.is_none());
+        assert!(view.discovered.is_none());
+        assert!(view.last_scan.is_none());
+        assert_eq!(view.scan_warnings, ["Snap: offline"]);
+    }
+
+    #[test]
+    fn indexed_search_matches_full_search_when_typing_deleting_and_replacing() {
+        let mut view = UninstallerView::new();
+        view.meta = Meta::default();
+        let mut programs: Vec<_> = (0..10_000)
+            .map(|i| {
+                let mut p = Program::new(format!("app:{i}"), format!("Application {i:05}"), ProgramKind::Manual);
+                p.publisher = format!("Publisher {}", i % 20);
+                p
+            })
+            .collect();
+        programs.push(Program::new("unicode", "Éditeur עורך", ProgramKind::Flatpak));
+        view.set_programs(programs);
+        let mut settings = Settings::default();
+        let mut notices = Vec::new();
+        let cx = Cx { settings: &mut settings, notices: &mut notices };
+        let started = std::time::Instant::now();
+        for query in ["", "app", "application 09", "application 099", "application 0999", "application 09", "Publisher 7", "ÉDITEUR", "עורך", "missing", ""] {
+            view.search = query.into();
+            let expected: Vec<_> =
+                view.programs.iter().enumerate().filter(|(_, p)| !p.kind.is_store_app() && p.haystack().contains(&query.trim().to_lowercase())).map(|(i, _)| i).collect();
+            assert_eq!(view.visible(&cx), expected, "query: {query}");
+            assert_eq!(view.visible(&cx), expected, "cached query: {query}");
+        }
+        eprintln!("10,001-program search correctness and cache exercise: {:?}", started.elapsed());
+        view.search = "application 0999".into();
+        assert_eq!(view.visible(&cx).len(), 10);
+        let cached = std::time::Instant::now();
+        for _ in 0..1000 {
+            assert_eq!(view.visible(&cx).len(), 10);
+        }
+        eprintln!("1,000 cached queries over 10,001 programs: {:?}", cached.elapsed());
+        view.search = "updated".into();
+        assert!(view.visible(&cx).is_empty());
+        let mut changed = view.programs.clone();
+        changed[0].comment = Some("Updated".into());
+        view.set_programs(changed);
+        assert_eq!(view.visible(&cx), [0], "a new snapshot must invalidate cached matches");
+        view.search.clear();
+        view.tab = Tab::Store;
+        assert_eq!(view.visible(&cx), [10_000], "tab filters apply to cached search results");
+    }
+
+    #[test]
+    fn navigation_cache_expires_and_explicit_invalidation_is_preserved() {
+        let mut view = UninstallerView::new();
+        view.loaded = true;
+        view.last_scan = Some(std::time::Instant::now());
+        view.refresh();
+        assert!(view.loaded, "a recent scan is reused");
+        view.loaded = false;
+        view.refresh();
+        assert!(!view.loaded, "navigation cannot erase mutation invalidation");
+        view.loaded = true;
+        view.last_scan = Some(std::time::Instant::now() - std::time::Duration::from_secs(31));
+        view.refresh();
+        assert!(!view.loaded, "old inventories must be refreshed");
     }
 }

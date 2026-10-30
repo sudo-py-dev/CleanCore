@@ -10,10 +10,10 @@ Status key: ✅ done · ⏳ later phase. Phases 1–5 are tested on Linux (CLI i
 
 ## 1. Uninstaller
 
-### 1.1 All Programs
+### 1.1 Programs
 | Feature | Windows | Linux | Phase |
 |---|---|---|---|
-| Program list: Name, Size, Version, Type, Install date, Company, Comment, Uninstall string, Registry key, Website | `Uninstall` keys in HKLM, HKLM\WOW6432Node and HKCU (and every loaded user hive) | Desktop apps from dpkg/rpm/pacman, Flatpak, Snap and AppImage. All packages are shown when "show system components" is on | ✅ |
+| Program list: Name, Size, Version, Type, Install date, Company, Comment, Uninstall string, Registry key, Website | `Uninstall` keys in HKLM, HKLM\WOW6432Node and HKCU (and every loaded user hive) | Desktop apps from dpkg/rpm/pacman, AppImage and manual installs; Flatpak and Snap have a separate tab. All packages are shown when "show system components" is on | ✅ |
 | Show Windows updates / system components | `SystemComponent`, `ParentKeyName`, KB entries | All packages, not only apps | ✅ |
 | "New programs" group (last N days) and custom groups (Internet, Games, Multimedia, Utilities) | ✓ | ✓ | ✅ |
 | Search by name, publisher or comment; sort; status bar count | ✓ | ✓ | ✅ |
@@ -49,7 +49,7 @@ Status key: ✅ done · ⏳ later phase. Phases 1–5 are tested on Linux (CLI i
 ### 1.4 Windows Apps
 | Feature | Windows | Linux | Phase |
 |---|---|---|---|
-| List Store and built-in apps: name, size, install date, version, publisher | `Get-AppxPackage` | Flatpak and Snap apps | ✅ also listed in All Programs, with their own icons |
+| List Store and built-in apps: name, size, install date, version, publisher | `Get-AppxPackage` | Flatpak and Snap apps | ✅ separate Store tab with its own icons, counts, selection and export |
 | Uninstall, uninstall for all users, reset the app, run, terminate, reset Microsoft Store | `Remove-AppxPackage [-AllUsers]`, `Reset-AppxPackage`, `wsreset` | `flatpak uninstall`, `snap remove`, run, kill | ✅ uninstall, all users, reset, run, terminate, reset Microsoft Store (`cleancore app …`) |
 
 ### 1.5 Browser Extensions

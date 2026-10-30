@@ -20,14 +20,12 @@ pub fn run_as_root(args: &[&str]) -> Result<Option<i32>> {
         bail!("not a command CleanCore runs as administrator: {}", args.join(" "));
     }
     if is_root() {
-        let st = std::process::Command::new(args[0]).args(&args[1..]).env("DEBIAN_FRONTEND", "noninteractive").status().with_context(|| format!("starting {}", args[0]))?;
-        return Ok(st.code());
+        return run_package_sequence(args, |command| execute_package(command, false));
     }
     // The command line in a terminal uses sudo, which asks once and remembers the password for
     // a while by itself. The desktop app always uses the graphical prompt.
     if (!crate::launch::in_window() && std::io::IsTerminal::is_terminal(&std::io::stdin())) || which("pkexec").is_none() {
-        let st = std::process::Command::new("sudo").args(args).env("DEBIAN_FRONTEND", "noninteractive").status().context("starting sudo")?;
-        return Ok(st.code());
+        return run_package_sequence(args, |command| execute_package(command, true));
     }
     let mut guard = HELPER.lock().unwrap_or_else(|e| e.into_inner());
     // One attempt to (re)start the helper, then send the command.
@@ -118,16 +116,9 @@ pub fn serve() -> Result<()> {
                 if !allowed(&a) {
                     serde_json::json!({ "error": format!("refused: {}", a.join(" ")) })
                 } else {
-                    // The command's own output goes to stderr, so it can't disturb the replies.
-                    match std::process::Command::new(a[0])
-                        .args(&a[1..])
-                        .env("DEBIAN_FRONTEND", "noninteractive")
-                        .stdin(std::process::Stdio::null())
-                        .stdout(std::io::stderr())
-                        .status()
-                    {
-                        Ok(st) => serde_json::json!({ "code": st.code() }),
-                        Err(e) => serde_json::json!({ "error": format!("starting {}: {e}", a[0]) }),
+                    match run_package_sequence(&a, |command| execute_package(command, false)) {
+                        Ok(code) => serde_json::json!({ "code": code }),
+                        Err(e) => serde_json::json!({ "error": format!("{e:#}") }),
                     }
                 }
             }
@@ -139,6 +130,89 @@ pub fn serve() -> Result<()> {
     Ok(())
 }
 
+#[cfg(not(windows))]
+struct CommandReport {
+    code: Option<i32>,
+    autoremove_suggested: bool,
+}
+
+#[cfg(not(windows))]
+fn run_package_sequence(args: &[&str], mut run: impl FnMut(&[&str]) -> Result<CommandReport>) -> Result<Option<i32>> {
+    anyhow::ensure!(allowed(args), "package command refused");
+    let result = run(args)?;
+    // Only a successful APT removal can trigger the fixed follow-up. Never execute a
+    // command parsed from package output, and never retry a failed package removal.
+    if matches!(args, ["apt-get", "remove" | "purge", "-y", _]) && result.code == Some(0) && result.autoremove_suggested {
+        return Ok(run(&["apt-get", "autoremove", "-y"])?.code);
+    }
+    Ok(result.code)
+}
+
+#[cfg(not(windows))]
+#[derive(Default)]
+struct AptSuggestion {
+    tail: Vec<u8>,
+    found: bool,
+}
+
+#[cfg(not(windows))]
+impl AptSuggestion {
+    fn feed(&mut self, bytes: &[u8]) {
+        self.tail.extend_from_slice(bytes);
+        let text = String::from_utf8_lossy(&self.tail);
+        self.found |= [
+            "Use 'apt autoremove' to remove them.",
+            "Use 'sudo apt autoremove' to remove them.",
+            "Use 'apt-get autoremove' to remove them.",
+            "Use 'sudo apt-get autoremove' to remove them.",
+        ]
+        .iter()
+        .any(|message| text.contains(message));
+        // Keep enough overlap to recognize a suggestion split across reads, without
+        // retaining a potentially huge package-manager log in memory.
+        if self.tail.len() > 128 {
+            self.tail.drain(..self.tail.len() - 128);
+        }
+    }
+}
+
+#[cfg(not(windows))]
+fn execute_package(args: &[&str], sudo: bool) -> Result<CommandReport> {
+    use std::io::{Read, Write};
+    use std::process::{Command, Stdio};
+    let mut command = Command::new(if sudo { "sudo" } else { args[0] });
+    command.args(if sudo { args } else { &args[1..] }).env("DEBIAN_FRONTEND", "noninteractive").stdin(Stdio::null());
+    if args[0] != "apt-get" {
+        let status = command.stdout(std::io::stderr()).status().with_context(|| format!("starting {}", args[0]))?;
+        return Ok(CommandReport { code: status.code(), autoremove_suggested: false });
+    }
+    // Keep package output in a known language for reliable detection. UI translations
+    // are independent of the package-manager process locale.
+    let mut child = command.env("LC_ALL", "C").stdout(Stdio::piped()).stderr(Stdio::piped()).spawn().context("starting APT")?;
+    let reader = |mut pipe: Box<dyn Read + Send>| {
+        std::thread::spawn(move || -> std::io::Result<bool> {
+            let mut detector = AptSuggestion::default();
+            let mut buffer = [0u8; 4096];
+            loop {
+                let n = pipe.read(&mut buffer)?;
+                if n == 0 {
+                    break;
+                }
+                detector.feed(&buffer[..n]);
+                // stdout is the root helper's JSON protocol; command logs must use stderr.
+                let _ = std::io::stderr().write_all(&buffer[..n]);
+            }
+            Ok(detector.found)
+        })
+    };
+    let stdout = reader(Box::new(child.stdout.take().context("APT stdout")?));
+    let stderr = reader(Box::new(child.stderr.take().context("APT stderr")?));
+    let status = child.wait().context("waiting for APT")?;
+    let suggested = stdout.join().map_err(|_| anyhow::anyhow!("APT output reader failed"))??;
+    let suggested_err = stderr.join().map_err(|_| anyhow::anyhow!("APT output reader failed"))??;
+    Ok(CommandReport { code: status.code(), autoremove_suggested: suggested || suggested_err })
+}
+
 /// The only commands that run as root: removing a package by name.
 pub fn allowed(args: &[&str]) -> bool {
     fn package(s: &str) -> bool {
@@ -148,11 +222,15 @@ pub fn allowed(args: &[&str]) -> bool {
     }
     match args {
         ["apt-get", "remove" | "purge", "-y", p] => package(p),
+        ["apt-get", "autoremove", "-y"] => true,
         ["dpkg", "-r" | "--purge", p] => package(p),
-        ["dnf", "remove", "-y", p] => package(p),
+        ["dnf" | "dnf5" | "yum", "remove", "-y", p] => package(p),
         ["zypper", "-n", "remove", p] => package(p),
         ["rpm", "-e", p] => package(p),
         ["pacman", "-R" | "-Rns", "--noconfirm", p] => package(p),
+        ["apk", "del", "--", p] => package(p),
+        ["xbps-remove", "-y", p] => package(p),
+        ["emerge", "--unmerge", "--ask=n", "--", atom] => atom.strip_prefix('=').and_then(|p| p.split_once('/')).is_some_and(|(category, name)| package(category) && package(name)),
         ["snap", "remove", p] | ["snap", "remove", "--purge", p] => package(p),
         _ => false,
     }
@@ -194,9 +272,62 @@ pub fn relaunch_elevated() -> bool {
 mod tests {
     use super::allowed;
 
+    #[cfg(not(windows))]
+    #[test]
+    fn apt_suggestion_is_detected_across_reads_with_bounded_memory() {
+        let mut detector = super::AptSuggestion::default();
+        detector.feed(&vec![b'x'; 100_000]);
+        assert!(detector.tail.len() <= 128);
+        detector.feed(b"Use 'apt auto");
+        detector.feed(b"remove' to remove them.\n");
+        assert!(detector.found);
+        let mut unrelated = super::AptSuggestion::default();
+        unrelated.feed(b"apt autoremove is a command you could run");
+        assert!(!unrelated.found);
+    }
+
+    #[cfg(not(windows))]
+    #[test]
+    fn autoremove_runs_once_only_after_a_successful_apt_suggestion() {
+        for (args, code, suggested, expected) in [
+            (vec!["apt-get", "remove", "-y", "vlc"], Some(0), true, 2),
+            (vec!["apt-get", "purge", "-y", "vlc"], Some(0), true, 2),
+            (vec!["apt-get", "remove", "-y", "vlc"], Some(100), true, 1),
+            (vec!["apt-get", "remove", "-y", "vlc"], Some(0), false, 1),
+            (vec!["snap", "remove", "vlc"], Some(0), true, 1),
+            (vec!["apt-get", "autoremove", "-y"], Some(0), true, 1),
+        ] {
+            let mut calls = Vec::new();
+            let result = super::run_package_sequence(&args, |command| {
+                calls.push(command.iter().map(|s| s.to_string()).collect::<Vec<_>>());
+                Ok(super::CommandReport { code, autoremove_suggested: suggested })
+            })
+            .unwrap();
+            assert_eq!(calls.len(), expected);
+            assert_eq!(result, code);
+            if expected == 2 {
+                assert_eq!(calls[1], ["apt-get", "autoremove", "-y"]);
+            }
+        }
+        let mut count = 0;
+        let result = super::run_package_sequence(&["apt-get", "remove", "-y", "vlc"], |_| {
+            count += 1;
+            Ok(super::CommandReport { code: Some(if count == 1 { 0 } else { 100 }), autoremove_suggested: true })
+        })
+        .unwrap();
+        assert_eq!(result, Some(100), "a failed autoremove must not be reported as success");
+    }
+
     #[test]
     fn only_package_removal_is_allowed() {
         assert!(allowed(&["apt-get", "remove", "-y", "vlc"]));
+        assert!(allowed(&["apt-get", "autoremove", "-y"]));
+        assert!(!allowed(&["apt-get", "autoremove", "-y", "--purge"]));
+        assert!(allowed(&["apk", "del", "--", "firefox"]));
+        assert!(allowed(&["xbps-remove", "-y", "firefox"]));
+        assert!(allowed(&["emerge", "--unmerge", "--ask=n", "--", "=www-client/firefox-140.0"]));
+        assert!(!allowed(&["emerge", "--unmerge", "--ask=n", "--", "=../etc/passwd"]));
+        assert!(!allowed(&["apk", "del", "--", "--rdepends"]));
         assert!(allowed(&["apt-get", "purge", "-y", "libfoo2:amd64"]));
         assert!(allowed(&["snap", "remove", "--purge", "firefox"]));
         assert!(allowed(&["pacman", "-Rns", "--noconfirm", "gimp"]));

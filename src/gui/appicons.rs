@@ -16,7 +16,7 @@ const SIZE: u32 = 48;
 #[derive(Default)]
 pub struct IconCache {
     textures: HashMap<String, TextureHandle>,
-    rx: Option<Receiver<(String, ColorImage)>>,
+    receivers: Vec<Receiver<(String, ColorImage)>>,
     /// Ids already requested, so a refresh only loads new programs.
     requested: std::collections::HashSet<String>,
 }
@@ -39,7 +39,7 @@ impl IconCache {
             return;
         }
         let (tx, rx) = channel();
-        self.rx = Some(rx);
+        self.receivers.push(rx);
         let ctx = ctx.clone();
         std::thread::spawn(move || {
             // Several programs often share one icon file: decode each source once.
@@ -64,11 +64,34 @@ impl IconCache {
 
     /// Turn decoded icons into textures (call once per frame).
     pub fn poll(&mut self, ctx: &egui::Context) {
-        let Some(rx) = &self.rx else { return };
-        for (id, img) in rx.try_iter() {
-            let tex = ctx.load_texture(crate::tf!("app-icon:{id}"), img, TextureOptions::LINEAR);
-            self.textures.insert(id, tex);
+        // Texture uploads also cost UI time. Spread large batches over several frames.
+        let mut budget = 16;
+        self.receivers.retain(|rx| loop {
+            if budget == 0 {
+                break true;
+            }
+            match rx.try_recv() {
+                Ok((id, img)) => {
+                    budget -= 1;
+                    if self.requested.contains(&id) {
+                        let tex = ctx.load_texture(crate::tf!("app-icon:{id}"), img, TextureOptions::LINEAR);
+                        self.textures.insert(id, tex);
+                    }
+                }
+                Err(std::sync::mpsc::TryRecvError::Empty) => break true,
+                Err(std::sync::mpsc::TryRecvError::Disconnected) => break false,
+            }
+        });
+        if budget == 0 {
+            ctx.request_repaint();
         }
+    }
+
+    /// Drop icons for removed entries after a complete scan, including late worker results.
+    pub fn retain_ids<'a>(&mut self, ids: impl IntoIterator<Item = &'a str>) {
+        let ids: std::collections::HashSet<_> = ids.into_iter().collect();
+        self.textures.retain(|id, _| ids.contains(id.as_str()));
+        self.requested.retain(|id| ids.contains(id.as_str()));
     }
 
     pub fn get(&self, id: &str) -> Option<&TextureHandle> {
@@ -172,5 +195,26 @@ mod tests {
         assert_eq!(img.size, [48, 48]);
         assert_eq!(img.pixels[48 * 24 + 24], egui::Color32::from_rgb(0, 0, 255));
         let _ = std::fs::remove_dir_all(&dir);
+    }
+}
+
+#[cfg(test)]
+mod incremental_tests {
+    use super::*;
+
+    #[test]
+    fn incremental_batches_keep_all_icon_receivers() {
+        let ctx = egui::Context::default();
+        let mut cache = IconCache::default();
+        for id in ["first", "second"] {
+            let (tx, rx) = channel();
+            cache.receivers.push(rx);
+            cache.requested.insert(id.into());
+            tx.send((id.into(), ColorImage::new([1, 1], vec![egui::Color32::WHITE]))).unwrap();
+        }
+        cache.poll(&ctx);
+        assert!(cache.get("first").is_some());
+        assert!(cache.get("second").is_some());
+        assert!(cache.receivers.is_empty());
     }
 }

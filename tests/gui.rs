@@ -82,6 +82,33 @@ fn walk_through_every_tool() {
         &root.join("data/pending-uninstall.json"),
         r#"{"program":null,"label":"Zapp","version":"1","target":{"names":["Zapp"]},"op":"Uninstall","started":"2026-10-21T07:00:00+03:00","reboot_needed":true}"#,
     );
+    // Store fixtures avoid consulting host daemons (a disconnected snapd can wait minutes).
+    // They also exercise the desktop/store split with real parsed inventory rows.
+    let bin = root.join("bin");
+    write(
+        &bin.join("flatpak"),
+        r#"#!/bin/sh
+[ "$1" = list ] || exit 1
+printf 'org.test.StoreApp\tFixture Store App\t1.0\t1 MB\tuser\tfixture\n'
+"#,
+    );
+    write(
+        &bin.join("snap"),
+        r#"#!/bin/sh
+[ "$1" = list ] || exit 1
+printf 'Name Version Rev Tracking Publisher Notes\nfixture-snap 1.0 1 latest/stable Fixture -\n'
+"#,
+    );
+    {
+        use std::os::unix::fs::PermissionsExt;
+        for name in ["flatpak", "snap"] {
+            std::fs::set_permissions(bin.join(name), std::fs::Permissions::from_mode(0o755)).unwrap();
+        }
+    }
+    let mut paths = vec![bin];
+    paths.extend(std::env::split_paths(&std::env::var_os("PATH").unwrap_or_default()));
+    std::env::set_var("PATH", std::env::join_paths(paths).unwrap());
+
     std::env::set_var("CLEANCORE_NO_TRAY", "1");
     // The walkthrough finds widgets by their English text.
     std::env::set_var("CLEANCORE_LANG", "en");
@@ -119,12 +146,24 @@ fn walk_through_every_tool() {
     // The dialog's field is drawn after the page's search box.
     h.query_all_by_role(Role::TextInput).last().unwrap().click();
     h.query_all_by_role(Role::TextInput).last().unwrap().type_text("Work tools");
-    h.get_by_label_contains("Create").click();
+    h.get_by_role_and_label(Role::Button, &format!("{}  Create", cleancore::gui::style::icon::PLUS)).click();
     h.run_steps(3);
     shot(&mut h, "01a2-groups-manager");
     h.get_by_label("Done").click();
     h.run_steps(3);
     assert!(cleancore::uninstaller::Meta::load().groups.iter().any(|(g, _)| g == "Work tools"));
+    assert!(h.query_all_by_label("Fixture Store App").next().is_none());
+    h.get_by_role_and_label(Role::Tab, &format!("{}  Flatpak & Snap", cleancore::gui::style::icon::STOREFRONT)).click();
+    h.run_steps(3);
+    assert!(h.query_all_by_label("Fixture Store App").next().is_some());
+    assert!(h.query_all_by_label("Fake App").next().is_none());
+    shot(&mut h, "01a3-store-only");
+    h.query_all_by_role(Role::CheckBox).next().unwrap().click();
+    h.run_steps(3);
+    h.get_by_role_and_label(Role::Tab, &format!("{}  Programs", cleancore::gui::style::icon::APP_WINDOW)).click();
+    h.run_steps(3);
+    assert!(h.get_by_role_and_label(Role::Button, &format!("{}  Uninstall", cleancore::gui::style::icon::TRASH)).accesskit_node().is_disabled());
+
     h.get_by_role(Role::TextInput).click();
     h.get_by_role(Role::TextInput).type_text("Fake");
     h.run_steps(3);

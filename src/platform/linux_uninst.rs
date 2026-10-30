@@ -9,9 +9,11 @@
 
 use crate::model::{Fix, Issue, ScanMode, Scope};
 use crate::pathutil::{desktop_exec_program, which, PathCache};
+use crate::uninstaller::sources::{homebrew_programs, nix_programs};
 use crate::uninstaller::{matches, Program, ProgramKind, RunMode, RunResult, Target};
 use anyhow::{bail, Context, Result};
 use chrono::{DateTime, Local, NaiveDate};
+use rayon::prelude::*;
 use std::collections::{HashMap, HashSet};
 use std::fs;
 use std::os::unix::fs::MetadataExt;
@@ -24,8 +26,100 @@ pub const CAT_FILES: &str = "leftover_files";
 // ---------------------------------------------------------------- helpers
 
 fn run(cmd: &str, args: &[&str]) -> Option<String> {
-    let o = Command::new(cmd).args(args).output().ok()?;
+    let o = Command::new(cmd).args(args).env("LC_ALL", "C").env("HOMEBREW_NO_AUTO_UPDATE", "1").env("HOMEBREW_NO_ANALYTICS", "1").output().ok()?;
     o.status.success().then(|| String::from_utf8_lossy(&o.stdout).into_owned())
+}
+
+/// Interactive inventory queries must not wait indefinitely for an optional daemon.
+fn inventory_output(cmd: &str, args: &[&str], limit: std::time::Duration) -> std::result::Result<String, String> {
+    use std::io::Read;
+    use std::process::Stdio;
+    let mut child = Command::new(cmd)
+        .args(args)
+        .env("LC_ALL", "C")
+        .env("HOMEBREW_NO_AUTO_UPDATE", "1")
+        .env("HOMEBREW_NO_ANALYTICS", "1")
+        .stdin(Stdio::null())
+        .stdout(Stdio::piped())
+        .stderr(Stdio::piped())
+        .spawn()
+        .map_err(|e| e.to_string())?;
+    let stdout = child.stdout.take().unwrap();
+    let stderr = child.stderr.take().unwrap();
+    let reader = |mut pipe: Box<dyn Read + Send>| {
+        std::thread::spawn(move || {
+            let mut bytes = Vec::new();
+            let _ = pipe.read_to_end(&mut bytes);
+            bytes
+        })
+    };
+    let out = reader(Box::new(stdout));
+    let err = reader(Box::new(stderr));
+    let started = std::time::Instant::now();
+    let status = loop {
+        match child.try_wait() {
+            Ok(Some(status)) => break Ok(status),
+            Ok(None) if started.elapsed() < limit => std::thread::sleep(std::time::Duration::from_millis(20)),
+            other => {
+                let _ = child.kill();
+                let _ = child.wait();
+                break Err(match other {
+                    Err(e) => e.to_string(),
+                    _ => format!("query timed out after {} seconds", limit.as_secs()),
+                });
+            }
+        }
+    };
+    let stdout = out.join().unwrap_or_default();
+    let stderr = err.join().unwrap_or_default();
+    if status?.success() {
+        Ok(String::from_utf8_lossy(&stdout).into_owned())
+    } else {
+        Err(String::from_utf8_lossy(&stderr).trim().to_string())
+    }
+}
+
+fn optional_source(cmd: &str, args: &[&str], bounded: bool) -> Option<std::result::Result<String, String>> {
+    has(cmd).then(|| if bounded { inventory_output(cmd, args, std::time::Duration::from_secs(10)) } else { run(cmd, args).ok_or_else(|| "query failed".to_string()) })
+}
+
+fn optional_program(name: &str) -> Option<PathBuf> {
+    if let Some(path) = which(name, &PathCache::default()) {
+        return Some(path);
+    }
+    let home = dirs::home_dir().unwrap_or_default();
+    let candidates = match name {
+        "brew" => vec![
+            home.join(".linuxbrew/bin/brew"),
+            PathBuf::from("/home/linuxbrew/.linuxbrew/bin/brew"),
+            PathBuf::from("/opt/homebrew/bin/brew"),
+            PathBuf::from("/usr/local/bin/brew"),
+        ],
+        "nix" => vec![home.join(".nix-profile/bin/nix"), PathBuf::from("/nix/var/nix/profiles/default/bin/nix")],
+        _ => Vec::new(),
+    };
+    candidates.into_iter().find(|path| path.is_file())
+}
+
+fn optional_inventory(name: &str, args: &[&str], bounded: bool) -> Option<std::result::Result<String, String>> {
+    let path = optional_program(name)?;
+    let path = path.to_str()?;
+    Some(if bounded { inventory_output(path, args, std::time::Duration::from_secs(10)) } else { run(path, args).ok_or_else(|| "query failed".into()) })
+}
+
+fn source_output(result: std::thread::Result<Option<std::result::Result<String, String>>>, source: &str, warning: &mut impl FnMut(String)) -> Option<String> {
+    match result {
+        Ok(Some(Ok(text))) => Some(text),
+        Ok(None) => None,
+        Ok(Some(Err(error))) => {
+            warning(format!("{source}: {error}"));
+            None
+        }
+        Err(_) => {
+            warning(format!("{source}: inventory worker failed"));
+            None
+        }
+    }
 }
 
 fn has(cmd: &str) -> bool {
@@ -141,27 +235,27 @@ fn app_dirs() -> Vec<PathBuf> {
 
 fn desktop_entries() -> Vec<Desktop> {
     let mut seen = HashSet::new();
-    let mut out = Vec::new();
+    let mut paths = Vec::new();
     for dir in app_dirs() {
         let Ok(rd) = fs::read_dir(&dir) else { continue };
-        for e in rd.flatten() {
-            let p = e.path();
-            if p.extension().is_some_and(|x| x == "desktop") && seen.insert(p.file_name().unwrap().to_os_string()) {
-                if let Some(d) = parse_desktop(&p) {
-                    out.push(d);
-                }
+        // Resolve overrides before parallel parsing: user launchers must win over system ones.
+        let mut entries: Vec<_> = rd.flatten().map(|entry| entry.path()).collect();
+        entries.sort_unstable();
+        for path in entries {
+            if path.extension().is_some_and(|x| x == "desktop") && seen.insert(path.file_name().unwrap().to_os_string()) {
+                paths.push(path);
             }
         }
     }
-    out
+    paths.par_iter().filter_map(|path| parse_desktop(path)).collect()
 }
 
-fn exec_path(d: &Desktop) -> Option<String> {
+fn exec_path(d: &Desktop, cache: &PathCache) -> Option<String> {
     let prog = desktop_exec_program(d.exec.as_deref()?)?;
     if prog.starts_with('/') {
         return Some(prog);
     }
-    which(&prog, &PathCache::default()).map(|p| p.display().to_string())
+    which(&prog, cache).map(|p| p.display().to_string())
 }
 
 // ---------------------------------------------------------------- package managers
@@ -171,18 +265,31 @@ enum Pm {
     Dpkg,
     Rpm,
     Pacman,
+    Apk,
+    Xbps,
+    Portage,
 }
 
 fn package_manager() -> Option<Pm> {
-    if has("dpkg-query") {
-        Some(Pm::Dpkg)
-    } else if has("rpm") && !has("pacman") {
-        Some(Pm::Rpm)
-    } else if has("pacman") {
-        Some(Pm::Pacman)
-    } else {
-        None
+    // A foreign package-manager binary can be installed on another distro. Prefer the
+    // installed database, rather than accidentally treating Arch as Debian because of dpkg.
+    for (pm, db) in [
+        (Pm::Apk, "/lib/apk/db/installed"),
+        (Pm::Pacman, "/var/lib/pacman/local"),
+        (Pm::Portage, "/var/db/pkg"),
+        (Pm::Xbps, "/var/db/xbps"),
+        (Pm::Dpkg, "/var/lib/dpkg/status"),
+        (Pm::Rpm, "/usr/lib/sysimage/rpm"),
+        (Pm::Rpm, "/var/lib/rpm"),
+    ] {
+        if Path::new(db).exists() {
+            return Some(pm);
+        }
     }
+    [(Pm::Dpkg, "dpkg-query"), (Pm::Pacman, "pacman"), (Pm::Rpm, "rpm"), (Pm::Apk, "apk"), (Pm::Xbps, "xbps-query"), (Pm::Portage, "emerge")]
+        .into_iter()
+        .find(|(_, cmd)| has(cmd))
+        .map(|(pm, _)| pm)
 }
 
 /// Owning package of each path (one batched query).
@@ -204,6 +311,43 @@ fn owners(pm: Pm, paths: &[PathBuf]) -> HashMap<PathBuf, String> {
                 }
             }
         }
+        Pm::Apk => {
+            let text = fs::read_to_string("/lib/apk/db/installed").unwrap_or_default();
+            let wanted: HashSet<_> = paths.iter().collect();
+            for (name, _, files) in apk_records(&text) {
+                for path in files {
+                    if wanted.contains(&path) {
+                        out.insert(path, name.clone());
+                    }
+                }
+            }
+        }
+        Pm::Xbps => {
+            for path in paths {
+                if let Some(text) = run("xbps-query", &["-o", &path.display().to_string()]) {
+                    for line in text.lines() {
+                        if let Some((pkgver, found)) = line.split_once(": ") {
+                            if found.trim() == path.to_string_lossy() {
+                                if let Some((pkg, _)) = pkgver.rsplit_once('-') {
+                                    out.insert(path.clone(), pkg.to_string());
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        Pm::Portage => {
+            let wanted: HashSet<_> = paths.iter().collect();
+            for (pkg, dir) in portage_packages(Path::new("/var/db/pkg")) {
+                let text = fs::read_to_string(dir.join("CONTENTS")).unwrap_or_default();
+                for path in portage_files(&text) {
+                    if wanted.contains(&path) {
+                        out.insert(path, pkg.clone());
+                    }
+                }
+            }
+        }
         Pm::Rpm | Pm::Pacman => {
             for p in paths {
                 let o = if pm == Pm::Rpm { run("rpm", &["-qf", "--qf", "%{NAME}\\n", &p.display().to_string()]) } else { run("pacman", &["-Qqo", &p.display().to_string()]) };
@@ -216,6 +360,7 @@ fn owners(pm: Pm, paths: &[PathBuf]) -> HashMap<PathBuf, String> {
     out
 }
 
+#[derive(Default)]
 struct PkgInfo {
     version: String,
     size: Option<u64>,
@@ -225,15 +370,122 @@ struct PkgInfo {
     system: bool,
 }
 
+/// Alpine's installed database is one local read, with explicit file ownership records.
+fn apk_records(text: &str) -> Vec<(String, PkgInfo, Vec<PathBuf>)> {
+    text.split("\n\n")
+        .filter_map(|block| {
+            let get = |key: &str| block.lines().find_map(|line| line.strip_prefix(key));
+            let name = get("P:")?.to_string();
+            let info = PkgInfo {
+                version: get("V:").unwrap_or_default().into(),
+                size: get("I:").and_then(|v| v.parse().ok()),
+                publisher: get("m:").unwrap_or_default().split('<').next().unwrap_or_default().trim().into(),
+                website: get("U:").filter(|s| !s.is_empty()).map(str::to_string),
+                ..Default::default()
+            };
+            let mut dir = PathBuf::from("/");
+            let mut files = Vec::new();
+            for line in block.lines() {
+                if let Some(value) = line.strip_prefix("F:") {
+                    dir = Path::new("/").join(value);
+                }
+                if let Some(value) = line.strip_prefix("R:") {
+                    files.push(dir.join(value));
+                }
+            }
+            Some((name, info, files))
+        })
+        .collect()
+}
+
+fn portage_packages(root: &Path) -> Vec<(String, PathBuf)> {
+    let mut out = Vec::new();
+    if let Ok(categories) = fs::read_dir(root) {
+        for category in categories.flatten().filter(|e| e.file_type().is_ok_and(|t| t.is_dir())) {
+            if let Ok(packages) = fs::read_dir(category.path()) {
+                for package in packages.flatten().filter(|e| e.file_type().is_ok_and(|t| t.is_dir())) {
+                    out.push((format!("{}/{}", category.file_name().to_string_lossy(), package.file_name().to_string_lossy()), package.path()));
+                }
+            }
+        }
+    }
+    out.sort_unstable();
+    out
+}
+
+fn portage_version(name: &str) -> &str {
+    name.char_indices().find(|(i, c)| *c == '-' && name.as_bytes().get(i + 1).is_some_and(u8::is_ascii_digit)).map(|(i, _)| &name[i + 1..]).unwrap_or_default()
+}
+
+fn portage_files(text: &str) -> Vec<PathBuf> {
+    text.lines()
+        .filter_map(|line| {
+            if let Some(rest) = line.strip_prefix("obj ") {
+                rest.rsplitn(3, ' ').nth(2).map(PathBuf::from)
+            } else {
+                line.strip_prefix("sym ")?.split_once(" -> ").map(|(path, _)| PathBuf::from(path))
+            }
+        })
+        .collect()
+}
+
+fn xbps_packages(text: &str, pkgs: &[String]) -> HashMap<String, PkgInfo> {
+    text.lines()
+        .filter_map(|line| {
+            let mut fields = line.split_whitespace();
+            if fields.next()? != "ii" {
+                return None;
+            }
+            let (name, version) = fields.next()?.rsplit_once('-')?;
+            if !pkgs.is_empty() && !pkgs.iter().any(|p| p == name) {
+                return None;
+            }
+            Some((name.to_string(), PkgInfo { version: version.into(), ..Default::default() }))
+        })
+        .collect()
+}
+
 /// Details for the given packages, or for every installed package when `pkgs` is empty.
 fn package_info(pm: Pm, pkgs: &[String]) -> HashMap<String, PkgInfo> {
     let mut out = HashMap::new();
     match pm {
+        Pm::Apk => {
+            let text = fs::read_to_string("/lib/apk/db/installed").unwrap_or_default();
+            out.extend(apk_records(&text).into_iter().filter(|(name, _, _)| pkgs.is_empty() || pkgs.contains(name)).map(|(name, info, _)| (name, info)));
+        }
+        Pm::Xbps => {
+            out = xbps_packages(&run("xbps-query", &["-l"]).unwrap_or_default(), pkgs);
+        }
+        Pm::Portage => {
+            for (name, dir) in portage_packages(Path::new("/var/db/pkg")) {
+                if !pkgs.is_empty() && !pkgs.contains(&name) {
+                    continue;
+                }
+                let get = |file| fs::read_to_string(dir.join(file)).unwrap_or_default().trim().to_string();
+                out.insert(
+                    name.clone(),
+                    PkgInfo {
+                        version: {
+                            let version = get("PVR");
+                            if version.is_empty() {
+                                portage_version(&name).to_string()
+                            } else {
+                                version
+                            }
+                        },
+                        publisher: get("repository"),
+                        website: get("HOMEPAGE").split_whitespace().next().map(str::to_string),
+                        installed: mtime_date(&dir),
+                        ..Default::default()
+                    },
+                );
+            }
+        }
         Pm::Dpkg => {
             let fmt = "${binary:Package}\t${Version}\t${Installed-Size}\t${Maintainer}\t${Homepage}\t${db:Status-Abbrev}\t${Priority}\t${Section}\n";
             let mut c = Command::new("dpkg-query");
             c.args(["-W", "-f", fmt]).args(pkgs);
-            let text = c.output().map(|o| String::from_utf8_lossy(&o.stdout).into_owned()).unwrap_or_default();
+            let text = c.env("LC_ALL", "C").output().map(|o| String::from_utf8_lossy(&o.stdout).into_owned()).unwrap_or_default();
             for l in text.lines() {
                 let f: Vec<&str> = l.split('\t').collect();
                 if f.len() < 8 || !f[5].starts_with("ii") {
@@ -263,7 +515,7 @@ fn package_info(pm: Pm, pkgs: &[String]) -> HashMap<String, PkgInfo> {
                 c.arg("-q");
             }
             c.args(["--qf", fmt]).args(pkgs);
-            let text = c.output().map(|o| String::from_utf8_lossy(&o.stdout).into_owned()).unwrap_or_default();
+            let text = c.env("LC_ALL", "C").output().map(|o| String::from_utf8_lossy(&o.stdout).into_owned()).unwrap_or_default();
             for l in text.lines() {
                 let f: Vec<&str> = l.split('\t').collect();
                 if f.len() < 7 {
@@ -285,7 +537,7 @@ fn package_info(pm: Pm, pkgs: &[String]) -> HashMap<String, PkgInfo> {
         Pm::Pacman => {
             let mut c = Command::new("pacman");
             c.arg("-Qi").args(pkgs);
-            let text = c.output().map(|o| String::from_utf8_lossy(&o.stdout).into_owned()).unwrap_or_default();
+            let text = c.env("LC_ALL", "C").output().map(|o| String::from_utf8_lossy(&o.stdout).into_owned()).unwrap_or_default();
             for block in text.split("\n\n") {
                 let get = |k: &str| block.lines().find_map(|l| l.strip_prefix(k).map(|r| r.trim_start_matches([' ', ':']).trim().to_string()));
                 let Some(name) = get("Name") else { continue };
@@ -311,6 +563,9 @@ fn pm_kind(pm: Pm) -> ProgramKind {
         Pm::Dpkg => ProgramKind::Deb,
         Pm::Rpm => ProgramKind::Rpm,
         Pm::Pacman => ProgramKind::Pacman,
+        Pm::Apk => ProgramKind::Apk,
+        Pm::Xbps => ProgramKind::Xbps,
+        Pm::Portage => ProgramKind::Portage,
     }
 }
 
@@ -319,18 +574,96 @@ fn pm_prefix(k: ProgramKind) -> &'static str {
         ProgramKind::Deb => "deb",
         ProgramKind::Rpm => "rpm",
         ProgramKind::Pacman => "pacman",
+        ProgramKind::Apk => "apk",
+        ProgramKind::Xbps => "xbps",
+        ProgramKind::Portage => "portage",
         _ => "pkg",
     }
+}
+
+fn flatpak_programs(text: &str, home: &Path) -> Vec<Program> {
+    let mut out = Vec::new();
+    for l in text.lines() {
+        let f: Vec<&str> = l.split('\t').collect();
+        if f.len() < 5 {
+            continue;
+        }
+        let (id, inst) = (f[0], f[4]);
+        let mut p = Program::new(format!("flatpak:{id}:{inst}"), if f[1].is_empty() { id } else { f[1] }, ProgramKind::Flatpak);
+        p.version = f[2].to_string();
+        p.size = parse_size(f[3]);
+        p.package = Some(id.to_string());
+        p.user_scope = inst == "user";
+        p.publisher = f.get(5).map(|o| o.to_string()).unwrap_or_default();
+        let base = if p.user_scope { home.join(".local/share/flatpak/app") } else { PathBuf::from("/var/lib/flatpak/app") };
+        p.install_location = Some(base.join(id).display().to_string());
+        p.install_date = mtime_date(&base.join(id));
+        p.uninstall_string = Some(format!("flatpak uninstall {}{id}", if p.user_scope { "--user " } else { "" }));
+        p.icon = Some(id.to_string());
+        out.push(p);
+    }
+    out
+}
+
+fn snap_programs(text: &str, entries: &[Desktop]) -> Vec<Program> {
+    let mut out = Vec::new();
+    for l in text.lines().skip(1) {
+        let f: Vec<&str> = l.split_whitespace().collect();
+        if f.len() < 5 {
+            continue;
+        }
+        let notes = f.get(5).copied().unwrap_or("");
+        let system = notes.contains("base") || notes.contains("snapd") || notes.contains("core") || f[0].starts_with("gnome-") || f[0].starts_with("gtk-") || f[0] == "bare";
+        let mut p = Program::new(format!("snap:{}", f[0]), f[0], ProgramKind::Snap);
+        p.version = f[1].to_string();
+        p.publisher = f[4].trim_end_matches('*').trim_end_matches('✓').to_string();
+        p.package = Some(f[0].to_string());
+        p.system = system;
+        p.install_location = Some(format!("/snap/{}", f[0]));
+        p.install_date = mtime_date(Path::new(&format!("/snap/{}/current", f[0])));
+        p.size = fs::metadata(format!("/var/lib/snapd/snaps/{}_{}.snap", f[0], f[2])).ok().map(|m| m.len());
+        p.uninstall_string = Some(format!("snap remove {}", f[0]));
+        // Use the launcher's display name when there is one.
+        if let Some(d) = entries.iter().find(|d| d.snap.as_deref() == Some(f[0])) {
+            p.name = d.name.clone();
+            p.icon = d.icon.clone();
+        }
+        out.push(p);
+    }
+    out
 }
 
 // ---------------------------------------------------------------- inventory
 
 pub fn list_programs(show_system: bool) -> Vec<Program> {
-    // Flatpak and Snap are asked in the background while the package manager is queried.
-    let flatpak =
-        std::thread::spawn(|| has("flatpak").then(|| run("flatpak", &["list", "--app", "--columns=application,name,version,size,installation,origin"]).unwrap_or_default()));
-    let snap = std::thread::spawn(|| has("snap").then(|| run("snap", &["list"]).unwrap_or_default()));
+    inventory(show_system, |_| {}, |_| {}, false)
+}
+
+pub fn list_programs_with_snapshot(show_system: bool, discovered: impl FnMut(&[Program]), warning: impl FnMut(String)) -> Vec<Program> {
+    inventory(show_system, discovered, warning, true)
+}
+
+fn inventory(show_system: bool, mut discovered: impl FnMut(&[Program]), mut warning: impl FnMut(String), bounded: bool) -> Vec<Program> {
+    // One bounded query per optional manager, all independent of native package discovery.
+    let (tx, sources) = std::sync::mpsc::channel();
+    for source in ["Flatpak", "Snap", "Nix", "Homebrew"] {
+        let tx = tx.clone();
+        std::thread::spawn(move || {
+            let result = std::panic::catch_unwind(|| match source {
+                "Flatpak" => optional_source("flatpak", &["list", "--app", "--columns=application,name,version,size,installation,origin"], bounded),
+                "Snap" => optional_source("snap", &["list"], bounded),
+                "Nix" => optional_inventory("nix", &["--extra-experimental-features", "nix-command flakes", "profile", "list", "--json"], bounded),
+                "Homebrew" => optional_inventory("brew", &["info", "--json=v2", "--installed"], bounded),
+                _ => unreachable!(),
+            })
+            .unwrap_or_else(|_| Some(Err("inventory worker failed".into())));
+            let _ = tx.send((source, result));
+        });
+    }
+    drop(tx);
     let entries = desktop_entries();
+    // This cache lives for one scan, so new/removed executables are seen on refresh.
+    let paths = PathCache::default();
     let home = dirs::home_dir().unwrap_or_default();
     let user_apps = home.join(".local/share/applications");
     let mut out: Vec<Program> = Vec::new();
@@ -346,7 +679,9 @@ pub fn list_programs(show_system: bool) -> Vec<Program> {
             }
         }
         let pkgs: Vec<String> = by_pkg.keys().cloned().collect();
-        let info = package_info(pm, if show_system { &[] } else { &pkgs });
+        // An empty package selection means "all packages" to package_info.
+        // Don't enumerate the entire package database when there are no desktop apps.
+        let info = if !show_system && pkgs.is_empty() { HashMap::new() } else { package_info(pm, if show_system { &[] } else { &pkgs }) };
         let kind = pm_kind(pm);
         for (pkg, inf) in &info {
             let ds = by_pkg.get(pkg);
@@ -365,71 +700,21 @@ pub fn list_programs(show_system: bool) -> Vec<Program> {
             p.system = ds.is_none() || ds.is_some_and(|v| v.iter().all(|d| d.hidden)) || inf.system && ds.is_none();
             p.uninstall_string = Some(match kind {
                 ProgramKind::Deb => format!("apt-get remove {pkg}"),
-                ProgramKind::Rpm => format!("dnf remove {pkg}"),
+                ProgramKind::Rpm => format!("rpm -e {pkg}"),
+                ProgramKind::Apk => format!("apk del -- {pkg}"),
+                ProgramKind::Xbps => format!("xbps-remove -y {pkg}"),
+                ProgramKind::Portage => format!("emerge --unmerge ={pkg}"),
                 _ => format!("pacman -R {pkg}"),
             });
             if let Some(d) = main {
                 p.icon = d.icon.clone();
                 p.comment = (!d.comment.is_empty()).then(|| d.comment.clone());
-                p.executables = ds.unwrap().iter().filter_map(|d| exec_path(d)).collect();
+                p.executables = ds.unwrap().iter().filter_map(|d| exec_path(d, &paths)).collect();
                 p.executables.sort_unstable();
                 p.executables.dedup();
             }
             if p.system && !show_system {
                 continue;
-            }
-            out.push(p);
-        }
-    }
-
-    // Flatpak
-    if let Some(text) = flatpak.join().ok().flatten() {
-        for l in text.lines() {
-            let f: Vec<&str> = l.split('\t').collect();
-            if f.len() < 5 {
-                continue;
-            }
-            let (id, inst) = (f[0], f[4]);
-            let mut p = Program::new(format!("flatpak:{id}:{inst}"), if f[1].is_empty() { id } else { f[1] }, ProgramKind::Flatpak);
-            p.version = f[2].to_string();
-            p.size = parse_size(f[3]);
-            p.package = Some(id.to_string());
-            p.user_scope = inst == "user";
-            p.publisher = f.get(5).map(|o| o.to_string()).unwrap_or_default();
-            let base = if p.user_scope { home.join(".local/share/flatpak/app") } else { PathBuf::from("/var/lib/flatpak/app") };
-            p.install_location = Some(base.join(id).display().to_string());
-            p.install_date = mtime_date(&base.join(id));
-            p.uninstall_string = Some(format!("flatpak uninstall {}{id}", if p.user_scope { "--user " } else { "" }));
-            p.icon = Some(id.to_string());
-            out.push(p);
-        }
-    }
-
-    // Snap
-    if let Some(text) = snap.join().ok().flatten() {
-        for l in text.lines().skip(1) {
-            let f: Vec<&str> = l.split_whitespace().collect();
-            if f.len() < 5 {
-                continue;
-            }
-            let notes = f.get(5).copied().unwrap_or("");
-            let system = notes.contains("base") || notes.contains("snapd") || notes.contains("core") || f[0].starts_with("gnome-") || f[0].starts_with("gtk-") || f[0] == "bare";
-            if system && !show_system {
-                continue;
-            }
-            let mut p = Program::new(format!("snap:{}", f[0]), f[0], ProgramKind::Snap);
-            p.version = f[1].to_string();
-            p.publisher = f[4].trim_end_matches('*').trim_end_matches('✓').to_string();
-            p.package = Some(f[0].to_string());
-            p.system = system;
-            p.install_location = Some(format!("/snap/{}", f[0]));
-            p.install_date = mtime_date(Path::new(&format!("/snap/{}/current", f[0])));
-            p.size = fs::metadata(format!("/var/lib/snapd/snaps/{}_{}.snap", f[0], f[2])).ok().map(|m| m.len());
-            p.uninstall_string = Some(format!("snap remove {}", f[0]));
-            // Use the launcher's display name when there is one.
-            if let Some(d) = entries.iter().find(|d| d.snap.as_deref() == Some(f[0])) {
-                p.name = d.name.clone();
-                p.icon = d.icon.clone();
             }
             out.push(p);
         }
@@ -463,7 +748,7 @@ pub fn list_programs(show_system: bool) -> Vec<Program> {
     // Unpackaged apps with a user launcher (e.g. extracted to /opt or ~/.local/opt)
     let known: HashSet<String> = out.iter().flat_map(|p| p.executables.clone()).collect();
     for d in entries.iter().filter(|d| d.path.starts_with(&user_apps) && !d.hidden && d.flatpak.is_none() && d.snap.is_none()) {
-        let Some(exe) = exec_path(d) else { continue };
+        let Some(exe) = exec_path(d, &paths) else { continue };
         if known.contains(&exe) || exe.starts_with("/usr/") || exe.starts_with("/bin/") || exe.to_ascii_lowercase().ends_with(".appimage") {
             continue;
         }
@@ -482,6 +767,26 @@ pub fn list_programs(show_system: bool) -> Vec<Program> {
         p.user_scope = true;
         out.push(p);
     }
+
+    discovered(&out);
+    // Publish whichever optional source finishes first; a stalled Snap daemon must not
+    // hide already completed Homebrew, Nix or Flatpak inventory.
+    for (source, result) in sources {
+        if let Some(text) = source_output(Ok(result), source, &mut warning) {
+            let parsed = match source {
+                "Flatpak" => Ok(flatpak_programs(&text, &home)),
+                "Snap" => Ok(snap_programs(&text, &entries)),
+                "Nix" => nix_programs(&text),
+                "Homebrew" => homebrew_programs(&text),
+                _ => unreachable!(),
+            };
+            match parsed {
+                Ok(programs) => out.extend(programs.into_iter().filter(|p| show_system || !p.system)),
+                Err(error) => warning(format!("{source}: {error}")),
+            }
+            discovered(&out);
+        }
+    }
     out
 }
 
@@ -491,6 +796,17 @@ pub fn program_exists(p: &Program) -> bool {
         ProgramKind::Deb => run("dpkg-query", &["-W", "-f=${db:Status-Abbrev}", pkg]).is_some_and(|s| s.starts_with("ii")),
         ProgramKind::Rpm => run("rpm", &["-q", pkg]).is_some(),
         ProgramKind::Pacman => run("pacman", &["-Q", pkg]).is_some(),
+        ProgramKind::Apk => run("apk", &["info", "--exists", pkg]).is_some(),
+        ProgramKind::Xbps => run("xbps-query", &["-p", "pkgver", pkg]).is_some(),
+        ProgramKind::Portage => Path::new("/var/db/pkg").join(pkg).is_dir(),
+        ProgramKind::Nix => optional_inventory("nix", &["--extra-experimental-features", "nix-command flakes", "profile", "list", "--json"], true)
+            .and_then(|r| r.ok())
+            .and_then(|text| nix_programs(&text).ok())
+            .is_some_and(|ps| ps.iter().any(|x| x.package.as_deref() == Some(pkg))),
+        ProgramKind::Homebrew => optional_inventory("brew", &["info", "--json=v2", "--installed"], true)
+            .and_then(|r| r.ok())
+            .and_then(|text| homebrew_programs(&text).ok())
+            .is_some_and(|ps| ps.iter().any(|x| x.package.as_deref() == Some(pkg))),
         ProgramKind::Flatpak => run("flatpak", &["info", pkg]).is_some(),
         ProgramKind::Snap => run("snap", &["list", pkg]).is_some(),
         ProgramKind::AppImage | ProgramKind::Manual => p.install_location.as_deref().is_some_and(|l| Path::new(l).exists()),
@@ -502,13 +818,19 @@ pub fn run_uninstaller(p: &Program, mode: RunMode) -> Result<RunResult> {
     let pkg = p.package.clone().unwrap_or_default();
     // Package removal runs as root through the one administrator helper (one password prompt
     // for the whole session, however many programs are removed).
+    let atom = format!("={pkg}");
     let as_root: Option<Vec<&str>> = match p.kind {
         ProgramKind::Deb if has("apt-get") => Some(vec!["apt-get", "remove", "-y", &pkg]),
         ProgramKind::Deb => Some(vec!["dpkg", "-r", &pkg]),
         ProgramKind::Rpm if has("dnf") => Some(vec!["dnf", "remove", "-y", &pkg]),
+        ProgramKind::Rpm if has("dnf5") => Some(vec!["dnf5", "remove", "-y", &pkg]),
+        ProgramKind::Rpm if has("yum") => Some(vec!["yum", "remove", "-y", &pkg]),
         ProgramKind::Rpm if has("zypper") => Some(vec!["zypper", "-n", "remove", &pkg]),
         ProgramKind::Rpm => Some(vec!["rpm", "-e", &pkg]),
         ProgramKind::Pacman => Some(vec!["pacman", "-R", "--noconfirm", &pkg]),
+        ProgramKind::Portage => Some(vec!["emerge", "--unmerge", "--ask=n", "--", &atom]),
+        ProgramKind::Apk => Some(vec!["apk", "del", "--", &pkg]),
+        ProgramKind::Xbps => Some(vec!["xbps-remove", "-y", &pkg]),
         ProgramKind::Snap => Some(vec!["snap", "remove", &pkg]),
         _ => None,
     };
@@ -517,6 +839,17 @@ pub fn run_uninstaller(p: &Program, mode: RunMode) -> Result<RunResult> {
         return Ok(RunResult { command: args.join(" "), exit_code: code });
     }
     let mut cmd = match p.kind {
+        ProgramKind::Nix => {
+            anyhow::ensure!(pkg.starts_with("/nix/store/") && Path::new(&pkg).components().count() == 4, "invalid Nix store path");
+            let mut c = Command::new(optional_program("nix").context("Nix executable missing")?);
+            c.args(["--extra-experimental-features", "nix-command flakes", "profile", "remove", "--", &pkg]);
+            c
+        }
+        ProgramKind::Homebrew => {
+            let mut c = Command::new(optional_program("brew").context("Homebrew executable missing")?);
+            c.env("HOMEBREW_NO_AUTO_UPDATE", "1").args(["uninstall", "--formula", "--", &pkg]);
+            c
+        }
         ProgramKind::Flatpak => {
             let mut c = Command::new("flatpak");
             c.args(["uninstall", "-y", "--noninteractive", if p.user_scope { "--user" } else { "--system" }, &pkg]);
@@ -862,6 +1195,51 @@ pub fn reset_store() -> Result<()> {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn reads_alpine_metadata_and_desktop_ownership() {
+        let text = "P:editor\nV:2.1-r0\nI:2048\nm:Maintainer <mail@example.test>\nU:https://example.test\nF:usr/share/applications\nR:editor.desktop\nF:usr/bin\nR:editor\n\nP:library\nV:1.0-r1\nI:1024\n";
+        let records = apk_records(text);
+        assert_eq!(records.len(), 2);
+        assert_eq!(records[0].0, "editor");
+        assert_eq!(records[0].1.version, "2.1-r0");
+        assert_eq!(records[0].1.size, Some(2048));
+        assert_eq!(records[0].1.publisher, "Maintainer");
+        assert_eq!(records[0].2, [PathBuf::from("/usr/share/applications/editor.desktop"), PathBuf::from("/usr/bin/editor")]);
+    }
+
+    #[test]
+    fn reads_void_versions_and_filters_incomplete_installs() {
+        let programs =
+            xbps_packages("ii network-manager-applet-1.2_3 A desktop app\nuu half-installed-1.0_1 Unpacked\nii libfoo-2.0_1 Library\n", &["network-manager-applet".into()]);
+        assert_eq!(programs.len(), 1);
+        assert_eq!(programs["network-manager-applet"].version, "1.2_3");
+    }
+
+    #[test]
+    fn reads_gentoo_versions_and_paths_with_spaces() {
+        assert_eq!(portage_version("app-editors/my-editor-2.1-r3"), "2.1-r3");
+        let paths = portage_files("obj /usr/share/applications/My Editor.desktop abcd 123\nsym /usr/bin/editor -> editor-bin 123\ndir /usr/bin\n");
+        assert_eq!(paths, [PathBuf::from("/usr/share/applications/My Editor.desktop"), PathBuf::from("/usr/bin/editor")]);
+    }
+
+    #[test]
+    fn interactive_inventory_stops_a_stalled_command() {
+        let started = std::time::Instant::now();
+        let result = inventory_output("sleep", &["5"], std::time::Duration::from_millis(40));
+        assert!(result.unwrap_err().contains("timed out"));
+        assert!(started.elapsed() < std::time::Duration::from_secs(3));
+    }
+
+    #[test]
+    fn interactive_inventory_drains_large_output_and_reports_failures() {
+        let text = inventory_output("head", &["-c", "131072", "/dev/zero"], std::time::Duration::from_secs(3)).unwrap();
+        assert_eq!(text.len(), 131072);
+        assert!(inventory_output("false", &[], std::time::Duration::from_secs(3)).is_err());
+        let mut warnings = Vec::new();
+        assert!(source_output(Ok(Some(Err("offline".into()))), "Snap", &mut |message| warnings.push(message)).is_none());
+        assert_eq!(warnings, ["Snap: offline"]);
+    }
 
     #[test]
     fn sizes() {

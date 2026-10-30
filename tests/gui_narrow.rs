@@ -13,8 +13,9 @@ fn shot(h: &mut Harness<'_, App>, name: &str) {
     let d = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("target/gui-shots");
     std::fs::create_dir_all(&d).unwrap();
     let lang = std::env::var("CLEANCORE_LANG").unwrap_or_default();
+    let prefix = if std::env::var_os("CLEANCORE_TEST_WIDE").is_some() { "wide" } else { "narrow" };
     let suffix = if lang == "en" { String::new() } else { format!("-{lang}") };
-    h.render().expect("render").save(d.join(format!("narrow{suffix}-{name}.png"))).unwrap();
+    h.render().expect("render").save(d.join(format!("{prefix}{suffix}-{name}.png"))).unwrap();
 }
 
 #[test]
@@ -56,7 +57,8 @@ fn every_page_fits_a_small_window() {
         .collect();
     std::fs::write(watch.log_file(), log).unwrap();
 
-    let mut h = Harness::builder().with_size(egui::Vec2::new(960.0, 600.0)).wgpu().build_eframe(|cc| App::new(cc));
+    let size = if std::env::var_os("CLEANCORE_TEST_WIDE").is_some() { egui::Vec2::new(1600.0, 960.0) } else { egui::Vec2::new(960.0, 600.0) };
+    let mut h = Harness::builder().with_size(size).wgpu().build_eframe(|cc| App::new(cc));
     h.run_steps(10);
     // Wait for the program list.
     for _ in 0..200 {
