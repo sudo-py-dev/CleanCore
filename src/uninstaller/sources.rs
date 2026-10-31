@@ -1,6 +1,7 @@
 //! Portable parsers for installed package-manager inventory. No commands or network I/O.
 
 use super::{Program, ProgramKind};
+#[cfg(any(not(windows), test))]
 use std::path::Path;
 
 #[cfg(any(not(windows), test))]
