@@ -185,8 +185,13 @@ fn in_windows_apps(path: &str) -> bool {
     path.split(['\\', '/']).any(|c| c.eq_ignore_ascii_case("WindowsApps"))
 }
 
+// Appx enumeration can take minutes while Windows' deployment service is busy or
+// starting up. Interactive scans already publish desktop programs independently;
+// use the full inventory budget there too instead of dropping Store apps after 10 s.
+const APPX_INVENTORY: Duration = Duration::from_secs(600);
+
 fn store_apps(show_system: bool) -> Vec<Program> {
-    read_store_apps(show_system, Duration::from_secs(600)).unwrap_or_default()
+    read_store_apps(show_system, APPX_INVENTORY).unwrap_or_default()
 }
 
 fn read_store_apps(show_system: bool, limit: Duration) -> Result<Vec<Program>> {
@@ -256,7 +261,7 @@ pub fn list_programs(show_system: bool) -> Vec<Program> {
 
 pub fn list_programs_with_snapshot(show_system: bool, mut discovered: impl FnMut(&[Program]), mut warning: impl FnMut(String)) -> Vec<Program> {
     std::thread::scope(|scope| {
-        let store = scope.spawn(|| read_store_apps(show_system, Duration::from_secs(10)));
+        let store = scope.spawn(|| read_store_apps(show_system, APPX_INVENTORY));
         let mut v = desktop_programs(show_system);
         discovered(&v);
         match store.join() {
