@@ -44,7 +44,7 @@ pub fn run() -> eframe::Result {
     for renderer in renderers {
         let options = eframe::NativeOptions {
             viewport: {
-                let v = egui::ViewportBuilder::default().with_inner_size([1200.0, 780.0]).with_min_inner_size([960.0, 600.0]).with_title("CleanCore").with_app_id("cleancore");
+                let v = egui::ViewportBuilder::default().with_inner_size([1200.0, 780.0]).with_min_inner_size([960.0, 600.0]).with_title("CleanCore").with_decorations(false).with_app_id("cleancore");
                 match appicons::window_icon() {
                     Some(icon) => v.with_icon(icon),
                     None => v,
@@ -427,6 +427,64 @@ impl App {
     }
 }
 
+/// Window controls follow the language's trailing edge, including their order.
+fn window_header(ui: &mut Ui) {
+    let ctx = ui.ctx().clone();
+    let maximized = ctx.input(|i| i.viewport().maximized.unwrap_or(false));
+    egui::Panel::top("window_header").exact_size(42.0).show(ui, |ui| {
+        let rect = ui.max_rect();
+        let rtl = style::rtl();
+        let controls_width = 120.0;
+        let mut drag_rect = rect;
+        if rtl {
+            drag_rect.min.x += controls_width;
+        } else {
+            drag_rect.max.x -= controls_width;
+        }
+        let drag = ui.interact(drag_rect, ui.scope_id().with("window_drag"), egui::Sense::click_and_drag());
+        if drag.double_clicked() {
+            ctx.send_viewport_cmd(egui::ViewportCommand::Maximized(!maximized));
+        } else if drag.drag_started() {
+            ctx.send_viewport_cmd(egui::ViewportCommand::StartDrag);
+        }
+        ui.painter().text(drag_rect.center(), egui::Align2::CENTER_CENTER, "CleanCore", egui::FontId::proportional(14.0), ui.visuals().text_color());
+        let layout = if rtl { egui::Layout::left_to_right(egui::Align::Center) } else { egui::Layout::right_to_left(egui::Align::Center) };
+        ui.with_layout(layout, |ui| {
+            for (kind, label, command) in [
+                (0, "Close", egui::ViewportCommand::Close),
+                (1, if maximized { "Restore" } else { "Maximize" }, egui::ViewportCommand::Maximized(!maximized)),
+                (2, "Minimize", egui::ViewportCommand::Minimized(true)),
+            ] {
+                let response = ui.add_sized([32.0, 30.0], egui::Button::new(""));
+                // Draw the symbols directly so they never depend on font coverage.
+                let center = response.rect.center();
+                let color = if kind == 0 { Palette::get(ui.ctx()).danger } else { ui.style().interact(&response).fg_stroke.color };
+                let stroke = egui::Stroke::new(1.5, color);
+                let painter = ui.painter();
+                let bounds = egui::Rect::from_center_size(center, egui::vec2(10.0, 10.0));
+                match kind {
+                    0 => {
+                        painter.line_segment([bounds.left_top(), bounds.right_bottom()], stroke);
+                        painter.line_segment([bounds.right_top(), bounds.left_bottom()], stroke);
+                    }
+                    1 if maximized => {
+                        let back = bounds.translate(egui::vec2(2.0, -2.0)).shrink(1.0);
+                        painter.line_segment([back.left_top(), back.right_top()], stroke);
+                        painter.line_segment([back.right_top(), back.right_bottom()], stroke);
+                        painter.rect_stroke(bounds.translate(egui::vec2(-1.0, 1.0)).shrink(1.0), 0.0, stroke, egui::StrokeKind::Inside);
+                    }
+                    1 => { painter.rect_stroke(bounds, 0.0, stroke, egui::StrokeKind::Inside); }
+                    _ => { painter.line_segment([center - egui::vec2(5.0, 0.0), center + egui::vec2(5.0, 0.0)], stroke); }
+                }
+                response.widget_info(|| egui::WidgetInfo::labeled(egui::Role::Button, true, tr(label)));
+                if response.on_hover_text(style::vis(tr(label))).clicked() {
+                    ctx.send_viewport_cmd(command);
+                }
+            }
+        });
+    });
+}
+
 fn notice_row(ui: &mut Ui, n: &Notice) {
     let p = Palette::get(ui.ctx());
     crate::gui::style::row_top(ui, |ui| {
@@ -443,6 +501,7 @@ impl eframe::App for App {
     fn ui(&mut self, ui: &mut Ui, _frame: &mut eframe::Frame) {
         let ctx = ui.ctx().clone();
         let p = Palette::get(&ctx);
+        window_header(ui);
         // The sidebar sits at the start of the reading direction: right for right-to-left.
         let side = if style::rtl() { egui::Panel::right("sidebar") } else { egui::Panel::left("sidebar") };
         side.resizable(false)
